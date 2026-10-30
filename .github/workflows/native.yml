@@ -1,0 +1,150 @@
+name: Build and validate Stellae installer
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    shell: pwsh
+
+jobs:
+  inventory:
+    runs-on: windows-2022
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install PyYAML==6.0.2
+      - run: python scripts/verify_release.py --require-yaml
+      - run: ./scripts/native/Test-Inventory.ps1
+
+  engine:
+    needs: inventory
+    runs-on: windows-2022
+    timeout-minutes: 70
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - variant: engine-r5
+            arch: x64
+            msvc_arch: x64
+          - variant: engine-r5
+            arch: x86
+            msvc_arch: x64_x86
+          - variant: engine-n01
+            arch: x64
+            msvc_arch: x64
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: ${{ matrix.msvc_arch }}
+      - name: Assemble fixed engine sources
+        run: ./scripts/native/Prepare-Sources.ps1 -Variant '${{ matrix.variant }}' -Destination (Join-Path $env:RUNNER_TEMP 'engine')
+      - name: Build engine and finite regression checks
+        run: ./scripts/native/Build-Engine.ps1 -Variant '${{ matrix.variant }}' -Architecture '${{ matrix.arch }}' -SourcePath (Join-Path $env:RUNNER_TEMP 'engine') -CacheDirectory (Join-Path $env:RUNNER_TEMP 'native-cache') -OutputDirectory (Join-Path $env:RUNNER_TEMP 'engine-output')
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.variant }}-${{ matrix.arch }}
+          path: ${{ runner.temp }}/engine-output
+          if-no-files-found: error
+          retention-days: 14
+      - name: Preserve bounded build diagnostics
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: engine-failure-${{ matrix.variant }}-${{ matrix.arch }}
+          path: ${{ runner.temp }}/engine/ci-logs
+          if-no-files-found: warn
+          retention-days: 14
+
+  frontend-package:
+    needs: engine
+    runs-on: windows-2022
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: microsoft/setup-msbuild@v2
+        with:
+          vs-version: '[17.0,18.0)'
+      - uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: x64
+      - uses: actions/download-artifact@v4
+        with:
+          name: engine-r5-x64
+          path: ${{ runner.temp }}/sdk/engine-r5-x64
+      - uses: actions/download-artifact@v4
+        with:
+          name: engine-r5-x86
+          path: ${{ runner.temp }}/sdk/engine-r5-x86
+      - uses: actions/download-artifact@v4
+        with:
+          name: engine-n01-x64
+          path: ${{ runner.temp }}/sdk/engine-n01-x64
+      - name: Assemble fixed frontend source
+        run: ./scripts/native/Prepare-Sources.ps1 -Variant stellae-61052 -Destination (Join-Path $env:RUNNER_TEMP 'stellae')
+      - name: Build clean x64 and Win32 products
+        run: ./scripts/native/Build-Weasel.ps1 -SourcePath (Join-Path $env:RUNNER_TEMP 'stellae') -SdkRoot (Join-Path $env:RUNNER_TEMP 'sdk') -CacheDirectory (Join-Path $env:RUNNER_TEMP 'native-cache') -OutputDirectory (Join-Path $env:RUNNER_TEMP 'frontend-output')
+      - name: Build and extract the scheme-free installer
+        run: ./scripts/package/Prepare-Package.ps1 -FrontendOutput (Join-Path $env:RUNNER_TEMP 'frontend-output') -SourcePath (Join-Path $env:RUNNER_TEMP 'stellae') -SdkRoot (Join-Path $env:RUNNER_TEMP 'sdk') -CacheDirectory (Join-Path $env:RUNNER_TEMP 'native-cache') -OutputDirectory (Join-Path $env:RUNNER_TEMP 'package')
+      - name: Validate empty-scheme callbacks and existing key regressions
+        run: |
+          $source=Join-Path $env:RUNNER_TEMP 'stellae'
+          $shared=Join-Path $env:RUNNER_TEMP 'package/stage/output/data'
+          foreach($directory in @((Join-Path $source 'output/data'),(Join-Path $source 'output/Win32/data'))){
+            New-Item -ItemType Directory -Path $directory -Force|Out-Null
+            Copy-Item -Path "$shared/*" -Destination $directory -Recurse -Force
+          }
+          foreach($architecture in @('x64','Win32')){
+            ./native/tests/key-pairing/Run-ControlledKeys.ps1 -SourceRoot $source -SharedData $shared -Architecture $architecture -RuntimeN01 (Join-Path $env:RUNNER_TEMP 'frontend-output/output/rime.dll')
+          }
+      - name: Test clean installation, user-added scheme and upgrade preservation
+        run: |
+          ./native/tests/installer/Test-InstallerPolicy.ps1 -OfficialInstaller (Join-Path $env:RUNNER_TEMP 'native-cache/weasel-0.17.4.0-installer.exe') -StellaeInstaller (Join-Path $env:RUNNER_TEMP 'package/release/stellae-0.17.4.61052-installer.exe') -OutputDirectory (Join-Path $env:RUNNER_TEMP 'installer-evidence') -ApiHeader (Join-Path $env:RUNNER_TEMP 'stellae/include/rime_api.h')
+      - name: Validate Windows input-profile preservation through real APIs
+        run: |
+          & "$env:WINDIR/System32/WindowsPowerShell/v1.0/powershell.exe" -NoProfile -NonInteractive -ExecutionPolicy Bypass -File ./native/tests/installer/Test-Win11EquivalentPolicy.ps1 -HelperFile ./installer/InstallProfilePolicy.ps1 -SnapshotFile ./installer/NativeProfileSnapshot.ps1 -OutputDirectory (Join-Path $env:RUNNER_TEMP 'profile-policy-evidence')
+          if($LASTEXITCODE){throw 'Input-profile preservation validation failed.'}
+      - name: Record successful finite validation
+        run: |
+          $release=Join-Path $env:RUNNER_TEMP 'package/release'
+          $reports=@((Join-Path $env:RUNNER_TEMP 'installer-evidence/installer-result.json'),(Join-Path $env:RUNNER_TEMP 'profile-policy-evidence/win11-equivalent-policy-result.json'),(Join-Path $env:RUNNER_TEMP 'stellae/ci-logs/controlled-keys-x64.json'),(Join-Path $env:RUNNER_TEMP 'stellae/ci-logs/controlled-keys-win32.json'))
+          foreach($path in $reports){$report=Get-Content -LiteralPath $path -Raw|ConvertFrom-Json;if(-not $report.Passed){throw "A required validation report failed: $path"}}
+          [ordered]@{version='0.17.4.61052';commit=$env:GITHUB_SHA;run=$env:GITHUB_RUN_ID;passed=$true;emptySchemeCallbacksPerArchitecture=36;keyRegressionsPerArchitecture=130;physicalKeyboardTested=$false;actualWindows11Tested=$false;installerAndUpgradeTested=$true}|ConvertTo-Json|Set-Content (Join-Path $release 'validation.json') -Encoding utf8
+          Get-ChildItem -LiteralPath $release -File|Where-Object {$_.Name -ne 'SHA256SUMS.txt'}|Sort-Object Name|ForEach-Object{(Get-FileHash -LiteralPath $_.FullName -Algorithm SHA256).Hash.ToLowerInvariant()+'  '+$_.Name}|Set-Content (Join-Path $release 'SHA256SUMS.txt') -Encoding ascii
+      - name: Preserve successful release candidate
+        uses: actions/upload-artifact@v4
+        with:
+          name: stellae-0.17.4.61052-release
+          path: ${{ runner.temp }}/package/release
+          if-no-files-found: error
+          retention-days: 30
+      - name: Preserve finite validation evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: stellae-61052-validation
+          path: |
+            ${{ runner.temp }}/stellae/ci-logs
+            ${{ runner.temp }}/installer-evidence
+            ${{ runner.temp }}/profile-policy-evidence
+            ${{ runner.temp }}/package/*.json
+            ${{ runner.temp }}/package/*.log
+          if-no-files-found: warn
+          retention-days: 14

@@ -1,0 +1,1194 @@
+{
+  "format": "stellae-file-license-index-v1",
+  "scope": "License scope for every file in this source snapshot. Third-party notices retain their original terms. Generated installer payloads have a separate per-file license index.",
+  "project_program_license": "GPL-3.0-only",
+  "project_original_documentation_license": "CC-BY-SA-4.0",
+  "sources": {
+    "project-code": {
+      "origin": "Rime Stellae contributors",
+      "retained_terms": [
+        "GPL-3.0-only"
+      ],
+      "notices": [
+        "LICENSE"
+      ],
+      "evidence": [
+        "docs/SOURCES.md"
+      ]
+    },
+    "project-docs": {
+      "origin": "Rime Stellae contributors",
+      "retained_terms": [
+        "CC-BY-SA-4.0"
+      ],
+      "notices": [
+        "licenses/CC-BY-SA-4.0.txt"
+      ],
+      "evidence": [
+        "docs/SOURCES.md"
+      ]
+    },
+    "weasel": {
+      "origin": "rime/weasel and original contributors",
+      "retained_terms": [
+        "GNU GPL version3; retained original notices"
+      ],
+      "notices": [
+        "licenses/native-dependencies/weasel/LICENSE.txt"
+      ],
+      "evidence": [
+        "docs/SOURCES.md"
+      ],
+      "upstream_commit": "9cc96e20dc71b80876b12f689bb5863c76c2a7ed",
+      "url": "https://github.com/rime/weasel/tree/9cc96e20dc71b80876b12f689bb5863c76c2a7ed"
+    },
+    "librime": {
+      "origin": "RIME Developers / librime",
+      "retained_terms": [
+        "BSD-3-Clause"
+      ],
+      "notices": [
+        "licenses/supplement/librime-LICENSE.txt"
+      ],
+      "evidence": [
+        "docs/SOURCES.md"
+      ],
+      "url": "https://github.com/rime/librime/tree/1c23358157934bd6e6d6981f0c0164f05393b497"
+    },
+    "librime-lua": {
+      "origin": "librime-lua Developers",
+      "retained_terms": [
+        "BSD-3-Clause; bundled Lua MIT"
+      ],
+      "notices": [
+        "licenses/supplement/librime-lua-LICENSE.txt",
+        "licenses/supplement/Lua-5.4-MIT-NOTICE.txt",
+        "licenses/supplement/Lua-5.3-MIT-NOTICE.txt"
+      ],
+      "evidence": [
+        "docs/SOURCES.md"
+      ],
+      "caveat": "The build selects in-tree Lua5.4; Lua5.3 notice remains for source completeness.",
+      "url": "https://github.com/hchunhui/librime-lua/tree/e3912a4b3ac2c202d89face3fef3d41eb1d7fcd6"
+    },
+    "octagram": {
+      "origin": "lotem/librime-octagram",
+      "retained_terms": [
+        "GPLv3"
+      ],
+      "notices": [
+        "licenses/supplement/librime-octagram-LICENSE.txt"
+      ],
+      "evidence": [
+        "docs/SOURCES.md"
+      ],
+      "url": "https://github.com/lotem/librime-octagram/tree/dfcc15115788c828d9dd7b4bff68067d3ce2ffb8"
+    },
+    "predict": {
+      "origin": "RIME Developers / librime-predict",
+      "retained_terms": [
+        "BSD-3-Clause"
+      ],
+      "notices": [
+        "licenses/supplement/librime-predict-LICENSE.txt"
+      ],
+      "evidence": [
+        "docs/SOURCES.md"
+      ],
+      "url": "https://github.com/rime/librime-predict/tree/920bd41ebf6f9bf6855d14fbe80212e54e749791"
+    },
+    "native-dependencies": {
+      "origin": "Pinned native build dependencies",
+      "retained_terms": [
+        "Retain each original license and attribution; see source manifest"
+      ],
+      "notices": [
+        "licenses/native-dependencies/glog/COPYING",
+        "licenses/native-dependencies/glog/AUTHORS",
+        "licenses/native-dependencies/googletest/LICENSE",
+        "licenses/native-dependencies/leveldb/LICENSE",
+        "licenses/native-dependencies/leveldb/AUTHORS",
+        "licenses/native-dependencies/marisa-trie/COPYING.md",
+        "licenses/native-dependencies/marisa-trie/AUTHORS",
+        "licenses/native-dependencies/opencc/LICENSE",
+        "licenses/native-dependencies/opencc/AUTHORS",
+        "licenses/native-dependencies/yaml-cpp/LICENSE",
+        "licenses/native-dependencies/utf8cpp/core.h-NOTICE.txt",
+        "licenses/native-dependencies/utf8cpp/checked.h-NOTICE.txt",
+        "licenses/native-dependencies/utf8cpp/cpp17.h-NOTICE.txt",
+        "licenses/native-dependencies/x11/keysym.h-NOTICE.txt",
+        "licenses/native-dependencies/x11/keysymdef.h-NOTICE.txt",
+        "licenses/native-dependencies/boost/LICENSE_1_0.txt",
+        "licenses/native-dependencies/darts-clone/COPYING.darts-clone",
+        "licenses/native-dependencies/weasel/LICENSE.txt",
+        "licenses/native-dependencies/wtl/MS-PL.txt",
+        "licenses/native-dependencies/wtl/WTL-COPYRIGHT-NOTICE.txt",
+        "licenses/native-dependencies/winsparkle-0.8.1/COPYING",
+        "licenses/native-dependencies/winsparkle-0.8.1/COPYING.expat",
+        "licenses/native-dependencies/winsparkle-0.8.1/AUTHORS",
+        "licenses/native-dependencies/winsparkle-0.8.1/WEASEL-API-HEADER-NOTICE.txt"
+      ],
+      "evidence": [
+        "docs/SOURCES.md"
+      ]
+    },
+    "prelude": {
+      "origin": "rime/rime-prelude",
+      "retained_terms": [
+        "LGPLv3"
+      ],
+      "notices": [
+        "licenses/package/prelude-LICENSE.txt",
+        "LICENSE"
+      ],
+      "evidence": [
+        "docs/SOURCES.md"
+      ],
+      "version": "Source files selected from fixed official Weasel0.17.4 distribution",
+      "caveat": "The exact historical prelude commit in the distribution is not asserted. The selected source files are redistributed in their source form.",
+      "url": "https://github.com/rime/rime-prelude"
+    },
+    "opencc-data": {
+      "origin": "OpenCC original authors",
+      "retained_terms": [
+        "Apache-2.0"
+      ],
+      "notices": [
+        "licenses/OpenCC-LICENSE.txt",
+        "licenses/native-dependencies/opencc/AUTHORS"
+      ],
+      "evidence": [
+        "docs/SOURCES.md"
+      ],
+      "version": "Resources selected from fixed official Weasel0.17.4 distribution",
+      "caveat": "The package hash and selected file hashes pin the distributed data. They do not assert the historical OpenCC data commit.",
+      "url": "https://github.com/BYVoid/OpenCC"
+    },
+    "plum": {
+      "origin": "rime/plum and original contributors",
+      "retained_terms": [
+        "LGPLv3"
+      ],
+      "notices": [
+        "licenses/package/plum-LICENSE.txt",
+        "LICENSE"
+      ],
+      "evidence": [
+        "docs/SOURCES.md"
+      ],
+      "upstream_commit": "cab9ed35289f2022b6888503750d2dfb1851dbe0",
+      "url": "https://github.com/rime/plum/tree/cab9ed35289f2022b6888503750d2dfb1851dbe0"
+    },
+    "curl": {
+      "origin": "curl and curl-for-win contributors and static dependencies",
+      "retained_terms": [
+        "curl license; LibreSSL/OpenSSL/SSLeay/ISC; MIT; BSD; zlib; MPL2 for public suffix data"
+      ],
+      "notices": [
+        "licenses/package/curl-COPYING.txt",
+        "licenses/package/MPL-2.0.txt",
+        "licenses/package/curl-dependencies/curl-for-win-LICENSE.md",
+        "licenses/package/curl-dependencies/brotli-LICENSE",
+        "licenses/package/curl-dependencies/zstd-LICENSE",
+        "licenses/package/curl-dependencies/zstd-COPYING",
+        "licenses/package/curl-dependencies/nghttp2-COPYING",
+        "licenses/package/curl-dependencies/nghttp3-COPYING",
+        "licenses/package/curl-dependencies/ngtcp2-COPYING",
+        "licenses/package/curl-dependencies/libssh2-COPYING",
+        "licenses/package/curl-dependencies/libpsl-COPYING",
+        "licenses/package/curl-dependencies/libpsl-LICENSE.chromium",
+        "licenses/package/curl-dependencies/zlib-LICENSE",
+        "licenses/package/curl-dependencies/libressl-COPYING",
+        "licenses/package/curl-dependencies/public-suffix-SOURCE-NOTICE.txt"
+      ],
+      "evidence": [
+        "docs/SOURCES.md"
+      ],
+      "version": "curl8.7.1_9-win32-mingw",
+      "build_source": "https://github.com/curl/curl-for-win/tree/ef1b80f30fbb5b3854f25ce0b3cf2d15de60ee53",
+      "caveat": "The distributed binary is pinned by the fixed Weasel Git blob. The historical curl download archive is not required as a build input.",
+      "url": "https://github.com/rime/weasel/commit/95fd506ad97fec167ab7f431552c3417ffaa90f0"
+    },
+    "sevenzip": {
+      "origin": "Igor Pavlov and original 7-Zip contributors",
+      "retained_terms": [
+        "LGPL-2.1-or-later; unRAR restriction for the relevant decoder; retained BSD notices"
+      ],
+      "notices": [
+        "licenses/package/7zip-LICENSE.txt",
+        "licenses/package/LGPL-2.1.txt"
+      ],
+      "evidence": [
+        "docs/SOURCES.md"
+      ],
+      "version": "24.05",
+      "source_archive": "https://github.com/ip7z/7zip/releases/download/24.05/7z2405-src.tar.xz",
+      "source_archive_sha256": "63f341cf80b8d287c6e945519b3da0fa75553c85572a471b7fa6e68f9a90b790",
+      "url": "https://github.com/ip7z/7zip/releases/tag/24.05"
+    },
+    "ca-bundle": {
+      "origin": "Mozilla certificate data, converted by curl mk-ca-bundle.pl",
+      "retained_terms": [
+        "MPL-2.0; retained public certificate and conversion source header"
+      ],
+      "notices": [
+        "licenses/package/MPL-2.0.txt",
+        "licenses/package/ca-bundle-SOURCE-NOTICE.txt"
+      ],
+      "evidence": [
+        "docs/SOURCES.md"
+      ],
+      "version": "Mozilla certificate data as of2024-03-11; fixed Weasel bundle",
+      "url": "https://curl.se/docs/caextract.html"
+    },
+    "nsis": {
+      "origin": "NSIS contributors",
+      "retained_terms": [
+        "zlib/libpng; bzip2; CPL1.0 with the LZMA linking exception as documented"
+      ],
+      "notices": [
+        "licenses/package/NSIS-COPYING.txt"
+      ],
+      "evidence": [
+        "docs/SOURCES.md"
+      ],
+      "version": "3.11",
+      "source_archive": "https://github.com/NSIS-Dev/nsis/archive/refs/tags/v311.tar.gz",
+      "url": "https://github.com/NSIS-Dev/nsis/tree/v311"
+    }
+  },
+  "files": [
+    {
+      "path": ".github/workflows/native.yml",
+      "source_ids": [
+        "project-code"
+      ],
+      "references": [
+        "LICENSE"
+      ]
+    },
+    {
+      "path": ".github/workflows/verify.yml",
+      "source_ids": [
+        "project-code"
+      ],
+      "references": [
+        "LICENSE"
+      ]
+    },
+    {
+      "path": ".gitignore",
+      "source_ids": [
+        "project-code"
+      ],
+      "references": [
+        "LICENSE"
+      ]
+    },
+    {
+      "path": "assets/icon/generate.py",
+      "source_ids": [
+        "project-code"
+      ],
+      "references": [
+        "LICENSE"
+      ]
+    },
+    {
+      "path": "assets/icon/README.md",
+      "source_ids": [
+        "project-docs"
+      ],
+      "references": [
+        "licenses/CC-BY-SA-4.0.txt"
+      ]
+    },
+    {
+      "path": "assets/icon/star-core.ico",
+      "source_ids": [
+        "project-code"
+      ],
+      "references": [
+        "LICENSE"
+      ]
+    },
+    {
+      "path": "assets/icon/star-core.svg",
+      "source_ids": [
+        "project-code"
+      ],
+      "references": [
+        "LICENSE"
+      ]
+    },
+    {
+      "path": "docs/BUILD.md",
+      "source_ids": [
+        "project-docs"
+      ],
+      "references": [
+        "licenses/CC-BY-SA-4.0.txt"
+      ]
+    },
+    {
+      "path": "docs/PC.md",
+      "source_ids": [
+        "project-docs"
+      ],
+      "references": [
+        "licenses/CC-BY-SA-4.0.txt"
+      ]
+    },
+    {
+      "path": "docs/SOURCES.md",
+      "source_ids": [
+        "project-docs"
+      ],
+      "references": [
+        "licenses/CC-BY-SA-4.0.txt"
+      ]
+    },
+    {
+      "path": "installer/default.yaml",
+      "source_ids": [
+        "project-code"
+      ],
+      "references": [
+        "LICENSE"
+      ]
+    },
+    {
+      "path": "installer/install.nsi",
+      "source_ids": [
+        "project-code"
+      ],
+      "references": [
+        "LICENSE"
+      ]
+    },
+    {
+      "path": "installer/InstallProfilePolicy.ps1",
+      "source_ids": [
+        "project-code"
+      ],
+      "references": [
+        "LICENSE"
+      ]
+    },
+    {
+      "path": "installer/NativeProfileSnapshot.ps1",
+      "source_ids": [
+        "project-code"
+      ],
+      "references": [
+        "LICENSE"
+      ]
+    },
+    {
+      "path": "installer/stellae_identity.nsh",
+      "source_ids": [
+        "project-code"
+      ],
+      "references": [
+        "LICENSE"
+      ]
+    },
+    {
+      "path": "LICENSE",
+      "source_ids": [
+        "project-code"
+      ],
+      "references": [
+        "LICENSE"
+      ]
+    },
+    {
+      "path": "LICENSE-DOCS",
+      "source_ids": [
+        "project-docs"
+      ],
+      "references": [
+        "licenses/CC-BY-SA-4.0.txt"
+      ]
+    },
+    {
+      "path": "licenses/build_index.py",
+      "source_ids": [
+        "project-code"
+      ],
+      "references": [
+        "LICENSE"
+      ]
+    },
+    {
+      "path": "licenses/CC-BY-SA-4.0.txt",
+      "source_ids": [],
+      "references": [],
+      "notice_record": "licenses/CC-BY-SA-4.0.txt"
+    },
+    {
+      "path": "licenses/file-licenses.json",
+      "source_ids": [
+        "project-code"
+      ],
+      "references": [
+        "LICENSE"
+      ]
+    },
+    {
+      "path": "licenses/native-dependencies/boost/LICENSE_1_0.txt",
+      "source_ids": [],
+      "references": [],
+      "notice_record": "licenses/native-dependencies/boost/LICENSE_1_0.txt"
+    },
+    {
+      "path": "licenses/native-dependencies/darts-clone/COPYING.darts-clone",
+      "source_ids": [],
+      "references": [],
+      "notice_record": "licenses/native-dependencies/darts-clone/COPYING.darts-clone"
+    },
+    {
+      "path": "licenses/native-dependencies/glog/AUTHORS",
+      "source_ids": [],
+      "references": [],
+      "notice_record": "licenses/native-dependencies/glog/AUTHORS"
+    },
+    {
+      "path": "licenses/native-dependencies/glog/COPYING",
+      "source_ids": [],
+      "references": [],
+      "notice_record": "licenses/native-dependencies/glog/COPYING"
+    },
+    {
+      "path": "licenses/native-dependencies/googletest/LICENSE",
+      "source_ids": [],
+      "references": [],
+      "notice_record": "licenses/native-dependencies/googletest/LICENSE"
+    },
+    {
+      "path": "licenses/native-dependencies/leveldb/AUTHORS",
+      "source_ids": [],
+      "references": [],
+      "notice_record": "licenses/native-dependencies/leveldb/AUTHORS"
+    },
+    {
+      "path": "licenses/native-dependencies/leveldb/LICENSE",
+      "source_ids": [],
+      "references": [],
+      "notice_record": "licenses/native-dependencies/leveldb/LICENSE"
+    },
+    {
+      "path": "licenses/native-dependencies/marisa-trie/AUTHORS",
+      "source_ids": [],
+      "references": [],
+      "notice_record": "licenses/native-dependencies/marisa-trie/AUTHORS"
+    },
+    {
+      "path": "licenses/native-dependencies/marisa-trie/COPYING.md",
+      "source_ids": [],
+      "references": [],
+      "notice_record": "licenses/native-dependencies/marisa-trie/COPYING.md"
+    },
+    {
+      "path": "licenses/native-dependencies/opencc/AUTHORS",
+      "source_ids": [],
+      "references": [],
+      "notice_record": "licenses/native-dependencies/opencc/AUTHORS"
+    },
+    {
+      "path": "licenses/native-dependencies/opencc/LICENSE",
+      "source_ids": [],
+      "references": [],
+      "notice_record": "licenses/native-dependencies/opencc/LICENSE"
+    },
+    {
+      "path": "licenses/native-dependencies/utf8cpp/checked.h-NOTICE.txt",
+      "source_ids": [],
+      "references": [],
+      "notice_record": "licenses/native-dependencies/utf8cpp/checked.h-NOTICE.txt"
+    },
+    {
+      "path": "licenses/native-dependencies/utf8cpp/core.h-NOTICE.txt",
+      "source_ids": [],
+      "references": [],
+      "notice_record": "licenses/native-dependencies/utf8cpp/core.h-NOTICE.txt"
+    },
+    {
+      "path": "licenses/native-dependencies/utf8cpp/cpp17.h-NOTICE.txt",
+      "source_ids": [],
+      "references": [],
+      "notice_record": "licenses/native-dependencies/utf8cpp/cpp17.h-NOTICE.txt"
+    },
+    {
+      "path": "licenses/native-dependencies/weasel/LICENSE.txt",
+      "source_ids": [],
+      "references": [],
+      "notice_record": "licenses/native-dependencies/weasel/LICENSE.txt"
+    },
+    {
+      "path": "licenses/native-dependencies/winsparkle-0.8.1/AUTHORS",
+      "source_ids": [],
+      "references": [],
+      "notice_record": "licenses/native-dependencies/winsparkle-0.8.1/AUTHORS"
+    },
+    {
+      "path": "licenses/native-dependencies/winsparkle-0.8.1/COPYING",
+      "source_ids": [],
+      "references": [],
+      "notice_record": "licenses/native-dependencies/winsparkle-0.8.1/COPYING"
+    },
+    {
+      "path": "licenses/native-dependencies/winsparkle-0.8.1/COPYING.expat",
+      "source_ids": [],
+      "references": [],
+      "notice_record": "licenses/native-dependencies/winsparkle-0.8.1/COPYING.expat"
+    },
+    {
+      "path": "licenses/native-dependencies/winsparkle-0.8.1/WEASEL-API-HEADER-NOTICE.txt",
+      "source_ids": [],
+      "references": [],
+      "notice_record": "licenses/native-dependencies/winsparkle-0.8.1/WEASEL-API-HEADER-NOTICE.txt"
+    },
+    {
+      "path": "licenses/native-dependencies/wtl/MS-PL.txt",
+      "source_ids": [],
+      "references": [],
+      "notice_record": "licenses/native-dependencies/wtl/MS-PL.txt"
+    },
+    {
+      "path": "licenses/native-dependencies/wtl/WTL-COPYRIGHT-NOTICE.txt",
+      "source_ids": [],
+      "references": [],
+      "notice_record": "licenses/native-dependencies/wtl/WTL-COPYRIGHT-NOTICE.txt"
+    },
+    {
+      "path": "licenses/native-dependencies/x11/keysym.h-NOTICE.txt",
+      "source_ids": [],
+      "references": [],
+      "notice_record": "licenses/native-dependencies/x11/keysym.h-NOTICE.txt"
+    },
+    {
+      "path": "licenses/native-dependencies/x11/keysymdef.h-NOTICE.txt",
+      "source_ids": [],
+      "references": [],
+      "notice_record": "licenses/native-dependencies/x11/keysymdef.h-NOTICE.txt"
+    },
+    {
+      "path": "licenses/native-dependencies/yaml-cpp/LICENSE",
+      "source_ids": [],
+      "references": [],
+      "notice_record": "licenses/native-dependencies/yaml-cpp/LICENSE"
+    },
+    {
+      "path": "licenses/OpenCC-LICENSE.txt",
+      "source_ids": [],
+      "references": [],
+      "notice_record": "licenses/OpenCC-LICENSE.txt"
+    },
+    {
+      "path": "licenses/package/7zip-LICENSE.txt",
+      "source_ids": [],
+      "references": [],
+      "notice_record": "licenses/package/7zip-LICENSE.txt"
+    },
+    {
+      "path": "licenses/package/ca-bundle-SOURCE-NOTICE.txt",
+      "source_ids": [],
+      "references": [],
+      "notice_record": "licenses/package/ca-bundle-SOURCE-NOTICE.txt"
+    },
+    {
+      "path": "licenses/package/curl-COPYING.txt",
+      "source_ids": [],
+      "references": [],
+      "notice_record": "licenses/package/curl-COPYING.txt"
+    },
+    {
+      "path": "licenses/package/curl-dependencies/brotli-LICENSE",
+      "source_ids": [],
+      "references": [],
+      "notice_record": "licenses/package/curl-dependencies/brotli-LICENSE"
+    },
+    {
+      "path": "licenses/package/curl-dependencies/curl-for-win-LICENSE.md",
+      "source_ids": [],
+      "references": [],
+      "notice_record": "licenses/package/curl-dependencies/curl-for-win-LICENSE.md"
+    },
+    {
+      "path": "licenses/package/curl-dependencies/libpsl-COPYING",
+      "source_ids": [],
+      "references": [],
+      "notice_record": "licenses/package/curl-dependencies/libpsl-COPYING"
+    },
+    {
+      "path": "licenses/package/curl-dependencies/libpsl-LICENSE.chromium",
+      "source_ids": [],
+      "references": [],
+      "notice_record": "licenses/package/curl-dependencies/libpsl-LICENSE.chromium"
+    },
+    {
+      "path": "licenses/package/curl-dependencies/libressl-COPYING",
+      "source_ids": [],
+      "references": [],
+      "notice_record": "licenses/package/curl-dependencies/libressl-COPYING"
+    },
+    {
+      "path": "licenses/package/curl-dependencies/libssh2-COPYING",
+      "source_ids": [],
+      "references": [],
+      "notice_record": "licenses/package/curl-dependencies/libssh2-COPYING"
+    },
+    {
+      "path": "licenses/package/curl-dependencies/nghttp2-COPYING",
+      "source_ids": [],
+      "references": [],
+      "notice_record": "licenses/package/curl-dependencies/nghttp2-COPYING"
+    },
+    {
+      "path": "licenses/package/curl-dependencies/nghttp3-COPYING",
+      "source_ids": [],
+      "references": [],
+      "notice_record": "licenses/package/curl-dependencies/nghttp3-COPYING"
+    },
+    {
+      "path": "licenses/package/curl-dependencies/ngtcp2-COPYING",
+      "source_ids": [],
+      "references": [],
+      "notice_record": "licenses/package/curl-dependencies/ngtcp2-COPYING"
+    },
+    {
+      "path": "licenses/package/curl-dependencies/public-suffix-SOURCE-NOTICE.txt",
+      "source_ids": [],
+      "references": [],
+      "notice_record": "licenses/package/curl-dependencies/public-suffix-SOURCE-NOTICE.txt"
+    },
+    {
+      "path": "licenses/package/curl-dependencies/zlib-LICENSE",
+      "source_ids": [],
+      "references": [],
+      "notice_record": "licenses/package/curl-dependencies/zlib-LICENSE"
+    },
+    {
+      "path": "licenses/package/curl-dependencies/zstd-COPYING",
+      "source_ids": [],
+      "references": [],
+      "notice_record": "licenses/package/curl-dependencies/zstd-COPYING"
+    },
+    {
+      "path": "licenses/package/curl-dependencies/zstd-LICENSE",
+      "source_ids": [],
+      "references": [],
+      "notice_record": "licenses/package/curl-dependencies/zstd-LICENSE"
+    },
+    {
+      "path": "licenses/package/LGPL-2.1.txt",
+      "source_ids": [],
+      "references": [],
+      "notice_record": "licenses/package/LGPL-2.1.txt"
+    },
+    {
+      "path": "licenses/package/MPL-2.0.txt",
+      "source_ids": [],
+      "references": [],
+      "notice_record": "licenses/package/MPL-2.0.txt"
+    },
+    {
+      "path": "licenses/package/NSIS-COPYING.txt",
+      "source_ids": [],
+      "references": [],
+      "notice_record": "licenses/package/NSIS-COPYING.txt"
+    },
+    {
+      "path": "licenses/package/plum-LICENSE.txt",
+      "source_ids": [],
+      "references": [],
+      "notice_record": "licenses/package/plum-LICENSE.txt"
+    },
+    {
+      "path": "licenses/package/prelude-LICENSE.txt",
+      "source_ids": [],
+      "references": [],
+      "notice_record": "licenses/package/prelude-LICENSE.txt"
+    },
+    {
+      "path": "licenses/package-sources.json",
+      "source_ids": [
+        "project-code"
+      ],
+      "references": [
+        "LICENSE"
+      ]
+    },
+    {
+      "path": "licenses/README.md",
+      "source_ids": [
+        "project-docs"
+      ],
+      "references": [
+        "licenses/CC-BY-SA-4.0.txt"
+      ]
+    },
+    {
+      "path": "licenses/supplement/librime-LICENSE.txt",
+      "source_ids": [],
+      "references": [],
+      "notice_record": "licenses/supplement/librime-LICENSE.txt"
+    },
+    {
+      "path": "licenses/supplement/librime-lua-LICENSE.txt",
+      "source_ids": [],
+      "references": [],
+      "notice_record": "licenses/supplement/librime-lua-LICENSE.txt"
+    },
+    {
+      "path": "licenses/supplement/librime-octagram-LICENSE.txt",
+      "source_ids": [],
+      "references": [],
+      "notice_record": "licenses/supplement/librime-octagram-LICENSE.txt"
+    },
+    {
+      "path": "licenses/supplement/librime-predict-LICENSE.txt",
+      "source_ids": [],
+      "references": [],
+      "notice_record": "licenses/supplement/librime-predict-LICENSE.txt"
+    },
+    {
+      "path": "licenses/supplement/Lua-5.3-MIT-NOTICE.txt",
+      "source_ids": [],
+      "references": [],
+      "notice_record": "licenses/supplement/Lua-5.3-MIT-NOTICE.txt"
+    },
+    {
+      "path": "licenses/supplement/Lua-5.4-MIT-NOTICE.txt",
+      "source_ids": [],
+      "references": [],
+      "notice_record": "licenses/supplement/Lua-5.4-MIT-NOTICE.txt"
+    },
+    {
+      "path": "licenses/third-party-source-manifest.json",
+      "source_ids": [
+        "project-code"
+      ],
+      "references": [
+        "LICENSE"
+      ]
+    },
+    {
+      "path": "native/engine/librime-lua-n01.patch",
+      "source_ids": [
+        "project-code",
+        "librime-lua"
+      ],
+      "references": [
+        "LICENSE",
+        "licenses/supplement/Lua-5.3-MIT-NOTICE.txt",
+        "licenses/supplement/Lua-5.4-MIT-NOTICE.txt",
+        "licenses/supplement/librime-lua-LICENSE.txt"
+      ]
+    },
+    {
+      "path": "native/engine/librime-lua-r5-sdk.patch",
+      "source_ids": [
+        "project-code",
+        "librime-lua"
+      ],
+      "references": [
+        "LICENSE",
+        "licenses/supplement/Lua-5.3-MIT-NOTICE.txt",
+        "licenses/supplement/Lua-5.4-MIT-NOTICE.txt",
+        "licenses/supplement/librime-lua-LICENSE.txt"
+      ]
+    },
+    {
+      "path": "native/engine/librime-n01.patch",
+      "source_ids": [
+        "project-code",
+        "librime"
+      ],
+      "references": [
+        "LICENSE",
+        "licenses/supplement/librime-LICENSE.txt"
+      ]
+    },
+    {
+      "path": "native/engine/librime-r5-sdk.patch",
+      "source_ids": [
+        "project-code",
+        "librime"
+      ],
+      "references": [
+        "LICENSE",
+        "licenses/supplement/librime-LICENSE.txt"
+      ]
+    },
+    {
+      "path": "native/frontend-source-files.json",
+      "source_ids": [
+        "project-code"
+      ],
+      "references": [
+        "LICENSE"
+      ]
+    },
+    {
+      "path": "native/source-manifest.json",
+      "source_ids": [
+        "project-code"
+      ],
+      "references": [
+        "LICENSE"
+      ]
+    },
+    {
+      "path": "native/tests/installer/Export-SyntheticLearning.py",
+      "source_ids": [
+        "project-code"
+      ],
+      "references": [
+        "LICENSE"
+      ]
+    },
+    {
+      "path": "native/tests/installer/NativeProfileSnapshot.ps1",
+      "source_ids": [
+        "project-code"
+      ],
+      "references": [
+        "LICENSE"
+      ]
+    },
+    {
+      "path": "native/tests/installer/Probe-InstalledEngine.py",
+      "source_ids": [
+        "project-code"
+      ],
+      "references": [
+        "LICENSE"
+      ]
+    },
+    {
+      "path": "native/tests/installer/Test-InstallerPolicy.ps1",
+      "source_ids": [
+        "project-code"
+      ],
+      "references": [
+        "LICENSE"
+      ]
+    },
+    {
+      "path": "native/tests/installer/Test-Win11EquivalentPolicy.ps1",
+      "source_ids": [
+        "project-code"
+      ],
+      "references": [
+        "LICENSE"
+      ]
+    },
+    {
+      "path": "native/tests/key-pairing/ControlledReadGrant.inc",
+      "source_ids": [
+        "project-code"
+      ],
+      "references": [
+        "LICENSE"
+      ]
+    },
+    {
+      "path": "native/tests/key-pairing/Deploy-PublicFixture.py",
+      "source_ids": [
+        "project-code"
+      ],
+      "references": [
+        "LICENSE"
+      ]
+    },
+    {
+      "path": "native/tests/key-pairing/fixture/b01_public_fixture.dict.yaml",
+      "source_ids": [
+        "project-code"
+      ],
+      "references": [
+        "LICENSE"
+      ]
+    },
+    {
+      "path": "native/tests/key-pairing/fixture/default.yaml",
+      "source_ids": [
+        "project-code"
+      ],
+      "references": [
+        "LICENSE"
+      ]
+    },
+    {
+      "path": "native/tests/key-pairing/fixture/gui_test.schema.yaml",
+      "source_ids": [
+        "project-code"
+      ],
+      "references": [
+        "LICENSE"
+      ]
+    },
+    {
+      "path": "native/tests/key-pairing/fixture/weasel.yaml",
+      "source_ids": [
+        "project-code"
+      ],
+      "references": [
+        "LICENSE"
+      ]
+    },
+    {
+      "path": "native/tests/key-pairing/Invoke-KeyPairingTests.ps1",
+      "source_ids": [
+        "project-code"
+      ],
+      "references": [
+        "LICENSE"
+      ]
+    },
+    {
+      "path": "native/tests/key-pairing/ProductHostFixture.h",
+      "source_ids": [
+        "project-code"
+      ],
+      "references": [
+        "LICENSE"
+      ]
+    },
+    {
+      "path": "native/tests/key-pairing/ResponseOwnerProductTests.cpp",
+      "source_ids": [
+        "project-code"
+      ],
+      "references": [
+        "LICENSE"
+      ]
+    },
+    {
+      "path": "native/tests/key-pairing/Run-ControlledKeys.ps1",
+      "source_ids": [
+        "project-code"
+      ],
+      "references": [
+        "LICENSE"
+      ]
+    },
+    {
+      "path": "native/tests/key-pairing/SelectionControlledModes.inc",
+      "source_ids": [
+        "project-code"
+      ],
+      "references": [
+        "LICENSE"
+      ]
+    },
+    {
+      "path": "native/tests/preedit_spacing_tests.cc",
+      "source_ids": [
+        "project-code"
+      ],
+      "references": [
+        "LICENSE"
+      ]
+    },
+    {
+      "path": "native/tests/shift/Run-ShiftKeySnapshotTests.ps1",
+      "source_ids": [
+        "project-code"
+      ],
+      "references": [
+        "LICENSE"
+      ]
+    },
+    {
+      "path": "native/tests/shift/ShiftKeySnapshotTests.cpp",
+      "source_ids": [
+        "project-code"
+      ],
+      "references": [
+        "LICENSE"
+      ]
+    },
+    {
+      "path": "native/weasel/stellae-61052.patch",
+      "source_ids": [
+        "project-code",
+        "weasel",
+        "native-dependencies"
+      ],
+      "references": [
+        "LICENSE",
+        "licenses/native-dependencies/boost/LICENSE_1_0.txt",
+        "licenses/native-dependencies/darts-clone/COPYING.darts-clone",
+        "licenses/native-dependencies/glog/AUTHORS",
+        "licenses/native-dependencies/glog/COPYING",
+        "licenses/native-dependencies/googletest/LICENSE",
+        "licenses/native-dependencies/leveldb/AUTHORS",
+        "licenses/native-dependencies/leveldb/LICENSE",
+        "licenses/native-dependencies/marisa-trie/AUTHORS",
+        "licenses/native-dependencies/marisa-trie/COPYING.md",
+        "licenses/native-dependencies/opencc/AUTHORS",
+        "licenses/native-dependencies/opencc/LICENSE",
+        "licenses/native-dependencies/utf8cpp/checked.h-NOTICE.txt",
+        "licenses/native-dependencies/utf8cpp/core.h-NOTICE.txt",
+        "licenses/native-dependencies/utf8cpp/cpp17.h-NOTICE.txt",
+        "licenses/native-dependencies/weasel/LICENSE.txt",
+        "licenses/native-dependencies/winsparkle-0.8.1/AUTHORS",
+        "licenses/native-dependencies/winsparkle-0.8.1/COPYING",
+        "licenses/native-dependencies/winsparkle-0.8.1/COPYING.expat",
+        "licenses/native-dependencies/winsparkle-0.8.1/WEASEL-API-HEADER-NOTICE.txt",
+        "licenses/native-dependencies/wtl/MS-PL.txt",
+        "licenses/native-dependencies/wtl/WTL-COPYRIGHT-NOTICE.txt",
+        "licenses/native-dependencies/x11/keysym.h-NOTICE.txt",
+        "licenses/native-dependencies/x11/keysymdef.h-NOTICE.txt",
+        "licenses/native-dependencies/yaml-cpp/LICENSE"
+      ]
+    },
+    {
+      "path": "README.en.md",
+      "source_ids": [
+        "project-docs"
+      ],
+      "references": [
+        "licenses/CC-BY-SA-4.0.txt"
+      ]
+    },
+    {
+      "path": "README.md",
+      "source_ids": [
+        "project-docs"
+      ],
+      "references": [
+        "licenses/CC-BY-SA-4.0.txt"
+      ]
+    },
+    {
+      "path": "README.zh-SC.md",
+      "source_ids": [
+        "project-docs"
+      ],
+      "references": [
+        "licenses/CC-BY-SA-4.0.txt"
+      ]
+    },
+    {
+      "path": "release-manifest.json",
+      "source_ids": [
+        "project-code"
+      ],
+      "references": [
+        "LICENSE"
+      ]
+    },
+    {
+      "path": "scripts/native/Apply-Patches.ps1",
+      "source_ids": [
+        "project-code"
+      ],
+      "references": [
+        "LICENSE"
+      ]
+    },
+    {
+      "path": "scripts/native/Build-Engine.ps1",
+      "source_ids": [
+        "project-code"
+      ],
+      "references": [
+        "LICENSE"
+      ]
+    },
+    {
+      "path": "scripts/native/Build-Weasel.ps1",
+      "source_ids": [
+        "project-code"
+      ],
+      "references": [
+        "LICENSE"
+      ]
+    },
+    {
+      "path": "scripts/native/Common.ps1",
+      "source_ids": [
+        "project-code"
+      ],
+      "references": [
+        "LICENSE"
+      ]
+    },
+    {
+      "path": "scripts/native/Prepare-Sources.ps1",
+      "source_ids": [
+        "project-code"
+      ],
+      "references": [
+        "LICENSE"
+      ]
+    },
+    {
+      "path": "scripts/native/Test-Inventory.ps1",
+      "source_ids": [
+        "project-code"
+      ],
+      "references": [
+        "LICENSE"
+      ]
+    },
+    {
+      "path": "scripts/package/index_payload.py",
+      "source_ids": [
+        "project-code"
+      ],
+      "references": [
+        "LICENSE"
+      ]
+    },
+    {
+      "path": "scripts/package/Prepare-Package.ps1",
+      "source_ids": [
+        "project-code"
+      ],
+      "references": [
+        "LICENSE"
+      ]
+    },
+    {
+      "path": "scripts/package/verify_pe.py",
+      "source_ids": [
+        "project-code"
+      ],
+      "references": [
+        "LICENSE"
+      ]
+    },
+    {
+      "path": "scripts/verify_release.py",
+      "source_ids": [
+        "project-code"
+      ],
+      "references": [
+        "LICENSE"
+      ]
+    },
+    {
+      "path": "THIRD_PARTY_NOTICES.md",
+      "source_ids": [
+        "project-docs"
+      ],
+      "references": [
+        "licenses/CC-BY-SA-4.0.txt"
+      ]
+    },
+    {
+      "path": "TODO.md",
+      "source_ids": [
+        "project-docs"
+      ],
+      "references": [
+        "licenses/CC-BY-SA-4.0.txt"
+      ]
+    }
+  ]
+}

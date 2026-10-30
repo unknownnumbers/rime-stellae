@@ -1,0 +1,11 @@
+Original explanatory text in the Rime Stellae README editions, guides,
+source descriptions, TODO and asset documentation is licensed under
+Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0).
+
+The complete legal code is retained in licenses/CC-BY-SA-4.0.txt.
+https://creativecommons.org/licenses/by-sa/4.0/
+
+Code, configuration, tests, icon assets and build scripts have their own
+license scope. Third-party text, exact quotations, code fragments and
+original notices retain their respective terms and credits. See
+THIRD_PARTY_NOTICES.md and licenses/file-licenses.json.

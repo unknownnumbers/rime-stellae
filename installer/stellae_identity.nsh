@@ -1,0 +1,12 @@
+; Generated from ../identity.json.
+!define STELLAE_PRODUCT_NAME "Rime stellae"
+!define STELLAE_DISPLAY_ZH "墨芯"
+!define STELLAE_NAMESPACE "RimeStellae"
+!define STELLAE_REG_KEY "Software\RimeStellae"
+!define STELLAE_PROGRAM_DIRECTORY "RimeStellae"
+!define STELLAE_USER_DIRECTORY "RimeStellae"
+!define STELLAE_BINARY_BASE "stellae"
+!define STELLAE_SERVER_EXE "StellaeServer.exe"
+!define STELLAE_SERVER_TARGET "StellaeServer"
+!define STELLAE_DEPLOYER_EXE "StellaeDeployer.exe"
+!define STELLAE_SETUP_EXE "StellaeSetup.exe"

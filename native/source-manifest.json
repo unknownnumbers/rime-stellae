@@ -1,0 +1,333 @@
+{
+  "schema": "stellae-native-sources/1",
+  "date": "2026-10-31",
+  "status": "source-inputs-pinned; validation is recorded in docs/BUILD.md",
+  "productComposition": {
+    "frontend": "0.17.4.61052; TSF/legacy IME/Server/Deployer/Setup; x64 and Win32",
+    "runtimeEngineX64": "N01 with step-only GC",
+    "runtimeEngineX86": "R5",
+    "frontendBuildSdk": "R5; x64 and x86; rebuilt in the same workflow",
+    "installerProvided": true,
+    "bundledInputSchemes": false,
+    "promptTraceCompiled": false
+  },
+  "sources": {
+    "weasel": {
+      "url": "https://github.com/rime/weasel.git",
+      "commit": "9cc96e20dc71b80876b12f689bb5863c76c2a7ed",
+      "submodules": true,
+      "license": "GPL-3.0"
+    },
+    "librime": {
+      "url": "https://github.com/rime/librime.git",
+      "commit": "1c23358157934bd6e6d6981f0c0164f05393b497",
+      "submodules": false,
+      "license": "BSD-3-Clause"
+    },
+    "librimeLua": {
+      "url": "https://github.com/hchunhui/librime-lua.git",
+      "commit": "e3912a4b3ac2c202d89face3fef3d41eb1d7fcd6",
+      "submodules": false,
+      "license": "BSD-3-Clause"
+    },
+    "luaThirdparty": {
+      "url": "https://github.com/hchunhui/librime-lua.git",
+      "commit": "115e000c878d1170337f7ca934d7a84f68986e39",
+      "submodules": false,
+      "license": "Preserve bundled Lua and other third-party notices"
+    },
+    "octagram": {
+      "url": "https://github.com/lotem/librime-octagram.git",
+      "commit": "dfcc15115788c828d9dd7b4bff68067d3ce2ffb8",
+      "submodules": false,
+      "license": "See fixed upstream LICENSE"
+    },
+    "predict": {
+      "url": "https://github.com/rime/librime-predict.git",
+      "commit": "920bd41ebf6f9bf6855d14fbe80212e54e749791",
+      "submodules": false,
+      "license": "See fixed upstream LICENSE"
+    }
+  },
+  "patches": [
+    {
+      "id": "stellae61052",
+      "path": "native/weasel/stellae-61052.patch",
+      "sha256": "0681eb161a64b861e9c70f5f251bacfa1fdd5032cc12a27b10b4e9eec291ea7c",
+      "source": "weasel"
+    },
+    {
+      "id": "coreN01",
+      "path": "native/engine/librime-n01.patch",
+      "sha256": "3eaf5dcd371c497cfac298d11acf29a5e1327792057bca5aa4ffb53894f714b1",
+      "source": "librime"
+    },
+    {
+      "id": "luaN01",
+      "path": "native/engine/librime-lua-n01.patch",
+      "sha256": "e218a7bedc28231132dbe7029f86c44cd2a0d639c8747c5a138f7503f6bc32d6",
+      "source": "librimeLua"
+    },
+    {
+      "id": "coreR5",
+      "path": "native/engine/librime-r5-sdk.patch",
+      "sha256": "86656d2577009b0cef9e7d3335cd1e8ca8655821f97bcf060a56411c1b2eb293",
+      "source": "librime"
+    },
+    {
+      "id": "luaR5",
+      "path": "native/engine/librime-lua-r5-sdk.patch",
+      "sha256": "69a76f624a2b1359090ee95360a80f7a79a90a5e2a8888537721a96a5faebaa6",
+      "source": "librimeLua"
+    }
+  ],
+  "variants": {
+    "stellae-61052": {
+      "rootSource": "weasel",
+      "components": [
+        {
+          "path": ".",
+          "source": "weasel",
+          "patch": "stellae61052"
+        }
+      ],
+      "sourceVersion": "0.17.4.61052",
+      "buildNumber": "61052",
+      "msbuildTargets": [
+        "WeaselTSF",
+        "WeaselIME",
+        "WeaselServer",
+        "WeaselDeployer",
+        "WeaselSetup"
+      ],
+      "platforms": [
+        "x64",
+        "Win32"
+      ],
+      "products": [
+        "stellae.dll",
+        "stellaex64.dll",
+        "stellae.ime",
+        "stellaex64.ime",
+        "StellaeServer.exe",
+        "StellaeDeployer.exe",
+        "StellaeSetup.exe",
+        "Win32/StellaeServer.exe",
+        "Win32/StellaeDeployer.exe"
+      ],
+      "installerOverlaySeparate": true,
+      "installerRecipe": "installer/install.nsi"
+    },
+    "engine-r5": {
+      "rootSource": "librime",
+      "components": [
+        {
+          "path": ".",
+          "source": "librime",
+          "patch": "coreR5"
+        },
+        {
+          "path": "plugins/lua",
+          "source": "librimeLua",
+          "patch": "luaR5"
+        }
+      ],
+      "architectures": [
+        "x64",
+        "x86"
+      ],
+      "role": "Frontend SDK for both architectures and runtime engine for Win32"
+    },
+    "engine-n01": {
+      "rootSource": "librime",
+      "components": [
+        {
+          "path": ".",
+          "source": "librime",
+          "patch": "coreN01"
+        },
+        {
+          "path": "plugins/lua",
+          "source": "librimeLua",
+          "patch": "luaN01"
+        }
+      ],
+      "architectures": [
+        "x64"
+      ],
+      "role": "Runtime engine for x64"
+    }
+  },
+  "enginePlugins": [
+    {
+      "path": "plugins/lua",
+      "source": "librimeLua"
+    },
+    {
+      "path": "plugins/octagram",
+      "source": "octagram"
+    },
+    {
+      "path": "plugins/predict",
+      "source": "predict"
+    },
+    {
+      "path": "plugins/lua/thirdparty",
+      "source": "luaThirdparty"
+    }
+  ],
+  "assets": [
+    {
+      "id": "boost",
+      "url": "https://archives.boost.io/release/1.84.0/source/boost_1_84_0.7z",
+      "sha256": "81a4d10075731966477276c47324ecd9cac02da49899d36c48eba66e40014f25",
+      "hashEvidence": "https://archives.boost.io/release/1.84.0/source/boost_1_84_0.7z.json",
+      "role": "Boost 1.84.0 source; compiled locally on hosted runner"
+    },
+    {
+      "id": "deps-x64",
+      "url": "https://github.com/rime/librime/releases/download/1.13.1/rime-deps-1c23358-Windows-msvc-x64.7z",
+      "bytes": 3574853,
+      "sha256": "3ede059e6c1f4cdd5843ced3205f76666b706e5f55ccf8e56e2d04791a376ff6",
+      "hashEvidence": "SHA256 of bytes downloaded from the official URL on 2026-10-26; GitHub release API digest was null",
+      "role": "Official prebuilt third-party dependencies, not a fully-from-source dependency toolchain"
+    },
+    {
+      "id": "deps-x86",
+      "url": "https://github.com/rime/librime/releases/download/1.13.1/rime-deps-1c23358-Windows-msvc-x86.7z",
+      "bytes": 2950758,
+      "sha256": "17688b5f75216b2fb11fb352bd9f97007650e1bc36b343def98fa9f0677bc0c9",
+      "hashEvidence": "SHA256 of bytes downloaded from the official URL on 2026-10-26; GitHub release API digest was null",
+      "role": "Official prebuilt third-party dependencies"
+    },
+    {
+      "id": "shared-data",
+      "url": "https://github.com/rime/weasel/releases/download/0.17.4/weasel-0.17.4.0-installer.exe",
+      "bytes": 12431118,
+      "sha256": "cf509534a8f5f8af9c98ed7cbb8f135439f145a8cbe7e50ede42bb5b5ab45c29",
+      "hashEvidence": "https://api.github.com/repos/rime/weasel/releases/assets/260794274",
+      "role": "Extract data only with 7-Zip; never execute the installer"
+    }
+  ],
+  "tests": [
+    {
+      "path": "native/tests/installer/Export-SyntheticLearning.py",
+      "sha256": "405935ba06e78e5b6d594dbefa0ad87b4be0c6c6f005aab713bfea91bc2c96c2",
+      "scope": "Fixed synthetic native and installer regression fixture"
+    },
+    {
+      "path": "native/tests/installer/NativeProfileSnapshot.ps1",
+      "sha256": "a08e1a573d5aa2598a8110c72771e720f6cd59bad0efed92da0e508f0fd59dd2",
+      "scope": "Fixed synthetic native and installer regression fixture"
+    },
+    {
+      "path": "native/tests/installer/Probe-InstalledEngine.py",
+      "sha256": "f1e77d90461836b54d314d4c1fd31244c6567ed739db47f6f7a2e087ab0936b4",
+      "scope": "Fixed synthetic native and installer regression fixture"
+    },
+    {
+      "path": "native/tests/installer/Test-InstallerPolicy.ps1",
+      "sha256": "39997a074be1bc79aa83b183a8ad32fe32a8d333153965e3463977f42dd3715e",
+      "scope": "Fixed synthetic native and installer regression fixture"
+    },
+    {
+      "path": "native/tests/installer/Test-Win11EquivalentPolicy.ps1",
+      "sha256": "c745cd9f4d59cee809573d9c3eb1243b804649a984ef64fff102c90eb4ee0962",
+      "scope": "Fixed synthetic native and installer regression fixture"
+    },
+    {
+      "path": "native/tests/key-pairing/ControlledReadGrant.inc",
+      "sha256": "0d95e50844a8f251677349dee7e70f97d5e043b49e8c16f532cd595e0789ff6c",
+      "scope": "Fixed synthetic native and installer regression fixture"
+    },
+    {
+      "path": "native/tests/key-pairing/Deploy-PublicFixture.py",
+      "sha256": "2978e418c5f32f0da0694be246491301844d137d06771d005738038968d5848e",
+      "scope": "Fixed synthetic native and installer regression fixture"
+    },
+    {
+      "path": "native/tests/key-pairing/fixture/b01_public_fixture.dict.yaml",
+      "sha256": "001b3c53cd1ccfa223e518b60ce6a4a0a0e5cc2793c47a7560f69180cad0ed2f",
+      "scope": "Fixed synthetic native and installer regression fixture"
+    },
+    {
+      "path": "native/tests/key-pairing/fixture/default.yaml",
+      "sha256": "afc5188c5129533c6dbf9309243b041a332431e598e116787534dc62f4ad4ebb",
+      "scope": "Fixed synthetic native and installer regression fixture"
+    },
+    {
+      "path": "native/tests/key-pairing/fixture/gui_test.schema.yaml",
+      "sha256": "fa0ca63077994110547b422967b7ae50906c93632db494ae02e97acf6e16cfe4",
+      "scope": "Fixed synthetic native and installer regression fixture"
+    },
+    {
+      "path": "native/tests/key-pairing/fixture/weasel.yaml",
+      "sha256": "9f2910f4bc2ca5072bf0717d202fa6528a0c50c363066cdaa95e5417d43949e1",
+      "scope": "Fixed synthetic native and installer regression fixture"
+    },
+    {
+      "path": "native/tests/key-pairing/Invoke-KeyPairingTests.ps1",
+      "sha256": "b3ecfed7e168b254c195bf0d01aed2a718b4c5489e77ae80aaf00f9c28bce8ed",
+      "scope": "Fixed synthetic native and installer regression fixture"
+    },
+    {
+      "path": "native/tests/key-pairing/ProductHostFixture.h",
+      "sha256": "b44f001a7c1442e429003434b839200e3bf7dd6a4695f22be6ca6f6527c0a284",
+      "scope": "Fixed synthetic native and installer regression fixture"
+    },
+    {
+      "path": "native/tests/key-pairing/ResponseOwnerProductTests.cpp",
+      "sha256": "2430fa691f94333879cc791cd9ceb57f73c2911c9befb498b2ecc68c02267b61",
+      "scope": "Fixed synthetic native and installer regression fixture"
+    },
+    {
+      "path": "native/tests/key-pairing/Run-ControlledKeys.ps1",
+      "sha256": "13eee3460475cd2f954541338d7668176428dca791c4f2ac85467a216236469a",
+      "scope": "Fixed synthetic native and installer regression fixture"
+    },
+    {
+      "path": "native/tests/key-pairing/SelectionControlledModes.inc",
+      "sha256": "ad079211a014049d6abf71066920016dc04ba41d3a8f0fd9fe4c9df8e874d144",
+      "scope": "Fixed synthetic native and installer regression fixture"
+    },
+    {
+      "path": "native/tests/preedit_spacing_tests.cc",
+      "sha256": "b00a157f0ec1789127cbd295cfad79a1a01f27d20e7f815586a685d2bb2f6f97",
+      "scope": "Fixed synthetic native and installer regression fixture"
+    },
+    {
+      "path": "native/tests/shift/Run-ShiftKeySnapshotTests.ps1",
+      "sha256": "4d21ac6756cb60cebe2900dcde3f67115a66fad475f189325eb3c251d180e759",
+      "scope": "Fixed synthetic native and installer regression fixture"
+    },
+    {
+      "path": "native/tests/shift/ShiftKeySnapshotTests.cpp",
+      "sha256": "bedb6d25c5e7fd054e3730f42e13e7902d414fd3bc96aee220b974ea9d4eef41",
+      "scope": "Fixed synthetic native and installer regression fixture"
+    }
+  ],
+  "toolchain": {
+    "runner": "windows-2022",
+    "visualStudio": "VS2022, v143, ATL/MFC x86/x64",
+    "boost": "1.84.0",
+    "engineGenerator": "Ninja",
+    "actions": "Major action tags and hosted image revisions remain mutable; record actual versions per run",
+    "bitReproducible": false
+  },
+  "limits": [
+    "The source manifest identifies inputs; actual build and test results are recorded separately.",
+    "Engine third-party dependency archives are official prebuilt inputs with pinned hashes.",
+    "Source assembly, compilation, controlled tests and real application input acceptance are different checks.",
+    "The complete frontend patch preserves the adopted product source. The final no-scheme installer recipe and profile policy are separate public sources applied during packaging.",
+    "No personal configuration, learning database or historical private build artifact is needed.",
+    "Only x64 and Win32 products are built; retained ARM source entry points are not a support claim."
+  ],
+  "frontendSourceFiles": "native/frontend-source-files.json",
+  "installerSource": {
+    "recipe": "installer/install.nsi",
+    "overlaysAppliedAt": "scripts/package/Prepare-Package.ps1",
+    "includesWindowsProfilePolicy": true,
+    "nativePatchContainsPriorInstallerBaseline": true,
+    "finalInstallerSourceIsSeparate": true
+  }
+}

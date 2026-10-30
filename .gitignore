@@ -1,0 +1,10 @@
+work/
+out/
+__pycache__/
+*.pyc
+*.log
+*.pdb
+*.dmp
+*.userdb/
+*.userdb.*
+.DS_Store

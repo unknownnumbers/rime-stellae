@@ -1,0 +1,592 @@
+{
+  "format": "stellae-source-release-v1",
+  "date": "2026-10-31",
+  "kind": "frontend-source-and-shared-resources",
+  "nativeBinariesIncluded": false,
+  "personalLearningIncluded": false,
+  "productionInputSchemesIncluded": false,
+  "syntheticTestFixturesIncluded": true,
+  "sourceDescription": "See docs/SOURCES.md for pinned upstreams, modifications and shared resources.",
+  "files": [
+    {
+      "path": ".github/workflows/native.yml",
+      "bytes": 7723,
+      "sha256": "245e75b30315d9c4c12416a6846f6807663002ce2327706b800b707a570b1958"
+    },
+    {
+      "path": ".github/workflows/verify.yml",
+      "bytes": 525,
+      "sha256": "fba60147beb29b89e8d48068e7395202fc3f9b60e25dabfcf7ee2cd4f7b6b19a"
+    },
+    {
+      "path": ".gitignore",
+      "bytes": 79,
+      "sha256": "443b1421831b19521aa64c4740d89c34e4ea6280033fa25d4873d6f6abab0871"
+    },
+    {
+      "path": "LICENSE",
+      "bytes": 35147,
+      "sha256": "8ceb4b9ee5adedde47b31e975c1d90c73ad27b6b165a1dcd80c7c545eb65b903"
+    },
+    {
+      "path": "LICENSE-DOCS",
+      "bytes": 592,
+      "sha256": "3852c813bb3b1f16c4078d94683f93384a6c663c8b47c4edcba7ac4357256eb7"
+    },
+    {
+      "path": "README.en.md",
+      "bytes": 2851,
+      "sha256": "3ff2ba09d3027677dc364e6ac36d6d805a0be93663a93bfef856376d1cc3dbab"
+    },
+    {
+      "path": "README.md",
+      "bytes": 2417,
+      "sha256": "fa316e7f64acfe793f72da927487a1206a45859ccc90d1cf6de29dd9a4cc4237"
+    },
+    {
+      "path": "README.zh-SC.md",
+      "bytes": 2411,
+      "sha256": "cc0fb80ae44aed5d478bb17b614e592acac6699cd3df21b787a919acebafd9aa"
+    },
+    {
+      "path": "THIRD_PARTY_NOTICES.md",
+      "bytes": 3492,
+      "sha256": "78f2f6f60e6a19895f224274263969646c9370472607dcc908926f912cb12fe7"
+    },
+    {
+      "path": "TODO.md",
+      "bytes": 536,
+      "sha256": "66ec45645a63dd974152e8294609b8216c2b9f256148b87aa6aae32c5048e77c"
+    },
+    {
+      "path": "assets/icon/README.md",
+      "bytes": 813,
+      "sha256": "3a25c392416d5a9321f6db9ba5e455784411f378e38a0027c10f778a3ca0f71c"
+    },
+    {
+      "path": "assets/icon/generate.py",
+      "bytes": 2445,
+      "sha256": "e2601cd5fc36dcffbc3473292c6718ee30c395813938a05364ddf649dcf24076"
+    },
+    {
+      "path": "assets/icon/star-core.ico",
+      "bytes": 18175,
+      "sha256": "cbfedd62dd12fb8d280a1e1a8e1997f444c9ac804aa38bb4cab25e821a0961d9"
+    },
+    {
+      "path": "assets/icon/star-core.svg",
+      "bytes": 270,
+      "sha256": "1adb85a8c5a82c290c06506057726d7a4db352d4e60c757cf14b765955ea69c2"
+    },
+    {
+      "path": "docs/BUILD.md",
+      "bytes": 3427,
+      "sha256": "16e98b15ece3a6d561a39e534c4347ffc2c0bbc14b05835cf1a233a0359aa876"
+    },
+    {
+      "path": "docs/PC.md",
+      "bytes": 2774,
+      "sha256": "30af4c246befc238ab065517d961aa2ec67db17964628f6feb5fff7a718efb70"
+    },
+    {
+      "path": "docs/SOURCES.md",
+      "bytes": 6612,
+      "sha256": "926c5ee0f06c40f5ebd177f72996049c2a3d5921cf5594ffe37599b1e7021838"
+    },
+    {
+      "path": "installer/InstallProfilePolicy.ps1",
+      "bytes": 7836,
+      "sha256": "ab027fe39adc978f0d16b118bbd547f8655d7b76793c98aed9b7585690151082"
+    },
+    {
+      "path": "installer/NativeProfileSnapshot.ps1",
+      "bytes": 7691,
+      "sha256": "a08e1a573d5aa2598a8110c72771e720f6cd59bad0efed92da0e508f0fd59dd2"
+    },
+    {
+      "path": "installer/default.yaml",
+      "bytes": 575,
+      "sha256": "42066a76082d028dea58e27691be9b4c3423f9b8aa4c882a8463462d8f3b0e26"
+    },
+    {
+      "path": "installer/install.nsi",
+      "bytes": 19765,
+      "sha256": "7203118842de50f9d62e9c66df4b9b7c581160ab8b467d406454d457a4c107cb"
+    },
+    {
+      "path": "installer/stellae_identity.nsh",
+      "bytes": 534,
+      "sha256": "802ae5ceeec5cf815dd43e8a786df2165bd520b21ab2bafc5a4460fc771d0b95"
+    },
+    {
+      "path": "licenses/CC-BY-SA-4.0.txt",
+      "bytes": 20138,
+      "sha256": "28a9529c7d0bb4dc51f4bf5c116a3d16ef247a052f7591466768ddf563fd1cf5"
+    },
+    {
+      "path": "licenses/OpenCC-LICENSE.txt",
+      "bytes": 9165,
+      "sha256": "b534e465949558eec2597b04f5092b5e161236a68dfbfd04d547592ac3964308"
+    },
+    {
+      "path": "licenses/README.md",
+      "bytes": 1138,
+      "sha256": "f3a865e3c58e3e3833ca8337c453c3398b1ae1d59060fe47718b0372862b62e2"
+    },
+    {
+      "path": "licenses/build_index.py",
+      "bytes": 3560,
+      "sha256": "3b1e0ac4bb52fdb466017c046bc147f33d44a91922b9a5c89843998ac34031b3"
+    },
+    {
+      "path": "licenses/file-licenses.json",
+      "bytes": 32981,
+      "sha256": "fb308cc53dc2494d772a1a02e8b7f8ca17fc9ff152756877c8a8e642841daf2d"
+    },
+    {
+      "path": "licenses/native-dependencies/boost/LICENSE_1_0.txt",
+      "bytes": 1361,
+      "sha256": "beb8e42e9d6b4284e03304d05a81a0755200a965fc8d0a5e0aea1e84cf805d6e"
+    },
+    {
+      "path": "licenses/native-dependencies/darts-clone/COPYING.darts-clone",
+      "bytes": 1491,
+      "sha256": "521de7c11cd32d5542b67876bb973572af2f5400dc47bed01be3fa37102fdd29"
+    },
+    {
+      "path": "licenses/native-dependencies/glog/AUTHORS",
+      "bytes": 1085,
+      "sha256": "e97c0e63f6ec7f4334de7a07c62e7af05b6da4406d20eb511afd24f1c61c41dc"
+    },
+    {
+      "path": "licenses/native-dependencies/glog/COPYING",
+      "bytes": 1479,
+      "sha256": "136d48dea7a681413691f3db3098f6cf5ffaa3119d96d97bb83b8cff3ce38c4a"
+    },
+    {
+      "path": "licenses/native-dependencies/googletest/LICENSE",
+      "bytes": 1475,
+      "sha256": "9702de7e4117a8e2b20dafab11ffda58c198aede066406496bef670d40a22138"
+    },
+    {
+      "path": "licenses/native-dependencies/leveldb/AUTHORS",
+      "bytes": 293,
+      "sha256": "75cccce858c06397a2736b5018b304a6fe50fce7148c7ea7fd532dd255d264b9"
+    },
+    {
+      "path": "licenses/native-dependencies/leveldb/LICENSE",
+      "bytes": 1484,
+      "sha256": "ccc19f1da0798ed666609b65a5b44dd8b3abe6fc08b9c0592eb76e82e174db19"
+    },
+    {
+      "path": "licenses/native-dependencies/marisa-trie/AUTHORS",
+      "bytes": 36,
+      "sha256": "e6e63af57574b0c74b11e2bb8e52679e6eb68427420529fe50224b2bc3820041"
+    },
+    {
+      "path": "licenses/native-dependencies/marisa-trie/COPYING.md",
+      "bytes": 2284,
+      "sha256": "c0e214362b4dcf118371b02c87321f64a4d8317112d732b6d768167a635f383a"
+    },
+    {
+      "path": "licenses/native-dependencies/opencc/AUTHORS",
+      "bytes": 277,
+      "sha256": "cb34e252fa994679bcbfc8355581e821ceda44bd857875e2cfe15b7ec4eec006"
+    },
+    {
+      "path": "licenses/native-dependencies/opencc/LICENSE",
+      "bytes": 9165,
+      "sha256": "b534e465949558eec2597b04f5092b5e161236a68dfbfd04d547592ac3964308"
+    },
+    {
+      "path": "licenses/native-dependencies/utf8cpp/checked.h-NOTICE.txt",
+      "bytes": 1329,
+      "sha256": "ebd758544425cf8d60e3c3735807fddcd2bb82996df198547b034affbfb0d1fd"
+    },
+    {
+      "path": "licenses/native-dependencies/utf8cpp/core.h-NOTICE.txt",
+      "bytes": 1324,
+      "sha256": "1b45829b2934a146274162752708e2f3355aae05e13d78a2cf3a656540a553c1"
+    },
+    {
+      "path": "licenses/native-dependencies/utf8cpp/cpp17.h-NOTICE.txt",
+      "bytes": 1324,
+      "sha256": "23887e4a3ef24d8d7fd54f06bad675d730cd135ccbc12fa1f3dfb559844ac387"
+    },
+    {
+      "path": "licenses/native-dependencies/weasel/LICENSE.txt",
+      "bytes": 35821,
+      "sha256": "0b383d5a63da644f628d99c33976ea6487ed89aaa59f0b3257992deac1171e6b"
+    },
+    {
+      "path": "licenses/native-dependencies/winsparkle-0.8.1/AUTHORS",
+      "bytes": 263,
+      "sha256": "371d84677734c6478821943877de502539acfb97ae4dcce1b20216d4f82e1843"
+    },
+    {
+      "path": "licenses/native-dependencies/winsparkle-0.8.1/COPYING",
+      "bytes": 1213,
+      "sha256": "d236b139330d1456b8f392f8d10453e86c9a9375ec939566b234b9363a56535e"
+    },
+    {
+      "path": "licenses/native-dependencies/winsparkle-0.8.1/COPYING.expat",
+      "bytes": 1144,
+      "sha256": "46336ab2fec900803e2f1a4253e325ac01d998efb09bc6906651f7259e636f76"
+    },
+    {
+      "path": "licenses/native-dependencies/winsparkle-0.8.1/WEASEL-API-HEADER-NOTICE.txt",
+      "bytes": 1206,
+      "sha256": "cf9915fee9cf6512c7c755849cf78fbb44e283961a6519c4d763fd37c78fc649"
+    },
+    {
+      "path": "licenses/native-dependencies/wtl/MS-PL.txt",
+      "bytes": 2641,
+      "sha256": "9e2f669454f9bc20c8b33540cac66cfada1ed5130929807a9b63f08279749f9b"
+    },
+    {
+      "path": "licenses/native-dependencies/wtl/WTL-COPYRIGHT-NOTICE.txt",
+      "bytes": 386,
+      "sha256": "e275a97c31c900bb5ac33e98c8fff741c91133106d17d4724cc16cab79922b00"
+    },
+    {
+      "path": "licenses/native-dependencies/x11/keysym.h-NOTICE.txt",
+      "bytes": 2281,
+      "sha256": "4beeb94f9530a4e30dcd37d6277a5d3824c140d090323c82c9ccd5e5d9e72a7c"
+    },
+    {
+      "path": "licenses/native-dependencies/x11/keysymdef.h-NOTICE.txt",
+      "bytes": 2279,
+      "sha256": "6bbf351a5d24daecee82f85e7cd6db377e43d6f309b259e1feb6cb8aeee3c529"
+    },
+    {
+      "path": "licenses/native-dependencies/yaml-cpp/LICENSE",
+      "bytes": 1061,
+      "sha256": "aa6fcc27be034e41e21dd832f9175bfe694a48491d9e14ff0fa278e19ad14f1b"
+    },
+    {
+      "path": "licenses/package-sources.json",
+      "bytes": 14322,
+      "sha256": "eaa6d57ae307893d773673e1b8e6f70bbf0b9795448b669a2aeda94e1ac4cc2c"
+    },
+    {
+      "path": "licenses/package/7zip-LICENSE.txt",
+      "bytes": 6031,
+      "sha256": "3a9a7bca133a8af4560f48dfa351f941e110d80a2c2466e537ec6680b9fc2dda"
+    },
+    {
+      "path": "licenses/package/LGPL-2.1.txt",
+      "bytes": 26419,
+      "sha256": "20e50fe7aae3e56378ebf0417d9de904f55a0e61e4df315333e632a4d3555d95"
+    },
+    {
+      "path": "licenses/package/MPL-2.0.txt",
+      "bytes": 16726,
+      "sha256": "fab3dd6bdab226f1c08630b1dd917e11fcb4ec5e1e020e2c16f83a0a13863e85"
+    },
+    {
+      "path": "licenses/package/NSIS-COPYING.txt",
+      "bytes": 15488,
+      "sha256": "dc0f74a312c08ffc900548a67ae9a3670ed28ad25a3afda1fe0504da16f89361"
+    },
+    {
+      "path": "licenses/package/ca-bundle-SOURCE-NOTICE.txt",
+      "bytes": 853,
+      "sha256": "9b7f2c86219f2eebb4747b285813434d067b2470e25a10f4976b394caecdec70"
+    },
+    {
+      "path": "licenses/package/curl-COPYING.txt",
+      "bytes": 1110,
+      "sha256": "1b3254d53d27ef613e4e1b85789f7a441dc431e26c8bec6f4ba8e68f401d1eda"
+    },
+    {
+      "path": "licenses/package/curl-dependencies/brotli-LICENSE",
+      "bytes": 1084,
+      "sha256": "3d180008e36922a4e8daec11c34c7af264fed5962d07924aea928c38e8663c94"
+    },
+    {
+      "path": "licenses/package/curl-dependencies/curl-for-win-LICENSE.md",
+      "bytes": 1098,
+      "sha256": "956f2d7eeb61853d9e35be8cc012a143079b9ff1c4e7da897b011506e986681c"
+    },
+    {
+      "path": "licenses/package/curl-dependencies/libpsl-COPYING",
+      "bytes": 1060,
+      "sha256": "322392e6001b2b3b0fca705dc9f11f26e12441188ecde50eb1d22909980b2925"
+    },
+    {
+      "path": "licenses/package/curl-dependencies/libpsl-LICENSE.chromium",
+      "bytes": 1664,
+      "sha256": "1d7f52747a9169751cdf2641a8299c0098e9ecdf9429296ffd55bdb14c9ed5b3"
+    },
+    {
+      "path": "licenses/package/curl-dependencies/libressl-COPYING",
+      "bytes": 6500,
+      "sha256": "5c63613f008f16a9c0025c096bbd736cecf720494d121b5c5203e0ec6e5955b1"
+    },
+    {
+      "path": "licenses/package/curl-dependencies/libssh2-COPYING",
+      "bytes": 1959,
+      "sha256": "fda5e2522c58ba1f31c9f2044747616457466f4aebec16ade4af86e3a16a8e02"
+    },
+    {
+      "path": "licenses/package/curl-dependencies/nghttp2-COPYING",
+      "bytes": 1156,
+      "sha256": "6b94f3abc1aabd0c72a7c7d92a77f79dda7c8a0cb3df839a97890b4116a2de2a"
+    },
+    {
+      "path": "licenses/package/curl-dependencies/nghttp3-COPYING",
+      "bytes": 1081,
+      "sha256": "58cc3fc8c6d6cb2485ab35eb5918e849b5bf1e56522974e106d7a39a88d61dcd"
+    },
+    {
+      "path": "licenses/package/curl-dependencies/ngtcp2-COPYING",
+      "bytes": 1080,
+      "sha256": "542dd526d2ea23565f0571cc68df6f05ed11248a90ff0f32de19d8ba589db513"
+    },
+    {
+      "path": "licenses/package/curl-dependencies/public-suffix-SOURCE-NOTICE.txt",
+      "bytes": 498,
+      "sha256": "2f2171a1b36f6f6a772ac6995dced4b9a6e16aa4938e72c46af1d6a4282db337"
+    },
+    {
+      "path": "licenses/package/curl-dependencies/zlib-LICENSE",
+      "bytes": 1002,
+      "sha256": "845efc77857d485d91fb3e0b884aaa929368c717ae8186b66fe1ed2495753243"
+    },
+    {
+      "path": "licenses/package/curl-dependencies/zstd-COPYING",
+      "bytes": 18091,
+      "sha256": "f9c375a1be4a41f7b70301dd83c91cb89e41567478859b77eef375a52d782505"
+    },
+    {
+      "path": "licenses/package/curl-dependencies/zstd-LICENSE",
+      "bytes": 1549,
+      "sha256": "7055266497633c9025b777c78eb7235af13922117480ed5c674677adc381c9d8"
+    },
+    {
+      "path": "licenses/package/plum-LICENSE.txt",
+      "bytes": 7651,
+      "sha256": "da7eabb7bafdf7d3ae5e9f223aa5bdc1eece45ac569dc21b3b037520b4464768"
+    },
+    {
+      "path": "licenses/package/prelude-LICENSE.txt",
+      "bytes": 7651,
+      "sha256": "da7eabb7bafdf7d3ae5e9f223aa5bdc1eece45ac569dc21b3b037520b4464768"
+    },
+    {
+      "path": "licenses/supplement/Lua-5.3-MIT-NOTICE.txt",
+      "bytes": 1263,
+      "sha256": "062940535f605b12291d6e1df9c92bbdc121165bea3d4ac92c697f23f83e2aff"
+    },
+    {
+      "path": "licenses/supplement/Lua-5.4-MIT-NOTICE.txt",
+      "bytes": 1263,
+      "sha256": "b66c57df1c7de7a62eec9af87d7cde02a2a6ce791758ccc7a79c6781c360526d"
+    },
+    {
+      "path": "licenses/supplement/librime-LICENSE.txt",
+      "bytes": 1513,
+      "sha256": "f67d27a6d2d586fcfed4b4c886a83747095396a39b6641e18e855086be2ec400"
+    },
+    {
+      "path": "licenses/supplement/librime-lua-LICENSE.txt",
+      "bytes": 1520,
+      "sha256": "c6bd4f58b13ae9d45c5e53adddeea5049114a25862797c6c6f64920431eea249"
+    },
+    {
+      "path": "licenses/supplement/librime-octagram-LICENSE.txt",
+      "bytes": 35147,
+      "sha256": "8ceb4b9ee5adedde47b31e975c1d90c73ad27b6b165a1dcd80c7c545eb65b903"
+    },
+    {
+      "path": "licenses/supplement/librime-predict-LICENSE.txt",
+      "bytes": 1502,
+      "sha256": "9b1bbdf15a381884b47dfd9422e68f6382170b2841c476afc076f2d448c7a59f"
+    },
+    {
+      "path": "licenses/third-party-source-manifest.json",
+      "bytes": 39138,
+      "sha256": "f0efc99a33e3cc283cd3ba62cdb9aeebdf201ca676ef47113f4c659d06c33505"
+    },
+    {
+      "path": "native/engine/librime-lua-n01.patch",
+      "bytes": 3707,
+      "sha256": "e218a7bedc28231132dbe7029f86c44cd2a0d639c8747c5a138f7503f6bc32d6"
+    },
+    {
+      "path": "native/engine/librime-lua-r5-sdk.patch",
+      "bytes": 3681,
+      "sha256": "69a76f624a2b1359090ee95360a80f7a79a90a5e2a8888537721a96a5faebaa6"
+    },
+    {
+      "path": "native/engine/librime-n01.patch",
+      "bytes": 14063,
+      "sha256": "3eaf5dcd371c497cfac298d11acf29a5e1327792057bca5aa4ffb53894f714b1"
+    },
+    {
+      "path": "native/engine/librime-r5-sdk.patch",
+      "bytes": 13357,
+      "sha256": "86656d2577009b0cef9e7d3335cd1e8ca8655821f97bcf060a56411c1b2eb293"
+    },
+    {
+      "path": "native/frontend-source-files.json",
+      "bytes": 20999,
+      "sha256": "bf83c2bb9ea7cebc8a2c6511f671c4fafe81346f320e17497576cd123e4b1c48"
+    },
+    {
+      "path": "native/source-manifest.json",
+      "bytes": 12774,
+      "sha256": "1db10bf5c662a2b6324b3f5e9708d2b61e06dcdbbe5488756ce5cf8d5164641f"
+    },
+    {
+      "path": "native/tests/installer/Export-SyntheticLearning.py",
+      "bytes": 3192,
+      "sha256": "405935ba06e78e5b6d594dbefa0ad87b4be0c6c6f005aab713bfea91bc2c96c2"
+    },
+    {
+      "path": "native/tests/installer/NativeProfileSnapshot.ps1",
+      "bytes": 7691,
+      "sha256": "a08e1a573d5aa2598a8110c72771e720f6cd59bad0efed92da0e508f0fd59dd2"
+    },
+    {
+      "path": "native/tests/installer/Probe-InstalledEngine.py",
+      "bytes": 5204,
+      "sha256": "f1e77d90461836b54d314d4c1fd31244c6567ed739db47f6f7a2e087ab0936b4"
+    },
+    {
+      "path": "native/tests/installer/Test-InstallerPolicy.ps1",
+      "bytes": 14814,
+      "sha256": "39997a074be1bc79aa83b183a8ad32fe32a8d333153965e3463977f42dd3715e"
+    },
+    {
+      "path": "native/tests/installer/Test-Win11EquivalentPolicy.ps1",
+      "bytes": 7729,
+      "sha256": "c745cd9f4d59cee809573d9c3eb1243b804649a984ef64fff102c90eb4ee0962"
+    },
+    {
+      "path": "native/tests/key-pairing/ControlledReadGrant.inc",
+      "bytes": 795,
+      "sha256": "0d95e50844a8f251677349dee7e70f97d5e043b49e8c16f532cd595e0789ff6c"
+    },
+    {
+      "path": "native/tests/key-pairing/Deploy-PublicFixture.py",
+      "bytes": 5230,
+      "sha256": "2978e418c5f32f0da0694be246491301844d137d06771d005738038968d5848e"
+    },
+    {
+      "path": "native/tests/key-pairing/Invoke-KeyPairingTests.ps1",
+      "bytes": 955,
+      "sha256": "b3ecfed7e168b254c195bf0d01aed2a718b4c5489e77ae80aaf00f9c28bce8ed"
+    },
+    {
+      "path": "native/tests/key-pairing/ProductHostFixture.h",
+      "bytes": 27957,
+      "sha256": "b44f001a7c1442e429003434b839200e3bf7dd6a4695f22be6ca6f6527c0a284"
+    },
+    {
+      "path": "native/tests/key-pairing/ResponseOwnerProductTests.cpp",
+      "bytes": 136257,
+      "sha256": "2430fa691f94333879cc791cd9ceb57f73c2911c9befb498b2ecc68c02267b61"
+    },
+    {
+      "path": "native/tests/key-pairing/Run-ControlledKeys.ps1",
+      "bytes": 9351,
+      "sha256": "13eee3460475cd2f954541338d7668176428dca791c4f2ac85467a216236469a"
+    },
+    {
+      "path": "native/tests/key-pairing/SelectionControlledModes.inc",
+      "bytes": 4376,
+      "sha256": "ad079211a014049d6abf71066920016dc04ba41d3a8f0fd9fe4c9df8e874d144"
+    },
+    {
+      "path": "native/tests/key-pairing/fixture/b01_public_fixture.dict.yaml",
+      "bytes": 136,
+      "sha256": "001b3c53cd1ccfa223e518b60ce6a4a0a0e5cc2793c47a7560f69180cad0ed2f"
+    },
+    {
+      "path": "native/tests/key-pairing/fixture/default.yaml",
+      "bytes": 90,
+      "sha256": "afc5188c5129533c6dbf9309243b041a332431e598e116787534dc62f4ad4ebb"
+    },
+    {
+      "path": "native/tests/key-pairing/fixture/gui_test.schema.yaml",
+      "bytes": 731,
+      "sha256": "fa0ca63077994110547b422967b7ae50906c93632db494ae02e97acf6e16cfe4"
+    },
+    {
+      "path": "native/tests/key-pairing/fixture/weasel.yaml",
+      "bytes": 204,
+      "sha256": "9f2910f4bc2ca5072bf0717d202fa6528a0c50c363066cdaa95e5417d43949e1"
+    },
+    {
+      "path": "native/tests/preedit_spacing_tests.cc",
+      "bytes": 5398,
+      "sha256": "b00a157f0ec1789127cbd295cfad79a1a01f27d20e7f815586a685d2bb2f6f97"
+    },
+    {
+      "path": "native/tests/shift/Run-ShiftKeySnapshotTests.ps1",
+      "bytes": 3958,
+      "sha256": "4d21ac6756cb60cebe2900dcde3f67115a66fad475f189325eb3c251d180e759"
+    },
+    {
+      "path": "native/tests/shift/ShiftKeySnapshotTests.cpp",
+      "bytes": 8374,
+      "sha256": "bedb6d25c5e7fd054e3730f42e13e7902d414fd3bc96aee220b974ea9d4eef41"
+    },
+    {
+      "path": "native/weasel/stellae-61052.patch",
+      "bytes": 901278,
+      "sha256": "0681eb161a64b861e9c70f5f251bacfa1fdd5032cc12a27b10b4e9eec291ea7c"
+    },
+    {
+      "path": "scripts/native/Apply-Patches.ps1",
+      "bytes": 1466,
+      "sha256": "60601f5fe8f543519cc256303dea035eba025987f8624774742aa82e7d74b23c"
+    },
+    {
+      "path": "scripts/native/Build-Engine.ps1",
+      "bytes": 5301,
+      "sha256": "bdaa03e4bfee618237f04dc0656d6aa94665b75453cf81461c98e6a341a93d96"
+    },
+    {
+      "path": "scripts/native/Build-Weasel.ps1",
+      "bytes": 9726,
+      "sha256": "2852202ebe40a1e39ba27a51b7db0ec832560139e84fd68854facf36bd04510b"
+    },
+    {
+      "path": "scripts/native/Common.ps1",
+      "bytes": 11226,
+      "sha256": "5174f8c8135c37db06f4d6b597e411e84a0695fbf36ce82741229abfae9ceda7"
+    },
+    {
+      "path": "scripts/native/Prepare-Sources.ps1",
+      "bytes": 3334,
+      "sha256": "2e3c6398c50dcb58f5317ed4d85a9f84e82f2692d2a0db3c0e5882da1f014b23"
+    },
+    {
+      "path": "scripts/native/Test-Inventory.ps1",
+      "bytes": 2174,
+      "sha256": "e557c70a19fd4375d64db7c57f4425e1fddec5d9c6d0f8d15f69b25ec22f4f02"
+    },
+    {
+      "path": "scripts/package/Prepare-Package.ps1",
+      "bytes": 10531,
+      "sha256": "f7835bfbad7cae2cecc85c350edc0d482cf875aa29cc31417d73acb68a8f3587"
+    },
+    {
+      "path": "scripts/package/index_payload.py",
+      "bytes": 2684,
+      "sha256": "4a5bd32e8efb3cb9abe0a5c7726a34ec602fa4fff0f05cc8440f8af467875ee0"
+    },
+    {
+      "path": "scripts/package/verify_pe.py",
+      "bytes": 5876,
+      "sha256": "f7b4043d3179fb8e91fed60bf364286e9d314e827d598c96e9bd5e9c05353e74"
+    },
+    {
+      "path": "scripts/verify_release.py",
+      "bytes": 7867,
+      "sha256": "74cdbbdc5fcec4517cfb73aaffbef65cb9c6efae84213ea404bf52d130e5980a"
+    }
+  ]
+}

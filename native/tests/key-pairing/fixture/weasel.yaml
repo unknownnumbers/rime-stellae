@@ -1,0 +1,9 @@
+config_version: "1"
+show_notifications: false
+show_notifications_time: 0
+style:
+  inline_preedit: false
+  horizontal: true
+  preedit_type: composition
+  font_point: 14
+  label_text_format: "%s."

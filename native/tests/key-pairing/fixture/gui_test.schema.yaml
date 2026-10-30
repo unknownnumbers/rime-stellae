@@ -1,0 +1,26 @@
+schema:
+  schema_id: gui_test
+  name: B01 public native fixture
+  version: "1"
+switches:
+  - {name: ascii_mode, reset: 0}
+engine:
+  processors: [key_binder, speller, selector, navigator, express_editor]
+  segmentors: [abc_segmentor, fallback_segmentor]
+  translators: [table_translator]
+speller:
+  alphabet: abcdefghijklmnopqrstuvwxyz
+  delimiter: "'"
+translator:
+  dictionary: b01_public_fixture
+  enable_user_dict: false
+  enable_sentence: false
+  enable_completion: false
+key_binder:
+  bindings:
+    - {when: always, accept: 'Release+F13', toggle: fixture_release_probe_a}
+    - {when: always, accept: 'Release+F14', toggle: fixture_release_probe_b}
+menu:
+  page_size: 5
+style:
+  inline_preedit: false

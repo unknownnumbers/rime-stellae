@@ -1,0 +1,533 @@
+{
+  "format": "stellae-package-license-sources-v1",
+  "scope": "Mappings for the actual generated installer payload. Resolve every payload path to sources and retain per-file hashes in the generated package index.",
+  "sources": {
+    "project-code": {
+      "origin": "Rime Stellae contributors",
+      "retained_terms": [
+        "GPL-3.0-only"
+      ],
+      "notices": [
+        "LICENSE"
+      ],
+      "evidence": [
+        "docs/SOURCES.md"
+      ]
+    },
+    "project-docs": {
+      "origin": "Rime Stellae contributors",
+      "retained_terms": [
+        "CC-BY-SA-4.0"
+      ],
+      "notices": [
+        "licenses/CC-BY-SA-4.0.txt"
+      ],
+      "evidence": [
+        "docs/SOURCES.md"
+      ]
+    },
+    "weasel": {
+      "origin": "rime/weasel and original contributors",
+      "retained_terms": [
+        "GNU GPL version3; retained original notices"
+      ],
+      "notices": [
+        "licenses/native-dependencies/weasel/LICENSE.txt"
+      ],
+      "evidence": [
+        "docs/SOURCES.md"
+      ],
+      "upstream_commit": "9cc96e20dc71b80876b12f689bb5863c76c2a7ed",
+      "url": "https://github.com/rime/weasel/tree/9cc96e20dc71b80876b12f689bb5863c76c2a7ed"
+    },
+    "librime": {
+      "origin": "RIME Developers / librime",
+      "retained_terms": [
+        "BSD-3-Clause"
+      ],
+      "notices": [
+        "licenses/supplement/librime-LICENSE.txt"
+      ],
+      "evidence": [
+        "docs/SOURCES.md"
+      ],
+      "url": "https://github.com/rime/librime/tree/1c23358157934bd6e6d6981f0c0164f05393b497"
+    },
+    "librime-lua": {
+      "origin": "librime-lua Developers",
+      "retained_terms": [
+        "BSD-3-Clause; bundled Lua MIT"
+      ],
+      "notices": [
+        "licenses/supplement/librime-lua-LICENSE.txt",
+        "licenses/supplement/Lua-5.4-MIT-NOTICE.txt",
+        "licenses/supplement/Lua-5.3-MIT-NOTICE.txt"
+      ],
+      "evidence": [
+        "docs/SOURCES.md"
+      ],
+      "caveat": "The build selects in-tree Lua5.4; Lua5.3 notice remains for source completeness.",
+      "url": "https://github.com/hchunhui/librime-lua/tree/e3912a4b3ac2c202d89face3fef3d41eb1d7fcd6"
+    },
+    "octagram": {
+      "origin": "lotem/librime-octagram",
+      "retained_terms": [
+        "GPLv3"
+      ],
+      "notices": [
+        "licenses/supplement/librime-octagram-LICENSE.txt"
+      ],
+      "evidence": [
+        "docs/SOURCES.md"
+      ],
+      "url": "https://github.com/lotem/librime-octagram/tree/dfcc15115788c828d9dd7b4bff68067d3ce2ffb8"
+    },
+    "predict": {
+      "origin": "RIME Developers / librime-predict",
+      "retained_terms": [
+        "BSD-3-Clause"
+      ],
+      "notices": [
+        "licenses/supplement/librime-predict-LICENSE.txt"
+      ],
+      "evidence": [
+        "docs/SOURCES.md"
+      ],
+      "url": "https://github.com/rime/librime-predict/tree/920bd41ebf6f9bf6855d14fbe80212e54e749791"
+    },
+    "native-dependencies": {
+      "origin": "Pinned native build dependencies",
+      "retained_terms": [
+        "Retain each original license and attribution; see source manifest"
+      ],
+      "notices": [
+        "licenses/native-dependencies/glog/COPYING",
+        "licenses/native-dependencies/glog/AUTHORS",
+        "licenses/native-dependencies/googletest/LICENSE",
+        "licenses/native-dependencies/leveldb/LICENSE",
+        "licenses/native-dependencies/leveldb/AUTHORS",
+        "licenses/native-dependencies/marisa-trie/COPYING.md",
+        "licenses/native-dependencies/marisa-trie/AUTHORS",
+        "licenses/native-dependencies/opencc/LICENSE",
+        "licenses/native-dependencies/opencc/AUTHORS",
+        "licenses/native-dependencies/yaml-cpp/LICENSE",
+        "licenses/native-dependencies/utf8cpp/core.h-NOTICE.txt",
+        "licenses/native-dependencies/utf8cpp/checked.h-NOTICE.txt",
+        "licenses/native-dependencies/utf8cpp/cpp17.h-NOTICE.txt",
+        "licenses/native-dependencies/x11/keysym.h-NOTICE.txt",
+        "licenses/native-dependencies/x11/keysymdef.h-NOTICE.txt",
+        "licenses/native-dependencies/boost/LICENSE_1_0.txt",
+        "licenses/native-dependencies/darts-clone/COPYING.darts-clone",
+        "licenses/native-dependencies/weasel/LICENSE.txt",
+        "licenses/native-dependencies/wtl/MS-PL.txt",
+        "licenses/native-dependencies/wtl/WTL-COPYRIGHT-NOTICE.txt",
+        "licenses/native-dependencies/winsparkle-0.8.1/COPYING",
+        "licenses/native-dependencies/winsparkle-0.8.1/COPYING.expat",
+        "licenses/native-dependencies/winsparkle-0.8.1/AUTHORS",
+        "licenses/native-dependencies/winsparkle-0.8.1/WEASEL-API-HEADER-NOTICE.txt"
+      ],
+      "evidence": [
+        "docs/SOURCES.md"
+      ]
+    },
+    "prelude": {
+      "origin": "rime/rime-prelude",
+      "retained_terms": [
+        "LGPLv3"
+      ],
+      "notices": [
+        "licenses/package/prelude-LICENSE.txt",
+        "LICENSE"
+      ],
+      "evidence": [
+        "docs/SOURCES.md"
+      ],
+      "version": "Source files selected from fixed official Weasel0.17.4 distribution",
+      "caveat": "The exact historical prelude commit in the distribution is not asserted. The selected source files are redistributed in their source form.",
+      "url": "https://github.com/rime/rime-prelude"
+    },
+    "opencc-data": {
+      "origin": "OpenCC original authors",
+      "retained_terms": [
+        "Apache-2.0"
+      ],
+      "notices": [
+        "licenses/OpenCC-LICENSE.txt",
+        "licenses/native-dependencies/opencc/AUTHORS"
+      ],
+      "evidence": [
+        "docs/SOURCES.md"
+      ],
+      "version": "Resources selected from fixed official Weasel0.17.4 distribution",
+      "caveat": "The package hash and selected file hashes pin the distributed data. They do not assert the historical OpenCC data commit.",
+      "url": "https://github.com/BYVoid/OpenCC"
+    },
+    "plum": {
+      "origin": "rime/plum and original contributors",
+      "retained_terms": [
+        "LGPLv3"
+      ],
+      "notices": [
+        "licenses/package/plum-LICENSE.txt",
+        "LICENSE"
+      ],
+      "evidence": [
+        "docs/SOURCES.md"
+      ],
+      "upstream_commit": "cab9ed35289f2022b6888503750d2dfb1851dbe0",
+      "url": "https://github.com/rime/plum/tree/cab9ed35289f2022b6888503750d2dfb1851dbe0"
+    },
+    "curl": {
+      "origin": "curl and curl-for-win contributors and static dependencies",
+      "retained_terms": [
+        "curl license; LibreSSL/OpenSSL/SSLeay/ISC; MIT; BSD; zlib; MPL2 for public suffix data"
+      ],
+      "notices": [
+        "licenses/package/curl-COPYING.txt",
+        "licenses/package/MPL-2.0.txt",
+        "licenses/package/curl-dependencies/curl-for-win-LICENSE.md",
+        "licenses/package/curl-dependencies/brotli-LICENSE",
+        "licenses/package/curl-dependencies/zstd-LICENSE",
+        "licenses/package/curl-dependencies/zstd-COPYING",
+        "licenses/package/curl-dependencies/nghttp2-COPYING",
+        "licenses/package/curl-dependencies/nghttp3-COPYING",
+        "licenses/package/curl-dependencies/ngtcp2-COPYING",
+        "licenses/package/curl-dependencies/libssh2-COPYING",
+        "licenses/package/curl-dependencies/libpsl-COPYING",
+        "licenses/package/curl-dependencies/libpsl-LICENSE.chromium",
+        "licenses/package/curl-dependencies/zlib-LICENSE",
+        "licenses/package/curl-dependencies/libressl-COPYING",
+        "licenses/package/curl-dependencies/public-suffix-SOURCE-NOTICE.txt"
+      ],
+      "evidence": [
+        "docs/SOURCES.md"
+      ],
+      "version": "curl8.7.1_9-win32-mingw",
+      "build_source": "https://github.com/curl/curl-for-win/tree/ef1b80f30fbb5b3854f25ce0b3cf2d15de60ee53",
+      "caveat": "The distributed binary is pinned by the fixed Weasel Git blob. The historical curl download archive is not required as a build input.",
+      "url": "https://github.com/rime/weasel/commit/95fd506ad97fec167ab7f431552c3417ffaa90f0"
+    },
+    "sevenzip": {
+      "origin": "Igor Pavlov and original 7-Zip contributors",
+      "retained_terms": [
+        "LGPL-2.1-or-later; unRAR restriction for the relevant decoder; retained BSD notices"
+      ],
+      "notices": [
+        "licenses/package/7zip-LICENSE.txt",
+        "licenses/package/LGPL-2.1.txt"
+      ],
+      "evidence": [
+        "docs/SOURCES.md"
+      ],
+      "version": "24.05",
+      "source_archive": "https://github.com/ip7z/7zip/releases/download/24.05/7z2405-src.tar.xz",
+      "source_archive_sha256": "63f341cf80b8d287c6e945519b3da0fa75553c85572a471b7fa6e68f9a90b790",
+      "url": "https://github.com/ip7z/7zip/releases/tag/24.05"
+    },
+    "ca-bundle": {
+      "origin": "Mozilla certificate data, converted by curl mk-ca-bundle.pl",
+      "retained_terms": [
+        "MPL-2.0; retained public certificate and conversion source header"
+      ],
+      "notices": [
+        "licenses/package/MPL-2.0.txt",
+        "licenses/package/ca-bundle-SOURCE-NOTICE.txt"
+      ],
+      "evidence": [
+        "docs/SOURCES.md"
+      ],
+      "version": "Mozilla certificate data as of2024-03-11; fixed Weasel bundle",
+      "url": "https://curl.se/docs/caextract.html"
+    },
+    "nsis": {
+      "origin": "NSIS contributors",
+      "retained_terms": [
+        "zlib/libpng; bzip2; CPL1.0 with the LZMA linking exception as documented"
+      ],
+      "notices": [
+        "licenses/package/NSIS-COPYING.txt"
+      ],
+      "evidence": [
+        "docs/SOURCES.md"
+      ],
+      "version": "3.11",
+      "source_archive": "https://github.com/NSIS-Dev/nsis/archive/refs/tags/v311.tar.gz",
+      "url": "https://github.com/NSIS-Dev/nsis/tree/v311"
+    }
+  },
+  "rules": [
+    {
+      "pattern": "Stellae*.exe",
+      "source_ids": [
+        "project-code",
+        "weasel",
+        "native-dependencies"
+      ]
+    },
+    {
+      "pattern": "stellae*.dll",
+      "source_ids": [
+        "project-code",
+        "weasel",
+        "native-dependencies"
+      ]
+    },
+    {
+      "pattern": "stellae*.ime",
+      "source_ids": [
+        "project-code",
+        "weasel",
+        "native-dependencies"
+      ]
+    },
+    {
+      "pattern": "Win32/Stellae*.exe",
+      "source_ids": [
+        "project-code",
+        "weasel",
+        "native-dependencies"
+      ]
+    },
+    {
+      "pattern": "Win32/stellae*.dll",
+      "source_ids": [
+        "project-code",
+        "weasel",
+        "native-dependencies"
+      ]
+    },
+    {
+      "pattern": "Win32/stellae*.ime",
+      "source_ids": [
+        "project-code",
+        "weasel",
+        "native-dependencies"
+      ]
+    },
+    {
+      "pattern": "rime.dll",
+      "source_ids": [
+        "project-code",
+        "librime",
+        "librime-lua",
+        "octagram",
+        "predict",
+        "native-dependencies"
+      ]
+    },
+    {
+      "pattern": "Win32/rime.dll",
+      "source_ids": [
+        "project-code",
+        "librime",
+        "librime-lua",
+        "octagram",
+        "predict",
+        "native-dependencies"
+      ]
+    },
+    {
+      "pattern": "7z.exe",
+      "source_ids": [
+        "sevenzip"
+      ]
+    },
+    {
+      "pattern": "7z.dll",
+      "source_ids": [
+        "sevenzip"
+      ]
+    },
+    {
+      "pattern": "7-zip-license.txt",
+      "source_ids": [
+        "sevenzip"
+      ]
+    },
+    {
+      "pattern": "curl.exe",
+      "source_ids": [
+        "curl"
+      ]
+    },
+    {
+      "pattern": "COPYING-curl.txt",
+      "source_ids": [
+        "curl"
+      ]
+    },
+    {
+      "pattern": "curl-ca-bundle.crt",
+      "source_ids": [
+        "ca-bundle"
+      ]
+    },
+    {
+      "pattern": "rime-install.bat",
+      "source_ids": [
+        "plum"
+      ]
+    },
+    {
+      "pattern": "rime-install-config.bat",
+      "source_ids": [
+        "project-code",
+        "weasel"
+      ]
+    },
+    {
+      "pattern": "start_service.bat",
+      "source_ids": [
+        "project-code",
+        "weasel"
+      ]
+    },
+    {
+      "pattern": "stop_service.bat",
+      "source_ids": [
+        "project-code",
+        "weasel"
+      ]
+    },
+    {
+      "pattern": "data/default.yaml",
+      "source_ids": [
+        "project-code"
+      ]
+    },
+    {
+      "pattern": "data/weasel.yaml",
+      "source_ids": [
+        "weasel"
+      ]
+    },
+    {
+      "pattern": "data/preview/*.png",
+      "source_ids": [
+        "weasel"
+      ]
+    },
+    {
+      "pattern": "data/key_bindings.yaml",
+      "source_ids": [
+        "prelude"
+      ]
+    },
+    {
+      "pattern": "data/punctuation.yaml",
+      "source_ids": [
+        "prelude"
+      ]
+    },
+    {
+      "pattern": "data/symbols.yaml",
+      "source_ids": [
+        "prelude"
+      ]
+    },
+    {
+      "pattern": "data/opencc/*.json",
+      "source_ids": [
+        "opencc-data"
+      ]
+    },
+    {
+      "pattern": "data/opencc/*.ocd*",
+      "source_ids": [
+        "opencc-data"
+      ]
+    },
+    {
+      "pattern": "README.txt",
+      "source_ids": [
+        "project-docs"
+      ]
+    },
+    {
+      "pattern": "SOURCES.md",
+      "source_ids": [
+        "project-docs"
+      ]
+    },
+    {
+      "pattern": "THIRD_PARTY_NOTICES.md",
+      "source_ids": [
+        "project-docs"
+      ]
+    },
+    {
+      "pattern": "LICENSE",
+      "source_ids": [
+        "project-code"
+      ]
+    },
+    {
+      "pattern": "LICENSE.txt",
+      "source_ids": [
+        "weasel"
+      ]
+    },
+    {
+      "pattern": "LICENSE-DOCS",
+      "source_ids": [
+        "project-docs"
+      ]
+    },
+    {
+      "pattern": "licenses/**",
+      "source_ids": [
+        "native-dependencies"
+      ]
+    },
+    {
+      "pattern": "InstallProfilePolicy.ps1",
+      "source_ids": [
+        "project-code"
+      ]
+    },
+    {
+      "pattern": "NativeProfileSnapshot.ps1",
+      "source_ids": [
+        "project-code"
+      ]
+    },
+    {
+      "pattern": "stellae_identity.nsh",
+      "source_ids": [
+        "project-code"
+      ]
+    },
+    {
+      "pattern": "uninstall.exe",
+      "source_ids": [
+        "project-code",
+        "nsis"
+      ]
+    },
+    {
+      "pattern": "package-manifest.json",
+      "source_ids": [
+        "project-code"
+      ]
+    },
+    {
+      "pattern": "package-license-index.json",
+      "source_ids": [
+        "project-code"
+      ]
+    },
+    {
+      "pattern": "package-sources.json",
+      "source_ids": [
+        "project-code"
+      ]
+    },
+    {
+      "pattern": "source-manifest.json",
+      "source_ids": [
+        "project-code"
+      ]
+    }
+  ],
+  "default_action": "reject-unmapped"
+}
