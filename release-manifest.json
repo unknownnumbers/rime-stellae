@@ -550,8 +550,8 @@
     },
     {
       "path": "scripts/native/Build-Engine.ps1",
-      "bytes": 5301,
-      "sha256": "bdaa03e4bfee618237f04dc0656d6aa94665b75453cf81461c98e6a341a93d96"
+      "bytes": 5690,
+      "sha256": "d119566ae40794d4ebf5257a775b76850b9d5b9b2d109142aecae68802688bca"
     },
     {
       "path": "scripts/native/Build-Weasel.ps1",

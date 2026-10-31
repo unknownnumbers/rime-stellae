@@ -61,7 +61,13 @@ Assert-NativePe (Join-Path $source 'dist/lib/rime.dll') $machine
 foreach ($name in @('dist/lib/rime.lib','dist/include/rime_api.h')) {
     if (-not (Test-Path -LiteralPath (Join-Path $source $name))) { throw "Missing engine product: $name" }
 }
-Copy-Item -LiteralPath (Join-Path $source 'dist') -Destination (Join-Path $OutputDirectory 'dist') -Recurse
+# The frontend consumes the library and API headers. Upstream CLI tools use a
+# different bin/lib layout and are not part of this runtime or SDK artifact.
+$sdkOutput = Join-Path $OutputDirectory 'dist'
+New-Item -ItemType Directory -Path $sdkOutput | Out-Null
+foreach ($directory in @('lib','include')) {
+    Copy-Item -LiteralPath (Join-Path $source "dist/$directory") -Destination (Join-Path $sdkOutput $directory) -Recurse
+}
 Get-ChildItem -LiteralPath (Join-Path $OutputDirectory 'dist') -Recurse -File -Filter '*.pdb' | Remove-Item
 & python (Get-NativeRepositoryPath 'scripts/package/verify_pe.py') --root (Join-Path $OutputDirectory 'dist') --report (Join-Path $OutputDirectory 'pe-verification.json')
 if ($LASTEXITCODE -ne 0) { throw 'Engine PE metadata verification failed.' }
@@ -78,4 +84,5 @@ Copy-NativeSourceNotices $OutputDirectory
     publicBuildCommit=$env:GITHUB_SHA; publicBuildRunId=$env:GITHUB_RUN_ID; bitReproducible=$false
     symbolsBundled=$false; pdbAlternativePath='rime.pdb'; peMetadataVerified=$true
     assembledSourceSha256=$sourceArchive.sha256; assembledSourceFiles=$sourceArchive.files
+    sdkDirectories=@('lib','include'); upstreamCliToolsBundled=$false
 } | ConvertTo-Json -Depth 5 | Set-Content -LiteralPath (Join-Path $OutputDirectory 'build-result.json') -Encoding utf8
