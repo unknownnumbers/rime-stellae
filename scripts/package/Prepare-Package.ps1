@@ -64,6 +64,8 @@ Copy-Item -LiteralPath (Join-Path $repository 'LICENSE-DOCS') -Destination $payl
 Copy-Item -LiteralPath (Join-Path $repository 'licenses') -Destination $payload -Recurse
 & python (Join-Path $PSScriptRoot 'render_installed_docs.py') --repository $repository --output-directory $payload --ref $env:GITHUB_SHA
 if($LASTEXITCODE){throw 'Installed documentation rendering failed.'}
+& python (Join-Path $PSScriptRoot 'index_payload.py') --root $payload --repository $repository --prepare-metadata
+if($LASTEXITCODE){throw 'Installed license reference preparation failed.'}
 foreach($name in @('install.nsi','InstallProfilePolicy.ps1','NativeProfileSnapshot.ps1','stellae_identity.nsh')){
   Copy-Item -LiteralPath (Join-Path $repository "installer/$name") -Destination $payload
 }
@@ -103,8 +105,11 @@ Copy-Item -LiteralPath (Join-Path $payload 'package-manifest.json'),(Join-Path $
 Copy-Item -LiteralPath (Join-Path $payload 'package-license-index.json') -Destination $release
 # Extract the actual installer again. Staging alone is not the payload proof.
 $actual=Join-Path $OutputDirectory 'payload-verification'
-& 7z.exe x $installer "-o$actual" -y | Out-File (Join-Path $OutputDirectory 'extract-package.log')
+& 7z.exe x $installer "-o$actual" -aou -y | Out-File (Join-Path $OutputDirectory 'extract-package.log')
 if($LASTEXITCODE){throw 'Could not inspect the completed installer.'}
+$actualHashes=[Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
+foreach($file in Get-ChildItem -LiteralPath $actual -Recurse -File){[void]$actualHashes.Add((Get-FileHash -LiteralPath $file.FullName -Algorithm SHA256).Hash.ToLowerInvariant())}
+foreach($entry in $files){if(-not $actualHashes.Contains($entry.sha256)){throw "Completed installer is missing declared input bytes: $($entry.path)"}}
 $bad=@(Get-ChildItem -LiteralPath $actual -Recurse -File|Where-Object {$_.Name -match '\.(schema|dict)\.yaml$|\.(pdb|gram|lua)$' -or $_.Name -eq 'essay.txt'})
 if($bad.Count){throw 'A forbidden file reached the completed installer.'}
 foreach($entry in $files|Where-Object {$_.path -like 'licenses/*' -or $_.path -in @('LICENSE.txt','LICENSE-DOCS','data/default.yaml')}){
@@ -126,7 +131,7 @@ foreach($variant in @('engine-r5-x64','engine-r5-x86','engine-n01-x64')){
   if(-not (Test-Path -LiteralPath $archive)){throw "Missing same-run assembled engine source: $variant"}
   Copy-Item -LiteralPath $archive -Destination (Join-Path $sourceParts "$variant-source.zip")
 }
-Copy-Item -LiteralPath (Join-Path $repository 'docs/SOURCES.md') -Destination $sourceParts
+Copy-Item -LiteralPath (Join-Path $payload 'SOURCES.md') -Destination $sourceParts
 $sourceArchive=Join-Path $release 'stellae-0.17.4.61052-source.zip'
 Compress-Archive -Path (Join-Path $sourceParts '*') -DestinationPath $sourceArchive -CompressionLevel Optimal
 Get-ChildItem -LiteralPath $release -File|Sort-Object Name|ForEach-Object{(Get-FileHash -LiteralPath $_.FullName -Algorithm SHA256).Hash.ToLowerInvariant()+'  '+$_.Name}|Set-Content -LiteralPath (Join-Path $release 'SHA256SUMS.txt') -Encoding ascii

@@ -575,13 +575,13 @@
     },
     {
       "path": "scripts/package/Prepare-Package.ps1",
-      "bytes": 10286,
-      "sha256": "285df27004e36913cdf88b14779592513f72d8adc81bc70d5505e080c894001f"
+      "bytes": 10886,
+      "sha256": "acde859be8b3831353b9fb1fc8feacb9b86b8789c91e137ff65cf95e25c1d154"
     },
     {
       "path": "scripts/package/index_payload.py",
-      "bytes": 2684,
-      "sha256": "4a5bd32e8efb3cb9abe0a5c7726a34ec602fa4fff0f05cc8440f8af467875ee0"
+      "bytes": 4577,
+      "sha256": "98d1db1b28b9d93d5ae55eb8e1ab67ac8649ce378ede131513e934f6ac87e309"
     },
     {
       "path": "scripts/package/render_installed_docs.py",
