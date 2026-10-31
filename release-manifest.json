@@ -9,6 +9,11 @@
   "sourceDescription": "See docs/SOURCES.md for pinned upstreams, modifications and shared resources.",
   "files": [
     {
+      "path": ".gitattributes",
+      "bytes": 8,
+      "sha256": "705fd4d6451a31d36b3df7de96f83f30ac976c9b4a6d1e51671d8e2f33e2d0da"
+    },
+    {
       "path": ".github/workflows/native.yml",
       "bytes": 7762,
       "sha256": "d30a024591d2c1ccc38f5ddcfdf8a7ab512f8ab67e2779e16dd83c49fc3dd15b"
@@ -140,8 +145,8 @@
     },
     {
       "path": "licenses/file-licenses.json",
-      "bytes": 33154,
-      "sha256": "b8fe8d8d95fcf871daf14d459470b6144874e7416a3e39253a68279b6c34da86"
+      "bytes": 33301,
+      "sha256": "4ba39bbb53a8710dd39afc5242878721dfa84015733b806ea39ba99e392179b8"
     },
     {
       "path": "licenses/native-dependencies/boost/LICENSE_1_0.txt",

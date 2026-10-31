@@ -259,6 +259,15 @@
   },
   "files": [
     {
+      "path": ".gitattributes",
+      "source_ids": [
+        "project-code"
+      ],
+      "references": [
+        "LICENSE"
+      ]
+    },
+    {
       "path": ".github/workflows/native.yml",
       "source_ids": [
         "project-code"
