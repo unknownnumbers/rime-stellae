@@ -62,10 +62,8 @@ foreach($name in @('rime-install-config.bat','start_service.bat','stop_service.b
 Copy-Item -LiteralPath (Join-Path $repository 'LICENSE') -Destination (Join-Path $payload 'LICENSE.txt')
 Copy-Item -LiteralPath (Join-Path $repository 'LICENSE-DOCS') -Destination $payload
 Copy-Item -LiteralPath (Join-Path $repository 'licenses') -Destination $payload -Recurse
-Copy-Item -LiteralPath (Join-Path $repository 'THIRD_PARTY_NOTICES.md') -Destination $payload
-Copy-Item -LiteralPath (Join-Path $repository 'docs/SOURCES.md') -Destination (Join-Path $payload 'SOURCES.md')
-$manual=@('README.md','README.en.md','README.zh-SC.md')|ForEach-Object{[IO.File]::ReadAllText((Join-Path $repository $_))}
-[IO.File]::WriteAllText((Join-Path $payload 'README.txt'),($manual -join "`n`n---`n`n"),[Text.UTF8Encoding]::new($false))
+& python (Join-Path $PSScriptRoot 'render_installed_docs.py') --repository $repository --output-directory $payload --ref $env:GITHUB_SHA
+if($LASTEXITCODE){throw 'Installed documentation rendering failed.'}
 foreach($name in @('install.nsi','InstallProfilePolicy.ps1','NativeProfileSnapshot.ps1','stellae_identity.nsh')){
   Copy-Item -LiteralPath (Join-Path $repository "installer/$name") -Destination $payload
 }

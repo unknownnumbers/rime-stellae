@@ -522,7 +522,7 @@
       "sha256": "f9c375a1be4a41f7b70301dd83c91cb89e41567478859b77eef375a52d782505",
       "git_blob_sha1": "ecbc0593737be657aef92e3adcf3bcbd6fdb812e",
       "url": "https://github.com/facebook/zstd/blob/v1.5.6/COPYING",
-      "scope_note": "Zstandard1.5.6 upstream license selection statement.",
+      "scope_note": "Original alternative GPLv2 license text; the BSD license option is retained separately.",
       "saved_representation": "Original source bytes retained without edits."
     },
     {

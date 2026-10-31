@@ -1,6 +1,8 @@
 name: Build and validate Stellae installer
 
 on:
+  push:
+    branches: ['ci/stellae-*']
   workflow_dispatch:
 
 permissions:

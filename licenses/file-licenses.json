@@ -1155,6 +1155,15 @@
       ]
     },
     {
+      "path": "scripts/package/render_installed_docs.py",
+      "source_ids": [
+        "project-code"
+      ],
+      "references": [
+        "LICENSE"
+      ]
+    },
+    {
       "path": "scripts/package/verify_pe.py",
       "source_ids": [
         "project-code"

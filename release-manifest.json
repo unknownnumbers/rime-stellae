@@ -10,8 +10,8 @@
   "files": [
     {
       "path": ".github/workflows/native.yml",
-      "bytes": 7723,
-      "sha256": "245e75b30315d9c4c12416a6846f6807663002ce2327706b800b707a570b1958"
+      "bytes": 7762,
+      "sha256": "d30a024591d2c1ccc38f5ddcfdf8a7ab512f8ab67e2779e16dd83c49fc3dd15b"
     },
     {
       "path": ".github/workflows/verify.yml",
@@ -140,8 +140,8 @@
     },
     {
       "path": "licenses/file-licenses.json",
-      "bytes": 32981,
-      "sha256": "fb308cc53dc2494d772a1a02e8b7f8ca17fc9ff152756877c8a8e642841daf2d"
+      "bytes": 33154,
+      "sha256": "b8fe8d8d95fcf871daf14d459470b6144874e7416a3e39253a68279b6c34da86"
     },
     {
       "path": "licenses/native-dependencies/boost/LICENSE_1_0.txt",
@@ -405,8 +405,8 @@
     },
     {
       "path": "licenses/third-party-source-manifest.json",
-      "bytes": 39138,
-      "sha256": "f0efc99a33e3cc283cd3ba62cdb9aeebdf201ca676ef47113f4c659d06c33505"
+      "bytes": 39173,
+      "sha256": "03f47c357e109b4bd8e85d97c81200bd3faa4f99c870fee9cbe4ca5a9434d9bc"
     },
     {
       "path": "native/engine/librime-lua-n01.patch",
@@ -570,13 +570,18 @@
     },
     {
       "path": "scripts/package/Prepare-Package.ps1",
-      "bytes": 10531,
-      "sha256": "f7835bfbad7cae2cecc85c350edc0d482cf875aa29cc31417d73acb68a8f3587"
+      "bytes": 10286,
+      "sha256": "285df27004e36913cdf88b14779592513f72d8adc81bc70d5505e080c894001f"
     },
     {
       "path": "scripts/package/index_payload.py",
       "bytes": 2684,
       "sha256": "4a5bd32e8efb3cb9abe0a5c7726a34ec602fa4fff0f05cc8440f8af467875ee0"
+    },
+    {
+      "path": "scripts/package/render_installed_docs.py",
+      "bytes": 4139,
+      "sha256": "f2efe26d52f84072100074277f091c5eba299ef9db40003c8ce81defd2608e81"
     },
     {
       "path": "scripts/package/verify_pe.py",
