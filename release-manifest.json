@@ -98,12 +98,12 @@
     {
       "path": "docs/PC.md",
       "bytes": 892,
-      "sha256": "43624a5be428073d4e23f5e264476113b6e5051d021a1b8dbcd1b6cd08a8c820"
+      "sha256": "f5f1f44bdd3439f1f4af373f0785df31fba211aa174802117be93595172bf532"
     },
     {
       "path": "docs/SOURCES.md",
       "bytes": 1127,
-      "sha256": "b0b7020174ec8a7f3f7f4fc69e15b4153501cd267986970575d4cecb4dfffeba"
+      "sha256": "e41220e4b922f5046feac508e4493ca67935ab2f97ed362deb35725ad9a475c3"
     },
     {
       "path": "installer/BundleData.ps1",
@@ -123,7 +123,7 @@
     {
       "path": "installer/bundle-inputs.json",
       "bytes": 1118,
-      "sha256": "fe7a5fecec98481e02a6e09121a4d1fe49682e6c3edec4c09c865a04d01a6c9d"
+      "sha256": "da6a516c4a17e6a6f6fa7eb467912e81804afc696ea4f3a1e7092f7ee8b0a58f"
     },
     {
       "path": "installer/bundle.nsi",

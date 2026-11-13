@@ -16,7 +16,7 @@
   },
   "schemes": {
     "url": "https://github.com/unknownnumbers/RymCp-IME/releases/download/v2026.11.14/rymcp-2026.11.14-stellae-schemes.zip",
-    "sha256": "afb37e816902df351eb462011e647e6c178369f44324451b4efb252f235f586a",
-    "commit": "ce7df340a1c24c346734c8b1bdada73f2c0a2b0c"
+    "sha256": "b90e4ad34fe54aab39737ae35a5fe27c4964c91125cbbbaaab030edb0cbfd812",
+    "commit": "0fa76e67c3e7d71a9e766c845153173ddea378f0"
   }
 }

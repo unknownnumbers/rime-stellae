@@ -2,7 +2,7 @@
 
 The frontend remains `0.17.4.61052`. The original frontend installer and complete corresponding source archive are pinned by `installer/bundle-inputs.json`, using the retained `v0.17.4.61052` release.
 
-The integrated package adds the fixed RymCp source profile from commit `ce7df340a1c24c346734c8b1bdada73f2c0a2b0c`, using the scheme archive and SHA256 recorded in `installer/bundle-inputs.json`. Scheme sources and their original notices are at [RymCp](https://github.com/unknownnumbers/RymCp-IME/tree/ce7df340a1c24c346734c8b1bdada73f2c0a2b0c).
+The integrated package adds the fixed RymCp source profile from commit `0fa76e67c3e7d71a9e766c845153173ddea378f0`, using the scheme archive and SHA256 recorded in `installer/bundle-inputs.json`. Scheme sources and their original notices are at [RymCp](https://github.com/unknownnumbers/RymCp-IME/tree/0fa76e67c3e7d71a9e766c845153173ddea378f0).
 
 The integrated source archive includes the frontend base source archive, current bundle-project source, the exact scheme source archive and the input manifest. Native upstream versions, patches, assets and hashes are recorded in `native/source-manifest.json`.
 
