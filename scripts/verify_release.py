@@ -138,7 +138,7 @@ def main():
             'date': '2026-11-14',
             'kind': 'frontend-source-and-bundle-packaging',
             'frontendVersion': '0.17.4.61052',
-            'bundleVersion': '2026.11.14',
+            'bundleVersion': '2026.11.14.1',
             'nativeBinariesIncluded': False,
             'personalLearningIncluded': False,
             'productionInputSchemesIncluded': False,

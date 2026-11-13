@@ -2,7 +2,7 @@
 
 下載整合安裝器後依精靈安裝. 前端版本為 `0.17.4.61052`, x64 安裝同時提供 32-bit 應用所需支援, Win32 安裝使用對應引擎.
 
-整合包附通用 RymCp 方案. 新裝預設 SC 輸出, 中文橫排 5 項、智能英文直排 6 項, 保留 TC/SC 切換. 方案功能與 DLC 安裝詳見 [RymCp 使用說明](https://github.com/unknownnumbers/RymCp-IME/blob/0fa76e67c3e7d71a9e766c845153173ddea378f0/docs/PC.md).
+整合包附通用 RymCp 方案. 新裝預設 SC 輸出, 中文橫排 5 項、智能英文直排 6 項, 保留 TC/SC 切換. 方案功能與 DLC 安裝詳見 [RymCp 使用說明](https://github.com/unknownnumbers/RymCp-IME/blob/6eb7aaebc29ca7581f88468f18351284932b51ec/docs/PC.md).
 
 升級保留用戶自訂和學習資料. 自訂檔案可能覆蓋新版共享預設, 請按衝突報告對照合併. 共享資源依安裝清單更新及卸載, 未知或已修改檔案保留.
 
