@@ -1,7 +1,9 @@
 {
   "format": "stellae-source-release-v1",
-  "date": "2026-10-31",
-  "kind": "frontend-source-and-shared-resources",
+  "date": "2026-11-14",
+  "kind": "frontend-source-and-bundle-packaging",
+  "frontendVersion": "0.17.4.61052",
+  "bundleVersion": "2026.11.14",
   "nativeBinariesIncluded": false,
   "personalLearningIncluded": false,
   "productionInputSchemesIncluded": false,
@@ -12,6 +14,11 @@
       "path": ".gitattributes",
       "bytes": 8,
       "sha256": "705fd4d6451a31d36b3df7de96f83f30ac976c9b4a6d1e51671d8e2f33e2d0da"
+    },
+    {
+      "path": ".github/workflows/bundle.yml",
+      "bytes": 4331,
+      "sha256": "cc816a92c24d51aaec5381676d4b572e01bfe3c6fe8f9ea5a38cb46fe027c3b6"
     },
     {
       "path": ".github/workflows/native.yml",
@@ -25,8 +32,8 @@
     },
     {
       "path": ".gitignore",
-      "bytes": 79,
-      "sha256": "443b1421831b19521aa64c4740d89c34e4ea6280033fa25d4873d6f6abab0871"
+      "bytes": 89,
+      "sha256": "72beab7fe7bc701eeea96ab90aee8dd537641812187b937a99ff4f43eed13f72"
     },
     {
       "path": "LICENSE",
@@ -40,28 +47,28 @@
     },
     {
       "path": "README.en.md",
-      "bytes": 2851,
-      "sha256": "3ff2ba09d3027677dc364e6ac36d6d805a0be93663a93bfef856376d1cc3dbab"
+      "bytes": 1803,
+      "sha256": "25d51b9bac4cc003f98b7bb40380d29bfc6badd68a5ccaf29cc371a70e20aabd"
     },
     {
       "path": "README.md",
-      "bytes": 2417,
-      "sha256": "fa316e7f64acfe793f72da927487a1206a45859ccc90d1cf6de29dd9a4cc4237"
+      "bytes": 1497,
+      "sha256": "28852e60e90a029d4db39831ffde772f75fbd3680dad8bc8fa04ee51dd1aa4ed"
     },
     {
       "path": "README.zh-SC.md",
-      "bytes": 2411,
-      "sha256": "cc0fb80ae44aed5d478bb17b614e592acac6699cd3df21b787a919acebafd9aa"
+      "bytes": 1509,
+      "sha256": "edb725206b4f72c95df2191b6a524ca61d9f1d6a7ba09307e92168c0fb813769"
     },
     {
       "path": "THIRD_PARTY_NOTICES.md",
-      "bytes": 3492,
-      "sha256": "78f2f6f60e6a19895f224274263969646c9370472607dcc908926f912cb12fe7"
+      "bytes": 1004,
+      "sha256": "c857c31fdc4ced1c27ce1df68490812fae32d57dc9c7e985fb35ae016818006c"
     },
     {
       "path": "TODO.md",
-      "bytes": 536,
-      "sha256": "66ec45645a63dd974152e8294609b8216c2b9f256148b87aa6aae32c5048e77c"
+      "bytes": 255,
+      "sha256": "4df17d261de30036b6d67cf4996a629cbb1f8db05c6f17980b7464285e8b3afe"
     },
     {
       "path": "assets/icon/README.md",
@@ -85,18 +92,23 @@
     },
     {
       "path": "docs/BUILD.md",
-      "bytes": 5277,
-      "sha256": "6806d3a14b59430850acccc1df3248b1be77832b29b2631546af81be981ee4dd"
+      "bytes": 1092,
+      "sha256": "5eb10f7634bc382d7a306f1250d1be9ee234c49c160677cf7430fd986a73e5fb"
     },
     {
       "path": "docs/PC.md",
-      "bytes": 2774,
-      "sha256": "30af4c246befc238ab065517d961aa2ec67db17964628f6feb5fff7a718efb70"
+      "bytes": 892,
+      "sha256": "43624a5be428073d4e23f5e264476113b6e5051d021a1b8dbcd1b6cd08a8c820"
     },
     {
       "path": "docs/SOURCES.md",
-      "bytes": 6612,
-      "sha256": "926c5ee0f06c40f5ebd177f72996049c2a3d5921cf5594ffe37599b1e7021838"
+      "bytes": 1127,
+      "sha256": "b0b7020174ec8a7f3f7f4fc69e15b4153501cd267986970575d4cecb4dfffeba"
+    },
+    {
+      "path": "installer/BundleData.ps1",
+      "bytes": 6914,
+      "sha256": "3a0b27ba7b322804837d366abc75ffa5f741fd6c42b450b63becdcb2c7963bb5"
     },
     {
       "path": "installer/InstallProfilePolicy.ps1",
@@ -109,14 +121,24 @@
       "sha256": "a08e1a573d5aa2598a8110c72771e720f6cd59bad0efed92da0e508f0fd59dd2"
     },
     {
+      "path": "installer/bundle-inputs.json",
+      "bytes": 1118,
+      "sha256": "fe7a5fecec98481e02a6e09121a4d1fe49682e6c3edec4c09c865a04d01a6c9d"
+    },
+    {
+      "path": "installer/bundle.nsi",
+      "bytes": 87,
+      "sha256": "bd70c5aac3fd5c299e34f28d6d9fd4072e8572640dbaf024c4f7947ba87caa2b"
+    },
+    {
       "path": "installer/default.yaml",
       "bytes": 575,
       "sha256": "42066a76082d028dea58e27691be9b4c3423f9b8aa4c882a8463462d8f3b0e26"
     },
     {
       "path": "installer/install.nsi",
-      "bytes": 19765,
-      "sha256": "7203118842de50f9d62e9c66df4b9b7c581160ab8b467d406454d457a4c107cb"
+      "bytes": 24037,
+      "sha256": "108924851f14478b0231b910af905c0b0d002de6fcb0cb9ec42a4b1fa54f38c7"
     },
     {
       "path": "installer/stellae_identity.nsh",
@@ -135,8 +157,8 @@
     },
     {
       "path": "licenses/README.md",
-      "bytes": 1138,
-      "sha256": "f3a865e3c58e3e3833ca8337c453c3398b1ae1d59060fe47718b0372862b62e2"
+      "bytes": 480,
+      "sha256": "6ff531a3f104e987c830f4528c4bf0260d19d236c4d7b2d5f0c6c3a66c1cfcf7"
     },
     {
       "path": "licenses/build_index.py",
@@ -145,8 +167,8 @@
     },
     {
       "path": "licenses/file-licenses.json",
-      "bytes": 33301,
-      "sha256": "4ba39bbb53a8710dd39afc5242878721dfa84015733b806ea39ba99e392179b8"
+      "bytes": 39871,
+      "sha256": "1d149c13d51c6e6cc217f15eaf542d971bfe07f9d6b73956a31d9278569cb981"
     },
     {
       "path": "licenses/native-dependencies/boost/LICENSE_1_0.txt",
@@ -459,6 +481,31 @@
       "sha256": "f1e77d90461836b54d314d4c1fd31244c6567ed739db47f6f7a2e087ab0936b4"
     },
     {
+      "path": "native/tests/installer/Test-BundleData.ps1",
+      "bytes": 8917,
+      "sha256": "70bf1e050bd0145fb5a55fdf95f83d35150906d0e9b2f844ca047aeed3dd6d9c"
+    },
+    {
+      "path": "native/tests/installer/Test-BundleInstaller.ps1",
+      "bytes": 17484,
+      "sha256": "3b3dccb4c8e0d483e4f4d29de13e984d27da9ec890f7f83bf2ea79d194462659"
+    },
+    {
+      "path": "native/tests/installer/Test-BundlePresetPriority.ps1",
+      "bytes": 13107,
+      "sha256": "87d851ff2f7a928360353e754ecc880505eefbd7c1f30746427826b19e9ad107"
+    },
+    {
+      "path": "native/tests/installer/Test-BundleShared.ps1",
+      "bytes": 1846,
+      "sha256": "f056757f7d6852cd66df9cd0d67a35a8669ce0d23e21823a38437760c20ac8f2"
+    },
+    {
+      "path": "native/tests/installer/Test-InstalledBundleReady.ps1",
+      "bytes": 5525,
+      "sha256": "d12e48befa0d272d1641418d573acbfe0902b3104b655102aa98d5357f032716"
+    },
+    {
       "path": "native/tests/installer/Test-InstallerPolicy.ps1",
       "bytes": 14814,
       "sha256": "39997a074be1bc79aa83b183a8ad32fe32a8d333153965e3463977f42dd3715e"
@@ -574,9 +621,19 @@
       "sha256": "e557c70a19fd4375d64db7c57f4425e1fddec5d9c6d0f8d15f69b25ec22f4f02"
     },
     {
+      "path": "scripts/package/Build-Bundle.ps1",
+      "bytes": 5246,
+      "sha256": "8e63fe1cc77ed0c728c094f8dfdefdff3392106cf26339ccefa1db987d1926cd"
+    },
+    {
       "path": "scripts/package/Prepare-Package.ps1",
       "bytes": 10886,
       "sha256": "acde859be8b3831353b9fb1fc8feacb9b86b8789c91e137ff65cf95e25c1d154"
+    },
+    {
+      "path": "scripts/package/index_bundle.py",
+      "bytes": 6617,
+      "sha256": "88da092417b060082d4ec85c38aa04c4562e9bee91d2f61d5c35929928df5bec"
     },
     {
       "path": "scripts/package/index_payload.py",
@@ -584,9 +641,19 @@
       "sha256": "98d1db1b28b9d93d5ae55eb8e1ab67ac8649ce378ede131513e934f6ac87e309"
     },
     {
+      "path": "scripts/package/prepare_bundle.py",
+      "bytes": 11623,
+      "sha256": "29282f3ae005e729e543ae05839f586f368123eb7b9d4e6d4907a165c15698c0"
+    },
+    {
       "path": "scripts/package/render_installed_docs.py",
       "bytes": 4139,
       "sha256": "f2efe26d52f84072100074277f091c5eba299ef9db40003c8ce81defd2608e81"
+    },
+    {
+      "path": "scripts/package/verify_bundle.py",
+      "bytes": 2954,
+      "sha256": "344ee108f510b664aa0b0e7b18d512fa92728d3c174a47ab5617a8fd9f214ad4"
     },
     {
       "path": "scripts/package/verify_pe.py",
@@ -595,8 +662,8 @@
     },
     {
       "path": "scripts/verify_release.py",
-      "bytes": 7867,
-      "sha256": "74cdbbdc5fcec4517cfb73aaffbef65cb9c6efae84213ea404bf52d130e5980a"
+      "bytes": 7957,
+      "sha256": "51fa15ae110423a5a8638fe1799ac2758c9a110a18c36987ab264ff91c0cfe48"
     }
   ]
 }

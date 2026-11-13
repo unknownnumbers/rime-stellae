@@ -8,6 +8,21 @@
 
 Unicode true
 Var ProfilePolicyPowerShell
+!ifdef STELLAE_BUNDLE
+Var BundleTraceFile
+!endif
+!macro BundleTrace TEXT
+!ifdef STELLAE_BUNDLE
+  Push $R8
+  ${If} $BundleTraceFile != ""
+    FileOpen $R8 "$BundleTraceFile" a
+    FileSeek $R8 0 END
+    FileWrite $R8 "${TEXT}$\r$\n"
+    FileClose $R8
+  ${EndIf}
+  Pop $R8
+!endif
+!macroend
 
 ;--------------------------------
 ; General
@@ -24,10 +39,18 @@ Var ProfilePolicyPowerShell
 !define REG_UNINST_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\${STELLAE_NAMESPACE}"
 
 ; The name of the installer
+!ifdef STELLAE_BUNDLE
+Name "${STELLAE_DISPLAY_ZH} ${BUNDLE_VERSION}"
+!else
 Name "${STELLAE_DISPLAY_ZH} ${WEASEL_VERSION}"
+!endif
 
 ; The file to write
+!ifdef STELLAE_BUNDLE
+OutFile "archives\stellae-rymcp-${BUNDLE_VERSION}-installer.exe"
+!else
 OutFile "archives\${STELLAE_BINARY_BASE}-${PRODUCT_VERSION}-installer.exe"
+!endif
 
 VIProductVersion "${WEASEL_VERSION}.${WEASEL_BUILD}"
 VIAddVersionKey /LANG=2052 "ProductName" "${STELLAE_DISPLAY_ZH}"
@@ -51,7 +74,11 @@ RequestExecutionLevel admin
 !insertmacro MUI_PAGE_LICENSE "LICENSE.txt"
 !insertmacro MUI_PAGE_DIRECTORY
 !insertmacro MUI_PAGE_INSTFILES
+!ifdef STELLAE_BUNDLE
+!define MUI_FINISHPAGE_TEXT "$(BUNDLE_READY)"
+!else
 !define MUI_FINISHPAGE_TEXT "$(NO_SCHEMAS)"
+!endif
 !define MUI_FINISHPAGE_RUN
 !define MUI_FINISHPAGE_RUN_TEXT "$(OPEN_USER_FOLDER)"
 !define MUI_FINISHPAGE_RUN_FUNCTION OpenUserFolder
@@ -70,6 +97,9 @@ RequestExecutionLevel admin
 
 !insertmacro MUI_LANGUAGE "TradChinese"
 LangString NO_SCHEMAS ${LANG_TRADCHINESE} "本安裝包未附輸入方案. 請添加自己的方案後重新部署. 安裝不會自動下載方案或搬入其他輸入法資料."
+!ifdef STELLAE_BUNDLE
+LangString BUNDLE_READY ${LANG_TRADCHINESE} "已安裝 RymCp 方案. 既有使用者配置優先並保持原樣. 若新功能未出現, 請查看程式資料夾的 scheme-status.json 及使用說明."
+!endif
 LangString OPEN_USER_FOLDER ${LANG_TRADCHINESE} "打開使用者資料夾"
 LangString DISPLAYNAME ${LANG_TRADCHINESE} "${STELLAE_DISPLAY_ZH}輸入法"
 LangString LNKFORMANUAL ${LANG_TRADCHINESE} "【${STELLAE_DISPLAY_ZH}】說明書"
@@ -89,6 +119,9 @@ LangString AUTOCHKUPDATE ${LANG_TRADCHINESE} "自動檢查版本更新？"
 
 !insertmacro MUI_LANGUAGE "SimpChinese"
 LangString NO_SCHEMAS ${LANG_SIMPCHINESE} "本安装包未附输入方案. 请添加自己的方案后重新部署. 安装不会自动下载方案或搬入其他输入法资料."
+!ifdef STELLAE_BUNDLE
+LangString BUNDLE_READY ${LANG_SIMPCHINESE} "已安装 RymCp 方案. 已有用户配置优先并保持原样. 若新功能未出现, 请查看程序文件夹的 scheme-status.json 及使用说明."
+!endif
 LangString OPEN_USER_FOLDER ${LANG_SIMPCHINESE} "打开用户文件夹"
 LangString DISPLAYNAME ${LANG_SIMPCHINESE} "${STELLAE_DISPLAY_ZH}输入法"
 LangString LNKFORMANUAL ${LANG_SIMPCHINESE} "【${STELLAE_DISPLAY_ZH}】说明书"
@@ -108,6 +141,9 @@ LangString AUTOCHKUPDATE ${LANG_SIMPCHINESE} "自动检查版本更新？"
 
 !insertmacro MUI_LANGUAGE "English"
 LangString NO_SCHEMAS ${LANG_ENGLISH} "No input schemes are bundled. Add your own scheme, then deploy. Installation does not download schemes or copy data from other input methods."
+!ifdef STELLAE_BUNDLE
+LangString BUNDLE_READY ${LANG_ENGLISH} "RymCp schemes are installed. Existing user configuration takes precedence and is preserved. If new features do not appear, see scheme-status.json in the program folder and the user guide."
+!endif
 LangString OPEN_USER_FOLDER ${LANG_ENGLISH} "Open the user folder"
 LangString DISPLAYNAME ${LANG_ENGLISH} "${STELLAE_PRODUCT_NAME}"
 LangString LNKFORMANUAL ${LANG_ENGLISH} "${STELLAE_PRODUCT_NAME} Manual"
@@ -128,6 +164,15 @@ LangString AUTOCHKUPDATE ${LANG_ENGLISH} "Automatically check for updates?"
 ;--------------------------------
 
 Function .onInit
+!ifdef STELLAE_BUNDLE
+  ReadEnvStr $BundleTraceFile "GITHUB_ACTIONS"
+  ${If} $BundleTraceFile == "true"
+    ReadEnvStr $BundleTraceFile "STELLAE_BUNDLE_TEST_TRACE"
+  ${Else}
+    StrCpy $BundleTraceFile ""
+  ${EndIf}
+  !insertmacro BundleTrace "init"
+!endif
   SetRegView 32
   ${If} ${IsNativeARM64}
     Abort "This build supports x64 and x86 Windows."
@@ -177,8 +222,10 @@ skip:
   IfErrors profile_capture_failed
   IntCmp $R4 0 profile_capture_ready
 profile_capture_failed:
+  !insertmacro BundleTrace "profile-capture-failed exit=$R4"
   Abort "Could not read the current Windows input settings. No installation changes were made."
 profile_capture_ready:
+  !insertmacro BundleTrace "profile-capture-ready"
   ReadRegStr $R0 HKLM \
   "Software\Microsoft\Windows\CurrentVersion\Uninstall\${STELLAE_NAMESPACE}" \
   "UninstallString"
@@ -197,9 +244,12 @@ uninst:
   IfFileExists "$R1\WeaselServer.exe" 0 upgrade_own_directory
   Abort "The registered directory also contains Weasel. Its files have been preserved."
 upgrade_own_directory:
+  !insertmacro BundleTrace "old-installation-removal"
+!ifndef STELLAE_BUNDLE
   IfFileExists $R1\data\*.* 0 call_uninstaller
   CreateDirectory $TEMP\${STELLAE_BINARY_BASE}-backup
   CopyFiles $R1\data\*.* $TEMP\${STELLAE_BINARY_BASE}-backup
+!endif
 
 call_uninstaller:
   ExecWait '"$R1\${STELLAE_SERVER_EXE}" /quit'
@@ -217,9 +267,11 @@ call_uninstaller:
   ; recover back to 32bit view
   SetRegView 32
   ; Remove files and uninstaller
+!ifndef STELLAE_BUNDLE
   Delete  "$R1\data\opencc\*.*"
   Delete  "$R1\data\preview\*.*"
   Delete  "$R1\data\*.*"
+!endif
   RMDir /r "$R1\licenses"
   Delete  "$R1\*.*"
   RMDir   "$R1\data\opencc"
@@ -234,6 +286,7 @@ call_uninstaller:
   Sleep 800
 
 done:
+  !insertmacro BundleTrace "init-ready"
 FunctionEnd
 
 ; Registry key to check for directory (so if you install again, it will
@@ -250,6 +303,7 @@ Section "${STELLAE_PRODUCT_NAME}"
   IfFileExists "$INSTDIR\WeaselServer.exe" 0 own_directory
   Abort "This directory belongs to Weasel. Select a separate directory."
 own_directory:
+  !insertmacro BundleTrace "program-copy-start"
   ; Write the new installation path into the registry
   ; redirect on 64 bit system
   ; HKLM ${STELLAE_REG_KEY} "InstallDir" "$INSTDIR"
@@ -265,10 +319,12 @@ own_directory:
   ; Set output path to the installation directory.
   SetOutPath $INSTDIR
 
+!ifndef STELLAE_BUNDLE
   IfFileExists $TEMP\${STELLAE_BINARY_BASE}-backup\*.* 0 program_files
   CreateDirectory $INSTDIR\data
   CopyFiles $TEMP\${STELLAE_BINARY_BASE}-backup\*.* $INSTDIR\data
   RMDir /r $TEMP\${STELLAE_BINARY_BASE}-backup
+!endif
 
 program_files:
   File "LICENSE.txt"
@@ -333,6 +389,7 @@ program_files:
   ${Endif}
 
   File "${STELLAE_SETUP_EXE}"
+!ifndef STELLAE_BUNDLE
   ; shared data files
   SetOutPath $INSTDIR\data
   File "data\default.yaml"
@@ -347,10 +404,22 @@ program_files:
   ; images
   SetOutPath $INSTDIR\data\preview
   File "data\preview\*.png"
+!else
+  SetOutPath "$INSTDIR\scheme-notices"
+  File /r "scheme-notices\*"
+  SetOutPath "$INSTDIR"
+  File "BundleData.ps1"
+  File "bundle-inputs.json"
+  File "bundle-provenance.json"
+  File "base-package-license-index.json"
+  SetOutPath "$PLUGINSDIR\shared-payload"
+  File /r "shared-payload\*"
+!endif
 
   SetOutPath $INSTDIR
 
   ; /T selects the Traditional installation profile (HK).
+  !insertmacro BundleTrace "program-copy-ready"
   StrCpy $R2 "/i"
   ; Retain this product's registered language when upgrading silently.
   ReadRegDWORD $R3 HKCU "${STELLAE_REG_KEY}" "Hant"
@@ -374,20 +443,28 @@ program_files:
   IfErrors profile_setup_failed
   IntCmp $R4 0 profile_setup_ready
 profile_setup_failed:
+  !insertmacro BundleTrace "profile-setup-failed exit=$R4"
   Abort "Rime stellae registration could not be completed."
 profile_setup_ready:
+  !insertmacro BundleTrace "profile-setup-ready"
   ClearErrors
   ExecWait '"$ProfilePolicyPowerShell" -NoProfile -NonInteractive -ExecutionPolicy Bypass -File "$PLUGINSDIR\profile-policy\InstallProfilePolicy.ps1" -Action Finalize -StateFile "$PLUGINSDIR\profile-policy\input-before.json"' $R4
   IfErrors profile_placement_failed
   IntCmp $R4 0 profile_placement_ready
 profile_placement_failed:
+  !insertmacro BundleTrace "profile-placement-failed exit=$R4"
   Abort "Rime stellae was registered, but Windows input settings could not be retained."
 profile_placement_ready:
+  !insertmacro BundleTrace "profile-placement-ready"
 
   ; Write the uninstall keys for Windows
   WriteRegStr HKLM "${REG_UNINST_KEY}" "DisplayName" "$(DISPLAYNAME)"
   WriteRegStr HKLM "${REG_UNINST_KEY}" "DisplayIcon" '"$INSTDIR\${STELLAE_SERVER_EXE}"'
+!ifdef STELLAE_BUNDLE
+  WriteRegStr HKLM "${REG_UNINST_KEY}" "DisplayVersion" "${BUNDLE_VERSION} (frontend ${WEASEL_VERSION}.${WEASEL_BUILD})"
+!else
   WriteRegStr HKLM "${REG_UNINST_KEY}" "DisplayVersion" "${WEASEL_VERSION}.${WEASEL_BUILD}"
+!endif
   WriteRegStr HKLM "${REG_UNINST_KEY}" "UninstallString" '"$INSTDIR\uninstall.exe"'
   WriteRegStr HKLM "${REG_UNINST_KEY}" "Publisher" "${STELLAE_PRODUCT_NAME} contributors"
   WriteRegStr HKLM "${REG_UNINST_KEY}" "URLInfoAbout" "https://github.com/unknownnumbers/rime-stellae"
@@ -396,8 +473,31 @@ profile_placement_ready:
   WriteRegDWORD HKLM "${REG_UNINST_KEY}" "NoRepair" 1
   WriteUninstaller "$INSTDIR\uninstall.exe"
 
-  ; Deploy an empty scheme list without opening an empty selection dialog.
+!ifdef STELLAE_BUNDLE
+  ClearErrors
+  ExecWait '"$ProfilePolicyPowerShell" -NoProfile -NonInteractive -ExecutionPolicy Bypass -File "$INSTDIR\BundleData.ps1" -Action Install -SharedDirectory "$INSTDIR\data" -PayloadDirectory "$PLUGINSDIR\shared-payload" -ReportFile "$INSTDIR\scheme-status.json"' $R4
+  IfErrors bundle_install_failed
+  IntCmp $R4 0 bundle_install_ready
+bundle_install_failed:
+  !insertmacro BundleTrace "shared-helper-failed exit=$R4"
+  Abort "Bundled scheme installation failed. Existing user data was preserved."
+bundle_install_ready:
+  !insertmacro BundleTrace "shared-helper-ready"
+!endif
+  ; Deploy the installed shared configuration without a selection dialog.
+!ifdef STELLAE_BUNDLE
+  ClearErrors
+  ExecWait '"$INSTDIR\${STELLAE_DEPLOYER_EXE}" /deploy' $R4
+  IfErrors bundle_deploy_failed
+  IntCmp $R4 0 bundle_deploy_ready
+bundle_deploy_failed:
+  !insertmacro BundleTrace "deploy-failed exit=$R4"
+  Abort "Scheme deployment did not complete. Existing user data was preserved."
+bundle_deploy_ready:
+  !insertmacro BundleTrace "deploy-ready"
+!else
   ExecWait '"$INSTDIR\${STELLAE_DEPLOYER_EXE}" /deploy'
+!endif
 
   ; don't redirect on 64 bit system for auto run setting
   ${If} ${IsNativeARM64}
@@ -417,6 +517,7 @@ profile_placement_ready:
   ; Prompt reboot
   StrCmp $0 "Upgrade" 0 +2
   SetRebootFlag true
+  !insertmacro BundleTrace "install-ready"
 
 SectionEnd
 
@@ -465,9 +566,21 @@ uninstall_own_directory:
 
   ; Remove files and uninstaller
   SetOutPath $TEMP
+!ifdef STELLAE_BUNDLE
+  StrCpy $ProfilePolicyPowerShell "$SYSDIR\WindowsPowerShell\v1.0\powershell.exe"
+  ${If} ${RunningX64}
+    StrCpy $ProfilePolicyPowerShell "$WINDIR\Sysnative\WindowsPowerShell\v1.0\powershell.exe"
+  ${EndIf}
+  ExecWait '"$ProfilePolicyPowerShell" -NoProfile -NonInteractive -ExecutionPolicy Bypass -File "$INSTDIR\BundleData.ps1" -Action Uninstall -SharedDirectory "$INSTDIR\data"' $R4
+  IntCmp $R4 0 bundle_uninstall_ready
+  Abort "Could not safely remove managed shared resources. The files were preserved."
+bundle_uninstall_ready:
+  RMDir /r "$INSTDIR\scheme-notices"
+!else
   Delete  "$INSTDIR\data\opencc\*.*"
   Delete  "$INSTDIR\data\preview\*.*"
   Delete  "$INSTDIR\data\*.*"
+!endif
   RMDir /r "$INSTDIR\licenses"
   Delete  "$INSTDIR\*.*"
   RMDir  "$INSTDIR\data\opencc"

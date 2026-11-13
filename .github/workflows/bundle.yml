@@ -1,0 +1,78 @@
+name: Build and validate RymCp bundle
+
+on:
+  push:
+    branches: ['release/2026.11.14']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    shell: pwsh
+    working-directory: frontend
+
+jobs:
+  bundle:
+    runs-on: windows-2022
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: frontend
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Check source and fixed scheme input
+        id: inputs
+        run: |
+          python -m pip install PyYAML==6.0.2
+          python scripts/verify_release.py --require-yaml
+          if($LASTEXITCODE){throw 'Source inventory failed'}
+          $spec=Get-Content -LiteralPath installer/bundle-inputs.json -Raw|ConvertFrom-Json
+          if(-not $spec.schemes -or $spec.schemes.commit -notmatch '^[0-9a-f]{40}$'){throw 'The source must pin the scheme commit'}
+          "scheme_commit=$($spec.schemes.commit)" >> $env:GITHUB_OUTPUT
+      - uses: actions/checkout@v4
+        with:
+          repository: unknownnumbers/RymCp-IME
+          ref: ${{ steps.inputs.outputs.scheme_commit }}
+          path: scheme-validation
+          persist-credentials: false
+      - name: Test shared file preservation with synthetic sources
+        run: ./native/tests/installer/Test-BundleData.ps1 -OutputDirectory (Join-Path $env:RUNNER_TEMP 'shared-policy')
+      - name: Compile and extract the dated installer
+        run: ./scripts/package/Build-Bundle.ps1 -OutputDirectory (Join-Path $env:RUNNER_TEMP 'bundle')
+      - name: Test actual installation, shared-only input, upgrades and uninstall
+        run: ./native/tests/installer/Test-BundleInstaller.ps1 -PackageDirectory (Join-Path $env:RUNNER_TEMP 'bundle') -SchemeSource (Join-Path $env:GITHUB_WORKSPACE 'scheme-validation') -OutputDirectory (Join-Path $env:RUNNER_TEMP 'installer-validation')
+      - name: Record finite release validation
+        run: |
+          $checks=@((Join-Path $env:RUNNER_TEMP 'shared-policy/result.json'),(Join-Path $env:RUNNER_TEMP 'installer-validation/result.json'),(Join-Path $env:RUNNER_TEMP 'installer-validation/installed-ready/result.json'),(Join-Path $env:RUNNER_TEMP 'profile-policy/win11-equivalent-policy-result.json'))
+          foreach($path in $checks){$report=Get-Content -LiteralPath $path -Raw|ConvertFrom-Json;if(-not $report.passed){throw 'A required validation failed'}}
+          $release=Join-Path $env:RUNNER_TEMP 'bundle/release'
+          [ordered]@{passed=$true;bundleVersion='2026.11.14';frontendVersion='0.17.4.61052';sourceRef=$env:GITHUB_SHA;coreImagesReused=$true;sharedOnlyN01AndR5InputTested=$true;bundlePresetAndUserPriorityTested=$true;actualInstalledProfileReadyWithoutTestRedeploy=$true;bare61052UpgradeTested=$true;installedUpgradeAndUninstallTested=$true;physicalKeyboardTested=$false;actualWindows11Tested=$false}|ConvertTo-Json|Set-Content -LiteralPath (Join-Path $release 'validation.json') -Encoding UTF8
+          Get-ChildItem -LiteralPath $release -File|Where-Object {$_.Name -ne 'SHA256SUMS.txt'}|Sort-Object Name|ForEach-Object{(Get-FileHash -LiteralPath $_.FullName).Hash.ToLowerInvariant()+'  '+$_.Name}|Set-Content -LiteralPath (Join-Path $release 'SHA256SUMS.txt') -Encoding ASCII
+      - uses: actions/upload-artifact@v4
+        with:
+          name: stellae-rymcp-2026.11.14-release
+          path: ${{ runner.temp }}/bundle/release
+          if-no-files-found: error
+          retention-days: 30
+      - name: Preserve bounded synthetic validation evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: stellae-rymcp-2026.11.14-validation
+          path: |
+            ${{ runner.temp }}/bundle/*.json
+            ${{ runner.temp }}/bundle/*.log
+            ${{ runner.temp }}/shared-policy/*.json
+            ${{ runner.temp }}/installer-validation/*.json
+            ${{ runner.temp }}/installer-validation/*.log
+            ${{ runner.temp }}/installer-validation/installed-ready/*.json
+            ${{ runner.temp }}/installer-validation/shared-x64/**/result*.json
+            ${{ runner.temp }}/installer-validation/shared-win32/**/result*.json
+            ${{ runner.temp }}/profile-policy/*.json
+          if-no-files-found: warn
+          retention-days: 14

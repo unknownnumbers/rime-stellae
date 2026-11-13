@@ -1,0 +1,22 @@
+{
+  "format": "stellae-rymcp-bundle-inputs-v1",
+  "bundleVersion": "2026.11.14",
+  "frontendVersion": "0.17.4.61052",
+  "frontendInstaller": {
+    "url": "https://github.com/unknownnumbers/rime-stellae/releases/download/v0.17.4.61052/stellae-0.17.4.61052-installer.exe",
+    "sha256": "747f4a86ae77c519731bc441ed90e1cbb954decb78473d0e945441dd681c44e7"
+  },
+  "frontendSources": {
+    "url": "https://github.com/unknownnumbers/rime-stellae/releases/download/v0.17.4.61052/stellae-0.17.4.61052-source.zip",
+    "sha256": "eaf67e879a02f6c723fa5b6bd920d1dcbeb8e3e6e531c778aad9ebbe9d0c12a3"
+  },
+  "sevenZipSources": {
+    "url": "https://github.com/unknownnumbers/rime-stellae/releases/download/v0.17.4.61052/7z2405-src.tar.xz",
+    "sha256": "63f341cf80b8d287c6e945519b3da0fa75553c85572a471b7fa6e68f9a90b790"
+  },
+  "schemes": {
+    "url": "https://github.com/unknownnumbers/RymCp-IME/releases/download/v2026.11.14/rymcp-2026.11.14-stellae-schemes.zip",
+    "sha256": "afb37e816902df351eb462011e647e6c178369f44324451b4efb252f235f586a",
+    "commit": "ce7df340a1c24c346734c8b1bdada73f2c0a2b0c"
+  }
+}
