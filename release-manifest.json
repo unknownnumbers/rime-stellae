@@ -3,7 +3,7 @@
   "date": "2026-11-14",
   "kind": "frontend-source-and-bundle-packaging",
   "frontendVersion": "0.17.4.61052",
-  "bundleVersion": "2026.11.14.1",
+  "bundleVersion": "2026.11.14.2",
   "nativeBinariesIncluded": false,
   "personalLearningIncluded": false,
   "productionInputSchemesIncluded": false,
@@ -98,12 +98,12 @@
     {
       "path": "docs/PC.md",
       "bytes": 892,
-      "sha256": "44bd859fa968cf4711defdc3d4dd3b39516e426bd8c0c723577855769ebf1788"
+      "sha256": "10af08138bf0519aa4fedd3fc1c287a07cd0316adf97942e6f1be343fffef749"
     },
     {
       "path": "docs/SOURCES.md",
       "bytes": 1127,
-      "sha256": "fe157ed53bf9321228717db01b49fce2e89d2337c386c29bb57c94ea4c81bd76"
+      "sha256": "6b31889683dea07e12873a73a48c729f1fbcd88f1f0f62bb689512aad275956a"
     },
     {
       "path": "installer/BundleData.ps1",
@@ -123,7 +123,7 @@
     {
       "path": "installer/bundle-inputs.json",
       "bytes": 1102,
-      "sha256": "82c72113dbaa6645622f0684bc017aaa6f398622f668ed9e72d9a2e0fe46014c"
+      "sha256": "6b45b465d957bfbf423cc525582466eb41befb0e36ee5772de906937bec9a7d0"
     },
     {
       "path": "installer/bundle.nsi",
@@ -663,7 +663,7 @@
     {
       "path": "scripts/verify_release.py",
       "bytes": 7959,
-      "sha256": "8e45b09d5f2c08085db175e4e44f5414cbbc4ecc67b4035903629a66be0c1cb8"
+      "sha256": "a417a0b7568ab5dfee6abb63d980ea7cf585e2d160d65d5653b487f9eb214f2e"
     }
   ]
 }
