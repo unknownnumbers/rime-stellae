@@ -110,7 +110,6 @@ def apply(stage, overlays, repository, source_ref, run_id):
                               ('include/RimeWithWeasel.h', record['candidateHeaderSha256'])):
                 if hashlib.sha256(zf.read(name)).hexdigest() != sha:
                     raise ValueError('The source archive does not contain the rebuilt server source')
-        shutil.copyfile(source, stage / installed)
         origin = {'installed_path': installed, 'source': 'rebuiltServer',
                   'sha256': digest(source), 'original_sha256': old_sha,
                   'source_ref': source_ref, 'source_run': run_id, 'architecture': arch,
@@ -118,7 +117,14 @@ def apply(stage, overlays, repository, source_ref, run_id):
                   'assembled_source_sha256': digest(archive),
                   'transformation': 'rebuild the server from the fixed frontend source and mode notification/icon changes',
                   'generated_source_ids': ['project-code']}
-        provenance['files'].append(origin)
+        previous = [index for index, row in enumerate(provenance['files'])
+                    if row['installed_path'] == installed]
+        if (len(previous) != 1
+                or provenance['files'][previous[0]]['source'] != 'frontendInstaller'
+                or provenance['files'][previous[0]]['sha256'] != old_sha):
+            raise ValueError('The original server provenance is not unique or differs')
+        shutil.copyfile(source, stage / installed)
+        provenance['files'][previous[0]] = origin
         changes.append(origin)
     for name, row in base_images.items():
         expected = next((item['sha256'] for item in changes if item['installed_path'] == name), row['sha256'])

@@ -119,7 +119,7 @@ class ServerOverlayTests(unittest.TestCase):
             })
             self.checksums(arch)
         save(self.repo / 'installer/bundle-inputs.json', {
-            'frontendVersion': '0.17.4.61052', 'serverOverlays': {'architectures': specs}})
+            'bundleVersion': '2026.11.16', 'frontendVersion': '0.17.4.61052', 'serverOverlays': {'architectures': specs}})
         save(self.repo / 'native/notification-inputs.json', native)
         save(self.repo / 'native/source-manifest.json', {'patches': [{'sha256': complete_patch}]})
 
@@ -236,6 +236,109 @@ class ServerOverlayTests(unittest.TestCase):
         uninstall = recipe.split('Section "Uninstall"', 1)[1].split('SectionEnd', 1)[0]
         self.assertRegex(uninstall, r'(?m)^\s*Delete\s+"\$INSTDIR\\\*\.\*"\s*$',
                          'The owned root report must be covered by normal uninstall cleanup.')
+
+    def index_and_extract(self):
+        # Preserve the same profile metadata and nested snapshot boundary used
+        # by the actual package verifier, without executing native images.
+        snapshot = self.stage / 'scheme-notices/archive-profile-manifest.json'
+        save(snapshot, {})
+        save(self.stage / 'shared-payload/data/config-source-manifest.json', {
+            'source_files': [], 'generated_files': [],
+            'archive_provenance': {'original_manifest': snapshot.relative_to(self.stage).as_posix(),
+                                   'original_manifest_sha256': digest(snapshot.read_bytes())}})
+        source_inputs = json.loads((self.repo / 'installer/bundle-inputs.json').read_text('utf-8'))
+        if not (self.stage / 'bundle-inputs.json').exists():
+            save(self.stage / 'bundle-inputs.json', source_inputs)
+        result = subprocess.run([sys.executable, str(REPOSITORY / 'scripts/package/index_bundle.py'),
+                                 '--stage', str(self.stage), '--ref', SOURCE_REF],
+                                capture_output=True, text=True, encoding='utf-8', errors='replace')
+        self.assertEqual(result.returncode, 0, result.stderr)
+        extracted = self.root / ('extracted-' + str(len(list(self.root.glob('extracted-*')))))
+        extracted.mkdir()
+        # NSIS extraction can rename duplicate basenames. Match actual member
+        # bytes rather than pretending its flat extraction paths are installed paths.
+        for number, source in enumerate(sorted(self.stage.rglob('*'))):
+            if source.is_file():
+                (extracted / ('member-' + str(number) + source.suffix)).write_bytes(source.read_bytes())
+        return extracted
+
+    def verify_extracted(self, extracted):
+        report = self.root / 'payload-verification.json'
+        result = subprocess.run([sys.executable, str(REPOSITORY / 'scripts/package/verify_bundle.py'),
+                                 '--stage', str(self.stage), '--extracted', str(extracted), '--report', str(report)],
+                                capture_output=True, text=True, encoding='utf-8', errors='replace')
+        return result, report
+
+    def test_full_extraction_verifier_accepts_two_rebuilt_and_twelve_retained(self):
+        self.apply()
+        current = json.loads((self.stage / 'bundle-provenance.json').read_text('utf-8'))['files']
+        native = [row for row in current if Path(row['installed_path']).suffix in {'.exe', '.dll', '.ime'}]
+        self.assertEqual(len(native), 14)
+        self.assertEqual(len({row['installed_path'] for row in native}), 14)
+        self.assertEqual(sum(row['source'] == 'frontendInstaller' for row in native), 12)
+        self.assertEqual(sum(row['source'] == 'rebuiltServer' for row in native), 2)
+        result, report = self.verify_extracted(self.index_and_extract())
+        self.assertEqual(result.returncode, 0, result.stderr)
+        proof = json.loads(report.read_text('utf-8'))
+        self.assertTrue(proof['passed'])
+        self.assertEqual((len(proof['reusedImages']), len(proof['rebuiltImages'])), (12, 2))
+        self.assertEqual(proof['nativeImages'], 14)
+        self.assertEqual((proof['sourceRef'], proof['sourceRunId']), (SOURCE_REF, RUN_ID))
+
+    def test_full_verifier_rejects_legacy_duplicate_server_provenance(self):
+        self.apply()
+        path = self.stage / 'bundle-provenance.json'
+        provenance = json.loads(path.read_text('utf-8'))
+        name = 'StellaeServer.exe'
+        provenance['files'].append({'installed_path': name, 'source': 'frontendInstaller',
+                                     'sha256': digest(self.old_bytes[name])})
+        save(path, provenance)
+        result, _ = self.verify_extracted(self.index_and_extract())
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn('Duplicate current native image provenance', result.stderr)
+
+    def test_full_verifier_rejects_tampered_extracted_server(self):
+        self.apply()
+        extracted = self.index_and_extract()
+        path = next(path for path in extracted.iterdir()
+                    if path.read_bytes() == self.new_bytes['StellaeServer.exe'])
+        path.write_bytes(image(0x8664, 'tampered-extracted-server'))
+        result, _ = self.verify_extracted(extracted)
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn('missing declared bytes', result.stderr)
+
+    def test_full_verifier_rejects_reindexed_tampered_server(self):
+        self.apply()
+        (self.stage / 'StellaeServer.exe').write_bytes(image(0x8664, 'tampered-reindexed-server'))
+        result, _ = self.verify_extracted(self.index_and_extract())
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn('Rebuilt product differs', result.stderr)
+
+    def test_full_verifier_rejects_reindexed_tampered_retained_engine(self):
+        self.apply()
+        (self.stage / 'rime.dll').write_bytes(image(0x8664, 'tampered-reindexed-engine'))
+        result, _ = self.verify_extracted(self.index_and_extract())
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn('Reused product differs', result.stderr)
+
+    def test_full_verifier_rejects_reindexed_stale_server_run(self):
+        self.apply()
+        path = self.stage / 'bundle-provenance.json'
+        provenance = json.loads(path.read_text('utf-8'))
+        next(row for row in provenance['files'] if row['source'] == 'rebuiltServer')['source_run'] += 1
+        save(path, provenance)
+        result, _ = self.verify_extracted(self.index_and_extract())
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn('Rebuilt server provenance differs', result.stderr)
+
+    def test_full_verifier_rejects_reindexed_changed_base_pin(self):
+        self.apply()
+        inputs = json.loads((self.repo / 'installer/bundle-inputs.json').read_text('utf-8'))
+        inputs['serverOverlays']['architectures']['x64']['baseSha256'] = 'b' * 64
+        save(self.stage / 'bundle-inputs.json', inputs)
+        result, _ = self.verify_extracted(self.index_and_extract())
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn('Rebuilt server provenance differs', result.stderr)
 
     def test_index_retains_exact_inherited_licenses(self):
         self.apply()

@@ -622,8 +622,8 @@
     },
     {
       "path": "native/tests/package/test_server_overlays.py",
-      "bytes": 13174,
-      "sha256": "743f8b788a9ecf0eebb93b987b82c3f35539e00f9de5cc5ee094483bd81f88eb"
+      "bytes": 19385,
+      "sha256": "714f3e49393781dac45bf9347ffefbe73ec38da64f0bc4952acefc45eaa96ad4"
     },
     {
       "path": "native/tests/preedit_spacing_tests.cc",
@@ -702,8 +702,8 @@
     },
     {
       "path": "scripts/package/apply_server_overlays.py",
-      "bytes": 7790,
-      "sha256": "6f9cd274548f016b18f76398403d2495d7ccc8903f3d60ed19fdd6ed7897d8bb"
+      "bytes": 8210,
+      "sha256": "ce78f34e847aa0a76f09c1e002212d904c801221b692973ec181bde33ec4c258"
     },
     {
       "path": "scripts/package/index_bundle.py",
@@ -727,8 +727,8 @@
     },
     {
       "path": "scripts/package/verify_bundle.py",
-      "bytes": 2954,
-      "sha256": "344ee108f510b664aa0b0e7b18d512fa92728d3c174a47ab5617a8fd9f214ad4"
+      "bytes": 8126,
+      "sha256": "8b3e7a607ead9188edeb71a6d4cef5341a0cff99750d058e32b7d133151db999"
     },
     {
       "path": "scripts/package/verify_pe.py",
