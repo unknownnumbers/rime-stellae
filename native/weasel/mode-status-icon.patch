@@ -1,0 +1,102 @@
+--- a/RimeWithWeasel/RimeWithWeasel.cpp
++++ b/RimeWithWeasel/RimeWithWeasel.cpp
+@@ -80,16 +80,36 @@
+       });
+ }
+ 
++static std::wstring LoadSchemaIcon(RimeConfig& config, const char* key1,
++                                    const char* key2) {
++  const auto user_dir = WeaselUserDataPath();
++  const auto shared_dir = WeaselSharedDataPath();
++  const int BUF_SIZE = 255;
++  char buffer[BUF_SIZE + 1] = {0};
++  if (rime_api->config_get_string(&config, key1, buffer, BUF_SIZE) ||
++      (key2 != NULL &&
++       rime_api->config_get_string(&config, key2, buffer, BUF_SIZE))) {
++    auto resource = u8tow(buffer);
++    if (fs::is_regular_file(user_dir / resource))
++      return (user_dir / resource).wstring();
++    else if (fs::is_regular_file(shared_dir / resource))
++      return (shared_dir / resource).wstring();
++  }
++  return std::wstring();
++}
++
+ static bool ApplyModeStyle(const SessionStatus& session, int state, UIStyle& style) {
+   const auto layout = session.mode_horizontal[state]
+                           ? UIStyle::LAYOUT_HORIZONTAL : UIStyle::LAYOUT_VERTICAL;
+   const bool changed = style.layout_type != layout ||
+       style.candidate_spacing != session.mode_spacing[state] ||
+-      style.comment_font_point != session.mode_comment_font_point[state];
++      style.comment_font_point != session.mode_comment_font_point[state] ||
++      style.current_zhung_icon != session.mode_zhung_icon[state];
+   if (changed) {
+     style.layout_type = layout;
+     style.candidate_spacing = session.mode_spacing[state];
+     style.comment_font_point = session.mode_comment_font_point[state];
++    style.current_zhung_icon = session.mode_zhung_icon[state];
+   }
+   return changed;
+ }
+@@ -759,33 +779,18 @@
+     update_color_scheme();
+   // load schema icon start
+   {
+-    const auto load_icon = [](RimeConfig& config, const char* key1,
+-                              const char* key2) {
+-      const auto user_dir = WeaselUserDataPath();
+-      const auto shared_dir = WeaselSharedDataPath();
+-      const int BUF_SIZE = 255;
+-      char buffer[BUF_SIZE + 1] = {0};
+-      if (rime_api->config_get_string(&config, key1, buffer, BUF_SIZE) ||
+-          (key2 != NULL &&
+-           rime_api->config_get_string(&config, key2, buffer, BUF_SIZE))) {
+-        auto resource = u8tow(buffer);
+-        if (fs::is_regular_file(user_dir / resource))
+-          return (user_dir / resource).wstring();
+-        else if (fs::is_regular_file(shared_dir / resource))
+-          return (shared_dir / resource).wstring();
+-      }
+-      return std::wstring();
+-    };
+     style.current_zhung_icon =
+-        load_icon(config, "schema/icon", "schema/zhung_icon");
+-    style.current_ascii_icon = load_icon(config, "schema/ascii_icon", NULL);
+-    style.current_full_icon = load_icon(config, "schema/full_icon", NULL);
+-    style.current_half_icon = load_icon(config, "schema/half_icon", NULL);
++        LoadSchemaIcon(config, "schema/icon", "schema/zhung_icon");
++    style.current_ascii_icon = LoadSchemaIcon(config, "schema/ascii_icon", NULL);
++    style.current_full_icon = LoadSchemaIcon(config, "schema/full_icon", NULL);
++    style.current_half_icon = LoadSchemaIcon(config, "schema/half_icon", NULL);
+   }
+   // load schema icon end
+-  // Optional per-schema layout overlay, driven by an existing engine option.
++  // Optional per-schema layout and icon overlay, driven by an engine option.
+   session_status.mode_schema_id = schema_id;
+   session_status.mode_option.clear();
++  for (auto& icon : session_status.mode_zhung_icon)
++    icon = style.current_zhung_icon;
+   if (rime_api->config_get_string(&config, "style/mode_layout/option",
+                                    buffer, BUF_SIZE) && buffer[0]) {
+     session_status.mode_option = buffer;
+@@ -804,6 +809,10 @@
+       session_status.mode_comment_font_point[state] = comment_font_point;
+       session_status.mode_horizontal[state] = !!horizontal;
+       session_status.mode_spacing[state] = (std::max)(0, spacing);
++      const auto icon =
++          LoadSchemaIcon(config, (prefix + "icon").c_str(), NULL);
++      if (!icon.empty())
++        session_status.mode_zhung_icon[state] = icon;
+     }
+   }
+   rime_api->config_close(&config);
+--- a/include/RimeWithWeasel.h
++++ b/include/RimeWithWeasel.h
+@@ -32,6 +32,7 @@
+   bool mode_horizontal[2] = {false, false};
+   int mode_spacing[2] = {0, 0};
+   int mode_comment_font_point[2] = {0, 0};
++  std::wstring mode_zhung_icon[2];
+   bool __synced;
+   RimeSessionId session_id;
+ };

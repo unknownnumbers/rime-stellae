@@ -1,6 +1,9 @@
 # SPDX-License-Identifier: GPL-3.0-only
 #Requires -Version 7.2
-param([Parameter(Mandatory)][string]$OutputDirectory)
+param(
+ [Parameter(Mandatory)][string]$OutputDirectory,
+ [Parameter(Mandatory)][string]$ServerOverlayDirectory
+)
 Set-StrictMode -Version Latest
 $ErrorActionPreference='Stop'
 if($env:GITHUB_ACTIONS -ne 'true' -or -not $IsWindows){throw 'Use a disposable hosted Windows runner'}
@@ -10,6 +13,7 @@ if(-not $inputs.schemes -or $inputs.schemes.commit -notmatch '^[0-9a-f]{40}$' -o
 if(Test-Path -LiteralPath $OutputDirectory){throw 'Use a new package output directory'}
 $null=New-Item -ItemType Directory -Path $OutputDirectory
 $output=(Resolve-Path -LiteralPath $OutputDirectory).Path
+$serverOverlays=(Resolve-Path -LiteralPath $ServerOverlayDirectory).Path
 $cache=Join-Path $output 'inputs'
 $null=New-Item -ItemType Directory -Path $cache
 function Fetch($Spec,[string]$Name){
@@ -33,6 +37,8 @@ if($LASTEXITCODE){throw 'Official shared extraction failed'}
 $stage=Join-Path $output 'stage/output'
 & python (Join-Path $PSScriptRoot 'prepare_bundle.py') --repository $repo --base (Join-Path $output 'base') --official (Join-Path $output 'official') --schemes $scheme --stage $stage
 if($LASTEXITCODE){throw 'Bundle source assembly failed'}
+& python (Join-Path $PSScriptRoot 'apply_server_overlays.py') --repository $repo --stage $stage --overlays $serverOverlays --source-ref $env:GITHUB_SHA --run-id $env:GITHUB_RUN_ID
+if($LASTEXITCODE){throw 'Same-run server overlay verification failed'}
 & python (Join-Path $PSScriptRoot 'render_installed_docs.py') --repository $repo --output-directory $stage --ref $env:GITHUB_SHA
 if($LASTEXITCODE){throw 'Documentation rendering failed'}
 & python (Join-Path $PSScriptRoot 'index_bundle.py') --stage $stage --ref $env:GITHUB_SHA
@@ -53,7 +59,7 @@ try{
 $installer=Join-Path $stage ('archives/stellae-rymcp-'+$inputs.bundleVersion+'-installer.exe')
 $release=Join-Path $output 'release'
 $null=New-Item -ItemType Directory -Path $release
-Copy-Item -LiteralPath $installer,(Join-Path $stage 'package-manifest.json'),(Join-Path $stage 'package-license-index.json'),(Join-Path $stage 'bundle-provenance.json'),(Join-Path $output 'pe-verification.json'),$seven -Destination $release
+Copy-Item -LiteralPath $installer,(Join-Path $stage 'package-manifest.json'),(Join-Path $stage 'package-license-index.json'),(Join-Path $stage 'bundle-provenance.json'),(Join-Path $stage 'server-overlay-verification.json'),(Join-Path $output 'pe-verification.json'),$seven -Destination $release
 & 7z.exe x $installer ('-o'+(Join-Path $output 'actual')) -aou -y|Out-File (Join-Path $output 'extract-actual.log')
 if($LASTEXITCODE){throw 'Final installer extraction failed'}
 & python (Join-Path $PSScriptRoot 'verify_bundle.py') --stage $stage --extracted (Join-Path $output 'actual') --report (Join-Path $release 'payload-verification.json')
@@ -61,6 +67,19 @@ if($LASTEXITCODE){throw 'Final installer payload verification failed'}
 $parts=Join-Path $output 'source-parts'
 $null=New-Item -ItemType Directory -Path $parts
 Copy-Item -LiteralPath $baseSources,$scheme -Destination $parts
+foreach($arch in @('x64','x86')){
+  $from=Join-Path $serverOverlays $arch
+  $to=Join-Path $output ('server-'+$arch+'-source')
+  $null=New-Item -ItemType Directory -Path $to
+  foreach($item in Get-ChildItem -LiteralPath $from -Force){
+    if($item.Name -in @('StellaeServer.exe','SHA256SUMS.txt')){continue}
+    Copy-Item -LiteralPath $item.FullName -Destination (Join-Path $to $item.Name) -Recurse
+  }
+  Get-ChildItem -LiteralPath $to -File -Recurse|Sort-Object FullName|ForEach-Object{
+    (Get-FileHash -LiteralPath $_.FullName).Hash.ToLowerInvariant()+'  '+[IO.Path]::GetRelativePath($to,$_.FullName).Replace('\','/')
+  }|Set-Content -LiteralPath (Join-Path $to 'SOURCE-SHA256SUMS.txt') -Encoding ASCII
+  Compress-Archive -Path (Join-Path $to '*') -DestinationPath (Join-Path $parts ('server-'+$arch+'-source.zip')) -CompressionLevel Optimal
+}
 Push-Location $repo
 try{& git archive --format=zip ('--output='+(Join-Path $parts 'bundle-project-source.zip')) HEAD;if($LASTEXITCODE){throw 'Bundle project source archive failed'}}finally{Pop-Location}
 Copy-Item -LiteralPath (Join-Path $stage 'bundle-inputs.json'),(Join-Path $stage 'SOURCES.md') -Destination $parts

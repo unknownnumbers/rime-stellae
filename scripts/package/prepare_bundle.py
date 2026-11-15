@@ -187,7 +187,7 @@ def main():
     shutil.copyfile(repo/'assets/icon/star-core.ico', resource/'weasel.ico')
     (stage/'archives').mkdir()
     print(json.dumps({'sharedFiles': len(files), 'baseFiles': len(base_manifest['files']),
-                      'coreBinariesReused': True, 'bundleVersion': inputs['bundleVersion']}))
+                      'baseNativeImagesStaged': True, 'bundleVersion': inputs['bundleVersion']}))
 
 
 if __name__ == '__main__':

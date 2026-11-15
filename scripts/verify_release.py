@@ -135,10 +135,10 @@ def main():
     if args.write_manifest:
         manifest = {
             'format': 'stellae-source-release-v1',
-            'date': '2026-11-14',
+            'date': '2026-11-16',
             'kind': 'frontend-source-and-bundle-packaging',
             'frontendVersion': '0.17.4.61052',
-            'bundleVersion': '2026.11.14.2',
+            'bundleVersion': '2026.11.16',
             'nativeBinariesIncluded': False,
             'personalLearningIncluded': False,
             'productionInputSchemesIncluded': False,

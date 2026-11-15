@@ -1,6 +1,6 @@
 {
   "format": "stellae-rymcp-bundle-inputs-v1",
-  "bundleVersion": "2026.11.14.2",
+  "bundleVersion": "2026.11.16",
   "frontendVersion": "0.17.4.61052",
   "frontendInstaller": {
     "url": "https://github.com/unknownnumbers/rime-stellae/releases/download/v0.17.4.61052/stellae-0.17.4.61052-installer.exe",
@@ -15,8 +15,23 @@
     "sha256": "63f341cf80b8d287c6e945519b3da0fa75553c85572a471b7fa6e68f9a90b790"
   },
   "schemes": {
-    "url": "https://github.com/unknownnumbers/RymCp-IME/releases/download/v2026.11.14.2/rymcp-2026.11.14.2-stellae-schemes.zip",
-    "sha256": "f9aca920096ac6ce88d241f63482181d85b1ef6470713460116ec85749fff7fe",
-    "commit": "a281db9037d4d711e500aafa850170ac14d8cadf"
+    "url": "https://github.com/unknownnumbers/RymCp-IME/releases/download/v2026.11.16/rymcp-2026.11.16-stellae-schemes.zip",
+    "sha256": "69615404ca32db81e4e5f57ac96f97bf27496c6a7abf85c83957655a086bec32",
+    "commit": "bf6af2cf142588fb2bfb0c5a2ef36a153fcc63b8"
+  },
+  "serverOverlays": {
+    "format": "stellae-same-run-server-overlays-v1",
+    "architectures": {
+      "x86": {
+        "baseSha256": "2c279067ff0681c80bcd9f3909c670604b46058cb200c1323816a2a39875d8d3",
+        "installedPath": "Win32/StellaeServer.exe",
+        "machine": 332
+      },
+      "x64": {
+        "baseSha256": "50ab26e7bb8d60c310ea1245bf513a7f92069203ec84cf4ad0735201ee809e14",
+        "installedPath": "StellaeServer.exe",
+        "machine": 34404
+      }
+    }
   }
 }

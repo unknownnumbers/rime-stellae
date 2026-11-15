@@ -1,0 +1,12 @@
+--- a/RimeWithWeasel/RimeWithWeasel.cpp
++++ b/RimeWithWeasel/RimeWithWeasel.cpp
+@@ -541,6 +541,9 @@
+   RimeWithWeaselHandler* self =
+       reinterpret_cast<RimeWithWeaselHandler*>(context_object);
+   if (!self || !message_type || !message_value)
++    return;
++  // Context properties are response metadata, not popup notifications.
++  if (!strcmp(message_type, "property"))
+     return;
+   m_message_type = message_type;
+   m_message_value = message_value;

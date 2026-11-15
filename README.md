@@ -11,7 +11,8 @@
 - 從 [Releases](https://github.com/unknownnumbers/rime-stellae/releases) 取得安裝器.
 - 支援 x64 與 Win32, 包括 x64 Windows 的 32-bit 應用.
 - 前端版本為 `0.17.4.61052`. 方案與整合包另記版本.
-- 整合方案新裝預設 SC 輸出, 中文橫排 5 項、智能英文直排 6 項, 保留 TC/SC 切換.
+- 整合方案新裝預設 SC 輸出, 中文橫排 5 項、英文直排 6 項, 保留 TC/SC 切換.
+- 配套方案的英文模式使用藍色 En 狀態圖標.
 - 升級保留用戶自訂與學習資料. 同名自訂遮蔽方案預設時, 依 [使用說明](docs/PC.md) 核對與合併.
 
 [方案源碼及官方 Weasel 方案](https://github.com/unknownnumbers/RymCp-IME) | [構建](docs/BUILD.md) | [來源](docs/SOURCES.md) | [待辦](TODO.md)

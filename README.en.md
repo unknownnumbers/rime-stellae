@@ -11,7 +11,8 @@ Stellae is a Windows Rime frontend providing TSF input, a candidate interface, s
 - Download the installer from [Releases](https://github.com/unknownnumbers/rime-stellae/releases).
 - x64 and Win32 are supported, including 32-bit applications on x64 Windows.
 - The frontend version is `0.17.4.61052`. Schemes and integrated packages have separate versions.
-- A fresh profile defaults to SC output, five horizontal Chinese candidates and six vertical smart English candidates, with TC/SC switching.
+- A fresh profile defaults to SC output, five horizontal Chinese candidates and six vertical English candidates, with TC/SC switching.
+- The bundled scheme uses a blue En status icon for English mode.
 - Upgrades preserve user customization and learning. Check and merge conflicting custom files using the [user guide](docs/PC.md).
 
 [Scheme sources and official Weasel profile](https://github.com/unknownnumbers/RymCp-IME) | [Build](docs/BUILD.md) | [Sources](docs/SOURCES.md) | [TODO](TODO.md)

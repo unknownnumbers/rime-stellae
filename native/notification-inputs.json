@@ -1,0 +1,108 @@
+{
+  "schema": "stellae-notification-build-inputs/1",
+  "baselineSourceCommit": "864c733c74d6d4e77141ef8a95230f21f1862526",
+  "baselineCppSha256": "defa5b35df17bb2621bfbe6bdb23060ec6186a2b43d261fc850e4d300bc203d9",
+  "candidateCppSha256": "631f5b73aa9f1695b487cc38024bb806c978f846ef0d92337aae37872aa5690c",
+  "overlay": {
+    "path": "native/weasel/shift-notification.patch",
+    "sha256": "ac8e4ce3cfc508bf572c36219ed4fa8f5a4f54cd2298ac69117289a0c06e4a07"
+  },
+  "baselineInstaller": {
+    "url": "https://github.com/unknownnumbers/rime-stellae/releases/download/v0.17.4.61052/stellae-0.17.4.61052-installer.exe",
+    "sha256": "747f4a86ae77c519731bc441ed90e1cbb954decb78473d0e945441dd681c44e7"
+  },
+  "apiHeaders": [
+    {
+      "name": "rime_api.h",
+      "url": "https://raw.githubusercontent.com/rime/librime/1c23358157934bd6e6d6981f0c0164f05393b497/src/rime_api.h",
+      "sha256": "6eb5629162c44761e7b878f1b122f464de5c8685bd3cd5ac1e8519badc6d6424",
+      "license": "BSD-3-Clause"
+    },
+    {
+      "name": "rime_api_stdbool.h",
+      "url": "https://raw.githubusercontent.com/rime/librime/1c23358157934bd6e6d6981f0c0164f05393b497/src/rime_api_stdbool.h",
+      "sha256": "f5a64254e98c1c12ce6628f5d540bcd4e4b542ec287b4873c0b0ce4ed1bece99",
+      "license": "BSD-3-Clause"
+    },
+    {
+      "name": "rime_api_deprecated.h",
+      "url": "https://raw.githubusercontent.com/rime/librime/1c23358157934bd6e6d6981f0c0164f05393b497/src/rime_api_deprecated.h",
+      "sha256": "21625c4e16480a4540939299a002f21b11150bb10b69f5331e1580875ac63341",
+      "license": "BSD-3-Clause"
+    },
+    {
+      "name": "rime_levers_api.h",
+      "url": "https://raw.githubusercontent.com/rime/librime/1c23358157934bd6e6d6981f0c0164f05393b497/src/rime_levers_api.h",
+      "sha256": "b2ec30a89125f0fe5e91ea6cb209e8ae71e5f67fa87bc3d4a1dd3be3b5753b5a",
+      "license": "BSD-3-Clause"
+    }
+  ],
+  "tests": [
+    {
+      "path": "native/tests/notifications/NotificationTests.cpp",
+      "sha256": "fa50eb69e1aaf3e15473e703f99a75c8ea5102ddb66672fecac27be476194cb3"
+    },
+    {
+      "path": "native/tests/notifications/Prepare-NotificationTests.py",
+      "sha256": "79e7ac2c5e4192a8c7d518f52db55346587f7dd75ebe6d619aebe849bfb02fba"
+    },
+    {
+      "path": "native/tests/notifications/Run-NotificationTests.ps1",
+      "sha256": "46b98d4b953225d8ff94aaff6118ff1c04ab212ca0ee826992f13926bed56828"
+    }
+  ],
+  "scope": "x64 and Win32 frontend server mode notifications and status icons; other native components and runtime engines retain their fixed published bytes.",
+  "modeIconOverlay": {
+    "path": "native/weasel/mode-status-icon.patch",
+    "sha256": "adc9fd98501ca42b60a514a5c6510009c4e891c878660bc769ceb82305fee1bc",
+    "baselineHeaderSha256": "f4bd0363a26fc72fe149e8020807083e9ccd39dfa930cd5cd4d75ae18d0da782",
+    "candidateHeaderSha256": "dfe43ddf0aec22bd64b180485e490741732e226ec17e1ed0d35f49b607eaf73d",
+    "candidateCppSha256": "12440d30b0b1b600a45b02ec56da0af85b1ae8765809c16957b21319375cf28f"
+  },
+  "modeIconTests": [
+    {
+      "path": "native/tests/mode-icon/ModeIconTests.cpp",
+      "sha256": "7d8ed4bc363f35094fc1dfb67f849b5a5c2c43f55dca209c91ddd6022b669c23"
+    },
+    {
+      "path": "native/tests/mode-icon/Prepare-ModeIconTests.py",
+      "sha256": "9ba550101c276b63c3c52f2da4b8b874a31d1f4d298b9b8ccc8b0c38c7001fca"
+    },
+    {
+      "path": "native/tests/mode-icon/Run-ModeIconTests.ps1",
+      "sha256": "5eaa84b6da4d078eb673388d11e60079da3f9b536738d5e05d0515e0a690552c"
+    }
+  ],
+  "statusIconAssets": [
+    {
+      "path": "assets/status/smart-english.ico",
+      "sha256": "2dba231189760c6a8e58f1bc51f8275a73f402b61f600a075cc95be6695cb446"
+    },
+    {
+      "path": "assets/status/smart-english.svg",
+      "sha256": "e0a059469ce1dcb2c050063a21fe2e6a668b716da778743a97f58115391b5563"
+    },
+    {
+      "path": "assets/status/generate.py",
+      "sha256": "a054798dfe1ddefc3061bd2277666e52421adaa10acdd4a32b908cedaee40ff1"
+    }
+  ],
+  "architectures": {
+    "x64": {
+      "platform": "x64",
+      "machine": 34404,
+      "addressModel": 64,
+      "libraryDirectory": "lib64",
+      "output": "output/StellaeServer.exe",
+      "engineSha256": "623bd16fa2bded5b372df63136d7d8df8dedaaf4b9b76777796cb52e1e75e0a2"
+    },
+    "x86": {
+      "platform": "Win32",
+      "machine": 332,
+      "addressModel": 32,
+      "libraryDirectory": "lib",
+      "output": "output/Win32/StellaeServer.exe",
+      "engineSha256": "68e29fb212298dd963e16595b46f95df30c4bc4b9fb6019f3f501c3dad016d54"
+    }
+  }
+}
