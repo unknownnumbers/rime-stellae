@@ -27,8 +27,8 @@
     },
     {
       "path": ".github/workflows/shift-notification.yml",
-      "bytes": 2132,
-      "sha256": "68098377566de82906897453a83f4c2a721cefcb7b5b8aaa5720435a413a4447"
+      "bytes": 2406,
+      "sha256": "9c35dcf605570587d9d3a93ca1218a3364a2e40dd6090ab557dd382aa7de1726"
     },
     {
       "path": ".github/workflows/verify.yml",
@@ -467,8 +467,8 @@
     },
     {
       "path": "native/notification-inputs.json",
-      "bytes": 2686,
-      "sha256": "222bccab89ad97a4745344ae9f277336f5cedc5c3bb4f11cc01cd7dc27f056ea"
+      "bytes": 2592,
+      "sha256": "1ce7346e67a9221f24a5316c1c729d59d7f3551c4fc278547e4e4948af347e57"
     },
     {
       "path": "native/source-manifest.json",
@@ -632,8 +632,8 @@
     },
     {
       "path": "scripts/native/Build-ServerNotification.ps1",
-      "bytes": 10272,
-      "sha256": "15c5f8a09548a4a2eaf07a1029a0fc066a90867b16aa0fbfa19ace6e97c82c84"
+      "bytes": 11167,
+      "sha256": "e448a86c054729206e7d8815b0d50c6567e556e41b56101c46c7c3c16d0f71f6"
     },
     {
       "path": "scripts/native/Build-Weasel.ps1",

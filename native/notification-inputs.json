@@ -11,8 +11,7 @@
     "url": "https://github.com/unknownnumbers/rime-stellae/releases/download/v0.17.4.61052/stellae-0.17.4.61052-installer.exe",
     "sha256": "747f4a86ae77c519731bc441ed90e1cbb954decb78473d0e945441dd681c44e7"
   },
-  "engineSha256": "b715a5dfbe3db39f5248c88149bdfee74783e4da516bb3974b3c6922feab7e48",
-  "baselineServerSha256": "3edb1dcac55d2e4c96edb8da827b2a5c0dda0466779a92990038879cd878c6e8",
+  "engineSha256": "623bd16fa2bded5b372df63136d7d8df8dedaaf4b9b76777796cb52e1e75e0a2",
   "apiHeaders": [
     {
       "name": "rime_api.h",

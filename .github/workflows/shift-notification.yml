@@ -54,6 +54,9 @@ jobs:
           path: |
             ${{ runner.temp }}/stellae-notification-output/*.json
             ${{ runner.temp }}/stellae-notification-output/logs
+            ${{ runner.temp }}/stellae-notification-output/notification-tests/results.json
+            ${{ runner.temp }}/stellae-notification-output/notification-tests/*/result.txt
+            ${{ runner.temp }}/stellae-notification-output/notification-tests/*/compile.log
             ${{ runner.temp }}/stellae-notification-source/ci-logs/shift-key-snapshot-x64.json
           if-no-files-found: warn
           retention-days: 14

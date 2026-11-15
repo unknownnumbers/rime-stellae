@@ -52,8 +52,18 @@ if($LASTEXITCODE){throw 'Shift snapshot regressions failed.'}
 # Only the published engine's export table is used to construct an import library.
 $installer=Pinned-Download $inputs.baselineInstaller $cache
 $engineRoot=Join-Path $cache 'published-engine'
-Expand-NativeArchive $installer $engineRoot @('rime.dll')
-$engine=Join-Path $engineRoot 'rime.dll'
+if(Test-Path -LiteralPath $engineRoot){throw 'Use a fresh published-engine extraction directory.'}
+Run '7z.exe' @('x',$installer,('-o'+$engineRoot),'-aou','-y','-bso0','-bsp0','rime.dll') (Join-Path $logs 'extract-import-engine.log')
+# NSIS carries x64 and Win32 members with the same name. Preserve both and
+# select the published x64 input by PE architecture before checking its pin.
+$engines=@(Get-ChildItem -LiteralPath $engineRoot -File -Filter 'rime*.dll'|Where-Object {
+  $raw=[IO.File]::ReadAllBytes($_.FullName)
+  if($raw.Length -lt 64 -or $raw[0] -ne 0x4d -or $raw[1] -ne 0x5a){return $false}
+  $offset=[BitConverter]::ToInt32($raw,0x3c)
+  $offset -ge 0 -and $offset+6 -le $raw.Length -and [BitConverter]::ToUInt16($raw,$offset+4) -eq 0x8664 -and (Hash $_.FullName) -ceq $inputs.engineSha256
+})
+if($engines.Count -ne 1){throw 'Expected one published x64 engine for the import library.'}
+$engine=$engines[0].FullName
 $null=Assert-NativeHash $engine $inputs.engineSha256
 Assert-NativePe $engine 0x8664
 $exports=(& dumpbin.exe /nologo /exports $engine|Out-String)
@@ -100,7 +110,8 @@ if([Diagnostics.FileVersionInfo]::GetVersionInfo($server).FileVersion -cne '0.17
 $release=Join-Path $out 'release';$null=New-Item -ItemType Directory -Path $release
 Copy-Item -LiteralPath $server -Destination $release
 $peInput=Join-Path $out 'pe-input';$null=New-Item -ItemType Directory -Path $peInput
-Copy-Item -LiteralPath $server,$engine -Destination $peInput
+Copy-Item -LiteralPath $server -Destination $peInput
+Copy-Item -LiteralPath $engine -Destination (Join-Path $peInput 'rime.dll')
 Run 'python' @((Get-NativeRepositoryPath 'scripts/package/verify_pe.py'),'--root',$peInput,'--report',(Join-Path $out 'pe-verification.json')) (Join-Path $logs 'verify-pe.log')
 $testResult=Get-Content -LiteralPath (Join-Path $out 'notification-tests/results.json') -Raw|ConvertFrom-Json
 $shiftResult=Get-Content -LiteralPath (Join-Path $source 'ci-logs/shift-key-snapshot-x64.json') -Raw|ConvertFrom-Json
