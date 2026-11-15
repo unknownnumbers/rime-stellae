@@ -43,9 +43,21 @@ $null=Assert-NativeHash $patch $inputs.overlay.sha256
 Invoke-NativeGit @('-C',$source,'apply','--check','--whitespace=nowarn',$patch)
 Invoke-NativeGit @('-C',$source,'apply','--whitespace=nowarn',$patch)
 $null=Assert-NativeHash $baselineCpp $inputs.candidateCppSha256
-foreach($test in $inputs.tests){$null=Assert-NativeHash (Get-NativeRepositoryPath $test.path) $test.sha256}
+$modeIconPatch=Get-NativeRepositoryPath $inputs.modeIconOverlay.path
+$modeIconHeader=Join-Path $source 'include/RimeWithWeasel.h'
+$null=Assert-NativeHash $modeIconHeader $inputs.modeIconOverlay.baselineHeaderSha256
+$baselineHeaderCopy=Join-Path $out 'baseline-RimeWithWeasel.h';Copy-Item -LiteralPath $modeIconHeader -Destination $baselineHeaderCopy
+$null=Assert-NativeHash $modeIconPatch $inputs.modeIconOverlay.sha256
+Invoke-NativeGit @('-C',$source,'apply','--check','--whitespace=nowarn',$modeIconPatch)
+Invoke-NativeGit @('-C',$source,'apply','--whitespace=nowarn',$modeIconPatch)
+$null=Assert-NativeHash $baselineCpp $inputs.modeIconOverlay.candidateCppSha256
+$null=Assert-NativeHash $modeIconHeader $inputs.modeIconOverlay.candidateHeaderSha256
+foreach($test in @($inputs.tests)+@($inputs.modeIconTests)+@($inputs.statusIconAssets)){$null=Assert-NativeHash (Get-NativeRepositoryPath $test.path) $test.sha256}
+Run 'python' @((Get-NativeRepositoryPath 'assets/status/generate.py'),'--check') (Join-Path $logs 'status-icon-assets.log')
 & (Get-NativeRepositoryPath 'native/tests/notifications/Run-NotificationTests.ps1') -BaselineCpp $baselineCopy -CandidateCpp $baselineCpp -OutputDirectory (Join-Path $out 'notification-tests')
 if($LASTEXITCODE){throw 'Notification regressions failed.'}
+& (Get-NativeRepositoryPath 'native/tests/mode-icon/Run-ModeIconTests.ps1') -SourceRoot $source -OutputDirectory (Join-Path $out 'mode-icon-tests') -BaselineCpp $baselineCopy -BaselineHeader $baselineHeaderCopy
+if($LASTEXITCODE){throw 'Mode icon regressions failed.'}
 & (Get-NativeRepositoryPath 'native/tests/shift/Run-ShiftKeySnapshotTests.ps1') -Platform x64 -SourceRoot $source
 if($LASTEXITCODE){throw 'Shift snapshot regressions failed.'}
 
@@ -115,16 +127,19 @@ Copy-Item -LiteralPath $engine -Destination (Join-Path $peInput 'rime.dll')
 Run 'python' @((Get-NativeRepositoryPath 'scripts/package/verify_pe.py'),'--root',$peInput,'--report',(Join-Path $out 'pe-verification.json')) (Join-Path $logs 'verify-pe.log')
 $testResult=Get-Content -LiteralPath (Join-Path $out 'notification-tests/results.json') -Raw|ConvertFrom-Json
 $shiftResult=Get-Content -LiteralPath (Join-Path $source 'ci-logs/shift-key-snapshot-x64.json') -Raw|ConvertFrom-Json
-if(-not $testResult.Passed -or -not $shiftResult.Passed){throw 'A finite regression gate failed.'}
-$record=[ordered]@{schema='stellae-notification-server-build/1';passed=$true;sourceVersion='0.17.4.61052';architecture='x64';commit=$env:GITHUB_SHA;run=$env:GITHUB_RUN_ID;toolset=$vc;serverSha256=(Hash $server);baselineCppSha256=$inputs.baselineCppSha256;candidateCppSha256=$inputs.candidateCppSha256;overlaySha256=$inputs.overlay.sha256;baselineInstallerSha256=$inputs.baselineInstaller.sha256;engineUsedForImportLibrarySha256=$inputs.engineSha256;apiHeaders=$headerRecords;notificationChecks=$testResult.PatchedChecks;baselineFailureReproduced=$true;shiftSnapshotChecks=$shiftResult.PassedCases;engineRebuilt=$false;engineBundled=$false;tsfBuilt=$false;clientsBuilt=$false;profilesIncluded=$false;serverStarted=$false;installed=$false;bitReproducible=$false}
+$modeIconResult=Get-Content -LiteralPath (Join-Path $out 'mode-icon-tests/results.json') -Raw|ConvertFrom-Json
+if(-not $testResult.Passed -or -not $shiftResult.Passed -or -not $modeIconResult.Passed){throw 'A finite regression gate failed.'}
+$record=[ordered]@{schema='stellae-notification-server-build/1';passed=$true;sourceVersion='0.17.4.61052';architecture='x64';commit=$env:GITHUB_SHA;run=$env:GITHUB_RUN_ID;toolset=$vc;serverSha256=(Hash $server);baselineCppSha256=$inputs.baselineCppSha256;candidateCppSha256=$inputs.modeIconOverlay.candidateCppSha256;notificationGuardCppSha256=$inputs.candidateCppSha256;candidateHeaderSha256=$inputs.modeIconOverlay.candidateHeaderSha256;overlaySha256=$inputs.overlay.sha256;modeIconOverlaySha256=$inputs.modeIconOverlay.sha256;baselineInstallerSha256=$inputs.baselineInstaller.sha256;engineUsedForImportLibrarySha256=$inputs.engineSha256;apiHeaders=$headerRecords;notificationChecks=$testResult.PatchedChecks;baselineFailureReproduced=$true;shiftSnapshotChecks=$shiftResult.PassedCases;modeIconChecks=$modeIconResult.PassedCases;statusIconSha256=(Hash (Get-NativeRepositoryPath 'assets/status/smart-english.ico'));engineRebuilt=$false;engineBundled=$false;tsfBuilt=$false;clientsBuilt=$false;profilesIncluded=$false;serverStarted=$false;installed=$false;bitReproducible=$false}
 [IO.File]::WriteAllText((Join-Path $release 'validation.json'),($record|ConvertTo-Json -Depth 7),[Text.UTF8Encoding]::new($false))
 Copy-Item -LiteralPath (Join-Path $out 'pe-verification.json') -Destination $release
-Copy-Item -LiteralPath (Join-Path $out 'baseline-source.zip'),$patch,(Get-NativeRepositoryPath 'native/notification-inputs.json') -Destination $release
+Copy-Item -LiteralPath (Join-Path $out 'baseline-source.zip'),$patch,$modeIconPatch,(Get-NativeRepositoryPath 'native/notification-inputs.json') -Destination $release
 $sdkSource=Join-Path $release 'api-headers';$null=New-Item -ItemType Directory -Path $sdkSource
 foreach($header in $inputs.apiHeaders){Copy-Item -LiteralPath (Join-Path $source ('include/'+$header.name)) -Destination $sdkSource}
 Copy-NativeSourceNotices $release
 $productSource=Join-Path $release 'build-source/RimeWithWeasel';$null=New-Item -ItemType Directory -Path $productSource -Force
 Copy-Item -LiteralPath $baselineCpp -Destination (Join-Path $productSource 'RimeWithWeasel.cpp')
+$productHeader=Join-Path $release 'build-source/include';$null=New-Item -ItemType Directory -Path $productHeader -Force
+Copy-Item -LiteralPath $modeIconHeader -Destination (Join-Path $productHeader 'RimeWithWeasel.h')
 $sums=@(Get-ChildItem -LiteralPath $release -File -Recurse|Sort-Object FullName|ForEach-Object{(Hash $_.FullName)+'  '+[IO.Path]::GetRelativePath($release,$_.FullName).Replace('\','/')})
 [IO.File]::WriteAllLines((Join-Path $release 'SHA256SUMS.txt'),$sums,[Text.UTF8Encoding]::new($false))
 $record|ConvertTo-Json -Depth 7|Set-Content -LiteralPath (Join-Path $out 'build-result.json') -Encoding utf8

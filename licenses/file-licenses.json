@@ -287,8 +287,9 @@
     },
     {
       "path": ".github/workflows/shift-notification.yml",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
+      "source_ids": [
+        "project-code"
+      ],
       "references": [
         "LICENSE"
       ]
@@ -340,6 +341,33 @@
     },
     {
       "path": "assets/icon/star-core.svg",
+      "source_ids": [
+        "project-code"
+      ],
+      "references": [
+        "LICENSE"
+      ]
+    },
+    {
+      "path": "assets/status/generate.py",
+      "source_ids": [
+        "project-code"
+      ],
+      "references": [
+        "LICENSE"
+      ]
+    },
+    {
+      "path": "assets/status/smart-english.ico",
+      "source_ids": [
+        "project-code"
+      ],
+      "references": [
+        "LICENSE"
+      ]
+    },
+    {
+      "path": "assets/status/smart-english.svg",
       "source_ids": [
         "project-code"
       ],
@@ -475,11 +503,9 @@
     },
     {
       "path": "licenses/CC-BY-SA-4.0.txt",
-      "kind": "retained-upstream-notice",
-      "notice_record": "licenses/CC-BY-SA-4.0.txt",
-      "references": [
-        "licenses/CC-BY-SA-4.0.txt"
-      ]
+      "source_ids": [],
+      "references": [],
+      "notice_record": "licenses/CC-BY-SA-4.0.txt"
     },
     {
       "path": "licenses/file-licenses.json",
@@ -492,371 +518,279 @@
     },
     {
       "path": "licenses/native-dependencies/boost/LICENSE_1_0.txt",
-      "kind": "retained-upstream-notice",
-      "notice_record": "licenses/native-dependencies/boost/LICENSE_1_0.txt",
-      "references": [
-        "licenses/native-dependencies/boost/LICENSE_1_0.txt"
-      ]
+      "source_ids": [],
+      "references": [],
+      "notice_record": "licenses/native-dependencies/boost/LICENSE_1_0.txt"
     },
     {
       "path": "licenses/native-dependencies/darts-clone/COPYING.darts-clone",
-      "kind": "retained-upstream-notice",
-      "notice_record": "licenses/native-dependencies/darts-clone/COPYING.darts-clone",
-      "references": [
-        "licenses/native-dependencies/darts-clone/COPYING.darts-clone"
-      ]
+      "source_ids": [],
+      "references": [],
+      "notice_record": "licenses/native-dependencies/darts-clone/COPYING.darts-clone"
     },
     {
       "path": "licenses/native-dependencies/glog/AUTHORS",
-      "kind": "retained-upstream-notice",
-      "notice_record": "licenses/native-dependencies/glog/AUTHORS",
-      "references": [
-        "licenses/native-dependencies/glog/AUTHORS"
-      ]
+      "source_ids": [],
+      "references": [],
+      "notice_record": "licenses/native-dependencies/glog/AUTHORS"
     },
     {
       "path": "licenses/native-dependencies/glog/COPYING",
-      "kind": "retained-upstream-notice",
-      "notice_record": "licenses/native-dependencies/glog/COPYING",
-      "references": [
-        "licenses/native-dependencies/glog/COPYING"
-      ]
+      "source_ids": [],
+      "references": [],
+      "notice_record": "licenses/native-dependencies/glog/COPYING"
     },
     {
       "path": "licenses/native-dependencies/googletest/LICENSE",
-      "kind": "retained-upstream-notice",
-      "notice_record": "licenses/native-dependencies/googletest/LICENSE",
-      "references": [
-        "licenses/native-dependencies/googletest/LICENSE"
-      ]
+      "source_ids": [],
+      "references": [],
+      "notice_record": "licenses/native-dependencies/googletest/LICENSE"
     },
     {
       "path": "licenses/native-dependencies/leveldb/AUTHORS",
-      "kind": "retained-upstream-notice",
-      "notice_record": "licenses/native-dependencies/leveldb/AUTHORS",
-      "references": [
-        "licenses/native-dependencies/leveldb/AUTHORS"
-      ]
+      "source_ids": [],
+      "references": [],
+      "notice_record": "licenses/native-dependencies/leveldb/AUTHORS"
     },
     {
       "path": "licenses/native-dependencies/leveldb/LICENSE",
-      "kind": "retained-upstream-notice",
-      "notice_record": "licenses/native-dependencies/leveldb/LICENSE",
-      "references": [
-        "licenses/native-dependencies/leveldb/LICENSE"
-      ]
+      "source_ids": [],
+      "references": [],
+      "notice_record": "licenses/native-dependencies/leveldb/LICENSE"
     },
     {
       "path": "licenses/native-dependencies/marisa-trie/AUTHORS",
-      "kind": "retained-upstream-notice",
-      "notice_record": "licenses/native-dependencies/marisa-trie/AUTHORS",
-      "references": [
-        "licenses/native-dependencies/marisa-trie/AUTHORS"
-      ]
+      "source_ids": [],
+      "references": [],
+      "notice_record": "licenses/native-dependencies/marisa-trie/AUTHORS"
     },
     {
       "path": "licenses/native-dependencies/marisa-trie/COPYING.md",
-      "kind": "retained-upstream-notice",
-      "notice_record": "licenses/native-dependencies/marisa-trie/COPYING.md",
-      "references": [
-        "licenses/native-dependencies/marisa-trie/COPYING.md"
-      ]
+      "source_ids": [],
+      "references": [],
+      "notice_record": "licenses/native-dependencies/marisa-trie/COPYING.md"
     },
     {
       "path": "licenses/native-dependencies/opencc/AUTHORS",
-      "kind": "retained-upstream-notice",
-      "notice_record": "licenses/native-dependencies/opencc/AUTHORS",
-      "references": [
-        "licenses/native-dependencies/opencc/AUTHORS"
-      ]
+      "source_ids": [],
+      "references": [],
+      "notice_record": "licenses/native-dependencies/opencc/AUTHORS"
     },
     {
       "path": "licenses/native-dependencies/opencc/LICENSE",
-      "kind": "retained-upstream-notice",
-      "notice_record": "licenses/native-dependencies/opencc/LICENSE",
-      "references": [
-        "licenses/native-dependencies/opencc/LICENSE"
-      ]
+      "source_ids": [],
+      "references": [],
+      "notice_record": "licenses/native-dependencies/opencc/LICENSE"
     },
     {
       "path": "licenses/native-dependencies/utf8cpp/checked.h-NOTICE.txt",
-      "kind": "retained-upstream-notice",
-      "notice_record": "licenses/native-dependencies/utf8cpp/checked.h-NOTICE.txt",
-      "references": [
-        "licenses/native-dependencies/utf8cpp/checked.h-NOTICE.txt"
-      ]
+      "source_ids": [],
+      "references": [],
+      "notice_record": "licenses/native-dependencies/utf8cpp/checked.h-NOTICE.txt"
     },
     {
       "path": "licenses/native-dependencies/utf8cpp/core.h-NOTICE.txt",
-      "kind": "retained-upstream-notice",
-      "notice_record": "licenses/native-dependencies/utf8cpp/core.h-NOTICE.txt",
-      "references": [
-        "licenses/native-dependencies/utf8cpp/core.h-NOTICE.txt"
-      ]
+      "source_ids": [],
+      "references": [],
+      "notice_record": "licenses/native-dependencies/utf8cpp/core.h-NOTICE.txt"
     },
     {
       "path": "licenses/native-dependencies/utf8cpp/cpp17.h-NOTICE.txt",
-      "kind": "retained-upstream-notice",
-      "notice_record": "licenses/native-dependencies/utf8cpp/cpp17.h-NOTICE.txt",
-      "references": [
-        "licenses/native-dependencies/utf8cpp/cpp17.h-NOTICE.txt"
-      ]
+      "source_ids": [],
+      "references": [],
+      "notice_record": "licenses/native-dependencies/utf8cpp/cpp17.h-NOTICE.txt"
     },
     {
       "path": "licenses/native-dependencies/weasel/LICENSE.txt",
-      "kind": "retained-upstream-notice",
-      "notice_record": "licenses/native-dependencies/weasel/LICENSE.txt",
-      "references": [
-        "licenses/native-dependencies/weasel/LICENSE.txt"
-      ]
+      "source_ids": [],
+      "references": [],
+      "notice_record": "licenses/native-dependencies/weasel/LICENSE.txt"
     },
     {
       "path": "licenses/native-dependencies/winsparkle-0.8.1/AUTHORS",
-      "kind": "retained-upstream-notice",
-      "notice_record": "licenses/native-dependencies/winsparkle-0.8.1/AUTHORS",
-      "references": [
-        "licenses/native-dependencies/winsparkle-0.8.1/AUTHORS"
-      ]
+      "source_ids": [],
+      "references": [],
+      "notice_record": "licenses/native-dependencies/winsparkle-0.8.1/AUTHORS"
     },
     {
       "path": "licenses/native-dependencies/winsparkle-0.8.1/COPYING",
-      "kind": "retained-upstream-notice",
-      "notice_record": "licenses/native-dependencies/winsparkle-0.8.1/COPYING",
-      "references": [
-        "licenses/native-dependencies/winsparkle-0.8.1/COPYING"
-      ]
+      "source_ids": [],
+      "references": [],
+      "notice_record": "licenses/native-dependencies/winsparkle-0.8.1/COPYING"
     },
     {
       "path": "licenses/native-dependencies/winsparkle-0.8.1/COPYING.expat",
-      "kind": "retained-upstream-notice",
-      "notice_record": "licenses/native-dependencies/winsparkle-0.8.1/COPYING.expat",
-      "references": [
-        "licenses/native-dependencies/winsparkle-0.8.1/COPYING.expat"
-      ]
+      "source_ids": [],
+      "references": [],
+      "notice_record": "licenses/native-dependencies/winsparkle-0.8.1/COPYING.expat"
     },
     {
       "path": "licenses/native-dependencies/winsparkle-0.8.1/WEASEL-API-HEADER-NOTICE.txt",
-      "kind": "retained-upstream-notice",
-      "notice_record": "licenses/native-dependencies/winsparkle-0.8.1/WEASEL-API-HEADER-NOTICE.txt",
-      "references": [
-        "licenses/native-dependencies/winsparkle-0.8.1/WEASEL-API-HEADER-NOTICE.txt"
-      ]
+      "source_ids": [],
+      "references": [],
+      "notice_record": "licenses/native-dependencies/winsparkle-0.8.1/WEASEL-API-HEADER-NOTICE.txt"
     },
     {
       "path": "licenses/native-dependencies/wtl/MS-PL.txt",
-      "kind": "retained-upstream-notice",
-      "notice_record": "licenses/native-dependencies/wtl/MS-PL.txt",
-      "references": [
-        "licenses/native-dependencies/wtl/MS-PL.txt"
-      ]
+      "source_ids": [],
+      "references": [],
+      "notice_record": "licenses/native-dependencies/wtl/MS-PL.txt"
     },
     {
       "path": "licenses/native-dependencies/wtl/WTL-COPYRIGHT-NOTICE.txt",
-      "kind": "retained-upstream-notice",
-      "notice_record": "licenses/native-dependencies/wtl/WTL-COPYRIGHT-NOTICE.txt",
-      "references": [
-        "licenses/native-dependencies/wtl/WTL-COPYRIGHT-NOTICE.txt"
-      ]
+      "source_ids": [],
+      "references": [],
+      "notice_record": "licenses/native-dependencies/wtl/WTL-COPYRIGHT-NOTICE.txt"
     },
     {
       "path": "licenses/native-dependencies/x11/keysym.h-NOTICE.txt",
-      "kind": "retained-upstream-notice",
-      "notice_record": "licenses/native-dependencies/x11/keysym.h-NOTICE.txt",
-      "references": [
-        "licenses/native-dependencies/x11/keysym.h-NOTICE.txt"
-      ]
+      "source_ids": [],
+      "references": [],
+      "notice_record": "licenses/native-dependencies/x11/keysym.h-NOTICE.txt"
     },
     {
       "path": "licenses/native-dependencies/x11/keysymdef.h-NOTICE.txt",
-      "kind": "retained-upstream-notice",
-      "notice_record": "licenses/native-dependencies/x11/keysymdef.h-NOTICE.txt",
-      "references": [
-        "licenses/native-dependencies/x11/keysymdef.h-NOTICE.txt"
-      ]
+      "source_ids": [],
+      "references": [],
+      "notice_record": "licenses/native-dependencies/x11/keysymdef.h-NOTICE.txt"
     },
     {
       "path": "licenses/native-dependencies/yaml-cpp/LICENSE",
-      "kind": "retained-upstream-notice",
-      "notice_record": "licenses/native-dependencies/yaml-cpp/LICENSE",
-      "references": [
-        "licenses/native-dependencies/yaml-cpp/LICENSE"
-      ]
+      "source_ids": [],
+      "references": [],
+      "notice_record": "licenses/native-dependencies/yaml-cpp/LICENSE"
     },
     {
       "path": "licenses/OpenCC-LICENSE.txt",
-      "kind": "retained-upstream-notice",
-      "notice_record": "licenses/OpenCC-LICENSE.txt",
-      "references": [
-        "licenses/OpenCC-LICENSE.txt"
-      ]
+      "source_ids": [],
+      "references": [],
+      "notice_record": "licenses/OpenCC-LICENSE.txt"
     },
     {
       "path": "licenses/package/7zip-LICENSE.txt",
-      "kind": "retained-upstream-notice",
-      "notice_record": "licenses/package/7zip-LICENSE.txt",
-      "references": [
-        "licenses/package/7zip-LICENSE.txt"
-      ]
+      "source_ids": [],
+      "references": [],
+      "notice_record": "licenses/package/7zip-LICENSE.txt"
     },
     {
       "path": "licenses/package/ca-bundle-SOURCE-NOTICE.txt",
-      "kind": "retained-upstream-notice",
-      "notice_record": "licenses/package/ca-bundle-SOURCE-NOTICE.txt",
-      "references": [
-        "licenses/package/ca-bundle-SOURCE-NOTICE.txt"
-      ]
+      "source_ids": [],
+      "references": [],
+      "notice_record": "licenses/package/ca-bundle-SOURCE-NOTICE.txt"
     },
     {
       "path": "licenses/package/curl-COPYING.txt",
-      "kind": "retained-upstream-notice",
-      "notice_record": "licenses/package/curl-COPYING.txt",
-      "references": [
-        "licenses/package/curl-COPYING.txt"
-      ]
+      "source_ids": [],
+      "references": [],
+      "notice_record": "licenses/package/curl-COPYING.txt"
     },
     {
       "path": "licenses/package/curl-dependencies/brotli-LICENSE",
-      "kind": "retained-upstream-notice",
-      "notice_record": "licenses/package/curl-dependencies/brotli-LICENSE",
-      "references": [
-        "licenses/package/curl-dependencies/brotli-LICENSE"
-      ]
+      "source_ids": [],
+      "references": [],
+      "notice_record": "licenses/package/curl-dependencies/brotli-LICENSE"
     },
     {
       "path": "licenses/package/curl-dependencies/curl-for-win-LICENSE.md",
-      "kind": "retained-upstream-notice",
-      "notice_record": "licenses/package/curl-dependencies/curl-for-win-LICENSE.md",
-      "references": [
-        "licenses/package/curl-dependencies/curl-for-win-LICENSE.md"
-      ]
+      "source_ids": [],
+      "references": [],
+      "notice_record": "licenses/package/curl-dependencies/curl-for-win-LICENSE.md"
     },
     {
       "path": "licenses/package/curl-dependencies/libpsl-COPYING",
-      "kind": "retained-upstream-notice",
-      "notice_record": "licenses/package/curl-dependencies/libpsl-COPYING",
-      "references": [
-        "licenses/package/curl-dependencies/libpsl-COPYING"
-      ]
+      "source_ids": [],
+      "references": [],
+      "notice_record": "licenses/package/curl-dependencies/libpsl-COPYING"
     },
     {
       "path": "licenses/package/curl-dependencies/libpsl-LICENSE.chromium",
-      "kind": "retained-upstream-notice",
-      "notice_record": "licenses/package/curl-dependencies/libpsl-LICENSE.chromium",
-      "references": [
-        "licenses/package/curl-dependencies/libpsl-LICENSE.chromium"
-      ]
+      "source_ids": [],
+      "references": [],
+      "notice_record": "licenses/package/curl-dependencies/libpsl-LICENSE.chromium"
     },
     {
       "path": "licenses/package/curl-dependencies/libressl-COPYING",
-      "kind": "retained-upstream-notice",
-      "notice_record": "licenses/package/curl-dependencies/libressl-COPYING",
-      "references": [
-        "licenses/package/curl-dependencies/libressl-COPYING"
-      ]
+      "source_ids": [],
+      "references": [],
+      "notice_record": "licenses/package/curl-dependencies/libressl-COPYING"
     },
     {
       "path": "licenses/package/curl-dependencies/libssh2-COPYING",
-      "kind": "retained-upstream-notice",
-      "notice_record": "licenses/package/curl-dependencies/libssh2-COPYING",
-      "references": [
-        "licenses/package/curl-dependencies/libssh2-COPYING"
-      ]
+      "source_ids": [],
+      "references": [],
+      "notice_record": "licenses/package/curl-dependencies/libssh2-COPYING"
     },
     {
       "path": "licenses/package/curl-dependencies/nghttp2-COPYING",
-      "kind": "retained-upstream-notice",
-      "notice_record": "licenses/package/curl-dependencies/nghttp2-COPYING",
-      "references": [
-        "licenses/package/curl-dependencies/nghttp2-COPYING"
-      ]
+      "source_ids": [],
+      "references": [],
+      "notice_record": "licenses/package/curl-dependencies/nghttp2-COPYING"
     },
     {
       "path": "licenses/package/curl-dependencies/nghttp3-COPYING",
-      "kind": "retained-upstream-notice",
-      "notice_record": "licenses/package/curl-dependencies/nghttp3-COPYING",
-      "references": [
-        "licenses/package/curl-dependencies/nghttp3-COPYING"
-      ]
+      "source_ids": [],
+      "references": [],
+      "notice_record": "licenses/package/curl-dependencies/nghttp3-COPYING"
     },
     {
       "path": "licenses/package/curl-dependencies/ngtcp2-COPYING",
-      "kind": "retained-upstream-notice",
-      "notice_record": "licenses/package/curl-dependencies/ngtcp2-COPYING",
-      "references": [
-        "licenses/package/curl-dependencies/ngtcp2-COPYING"
-      ]
+      "source_ids": [],
+      "references": [],
+      "notice_record": "licenses/package/curl-dependencies/ngtcp2-COPYING"
     },
     {
       "path": "licenses/package/curl-dependencies/public-suffix-SOURCE-NOTICE.txt",
-      "kind": "retained-upstream-notice",
-      "notice_record": "licenses/package/curl-dependencies/public-suffix-SOURCE-NOTICE.txt",
-      "references": [
-        "licenses/package/curl-dependencies/public-suffix-SOURCE-NOTICE.txt"
-      ]
+      "source_ids": [],
+      "references": [],
+      "notice_record": "licenses/package/curl-dependencies/public-suffix-SOURCE-NOTICE.txt"
     },
     {
       "path": "licenses/package/curl-dependencies/zlib-LICENSE",
-      "kind": "retained-upstream-notice",
-      "notice_record": "licenses/package/curl-dependencies/zlib-LICENSE",
-      "references": [
-        "licenses/package/curl-dependencies/zlib-LICENSE"
-      ]
+      "source_ids": [],
+      "references": [],
+      "notice_record": "licenses/package/curl-dependencies/zlib-LICENSE"
     },
     {
       "path": "licenses/package/curl-dependencies/zstd-COPYING",
-      "kind": "retained-upstream-notice",
-      "notice_record": "licenses/package/curl-dependencies/zstd-COPYING",
-      "references": [
-        "licenses/package/curl-dependencies/zstd-COPYING"
-      ]
+      "source_ids": [],
+      "references": [],
+      "notice_record": "licenses/package/curl-dependencies/zstd-COPYING"
     },
     {
       "path": "licenses/package/curl-dependencies/zstd-LICENSE",
-      "kind": "retained-upstream-notice",
-      "notice_record": "licenses/package/curl-dependencies/zstd-LICENSE",
-      "references": [
-        "licenses/package/curl-dependencies/zstd-LICENSE"
-      ]
+      "source_ids": [],
+      "references": [],
+      "notice_record": "licenses/package/curl-dependencies/zstd-LICENSE"
     },
     {
       "path": "licenses/package/LGPL-2.1.txt",
-      "kind": "retained-upstream-notice",
-      "notice_record": "licenses/package/LGPL-2.1.txt",
-      "references": [
-        "licenses/package/LGPL-2.1.txt"
-      ]
+      "source_ids": [],
+      "references": [],
+      "notice_record": "licenses/package/LGPL-2.1.txt"
     },
     {
       "path": "licenses/package/MPL-2.0.txt",
-      "kind": "retained-upstream-notice",
-      "notice_record": "licenses/package/MPL-2.0.txt",
-      "references": [
-        "licenses/package/MPL-2.0.txt"
-      ]
+      "source_ids": [],
+      "references": [],
+      "notice_record": "licenses/package/MPL-2.0.txt"
     },
     {
       "path": "licenses/package/NSIS-COPYING.txt",
-      "kind": "retained-upstream-notice",
-      "notice_record": "licenses/package/NSIS-COPYING.txt",
-      "references": [
-        "licenses/package/NSIS-COPYING.txt"
-      ]
+      "source_ids": [],
+      "references": [],
+      "notice_record": "licenses/package/NSIS-COPYING.txt"
     },
     {
       "path": "licenses/package/plum-LICENSE.txt",
-      "kind": "retained-upstream-notice",
-      "notice_record": "licenses/package/plum-LICENSE.txt",
-      "references": [
-        "licenses/package/plum-LICENSE.txt"
-      ]
+      "source_ids": [],
+      "references": [],
+      "notice_record": "licenses/package/plum-LICENSE.txt"
     },
     {
       "path": "licenses/package/prelude-LICENSE.txt",
-      "kind": "retained-upstream-notice",
-      "notice_record": "licenses/package/prelude-LICENSE.txt",
-      "references": [
-        "licenses/package/prelude-LICENSE.txt"
-      ]
+      "source_ids": [],
+      "references": [],
+      "notice_record": "licenses/package/prelude-LICENSE.txt"
     },
     {
       "path": "licenses/package-sources.json",
@@ -878,51 +812,39 @@
     },
     {
       "path": "licenses/supplement/librime-LICENSE.txt",
-      "kind": "retained-upstream-notice",
-      "notice_record": "licenses/supplement/librime-LICENSE.txt",
-      "references": [
-        "licenses/supplement/librime-LICENSE.txt"
-      ]
+      "source_ids": [],
+      "references": [],
+      "notice_record": "licenses/supplement/librime-LICENSE.txt"
     },
     {
       "path": "licenses/supplement/librime-lua-LICENSE.txt",
-      "kind": "retained-upstream-notice",
-      "notice_record": "licenses/supplement/librime-lua-LICENSE.txt",
-      "references": [
-        "licenses/supplement/librime-lua-LICENSE.txt"
-      ]
+      "source_ids": [],
+      "references": [],
+      "notice_record": "licenses/supplement/librime-lua-LICENSE.txt"
     },
     {
       "path": "licenses/supplement/librime-octagram-LICENSE.txt",
-      "kind": "retained-upstream-notice",
-      "notice_record": "licenses/supplement/librime-octagram-LICENSE.txt",
-      "references": [
-        "licenses/supplement/librime-octagram-LICENSE.txt"
-      ]
+      "source_ids": [],
+      "references": [],
+      "notice_record": "licenses/supplement/librime-octagram-LICENSE.txt"
     },
     {
       "path": "licenses/supplement/librime-predict-LICENSE.txt",
-      "kind": "retained-upstream-notice",
-      "notice_record": "licenses/supplement/librime-predict-LICENSE.txt",
-      "references": [
-        "licenses/supplement/librime-predict-LICENSE.txt"
-      ]
+      "source_ids": [],
+      "references": [],
+      "notice_record": "licenses/supplement/librime-predict-LICENSE.txt"
     },
     {
       "path": "licenses/supplement/Lua-5.3-MIT-NOTICE.txt",
-      "kind": "retained-upstream-notice",
-      "notice_record": "licenses/supplement/Lua-5.3-MIT-NOTICE.txt",
-      "references": [
-        "licenses/supplement/Lua-5.3-MIT-NOTICE.txt"
-      ]
+      "source_ids": [],
+      "references": [],
+      "notice_record": "licenses/supplement/Lua-5.3-MIT-NOTICE.txt"
     },
     {
       "path": "licenses/supplement/Lua-5.4-MIT-NOTICE.txt",
-      "kind": "retained-upstream-notice",
-      "notice_record": "licenses/supplement/Lua-5.4-MIT-NOTICE.txt",
-      "references": [
-        "licenses/supplement/Lua-5.4-MIT-NOTICE.txt"
-      ]
+      "source_ids": [],
+      "references": [],
+      "notice_record": "licenses/supplement/Lua-5.4-MIT-NOTICE.txt"
     },
     {
       "path": "licenses/third-party-source-manifest.json",
@@ -992,8 +914,9 @@
     },
     {
       "path": "native/notification-inputs.json",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
+      "source_ids": [
+        "project-code"
+      ],
       "references": [
         "LICENSE"
       ]
@@ -1197,25 +1120,55 @@
       ]
     },
     {
+      "path": "native/tests/mode-icon/ModeIconTests.cpp",
+      "source_ids": [
+        "project-code"
+      ],
+      "references": [
+        "LICENSE"
+      ]
+    },
+    {
+      "path": "native/tests/mode-icon/Prepare-ModeIconTests.py",
+      "source_ids": [
+        "project-code"
+      ],
+      "references": [
+        "LICENSE"
+      ]
+    },
+    {
+      "path": "native/tests/mode-icon/Run-ModeIconTests.ps1",
+      "source_ids": [
+        "project-code"
+      ],
+      "references": [
+        "LICENSE"
+      ]
+    },
+    {
       "path": "native/tests/notifications/NotificationTests.cpp",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
+      "source_ids": [
+        "project-code"
+      ],
       "references": [
         "LICENSE"
       ]
     },
     {
       "path": "native/tests/notifications/Prepare-NotificationTests.py",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
+      "source_ids": [
+        "project-code"
+      ],
       "references": [
         "LICENSE"
       ]
     },
     {
       "path": "native/tests/notifications/Run-NotificationTests.ps1",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
+      "source_ids": [
+        "project-code"
+      ],
       "references": [
         "LICENSE"
       ]
@@ -1248,11 +1201,73 @@
       ]
     },
     {
-      "path": "native/weasel/shift-notification.patch",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
+      "path": "native/weasel/mode-status-icon.patch",
+      "source_ids": [
+        "project-code",
+        "weasel",
+        "native-dependencies"
+      ],
       "references": [
-        "LICENSE"
+        "LICENSE",
+        "licenses/native-dependencies/boost/LICENSE_1_0.txt",
+        "licenses/native-dependencies/darts-clone/COPYING.darts-clone",
+        "licenses/native-dependencies/glog/AUTHORS",
+        "licenses/native-dependencies/glog/COPYING",
+        "licenses/native-dependencies/googletest/LICENSE",
+        "licenses/native-dependencies/leveldb/AUTHORS",
+        "licenses/native-dependencies/leveldb/LICENSE",
+        "licenses/native-dependencies/marisa-trie/AUTHORS",
+        "licenses/native-dependencies/marisa-trie/COPYING.md",
+        "licenses/native-dependencies/opencc/AUTHORS",
+        "licenses/native-dependencies/opencc/LICENSE",
+        "licenses/native-dependencies/utf8cpp/checked.h-NOTICE.txt",
+        "licenses/native-dependencies/utf8cpp/core.h-NOTICE.txt",
+        "licenses/native-dependencies/utf8cpp/cpp17.h-NOTICE.txt",
+        "licenses/native-dependencies/weasel/LICENSE.txt",
+        "licenses/native-dependencies/winsparkle-0.8.1/AUTHORS",
+        "licenses/native-dependencies/winsparkle-0.8.1/COPYING",
+        "licenses/native-dependencies/winsparkle-0.8.1/COPYING.expat",
+        "licenses/native-dependencies/winsparkle-0.8.1/WEASEL-API-HEADER-NOTICE.txt",
+        "licenses/native-dependencies/wtl/MS-PL.txt",
+        "licenses/native-dependencies/wtl/WTL-COPYRIGHT-NOTICE.txt",
+        "licenses/native-dependencies/x11/keysym.h-NOTICE.txt",
+        "licenses/native-dependencies/x11/keysymdef.h-NOTICE.txt",
+        "licenses/native-dependencies/yaml-cpp/LICENSE"
+      ]
+    },
+    {
+      "path": "native/weasel/shift-notification.patch",
+      "source_ids": [
+        "project-code",
+        "weasel",
+        "native-dependencies"
+      ],
+      "references": [
+        "LICENSE",
+        "licenses/native-dependencies/boost/LICENSE_1_0.txt",
+        "licenses/native-dependencies/darts-clone/COPYING.darts-clone",
+        "licenses/native-dependencies/glog/AUTHORS",
+        "licenses/native-dependencies/glog/COPYING",
+        "licenses/native-dependencies/googletest/LICENSE",
+        "licenses/native-dependencies/leveldb/AUTHORS",
+        "licenses/native-dependencies/leveldb/LICENSE",
+        "licenses/native-dependencies/marisa-trie/AUTHORS",
+        "licenses/native-dependencies/marisa-trie/COPYING.md",
+        "licenses/native-dependencies/opencc/AUTHORS",
+        "licenses/native-dependencies/opencc/LICENSE",
+        "licenses/native-dependencies/utf8cpp/checked.h-NOTICE.txt",
+        "licenses/native-dependencies/utf8cpp/core.h-NOTICE.txt",
+        "licenses/native-dependencies/utf8cpp/cpp17.h-NOTICE.txt",
+        "licenses/native-dependencies/weasel/LICENSE.txt",
+        "licenses/native-dependencies/winsparkle-0.8.1/AUTHORS",
+        "licenses/native-dependencies/winsparkle-0.8.1/COPYING",
+        "licenses/native-dependencies/winsparkle-0.8.1/COPYING.expat",
+        "licenses/native-dependencies/winsparkle-0.8.1/WEASEL-API-HEADER-NOTICE.txt",
+        "licenses/native-dependencies/wtl/MS-PL.txt",
+        "licenses/native-dependencies/wtl/WTL-COPYRIGHT-NOTICE.txt",
+        "licenses/native-dependencies/x11/keysym.h-NOTICE.txt",
+        "licenses/native-dependencies/x11/keysymdef.h-NOTICE.txt",
+        "licenses/native-dependencies/yaml-cpp/LICENSE"
       ]
     },
     {
@@ -1346,8 +1361,9 @@
     },
     {
       "path": "scripts/native/Build-ServerNotification.ps1",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
+      "source_ids": [
+        "project-code"
+      ],
       "references": [
         "LICENSE"
       ]

@@ -27,8 +27,8 @@
     },
     {
       "path": ".github/workflows/shift-notification.yml",
-      "bytes": 2406,
-      "sha256": "9c35dcf605570587d9d3a93ca1218a3364a2e40dd6090ab557dd382aa7de1726"
+      "bytes": 2827,
+      "sha256": "423ccc24c359744a1033b3417758e2a899516a9c70100151689b778c88a2e92b"
     },
     {
       "path": ".github/workflows/verify.yml",
@@ -94,6 +94,21 @@
       "path": "assets/icon/star-core.svg",
       "bytes": 270,
       "sha256": "1adb85a8c5a82c290c06506057726d7a4db352d4e60c757cf14b765955ea69c2"
+    },
+    {
+      "path": "assets/status/generate.py",
+      "bytes": 8774,
+      "sha256": "a054798dfe1ddefc3061bd2277666e52421adaa10acdd4a32b908cedaee40ff1"
+    },
+    {
+      "path": "assets/status/smart-english.ico",
+      "bytes": 374262,
+      "sha256": "2dba231189760c6a8e58f1bc51f8275a73f402b61f600a075cc95be6695cb446"
+    },
+    {
+      "path": "assets/status/smart-english.svg",
+      "bytes": 549,
+      "sha256": "e0a059469ce1dcb2c050063a21fe2e6a668b716da778743a97f58115391b5563"
     },
     {
       "path": "docs/BUILD.md",
@@ -172,8 +187,8 @@
     },
     {
       "path": "licenses/file-licenses.json",
-      "bytes": 41312,
-      "sha256": "f03258c02fe9896d912156e2efb8e17a463420a505437ae77c1f0535a8302042"
+      "bytes": 41022,
+      "sha256": "147de2a05bb0e27d2b6177d94dc6fc24b5a9f04c342d20e2325ada66768ee53a"
     },
     {
       "path": "licenses/native-dependencies/boost/LICENSE_1_0.txt",
@@ -467,8 +482,8 @@
     },
     {
       "path": "native/notification-inputs.json",
-      "bytes": 2592,
-      "sha256": "1ce7346e67a9221f24a5316c1c729d59d7f3551c4fc278547e4e4948af347e57"
+      "bytes": 4015,
+      "sha256": "28506807dd444e51a20181a6f99618e597828dfbf2f683b942e61c57aa0ded13"
     },
     {
       "path": "native/source-manifest.json",
@@ -581,14 +596,29 @@
       "sha256": "9f2910f4bc2ca5072bf0717d202fa6528a0c50c363066cdaa95e5417d43949e1"
     },
     {
+      "path": "native/tests/mode-icon/ModeIconTests.cpp",
+      "bytes": 11220,
+      "sha256": "7d8ed4bc363f35094fc1dfb67f849b5a5c2c43f55dca209c91ddd6022b669c23"
+    },
+    {
+      "path": "native/tests/mode-icon/Prepare-ModeIconTests.py",
+      "bytes": 5248,
+      "sha256": "9ba550101c276b63c3c52f2da4b8b874a31d1f4d298b9b8ccc8b0c38c7001fca"
+    },
+    {
+      "path": "native/tests/mode-icon/Run-ModeIconTests.ps1",
+      "bytes": 2658,
+      "sha256": "5eaa84b6da4d078eb673388d11e60079da3f9b536738d5e05d0515e0a690552c"
+    },
+    {
       "path": "native/tests/notifications/NotificationTests.cpp",
       "bytes": 15555,
       "sha256": "fa50eb69e1aaf3e15473e703f99a75c8ea5102ddb66672fecac27be476194cb3"
     },
     {
       "path": "native/tests/notifications/Prepare-NotificationTests.py",
-      "bytes": 3945,
-      "sha256": "c3f50e38db350ef08d6e4690862c058cc9d9af8432751cd83b485e8c0b2a125f"
+      "bytes": 4291,
+      "sha256": "79e7ac2c5e4192a8c7d518f52db55346587f7dd75ebe6d619aebe849bfb02fba"
     },
     {
       "path": "native/tests/notifications/Run-NotificationTests.ps1",
@@ -609,6 +639,11 @@
       "path": "native/tests/shift/ShiftKeySnapshotTests.cpp",
       "bytes": 8374,
       "sha256": "bedb6d25c5e7fd054e3730f42e13e7902d414fd3bc96aee220b974ea9d4eef41"
+    },
+    {
+      "path": "native/weasel/mode-status-icon.patch",
+      "bytes": 4490,
+      "sha256": "3b48781480e9895972ad73c698f0ebe159781cd9d88db43a80fa1a6261efb53d"
     },
     {
       "path": "native/weasel/shift-notification.patch",
@@ -632,8 +667,8 @@
     },
     {
       "path": "scripts/native/Build-ServerNotification.ps1",
-      "bytes": 11167,
-      "sha256": "e448a86c054729206e7d8815b0d50c6567e556e41b56101c46c7c3c16d0f71f6"
+      "bytes": 13062,
+      "sha256": "3b53cacbb4f81844153f0095d857f302354c5440487380b199bd69d995bbff0b"
     },
     {
       "path": "scripts/native/Build-Weasel.ps1",

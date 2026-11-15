@@ -57,6 +57,11 @@ jobs:
             ${{ runner.temp }}/stellae-notification-output/notification-tests/results.json
             ${{ runner.temp }}/stellae-notification-output/notification-tests/*/result.txt
             ${{ runner.temp }}/stellae-notification-output/notification-tests/*/compile.log
+            ${{ runner.temp }}/stellae-notification-output/mode-icon-tests/*.json
+            ${{ runner.temp }}/stellae-notification-output/mode-icon-tests/*.txt
+            ${{ runner.temp }}/stellae-notification-output/mode-icon-tests/*.log
+            ${{ runner.temp }}/stellae-notification-output/mode-icon-tests/*/result.txt
+            ${{ runner.temp }}/stellae-notification-output/mode-icon-tests/*/compile.log
             ${{ runner.temp }}/stellae-notification-source/ci-logs/shift-key-snapshot-x64.json
           if-no-files-found: warn
           retention-days: 14

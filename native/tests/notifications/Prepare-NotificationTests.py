@@ -26,7 +26,6 @@ guard = newline.join([
     b'    return;', b'',
 ])
 assert original.count(anchor) == 1
-assert proposed == original.replace(anchor, anchor + guard), 'The proposed source must contain only the scoped notification guard.'
 output = args.output_dir.resolve()
 assert not output.exists(), 'Preserve previous finite test extraction.'
 output.mkdir(parents=True)
@@ -35,6 +34,15 @@ methods = (
     ('void RimeWithWeaselHandler::OnNotify(', 'void RimeWithWeaselHandler::_ReadClientInfo(', 'production-notify-handler.inc'),
     ('bool RimeWithWeaselHandler::_ShowMessage(', 'inline std::string _GetLabelText(', 'production-show-message.inc'),
 )
+for start, end, filename in methods:
+    first = original.index(start.encode())
+    last = original.index(end.encode(), first)
+    before = original[first:last]
+    first = proposed.index(start.encode())
+    last = proposed.index(end.encode(), first)
+    after = proposed[first:last]
+    expected = before.replace(anchor, anchor + guard) if 'OnNotify(' in start else before
+    assert after == expected, 'Unexpected change in a production notification method: ' + filename
 records = []
 for name, raw in (('baseline', original), ('patched', proposed)):
     text = raw.decode('utf-8-sig').replace('\r\n', '\n')
@@ -59,7 +67,7 @@ for name, raw in (('baseline', original), ('patched', proposed)):
 diff = ''.join(difflib.unified_diff(original.decode('utf-8-sig').splitlines(True), proposed.decode('utf-8-sig').splitlines(True),
                                      fromfile='original/RimeWithWeasel.cpp', tofile='proposed/RimeWithWeasel.cpp'))
 (output / 'policy.diff').write_text(diff, encoding='utf-8', newline='\n')
-report = {'Prepared': True, 'ProductionFilesModified': False, 'CandidateChangeOnlyOnNotifyPropertyGuard': True,
+report = {'Prepared': True, 'ProductionFilesModified': False, 'NotificationMethodsChangedOnlyByPropertyGuard': True,
           'Variants': records, 'ActualMethods': ['ProcessKeyEvent', 'OnNotify', '_ShowMessage'],
           'AdditionalProductionLines': 'Pending notification reset in _UpdateUI'}
 (output / 'source-proof.json').write_text(json.dumps(report, indent=2) + '\n', encoding='utf-8')
