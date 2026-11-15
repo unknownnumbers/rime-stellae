@@ -1,0 +1,57 @@
+{
+  "schema": "stellae-notification-build-inputs/1",
+  "baselineSourceCommit": "864c733c74d6d4e77141ef8a95230f21f1862526",
+  "baselineCppSha256": "defa5b35df17bb2621bfbe6bdb23060ec6186a2b43d261fc850e4d300bc203d9",
+  "candidateCppSha256": "631f5b73aa9f1695b487cc38024bb806c978f846ef0d92337aae37872aa5690c",
+  "overlay": {
+    "path": "native/weasel/shift-notification.patch",
+    "sha256": "ac8e4ce3cfc508bf572c36219ed4fa8f5a4f54cd2298ac69117289a0c06e4a07"
+  },
+  "baselineInstaller": {
+    "url": "https://github.com/unknownnumbers/rime-stellae/releases/download/v0.17.4.61052/stellae-0.17.4.61052-installer.exe",
+    "sha256": "747f4a86ae77c519731bc441ed90e1cbb954decb78473d0e945441dd681c44e7"
+  },
+  "engineSha256": "b715a5dfbe3db39f5248c88149bdfee74783e4da516bb3974b3c6922feab7e48",
+  "baselineServerSha256": "3edb1dcac55d2e4c96edb8da827b2a5c0dda0466779a92990038879cd878c6e8",
+  "apiHeaders": [
+    {
+      "name": "rime_api.h",
+      "url": "https://raw.githubusercontent.com/rime/librime/1c23358157934bd6e6d6981f0c0164f05393b497/src/rime_api.h",
+      "sha256": "6eb5629162c44761e7b878f1b122f464de5c8685bd3cd5ac1e8519badc6d6424",
+      "license": "BSD-3-Clause"
+    },
+    {
+      "name": "rime_api_stdbool.h",
+      "url": "https://raw.githubusercontent.com/rime/librime/1c23358157934bd6e6d6981f0c0164f05393b497/src/rime_api_stdbool.h",
+      "sha256": "f5a64254e98c1c12ce6628f5d540bcd4e4b542ec287b4873c0b0ce4ed1bece99",
+      "license": "BSD-3-Clause"
+    },
+    {
+      "name": "rime_api_deprecated.h",
+      "url": "https://raw.githubusercontent.com/rime/librime/1c23358157934bd6e6d6981f0c0164f05393b497/src/rime_api_deprecated.h",
+      "sha256": "21625c4e16480a4540939299a002f21b11150bb10b69f5331e1580875ac63341",
+      "license": "BSD-3-Clause"
+    },
+    {
+      "name": "rime_levers_api.h",
+      "url": "https://raw.githubusercontent.com/rime/librime/1c23358157934bd6e6d6981f0c0164f05393b497/src/rime_levers_api.h",
+      "sha256": "b2ec30a89125f0fe5e91ea6cb209e8ae71e5f67fa87bc3d4a1dd3be3b5753b5a",
+      "license": "BSD-3-Clause"
+    }
+  ],
+  "tests": [
+    {
+      "path": "native/tests/notifications/NotificationTests.cpp",
+      "sha256": "fa50eb69e1aaf3e15473e703f99a75c8ea5102ddb66672fecac27be476194cb3"
+    },
+    {
+      "path": "native/tests/notifications/Prepare-NotificationTests.py",
+      "sha256": "c3f50e38db350ef08d6e4690862c058cc9d9af8432751cd83b485e8c0b2a125f"
+    },
+    {
+      "path": "native/tests/notifications/Run-NotificationTests.ps1",
+      "sha256": "46b98d4b953225d8ff94aaff6118ff1c04ab212ca0ee826992f13926bed56828"
+    }
+  ],
+  "scope": "x64 frontend server notification handling; runtime engines and input profiles are separate inputs."
+}

@@ -26,6 +26,11 @@
       "sha256": "d30a024591d2c1ccc38f5ddcfdf8a7ab512f8ab67e2779e16dd83c49fc3dd15b"
     },
     {
+      "path": ".github/workflows/shift-notification.yml",
+      "bytes": 2132,
+      "sha256": "68098377566de82906897453a83f4c2a721cefcb7b5b8aaa5720435a413a4447"
+    },
+    {
       "path": ".github/workflows/verify.yml",
       "bytes": 525,
       "sha256": "fba60147beb29b89e8d48068e7395202fc3f9b60e25dabfcf7ee2cd4f7b6b19a"
@@ -167,8 +172,8 @@
     },
     {
       "path": "licenses/file-licenses.json",
-      "bytes": 39871,
-      "sha256": "1d149c13d51c6e6cc217f15eaf542d971bfe07f9d6b73956a31d9278569cb981"
+      "bytes": 41312,
+      "sha256": "f03258c02fe9896d912156e2efb8e17a463420a505437ae77c1f0535a8302042"
     },
     {
       "path": "licenses/native-dependencies/boost/LICENSE_1_0.txt",
@@ -461,6 +466,11 @@
       "sha256": "bf83c2bb9ea7cebc8a2c6511f671c4fafe81346f320e17497576cd123e4b1c48"
     },
     {
+      "path": "native/notification-inputs.json",
+      "bytes": 2686,
+      "sha256": "222bccab89ad97a4745344ae9f277336f5cedc5c3bb4f11cc01cd7dc27f056ea"
+    },
+    {
       "path": "native/source-manifest.json",
       "bytes": 12774,
       "sha256": "1db10bf5c662a2b6324b3f5e9708d2b61e06dcdbbe5488756ce5cf8d5164641f"
@@ -571,6 +581,21 @@
       "sha256": "9f2910f4bc2ca5072bf0717d202fa6528a0c50c363066cdaa95e5417d43949e1"
     },
     {
+      "path": "native/tests/notifications/NotificationTests.cpp",
+      "bytes": 15555,
+      "sha256": "fa50eb69e1aaf3e15473e703f99a75c8ea5102ddb66672fecac27be476194cb3"
+    },
+    {
+      "path": "native/tests/notifications/Prepare-NotificationTests.py",
+      "bytes": 3945,
+      "sha256": "c3f50e38db350ef08d6e4690862c058cc9d9af8432751cd83b485e8c0b2a125f"
+    },
+    {
+      "path": "native/tests/notifications/Run-NotificationTests.ps1",
+      "bytes": 2303,
+      "sha256": "46b98d4b953225d8ff94aaff6118ff1c04ab212ca0ee826992f13926bed56828"
+    },
+    {
       "path": "native/tests/preedit_spacing_tests.cc",
       "bytes": 5398,
       "sha256": "b00a157f0ec1789127cbd295cfad79a1a01f27d20e7f815586a685d2bb2f6f97"
@@ -586,6 +611,11 @@
       "sha256": "bedb6d25c5e7fd054e3730f42e13e7902d414fd3bc96aee220b974ea9d4eef41"
     },
     {
+      "path": "native/weasel/shift-notification.patch",
+      "bytes": 467,
+      "sha256": "ac8e4ce3cfc508bf572c36219ed4fa8f5a4f54cd2298ac69117289a0c06e4a07"
+    },
+    {
       "path": "native/weasel/stellae-61052.patch",
       "bytes": 901278,
       "sha256": "0681eb161a64b861e9c70f5f251bacfa1fdd5032cc12a27b10b4e9eec291ea7c"
@@ -599,6 +629,11 @@
       "path": "scripts/native/Build-Engine.ps1",
       "bytes": 5690,
       "sha256": "d119566ae40794d4ebf5257a775b76850b9d5b9b2d109142aecae68802688bca"
+    },
+    {
+      "path": "scripts/native/Build-ServerNotification.ps1",
+      "bytes": 10272,
+      "sha256": "15c5f8a09548a4a2eaf07a1029a0fc066a90867b16aa0fbfa19ace6e97c82c84"
     },
     {
       "path": "scripts/native/Build-Weasel.ps1",

@@ -1,0 +1,59 @@
+name: Build server notification fix
+
+on:
+  push:
+    branches: [ci/shift-notification-20261116]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    shell: pwsh
+
+jobs:
+  server:
+    runs-on: windows-2022
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install PyYAML==6.0.2
+      - name: Verify source inventory
+        run: |
+          python scripts/verify_release.py --require-yaml
+          if ($LASTEXITCODE) { throw 'Source verification failed.' }
+          ./scripts/native/Test-Inventory.ps1
+      - uses: microsoft/setup-msbuild@v2
+        with:
+          vs-version: '[17.0,18.0)'
+      - uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: x64
+      - name: Assemble fixed frontend source
+        run: ./scripts/native/Prepare-Sources.ps1 -Variant stellae-61052 -Destination "$env:RUNNER_TEMP/stellae-notification-source"
+      - name: Build only the x64 server and bounded regressions
+        run: ./scripts/native/Build-ServerNotification.ps1 -SourcePath "$env:RUNNER_TEMP/stellae-notification-source" -CacheDirectory "$env:RUNNER_TEMP/stellae-notification-cache" -OutputDirectory "$env:RUNNER_TEMP/stellae-notification-output"
+      - name: Retain server and corresponding source
+        uses: actions/upload-artifact@v4
+        with:
+          name: stellae-shift-notification-server-x64
+          path: ${{ runner.temp }}/stellae-notification-output/release
+          if-no-files-found: error
+          retention-days: 14
+      - name: Retain finite build diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: stellae-shift-notification-validation
+          path: |
+            ${{ runner.temp }}/stellae-notification-output/*.json
+            ${{ runner.temp }}/stellae-notification-output/logs
+            ${{ runner.temp }}/stellae-notification-source/ci-logs/shift-key-snapshot-x64.json
+          if-no-files-found: warn
+          retention-days: 14
