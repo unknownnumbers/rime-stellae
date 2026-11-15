@@ -3,6 +3,7 @@
 import hashlib
 import importlib.util
 import json
+import re
 from pathlib import Path
 import struct
 import subprocess
@@ -202,6 +203,39 @@ class ServerOverlayTests(unittest.TestCase):
         self.change_record('x64', engineBundled=True)
         with self.assertRaisesRegex(ValueError, 'exceeded its scope'):
             self.apply()
+
+    def test_bundle_recipe_installs_and_removes_indexed_server_report(self):
+        self.apply()
+        result = subprocess.run([sys.executable, str(REPOSITORY / 'scripts/package/index_bundle.py'),
+                                 '--stage', str(self.stage), '--ref', SOURCE_REF],
+                                capture_output=True, text=True, encoding='utf-8', errors='replace')
+        self.assertEqual(result.returncode, 0, result.stderr)
+        manifest = json.loads((self.stage / 'package-manifest.json').read_text('utf-8'))
+        report = 'server-overlay-verification.json'
+        row = next(item for item in manifest['files'] if item['path'] == report)
+        self.assertEqual(row['installed_path'], report)
+        self.assertEqual(row['sha256'], digest((self.stage / report).read_bytes()))
+        recipe = (REPOSITORY / 'installer/install.nsi').read_text('utf-8-sig')
+        first = recipe.index('  SetOutPath "$INSTDIR\\scheme-notices"')
+        last = recipe.index('  SetOutPath "$PLUGINSDIR\\shared-payload"', first)
+        guard = recipe.rfind('!ifndef STELLAE_BUNDLE', 0, first)
+        self.assertGreaterEqual(guard, 0)
+        self.assertLess(recipe.index('!else', guard), first)
+        self.assertGreater(recipe.index('!endif', guard), last)
+        destination = None
+        installed = {}
+        for line in recipe[first:last].splitlines():
+            out = re.fullmatch(r'\s*SetOutPath "([^"]+)"\s*', line)
+            source = re.fullmatch(r'\s*File "([^"]+)"\s*', line)
+            if out:
+                destination = out.group(1)
+            elif source:
+                installed[source.group(1)] = destination
+        self.assertEqual(installed.get(report), '$INSTDIR',
+                         'The indexed report must be embedded at its declared root path.')
+        uninstall = recipe.split('Section "Uninstall"', 1)[1].split('SectionEnd', 1)[0]
+        self.assertRegex(uninstall, r'(?m)^\s*Delete\s+"\$INSTDIR\\\*\.\*"\s*$',
+                         'The owned root report must be covered by normal uninstall cleanup.')
 
     def test_index_retains_exact_inherited_licenses(self):
         self.apply()

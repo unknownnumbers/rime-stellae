@@ -411,6 +411,7 @@ program_files:
   File "BundleData.ps1"
   File "bundle-inputs.json"
   File "bundle-provenance.json"
+  File "server-overlay-verification.json"
   File "base-package-license-index.json"
   SetOutPath "$PLUGINSDIR\shared-payload"
   File /r "shared-payload\*"

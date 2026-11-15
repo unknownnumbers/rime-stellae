@@ -152,8 +152,8 @@
     },
     {
       "path": "installer/install.nsi",
-      "bytes": 24037,
-      "sha256": "108924851f14478b0231b910af905c0b0d002de6fcb0cb9ec42a4b1fa54f38c7"
+      "bytes": 24079,
+      "sha256": "4af90ae8c967e1b964440b11705b05a859a023c3411c748e10972d67591dd53a"
     },
     {
       "path": "installer/stellae_identity.nsh",
@@ -622,8 +622,8 @@
     },
     {
       "path": "native/tests/package/test_server_overlays.py",
-      "bytes": 11096,
-      "sha256": "bb81634b42ddcd86c2991e75802fbcc6852921c969d035782673bf888c80638c"
+      "bytes": 13174,
+      "sha256": "743f8b788a9ecf0eebb93b987b82c3f35539e00f9de5cc5ee094483bd81f88eb"
     },
     {
       "path": "native/tests/preedit_spacing_tests.cc",
