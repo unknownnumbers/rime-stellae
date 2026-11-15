@@ -483,7 +483,7 @@
     {
       "path": "native/notification-inputs.json",
       "bytes": 4015,
-      "sha256": "28506807dd444e51a20181a6f99618e597828dfbf2f683b942e61c57aa0ded13"
+      "sha256": "3323c8a4f2ef6f6ad8a0dcf46cf4ffa881ac0df00f5804c4f37d303e9cab3da4"
     },
     {
       "path": "native/source-manifest.json",
@@ -642,8 +642,8 @@
     },
     {
       "path": "native/weasel/mode-status-icon.patch",
-      "bytes": 4490,
-      "sha256": "3b48781480e9895972ad73c698f0ebe159781cd9d88db43a80fa1a6261efb53d"
+      "bytes": 4584,
+      "sha256": "adc9fd98501ca42b60a514a5c6510009c4e891c878660bc769ceb82305fee1bc"
     },
     {
       "path": "native/weasel/shift-notification.patch",

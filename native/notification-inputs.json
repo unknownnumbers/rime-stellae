@@ -55,7 +55,7 @@
   "scope": "x64 frontend server mode notifications and status icon styles; runtime engines and input profiles are separate inputs.",
   "modeIconOverlay": {
     "path": "native/weasel/mode-status-icon.patch",
-    "sha256": "3b48781480e9895972ad73c698f0ebe159781cd9d88db43a80fa1a6261efb53d",
+    "sha256": "adc9fd98501ca42b60a514a5c6510009c4e891c878660bc769ceb82305fee1bc",
     "baselineHeaderSha256": "f4bd0363a26fc72fe149e8020807083e9ccd39dfa930cd5cd4d75ae18d0da782",
     "candidateHeaderSha256": "dfe43ddf0aec22bd64b180485e490741732e226ec17e1ed0d35f49b607eaf73d",
     "candidateCppSha256": "12440d30b0b1b600a45b02ec56da0af85b1ae8765809c16957b21319375cf28f"
