@@ -1,0 +1,41 @@
+name: Upload verified draft release assets
+
+on:
+  push:
+    branches: [ci/upload-mode-release-20261116]
+  workflow_dispatch:
+
+permissions:
+  actions: read
+  contents: write
+
+jobs:
+  upload:
+    if: github.repository == 'unknownnumbers/rime-stellae' && github.ref == 'refs/heads/ci/upload-mode-release-20261116'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Validate the exact source artifact and existing draft
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python scripts/release/upload_reviewed_release.py preflight
+      - name: Download the verified successful build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: stellae-rymcp-2026.11.16-release
+          repository: unknownnumbers/rime-stellae
+          run-id: 43750952295
+          github-token: ${{ github.token }}
+          path: ${{ runner.temp }}/reviewed-release
+      - name: Verify every approved file and upload missing assets only
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python scripts/release/upload_reviewed_release.py upload --directory "$RUNNER_TEMP/reviewed-release"
