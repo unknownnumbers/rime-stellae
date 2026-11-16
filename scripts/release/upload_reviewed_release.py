@@ -241,7 +241,8 @@ if __name__ == '__main__':
             print(json.dumps({'passed': True, 'verifiedFiles': len(PINS['assets'])}))
         else:
             token = os.environ.get('GH_TOKEN', '')
-            require(re.fullmatch('[A-Za-z0-9_]+', token) is not None, 'The workflow token is missing')
+            require(len(token) >= 20 and all(33 <= ord(character) <= 126 for character in token),
+                    'The workflow token is missing or invalid')
             if args.mode == 'preflight':
                 _, existing = preflight(token)
                 print(json.dumps({'passed': True, 'draft': True, 'existingAssets': len(existing)}))
