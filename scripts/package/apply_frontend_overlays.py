@@ -142,13 +142,19 @@ def check_source_archive(artifact, record, manifest, variant, destination):
             public.writestr('source-archive-manifest.json', json.dumps(safe_index, indent=2) + '\n')
 
 
-def checked_engine(artifact, arch, variant, native_manifest, engine_sources):
+def checked_engine(artifact, arch, variant, native_manifest, engine_sources, previous_build=None):
     record = load(artifact / 'build-result.json')
     manifest = load(native_manifest)
-    manifest_sha = digest(native_manifest)
+    manifest_sha = record['manifestSha256']
     image = artifact / 'dist/lib/rime.dll'
+    current_build = manifest_sha == digest(native_manifest)
+    previous_manifest = artifact / 'build-source/native/source-manifest.json'
+    reviewed_build = (previous_build is not None
+                      and manifest_sha == previous_build['manifestSha256']
+                      and record['sha256'] == previous_build['runtimeSha256'][arch]
+                      and previous_manifest.is_file() and digest(previous_manifest) == manifest_sha)
     if (record['schema'] != 'stellae-native-build/1' or record['variant'] != variant
-            or record['architecture'] != arch or record['manifestSha256'] != manifest_sha
+            or record['architecture'] != arch or not (current_build or reviewed_build)
             or record['compilationPassed'] is not True or record['upstreamCTestPassed'] is not True
             or record['peMetadataVerified'] is not True or record['symbolsBundled'] is not False
             or record['preeditHelperChecks'] != 34 or digest(image) != record['sha256']
@@ -168,6 +174,12 @@ def apply(stage, products, sources, source_ref, engines=None, native_manifest=No
         raise ValueError('Use the exact frontend source revision')
     inputs = load(stage / 'bundle-inputs.json')
     engine_spec = inputs.get('nativeEngines')
+    previous_build = inputs.get('previousRuntimeBuild')
+    if previous_build is not None and (
+            engine_spec is None or set(previous_build['runtimeSha256']) != set(ENGINES)
+            or any(not re.fullmatch('[a-f0-9]{64}', sha) for sha in
+                   (previous_build['manifestSha256'], *previous_build['runtimeSha256'].values()))):
+        raise ValueError('Previously built runtime hashes must be pinned for both architectures')
     expected_engine_spec = {arch: variant for arch, (variant, _) in ENGINES.items()}
     if (('nativeEngines' in inputs and engine_spec != expected_engine_spec)
             or (engine_spec is None and any(value is not None for value in (engines, native_manifest, engine_sources)))
@@ -212,7 +224,8 @@ def apply(stage, products, sources, source_ref, engines=None, native_manifest=No
     if engine_spec:
         engine_sources.mkdir()
         for arch, (variant, name) in ENGINES.items():
-            path, details = checked_engine(engines / arch, arch, variant, native_manifest, engine_sources)
+            path, details = checked_engine(engines / arch, arch, variant, native_manifest,
+                                           engine_sources, previous_build)
             engine_inputs[arch] = (name, path, details)
     for arch in PRODUCTS:
         for name, (path, _) in checked_products(products / arch, sources / arch,

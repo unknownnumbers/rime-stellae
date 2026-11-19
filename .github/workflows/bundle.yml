@@ -2,7 +2,7 @@ name: Build and validate RymCp bundle
 
 on:
   push:
-    branches: ['release/stellae-2026.11.20']
+    branches: ['release/stellae-2026.11.20', 'release/stellae-2026.11.20.1']
   workflow_dispatch:
 
 permissions:
@@ -147,6 +147,7 @@ jobs:
             422 { $env:GITHUB_REPOSITORY }
             default { throw 'Could not check the pinned scheme revision.' }
           }
+          "bundle_version=$($spec.bundleVersion)" >> $env:GITHUB_OUTPUT
           "scheme_commit=$($spec.schemes.commit)" >> $env:GITHUB_OUTPUT
           "scheme_repository=$schemeRepository" >> $env:GITHUB_OUTPUT
       - uses: actions/checkout@v4
@@ -159,7 +160,7 @@ jobs:
         run: |
           $spec=Get-Content -LiteralPath installer/bundle-inputs.json -Raw|ConvertFrom-Json
           $scheme=Join-Path $env:GITHUB_WORKSPACE 'scheme-validation'
-          python (Join-Path $scheme 'scripts/build_scheme_packages.py') --profile stellae --version $spec.bundleVersion --output-dir (Join-Path $env:RUNNER_TEMP 'scheme-input') --source-ref $spec.schemes.commit
+          python (Join-Path $scheme 'scripts/build_scheme_packages.py') --profile stellae --version ($spec.schemes.version ?? $spec.bundleVersion) --output-dir (Join-Path $env:RUNNER_TEMP 'scheme-input') --source-ref $spec.schemes.commit
           if ($LASTEXITCODE) { throw 'Scheme archive build failed.' }
       - name: Test shared file preservation with synthetic sources
         run: ./native/tests/installer/Test-BundleData.ps1 -OutputDirectory (Join-Path $env:RUNNER_TEMP 'shared-policy')
@@ -185,7 +186,7 @@ jobs:
         run: |
           $overlays=Join-Path $env:RUNNER_TEMP 'frontend-overlays'
           $spec=Get-Content -LiteralPath installer/bundle-inputs.json -Raw|ConvertFrom-Json
-          $schemeArchive=Join-Path $env:RUNNER_TEMP "scheme-input/rymcp-$($spec.bundleVersion)-stellae-schemes.zip"
+          $schemeArchive=Join-Path $env:RUNNER_TEMP "scheme-input/rymcp-$($spec.schemes.version ?? $spec.bundleVersion)-stellae-schemes.zip"
           ./scripts/package/Build-Bundle.ps1 -OutputDirectory (Join-Path $env:RUNNER_TEMP 'bundle') -NativeProductDirectory $overlays -NativeSourceDirectory $overlays -NativeEngineDirectory (Join-Path $env:RUNNER_TEMP 'runtime-engines') -SchemeArchive $schemeArchive
       - name: Test actual installation, shared-only input, upgrades and uninstall
         run: ./native/tests/installer/Test-BundleInstaller.ps1 -PackageDirectory (Join-Path $env:RUNNER_TEMP 'bundle') -SchemeSource (Join-Path $env:GITHUB_WORKSPACE 'scheme-validation') -OutputDirectory (Join-Path $env:RUNNER_TEMP 'installer-validation')
@@ -201,7 +202,7 @@ jobs:
           Get-ChildItem -LiteralPath $release -File|Where-Object {$_.Name -ne 'SHA256SUMS.txt'}|Sort-Object Name|ForEach-Object{(Get-FileHash -LiteralPath $_.FullName).Hash.ToLowerInvariant()+'  '+$_.Name}|Set-Content -LiteralPath (Join-Path $release 'SHA256SUMS.txt') -Encoding ASCII
       - uses: actions/upload-artifact@v4
         with:
-          name: stellae-rymcp-2026.11.20-release
+          name: stellae-rymcp-${{ steps.inputs.outputs.bundle_version }}-release
           path: ${{ runner.temp }}/bundle/release
           if-no-files-found: error
           retention-days: 30
@@ -209,7 +210,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: stellae-rymcp-2026.11.20-validation
+          name: stellae-rymcp-${{ steps.inputs.outputs.bundle_version }}-validation
           path: |
             ${{ runner.temp }}/bundle/*.json
             ${{ runner.temp }}/bundle/*.log

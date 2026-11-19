@@ -1,6 +1,6 @@
 {
   "format": "stellae-rymcp-bundle-inputs-v1",
-  "bundleVersion": "2026.11.20",
+  "bundleVersion": "2026.11.20.1",
   "frontendVersion": "0.17.4.61052",
   "frontendInstaller": {
     "url": "https://github.com/unknownnumbers/rime-stellae/releases/download/v0.17.4.61052/stellae-0.17.4.61052-installer.exe",
@@ -17,19 +17,27 @@
   "schemes": {
     "url": "https://github.com/unknownnumbers/RymCp-IME/releases/download/v2026.11.20/rymcp-2026.11.20-stellae-schemes.zip",
     "sha256": "248aef5a9d4e86c9eb85dd32fdb401b190385de8a49306768020e3fc5490cc2f",
-    "commit": "1e6de17cac462b3e12042241658a285699a59392"
+    "commit": "1e6de17cac462b3e12042241658a285699a59392",
+    "version": "2026.11.20"
   },
   "nativeEngines": {
     "x64": "engine-n01",
     "x86": "engine-r5"
   },
+  "previousRuntimeBuild": {
+    "manifestSha256": "add89088f607a821dc864d42ea8ee6b4573062e309f28c4c43f3e13ff00956a9",
+    "runtimeSha256": {
+      "x64": "7c2d5d5a922d0d8fbd07c6a9f4d8f9be56a4e2f9b3a50e54cfabede09f509f21",
+      "x86": "a1c6fb6b92844ee6365b4f576583a0aca10d7bf2146f158c37d1cade7d12252c"
+    }
+  },
   "nativeFrontend": {
     "sourceFiles": {
-      "RimeWithWeasel/RimeWithWeasel.cpp": "311bd6cd45507d48784fcbf669685c41610f0dad78bdb00a16ec056066554425",
+      "RimeWithWeasel/RimeWithWeasel.cpp": "367cc89a873b1f8222f5275c9aa5e68a8d7656170522e898a513a31da5b8b672",
       "WeaselIPC/WeaselClientImpl.cpp": "cbcee2bd46fc2fac4a6d8d94f0a34df21476e4c7f127e6698b49cd2326fdd21a",
       "WeaselIPC/WeaselClientImpl.h": "3d5c95afd3d0fbdafbbf4d1231e3882d07a72c7b80bfc36a755ea8ee270c6777",
       "WeaselIPCServer/WeaselServerImpl.cpp": "688127f9c4252444d83535f1d098c98f29bf2511b9c1df22673d0a334dae6bc2",
-      "WeaselTSF/Compartment.cpp": "f97eae35493dff57b64d64296f6dc01495e66317ae2637997c2643f228da1508",
+      "WeaselTSF/Compartment.cpp": "b26ac7542825d0c0981500f1db32f5e9901baa20b59fb0bda66aca53ea300492",
       "WeaselTSF/Composition.cpp": "57369f3bf7cf1894b11e8cc490562ae7cbb36dfc76bb0dc90a1b5aacf2ebbbc1",
       "WeaselTSF/EditSession.cpp": "91655df1522781c824d02cf3a1b2561f0c5dd74f033af495e77eeac59b0844d2",
       "WeaselTSF/KeyEventSink.cpp": "76c6b1e62a3d274b2cc66bec36501ea2aacb6580b132cad8a5e357e43143ebed",

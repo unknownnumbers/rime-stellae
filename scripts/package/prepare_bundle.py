@@ -104,7 +104,7 @@ def main():
     with zipfile.ZipFile(a.schemes) as archive:
         scheme_manifest = json.loads(archive.read('package-manifest.json'))
         if (scheme_manifest['source_ref'] != inputs['schemes']['commit']
-                or scheme_manifest['version'] != inputs['bundleVersion']
+                or scheme_manifest['version'] != inputs['schemes'].get('version', inputs['bundleVersion'])
                 or scheme_manifest['profile'] != 'stellae'):
             raise SystemExit('Scheme source provenance differs from the pinned bundle input.')
         for entry in scheme_manifest['files']:

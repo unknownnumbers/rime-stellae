@@ -3,7 +3,7 @@
   "date": "2026-11-20",
   "kind": "frontend-source-and-bundle-packaging",
   "frontendVersion": "0.17.4.61052",
-  "bundleVersion": "2026.11.20",
+  "bundleVersion": "2026.11.20.1",
   "nativeBinariesIncluded": false,
   "personalLearningIncluded": false,
   "productionInputSchemesIncluded": false,
@@ -17,8 +17,8 @@
     },
     {
       "path": ".github/workflows/bundle.yml",
-      "bytes": 11850,
-      "sha256": "cbc6535be07b212233a7897c36a12477d0ba5ce5fc231337dd793ad989d13f16"
+      "bytes": 12070,
+      "sha256": "8dc48b443e7ab04b10e39902f54d0ffb7cc7f2c052ef2c6a11a21c4c5cdf3f27"
     },
     {
       "path": ".github/workflows/native.yml",
@@ -107,8 +107,8 @@
     },
     {
       "path": "docs/BUILD.md",
-      "bytes": 1507,
-      "sha256": "0194c50a1cffafbb3284aef1fdeb527fa1fe4d2597eb7d9c81ab007287189637"
+      "bytes": 1730,
+      "sha256": "81881fb19a2547567d2d082a03649d38bb53a33b1f7dc3c9b3e4d00720f57bfa"
     },
     {
       "path": "docs/PC.md",
@@ -137,8 +137,8 @@
     },
     {
       "path": "installer/bundle-inputs.json",
-      "bytes": 3821,
-      "sha256": "fe3720547440df1dd2424de44da732618e42028df95d4266e6f94ea8da4d8f2e"
+      "bytes": 4165,
+      "sha256": "13c1704003e10ecdd29a9b9e2edcb4ee7ca7e997b5ce3c81ac4309701eb42ef4"
     },
     {
       "path": "installer/bundle.nsi",
@@ -478,7 +478,7 @@
     {
       "path": "native/frontend-source-files.json",
       "bytes": 20999,
-      "sha256": "74fd47be947c190914935f1a4a02c5d445bbbdfef203c1e8abf9fc2f57f181c3"
+      "sha256": "feb6f7797e7be2968ad1c9279ee57b725fadef2cdbac164bd4a26d69bec99795"
     },
     {
       "path": "native/notification-inputs.json",
@@ -488,7 +488,7 @@
     {
       "path": "native/source-manifest.json",
       "bytes": 12566,
-      "sha256": "add89088f607a821dc864d42ea8ee6b4573062e309f28c4c43f3e13ff00956a9"
+      "sha256": "f122146568ad2868edb0e18b8efb0593e50e1cec70e67ec1d98200211ef86e1a"
     },
     {
       "path": "native/tests/installer/Export-SyntheticLearning.py",
@@ -662,8 +662,8 @@
     },
     {
       "path": "native/weasel/stellae-61052.patch",
-      "bytes": 938347,
-      "sha256": "3f08a39bc5df907145617de0f94deca783c7772ddbdc69e0b7703a8cf8a18570"
+      "bytes": 940720,
+      "sha256": "d626b73321bbddd72019f237e682e6c2c6abb9b3673a2c19617c0610fc5fbbdf"
     },
     {
       "path": "scripts/native/Apply-Patches.ps1",
@@ -707,8 +707,8 @@
     },
     {
       "path": "scripts/package/Build-Bundle.ps1",
-      "bytes": 7441,
-      "sha256": "28dd55a1b99f5e9384045ed2954e651170fdf75d0a903dcb47166bdbd8414e44"
+      "bytes": 7449,
+      "sha256": "77b328c3e170f933fc313e5b881cc87abb9b73fbbcd87778422ae1ad237dd014"
     },
     {
       "path": "scripts/package/Prepare-Package.ps1",
@@ -717,8 +717,8 @@
     },
     {
       "path": "scripts/package/apply_frontend_overlays.py",
-      "bytes": 13326,
-      "sha256": "4971d867db2cd5bcb47a3f281227fc23513b829dc567064a4b154a283a023aa5"
+      "bytes": 14301,
+      "sha256": "1f442d82be07e4a96d25ba523ba3bfbba430b82ff12479e42b69a59035b57341"
     },
     {
       "path": "scripts/package/apply_server_overlays.py",
@@ -737,8 +737,8 @@
     },
     {
       "path": "scripts/package/prepare_bundle.py",
-      "bytes": 13446,
-      "sha256": "bddb8b4a27eba0b5cf4e7eecc9ce5d8013cc28388a87c2b930ea6f286d65c05d"
+      "bytes": 13480,
+      "sha256": "c3246453a436513eae8d5fc85c9ea2f02abd0318ba873fa02ce2d5034604c657"
     },
     {
       "path": "scripts/package/render_installed_docs.py",
