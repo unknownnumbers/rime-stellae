@@ -1,12 +1,12 @@
 {
   "schema": "stellae-frontend-source-files/1",
   "upstreamCommit": "9cc96e20dc71b80876b12f689bb5863c76c2a7ed",
-  "patchSha256": "27d2858219414964acf86c55313f5fd4f41d4f08ef12f7c85bc0a92a1e9ba7a5",
+  "patchSha256": "3f08a39bc5df907145617de0f94deca783c7772ddbdc69e0b7703a8cf8a18570",
   "files": [
     {
       "path": "RimeWithWeasel/RimeWithWeasel.cpp",
-      "sha256": "12440d30b0b1b600a45b02ec56da0af85b1ae8765809c16957b21319375cf28f",
-      "bytes": 67412,
+      "sha256": "311bd6cd45507d48784fcbf669685c41610f0dad78bdb00a16ec056066554425",
+      "bytes": 72328,
       "replayMatchesFrozen": true
     },
     {
@@ -113,20 +113,20 @@
     },
     {
       "path": "WeaselIPC/WeaselClientImpl.cpp",
-      "sha256": "98076db3fda9cd5fd1f2293c3bd14f95e88fcc7943b51be911f53adb064eae14",
-      "bytes": 10077,
+      "sha256": "cbcee2bd46fc2fac4a6d8d94f0a34df21476e4c7f127e6698b49cd2326fdd21a",
+      "bytes": 10731,
       "replayMatchesFrozen": true
     },
     {
       "path": "WeaselIPC/WeaselClientImpl.h",
-      "sha256": "d572326179a203964b6b54e3fa519eb2bf5e8f1240900af07018d39036af9db7",
-      "bytes": 1508,
+      "sha256": "3d5c95afd3d0fbdafbbf4d1231e3882d07a72c7b80bfc36a755ea8ee270c6777",
+      "bytes": 1520,
       "replayMatchesFrozen": true
     },
     {
       "path": "WeaselIPCServer/WeaselServerImpl.cpp",
-      "sha256": "935353dae6172babea1702dde0184e44aeb5b3e4e5efb932414d4653ab5ec807",
-      "bytes": 25485,
+      "sha256": "688127f9c4252444d83535f1d098c98f29bf2511b9c1df22673d0a334dae6bc2",
+      "bytes": 25815,
       "replayMatchesFrozen": true
     },
     {
@@ -227,8 +227,8 @@
     },
     {
       "path": "WeaselTSF/Compartment.cpp",
-      "sha256": "3e0da98a4c9b2c5856334873bfaead861b12b2b8fb987de2c1a0e934a697862f",
-      "bytes": 16347,
+      "sha256": "f97eae35493dff57b64d64296f6dc01495e66317ae2637997c2643f228da1508",
+      "bytes": 11088,
       "replayMatchesFrozen": true
     },
     {
@@ -239,8 +239,8 @@
     },
     {
       "path": "WeaselTSF/Composition.cpp",
-      "sha256": "45e603ef04d39fb34d7ff27f3e2798a8a9623ca08799b245878822d3784025a8",
-      "bytes": 40533,
+      "sha256": "57369f3bf7cf1894b11e8cc490562ae7cbb36dfc76bb0dc90a1b5aacf2ebbbc1",
+      "bytes": 47443,
       "replayMatchesFrozen": true
     },
     {
@@ -257,8 +257,8 @@
     },
     {
       "path": "WeaselTSF/EditSession.cpp",
-      "sha256": "17d3d8ecc67a104bea767fb7bc888f07015f39be671e25f0b494f078549bb249",
-      "bytes": 38029,
+      "sha256": "91655df1522781c824d02cf3a1b2561f0c5dd74f033af495e77eeac59b0844d2",
+      "bytes": 41814,
       "replayMatchesFrozen": true
     },
     {
@@ -275,14 +275,14 @@
     },
     {
       "path": "WeaselTSF/KeyEventSink.cpp",
-      "sha256": "d995be723ee0ba4242b9d811e79dea262726fee2aedd43de2ce5856f23038aa0",
-      "bytes": 18435,
+      "sha256": "76c6b1e62a3d274b2cc66bec36501ea2aacb6580b132cad8a5e357e43143ebed",
+      "bytes": 17781,
       "replayMatchesFrozen": true
     },
     {
       "path": "WeaselTSF/LanguageBar.cpp",
-      "sha256": "dc81229f57679b83fd17210fc19313e257dbee1b174875c1e88f0243ad0e9a38",
-      "bytes": 15905,
+      "sha256": "d1562a7f47461deccdccd5c2d2f9b765b4dd2b58737b89480f2342879b346eab",
+      "bytes": 15885,
       "replayMatchesFrozen": true
     },
     {
@@ -293,8 +293,8 @@
     },
     {
       "path": "WeaselTSF/PromptTrace.h",
-      "sha256": "1b1c9e8aebe82697bc19920665447d3841db611002ac0fe74214ad69771ebf6a",
-      "bytes": 11713,
+      "sha256": "d4f38820f921b37b5e7d2b72b6ff39bcf76ad99ae7a2df9e595dd0292fc16c2e",
+      "bytes": 16887,
       "replayMatchesFrozen": true
     },
     {
@@ -311,26 +311,26 @@
     },
     {
       "path": "WeaselTSF/TextEditSink.cpp",
-      "sha256": "d731a17b474c7bb2a6fb350b87aa6f8350d62df988cc6fbfa69e4c77c7f2a1cd",
-      "bytes": 11813,
+      "sha256": "9282195a425e016ea2cde09fda5506f45de9a59a387bd37005ab5cf026dad975",
+      "bytes": 12325,
       "replayMatchesFrozen": true
     },
     {
       "path": "WeaselTSF/ThreadMgrEventSink.cpp",
-      "sha256": "f7a964c7ffbfa8128469b9b117a91775e1c75a8ff2a6e395f4a5d0d7672e6b91",
-      "bytes": 7024,
+      "sha256": "23e52c0d6ca9fb8aff1660201f001dbd4ce41b9b64bc45be84c2247fa06c7a54",
+      "bytes": 8184,
       "replayMatchesFrozen": true
     },
     {
       "path": "WeaselTSF/WeaselTSF.cpp",
-      "sha256": "9d6834a73521a9f8f41e69f37a9b7e2ef037a9dd4a429f93a34f0bb6f087ba05",
-      "bytes": 14305,
+      "sha256": "806eb94b2ff4b85afe2441519cbd9187054facd572436d73c20303771d287d37",
+      "bytes": 15522,
       "replayMatchesFrozen": true
     },
     {
       "path": "WeaselTSF/WeaselTSF.h",
-      "sha256": "b3fdf9b7a7e2fbb70c2e9f69674c98ddd02965fdb06d0df068458701f8465996",
-      "bytes": 18727,
+      "sha256": "7cbeb75e98662b60d500ef64477999170f6c3102a6e3a5fc55fd43554c6ea3fb",
+      "bytes": 19332,
       "replayMatchesFrozen": true
     },
     {
@@ -419,20 +419,20 @@
     },
     {
       "path": "WeaselUI/WeaselPanel.cpp",
-      "sha256": "d60484eb2e316d5a79fb6d0303baa28cb4bc4a693f41862fb3a4b82c990d01f5",
-      "bytes": 52511,
+      "sha256": "8877e271dcd3d844b5f1f9a91a061aeb8dea49e358b46a69bda95574915f4597",
+      "bytes": 53230,
       "replayMatchesFrozen": true
     },
     {
       "path": "WeaselUI/WeaselPanel.h",
-      "sha256": "3a710bea9e00f52ed4e27092dbf52181435fc45c32996f7568367f6f7df3634e",
-      "bytes": 5188,
+      "sha256": "4c6dbb6d60da072ca680277c28d5af258a12dceec23a607b969d3c27f196bc49",
+      "bytes": 5291,
       "replayMatchesFrozen": true
     },
     {
       "path": "WeaselUI/WeaselUI.cpp",
-      "sha256": "b5eac4e5531dfdb50b6253594c32af465acfe03a413e4d81dbb0522011002dc6",
-      "bytes": 3930,
+      "sha256": "0147debd7bbf4b2a5fa8bf623063cedb7700c4b4887fe9aedb1f86fbfbbc0c80",
+      "bytes": 4974,
       "replayMatchesFrozen": true
     },
     {
@@ -491,14 +491,14 @@
     },
     {
       "path": "include/PipeChannel.h",
-      "sha256": "1768842552c9d9acfe04e17408ed31c0c9161abbe78c7d9bbebabce35c4edca7",
-      "bytes": 7002,
+      "sha256": "6d28bc03e9e70803e85b652d45ee257e6ddefb0c00a35cdc1799da4dfe8d3f3b",
+      "bytes": 7234,
       "replayMatchesFrozen": true
     },
     {
       "path": "include/RimeWithWeasel.h",
-      "sha256": "dfe43ddf0aec22bd64b180485e490741732e226ec17e1ed0d35f49b607eaf73d",
-      "bytes": 5219,
+      "sha256": "7e098a2101ea0515aa27ac221fe473513f4dd4d2243e55d6f67ea8872c96954c",
+      "bytes": 5850,
       "replayMatchesFrozen": true
     },
     {
@@ -509,14 +509,14 @@
     },
     {
       "path": "include/ShiftKeySnapshotWin.h",
-      "sha256": "35e26d9a9e6d93f36e0a6c2e8ee3c2b4c2060d553b00c28b460bb4bd8deffc06",
-      "bytes": 1518,
+      "sha256": "827ba6411731876d4d6f28a6724aae55243ed989ef93dce9a000a76d09369a9e",
+      "bytes": 1813,
       "replayMatchesFrozen": true
     },
     {
       "path": "include/StellaeIdentity.h",
-      "sha256": "cea2336367551a4c67a4bfdc2f175c831090c72fd999249d2e114e39755300d5",
-      "bytes": 2764,
+      "sha256": "665df00b74dfa51219d3d9b53b8fc749e6377ef6185bd27a750fb81aa841a2ab",
+      "bytes": 2644,
       "replayMatchesFrozen": true
     },
     {
@@ -527,14 +527,14 @@
     },
     {
       "path": "include/WeaselIPC.h",
-      "sha256": "81e4be5293f47af867f1b15bfad4e728987fef61d51ec4bef0ae29832014fce2",
-      "bytes": 6021,
+      "sha256": "45622e826cdfbbbb802477c2b2572fd7325eb20ba8241fd83f7ee96f8fb0f7dc",
+      "bytes": 6170,
       "replayMatchesFrozen": true
     },
     {
       "path": "include/WeaselUI.h",
-      "sha256": "b502ae25308cdf240438a4fc9e95a1c19f55eb1ee236fec483ebb985c09ccb5b",
-      "bytes": 6284,
+      "sha256": "13662010d99f7204e5d484882fc5ecaa81624b01359512a5c5fcdaa219d8a7d7",
+      "bytes": 6348,
       "replayMatchesFrozen": true
     },
     {

@@ -2,7 +2,7 @@ name: Build and validate RymCp bundle
 
 on:
   push:
-    branches: ['release/2026.11.16']
+    branches: ['release/2026.11.19']
   workflow_dispatch:
 
 permissions:
@@ -17,7 +17,7 @@ defaults:
     working-directory: frontend
 
 jobs:
-  servers:
+  frontend-images:
     runs-on: windows-2022
     timeout-minutes: 45
     strategy:
@@ -28,7 +28,7 @@ jobs:
             compiler: x64
           - architecture: x86
             compiler: x86
-    name: Server ${{ matrix.architecture }}
+    name: Frontend images ${{ matrix.architecture }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -53,29 +53,23 @@ jobs:
           arch: ${{ matrix.compiler }}
       - name: Assemble fixed frontend source
         run: ./scripts/native/Prepare-Sources.ps1 -Variant stellae-61052 -Destination "$env:RUNNER_TEMP/server-source"
-      - name: Build server and bounded native regressions
-        run: ./scripts/native/Build-ServerNotification.ps1 -Architecture ${{ matrix.architecture }} -SourcePath "$env:RUNNER_TEMP/server-source" -CacheDirectory "$env:RUNNER_TEMP/server-cache" -OutputDirectory "$env:RUNNER_TEMP/server-output"
+      - name: Build TSF, IME and the server
+        run: ./scripts/native/Build-FrontendOverlay.ps1 -Architecture ${{ matrix.architecture }} -SourcePath "$env:RUNNER_TEMP/server-source" -CacheDirectory "$env:RUNNER_TEMP/server-cache" -OutputDirectory "$env:RUNNER_TEMP/server-output"
       - uses: actions/upload-artifact@v4
         with:
-          name: mode-server-${{ matrix.architecture }}
+          name: frontend-images-${{ matrix.architecture }}
           path: ${{ runner.temp }}/server-output/release
           if-no-files-found: error
-      - name: Preserve finite server diagnostics
+      - name: Preserve finite build diagnostics
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: mode-server-${{ matrix.architecture }}-validation
-          path: |
-            ${{ runner.temp }}/server-output/*.json
-            ${{ runner.temp }}/server-output/logs
-            ${{ runner.temp }}/server-output/*-tests/*.json
-            ${{ runner.temp }}/server-output/*-tests/*/result.txt
-            ${{ runner.temp }}/server-output/*-tests/*/compile.log
-            ${{ runner.temp }}/server-source/ci-logs/shift-key-snapshot-*.json
+          name: frontend-image-build-${{ matrix.architecture }}
+          path: ${{ runner.temp }}/server-output/logs
           if-no-files-found: warn
 
   bundle:
-    needs: servers
+    needs: frontend-images
     runs-on: windows-2022
     timeout-minutes: 90
     steps:
@@ -88,12 +82,12 @@ jobs:
           python-version: '3.12'
       - uses: actions/download-artifact@v4
         with:
-          name: mode-server-x64
-          path: ${{ runner.temp }}/server-overlays/x64
+          name: frontend-images-x64
+          path: ${{ runner.temp }}/frontend-overlays/x64
       - uses: actions/download-artifact@v4
         with:
-          name: mode-server-x86
-          path: ${{ runner.temp }}/server-overlays/x86
+          name: frontend-images-x86
+          path: ${{ runner.temp }}/frontend-overlays/x86
       - name: Check source and fixed scheme input
         id: inputs
         run: |
@@ -112,7 +106,9 @@ jobs:
       - name: Test shared file preservation with synthetic sources
         run: ./native/tests/installer/Test-BundleData.ps1 -OutputDirectory (Join-Path $env:RUNNER_TEMP 'shared-policy')
       - name: Compile and extract the dated installer
-        run: ./scripts/package/Build-Bundle.ps1 -OutputDirectory (Join-Path $env:RUNNER_TEMP 'bundle') -ServerOverlayDirectory (Join-Path $env:RUNNER_TEMP 'server-overlays')
+        run: |
+          $overlays=Join-Path $env:RUNNER_TEMP 'frontend-overlays'
+          ./scripts/package/Build-Bundle.ps1 -OutputDirectory (Join-Path $env:RUNNER_TEMP 'bundle') -NativeProductDirectory $overlays -NativeSourceDirectory $overlays
       - name: Test actual installation, shared-only input, upgrades and uninstall
         run: ./native/tests/installer/Test-BundleInstaller.ps1 -PackageDirectory (Join-Path $env:RUNNER_TEMP 'bundle') -SchemeSource (Join-Path $env:GITHUB_WORKSPACE 'scheme-validation') -OutputDirectory (Join-Path $env:RUNNER_TEMP 'installer-validation')
       - name: Record finite release validation
@@ -120,11 +116,12 @@ jobs:
           $checks=@((Join-Path $env:RUNNER_TEMP 'shared-policy/result.json'),(Join-Path $env:RUNNER_TEMP 'installer-validation/result.json'),(Join-Path $env:RUNNER_TEMP 'installer-validation/installed-ready/result.json'),(Join-Path $env:RUNNER_TEMP 'profile-policy/win11-equivalent-policy-result.json'),(Join-Path $env:RUNNER_TEMP 'bundle/stage/output/server-overlay-verification.json'))
           foreach($path in $checks){$report=Get-Content -LiteralPath $path -Raw|ConvertFrom-Json;if(-not $report.passed){throw 'A required validation failed'}}
           $release=Join-Path $env:RUNNER_TEMP 'bundle/release'
-          [ordered]@{passed=$true;bundleVersion='2026.11.16';frontendVersion='0.17.4.61052';sourceRef=$env:GITHUB_SHA;rebuiltServers=@('x64','Win32');unchangedNativeImages=12;runtimeEnginesPreserved=$true;sharedOnlyN01AndR5InputTested=$true;bundlePresetAndUserPriorityTested=$true;actualInstalledProfileReadyWithoutTestRedeploy=$true;bare61052UpgradeTested=$true;installedUpgradeAndUninstallTested=$true;physicalKeyboardTested=$false;actualWindows11Tested=$false}|ConvertTo-Json|Set-Content -LiteralPath (Join-Path $release 'validation.json') -Encoding UTF8
+          $overlay=Get-Content -LiteralPath (Join-Path $release 'frontend-overlay-verification.json') -Raw|ConvertFrom-Json
+          [ordered]@{passed=$true;bundleVersion='2026.11.19';frontendVersion='0.17.4.61052';sourceRef=$env:GITHUB_SHA;rebuiltImages=$overlay.rebuiltImages.Count;unchangedNativeImages=$overlay.unchangedNativeImages;runtimeEnginesPreserved=$true;sharedOnlyN01AndR5InputTested=$true;bundlePresetAndUserPriorityTested=$true;actualInstalledProfileReadyWithoutTestRedeploy=$true;bare61052UpgradeTested=$true;installedUpgradeAndUninstallTested=$true;physicalKeyboardTested=$false;actualWindows11Tested=$false}|ConvertTo-Json|Set-Content -LiteralPath (Join-Path $release 'validation.json') -Encoding UTF8
           Get-ChildItem -LiteralPath $release -File|Where-Object {$_.Name -ne 'SHA256SUMS.txt'}|Sort-Object Name|ForEach-Object{(Get-FileHash -LiteralPath $_.FullName).Hash.ToLowerInvariant()+'  '+$_.Name}|Set-Content -LiteralPath (Join-Path $release 'SHA256SUMS.txt') -Encoding ASCII
       - uses: actions/upload-artifact@v4
         with:
-          name: stellae-rymcp-2026.11.16-release
+          name: stellae-rymcp-2026.11.19-release
           path: ${{ runner.temp }}/bundle/release
           if-no-files-found: error
           retention-days: 30
@@ -132,7 +129,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: stellae-rymcp-2026.11.16-validation
+          name: stellae-rymcp-2026.11.19-validation
           path: |
             ${{ runner.temp }}/bundle/*.json
             ${{ runner.temp }}/bundle/*.log

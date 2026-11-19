@@ -1,5 +1,4 @@
 diff --git a/RimeWithWeasel/RimeWithWeasel.cpp b/RimeWithWeasel/RimeWithWeasel.cpp
-index 3f4e59d9f410c79ad605460c5492314d71bdfb65..94b33c77799da0f9c2b1aca94a9cd212152e1982 100644
 --- a/RimeWithWeasel/RimeWithWeasel.cpp
 +++ b/RimeWithWeasel/RimeWithWeasel.cpp
 @@ -1,4 +1,4 @@
@@ -116,6 +115,61 @@ index 3f4e59d9f410c79ad605460c5492314d71bdfb65..94b33c77799da0f9c2b1aca94a9cd212
    std::string log_dir = WeaselLogPath().u8string();
    weasel_traits.log_dir = log_dir.c_str();
    rime_api->setup(&weasel_traits);
+@@ -189,6 +272,8 @@
+ }
+ 
+ void RimeWithWeaselHandler::Finalize() {
++  m_notification_session.store(0);
++  _ClearNotification();
+   m_active_session = 0;
+   m_disabled = true;
+   m_session_status_map.clear();
+@@ -235,37 +320,35 @@
+   RIME_STRUCT(RimeStatus, status);
+   if (rime_api->get_status(session_id, &status)) {
+     std::string schema_id = status.schema_id;
+-    m_last_schema_id = schema_id;
+     _LoadSchemaSpecificSettings(ipc_id, schema_id);
+     _LoadAppInlinePreeditSet(ipc_id, true);
+     _UpdateInlinePreeditStatus(ipc_id);
+-    _RefreshTrayIcon(session_id, _UpdateUICallback);
+     session_status.status = status;
+     session_status.__synced = false;
+     rime_api->free_status(&status);
+   }
+-  m_ui->style() = session_status.style;
+   // show session's welcome message :-) if any
+   if (eat) {
+     _Respond(ipc_id, eat);
+   }
+   add_session = true;
+-  _UpdateUI(ipc_id);
++  // Connecting a background client does not own the shared notification UI.
++  if (!m_active_session)
++    FocusIn(0, ipc_id);
+   add_session = false;
+-  m_active_session = ipc_id;
+   return ipc_id;
+ }
+ 
+ DWORD RimeWithWeaselHandler::RemoveSession(WeaselSessionId ipc_id) {
+-  if (m_ui)
+-    m_ui->Hide();
+-  if (m_disabled)
++  if (ipc_id == m_active_session)
++    FocusOut(0, ipc_id);
++  const auto found = m_session_status_map.find(ipc_id);
++  if (m_disabled || found == m_session_status_map.end())
+     return 0;
+   DLOG(INFO) << "Remove session: session_id = " << to_session_id(ipc_id);
+   // TODO: force committing? otherwise current composition would be lost
+-  rime_api->destroy_session(to_session_id(ipc_id));
++  rime_api->destroy_session(found->second.session_id);
+   m_session_status_map.erase(ipc_id);
+-  m_active_session = 0;
+   return 0;
+ }
+ 
 @@ -301,6 +384,7 @@
      }
    }
@@ -124,14 +178,25 @@ index 3f4e59d9f410c79ad605460c5492314d71bdfb65..94b33c77799da0f9c2b1aca94a9cd212
  }
  
  BOOL RimeWithWeaselHandler::ProcessKeyEvent(KeyEvent keyEvent,
-@@ -311,8 +395,27 @@
+@@ -310,11 +394,41 @@
+              << ", mask = " << keyEvent.mask << ", ipc_id = " << ipc_id;
    if (m_disabled)
      return FALSE;
++  if (m_session_status_map.find(ipc_id) == m_session_status_map.end())
++    return FALSE;
++  // A genuine input request may establish focus after reconnecting.
++  if (m_active_session != ipc_id)
++    FocusIn(0, ipc_id);
    RimeSessionId session_id = to_session_id(ipc_id);
 -  Bool handled = rime_api->process_key(session_id, keyEvent.keycode,
 -                                       expand_ibus_modifier(keyEvent.mask));
-+  Bool handled;
-+  {
++  const bool ascii_mode = rime_api->get_option(session_id, "ascii_mode");
++  // Red A passes application keys through. Ctrl+Space still reaches the
++  // schema binding, including the command produced by the TSF frontend.
++  const bool ascii_toggle = keyEvent.keycode == ibus::space &&
++                            keyEvent.mask == ibus::CONTROL_MASK;
++  Bool handled = False;
++  if (!ascii_mode || ascii_toggle) {
 +    // One property lifetime per actual process_key, including unwind.
 +    // In particular a previous valid Shift must not leak into an old client.
 +    struct ClearShiftSnapshot {
@@ -152,9 +217,37 @@ index 3f4e59d9f410c79ad605460c5492314d71bdfb65..94b33c77799da0f9c2b1aca94a9cd212
 +                                    expand_ibus_modifier(keyEvent.mask));
 +  }
    // vim_mode when keydown only
-   if (!handled && !(keyEvent.mask & ibus::Modifier::RELEASE_MASK)) {
+-  if (!handled && !(keyEvent.mask & ibus::Modifier::RELEASE_MASK)) {
++  if (!ascii_mode && !handled &&
++      !(keyEvent.mask & ibus::Modifier::RELEASE_MASK)) {
      bool isVimBackInCommandMode =
-@@ -385,6 +488,35 @@
+         (keyEvent.keycode == ibus::Keycode::Escape) ||
+         ((keyEvent.mask & (1 << 2)) &&
+@@ -329,7 +443,6 @@
+   }
+   _Respond(ipc_id, eat);
+   _UpdateUI(ipc_id);
+-  m_active_session = ipc_id;
+   return (BOOL)handled;
+ }
+ 
+@@ -339,7 +452,6 @@
+     return;
+   rime_api->commit_composition(to_session_id(ipc_id));
+   _UpdateUI(ipc_id);
+-  m_active_session = ipc_id;
+ }
+ 
+ void RimeWithWeaselHandler::ClearComposition(WeaselSessionId ipc_id) {
+@@ -348,7 +460,6 @@
+     return;
+   rime_api->clear_composition(to_session_id(ipc_id));
+   _UpdateUI(ipc_id);
+-  m_active_session = ipc_id;
+ }
+ 
+ void RimeWithWeaselHandler::SelectCandidateOnCurrentPage(
+@@ -385,17 +496,60 @@
    return res;
  }
  
@@ -190,17 +283,165 @@ index 3f4e59d9f410c79ad605460c5492314d71bdfb65..94b33c77799da0f9c2b1aca94a9cd212
  void RimeWithWeaselHandler::FocusIn(DWORD client_caps, WeaselSessionId ipc_id) {
    DLOG(INFO) << "Focus in: ipc_id = " << ipc_id
               << ", client_caps = " << client_caps;
-@@ -429,6 +561,9 @@
-   RimeWithWeaselHandler* self =
+-  if (m_disabled)
+-    return;
+-  _UpdateUI(ipc_id);
++  const auto found = m_session_status_map.find(ipc_id);
++  if (m_disabled || found == m_session_status_map.end())
++    return;
+   m_active_session = ipc_id;
++  m_notification_session.store(found->second.session_id);
++  found->second.input_position_valid = false;
++  _ClearNotification();
++  if (m_ui)
++    m_ui->Hide();
++  // Focus restores metadata and style, never replays a previous mode tip.
++  _UpdateUI(ipc_id, false);
+ }
+ 
+ void RimeWithWeaselHandler::FocusOut(DWORD param, WeaselSessionId ipc_id) {
+   DLOG(INFO) << "Focus out: ipc_id = " << ipc_id;
++  if (ipc_id != m_active_session)
++    return;
++  const auto found = m_session_status_map.find(ipc_id);
++  if (found != m_session_status_map.end())
++    found->second.input_position_valid = false;
++  m_notification_session.store(0);
++  _ClearNotification();
+   if (m_ui)
+     m_ui->Hide();
+   m_active_session = 0;
+@@ -406,20 +560,50 @@
+   DLOG(INFO) << "Update input position: (" << rc.left << ", " << rc.top
+              << "), ipc_id = " << ipc_id
+              << ", m_active_session = " << m_active_session;
++  const auto found = m_session_status_map.find(ipc_id);
++  if (m_disabled || !ipc_id || ipc_id != m_active_session ||
++      found == m_session_status_map.end())
++    return;
++  SessionStatus& session = found->second;
++  // An empty rectangle invalidates an idle read. It never steals focus or
++  // cancels the same owner's already visible timeout on a Caps key release.
++  if (!(rc.left || rc.top || rc.right || rc.bottom) ||
++      rc.right < rc.left || rc.bottom < rc.top) {
++    session.input_position_valid = false;
++    return;
++  }
++  session.input_position = rc;
++  session.input_position_valid = true;
+   if (m_ui)
+     m_ui->UpdateInputPosition(rc);
+-  if (m_disabled)
+-    return;
+-  if (m_active_session != ipc_id) {
++  const PendingNotification pending = _PeekNotification(session.session_id);
++  if (!pending.type.empty())
+     _UpdateUI(ipc_id);
+-    m_active_session = ipc_id;
+-  }
+-}
+-
+-std::string RimeWithWeaselHandler::m_message_type;
+-std::string RimeWithWeaselHandler::m_message_value;
+-std::string RimeWithWeaselHandler::m_message_label;
+-std::string RimeWithWeaselHandler::m_option_name;
++}
++
++void RimeWithWeaselHandler::_ClearNotification() {
++  std::lock_guard<std::mutex> lock(m_notification_mutex);
++  m_notification = PendingNotification();
++}
++
++RimeWithWeaselHandler::PendingNotification
++RimeWithWeaselHandler::_PeekNotification(RimeSessionId owner) {
++  std::lock_guard<std::mutex> lock(m_notification_mutex);
++  if (m_notification.owner && m_notification.owner != owner)
++    return PendingNotification();
++  if (m_notification.type != "deploy" &&
++      (!m_show_notifications_time || GetTickCount64() - m_notification.created >
++          static_cast<ULONGLONG>(m_show_notifications_time))) {
++    m_notification = PendingNotification();
++  }
++  return m_notification;
++}
++
++void RimeWithWeaselHandler::_ConsumeNotification(std::uint64_t serial) {
++  std::lock_guard<std::mutex> lock(m_notification_mutex);
++  if (m_notification.serial == serial)
++    m_notification = PendingNotification();
++}
+ 
+ void RimeWithWeaselHandler::OnNotify(void* context_object,
+                                      uintptr_t session_id,
+@@ -430,19 +614,35 @@
        reinterpret_cast<RimeWithWeaselHandler*>(context_object);
    if (!self || !message_type || !message_value)
-+    return;
+     return;
+-  m_message_type = message_type;
+-  m_message_value = message_value;
 +  // Context properties are response metadata, not popup notifications.
 +  if (!strcmp(message_type, "property"))
-     return;
-   m_message_type = message_type;
-   m_message_value = message_value;
-@@ -555,7 +690,7 @@
++    return;
++  // Global ASCII propagation also notifies background engine sessions. Their
++  // events must not overwrite the foreground client's switching message.
++  if (session_id && session_id != self->m_notification_session.load())
++    return;
++  PendingNotification message;
++  message.owner = session_id;
++  message.type = message_type;
++  message.value = message_value;
++  message.option = message_type;
++  message.created = GetTickCount64();
+   if (RIME_API_AVAILABLE(rime_api, get_state_label) &&
+       !strcmp(message_type, "option")) {
+     Bool state = message_value[0] != '!';
+     const char* option_name = message_value + !state;
+-    m_option_name = option_name;
++    message.option = option_name;
+     const char* state_label =
+         rime_api->get_state_label(session_id, option_name, state);
+     if (state_label) {
+-      m_message_label = std::string(state_label);
+-    }
+-  }
++      message.label = std::string(state_label);
++    }
++  }
++  std::lock_guard<std::mutex> lock(self->m_notification_mutex);
++  if (session_id && session_id != self->m_notification_session.load())
++    return;
++  message.serial = ++self->m_notification_serial;
++  self->m_notification = std::move(message);
+ }
+ 
+ void RimeWithWeaselHandler::_ReadClientInfo(WeaselSessionId ipc_id,
+@@ -537,17 +737,14 @@
+ void RimeWithWeaselHandler::SetOption(WeaselSessionId ipc_id,
+                                       const std::string& opt,
+                                       bool val) {
+-  // from no-session client, not actual typing session
+-  if (!ipc_id) {
+-    if (m_global_ascii_mode && opt == "ascii_mode") {
+-      for (auto& pair : m_session_status_map)
+-        rime_api->set_option(to_session_id(pair.first), "ascii_mode", val);
+-    } else {
+-      rime_api->set_option(to_session_id(m_active_session), opt.c_str(), val);
+-    }
+-  } else {
+-    rime_api->set_option(to_session_id(ipc_id), opt.c_str(), val);
+-  }
++  if (m_global_ascii_mode && opt == "ascii_mode") {
++    for (auto& pair : m_session_status_map) {
++      rime_api->set_option(pair.second.session_id, "ascii_mode", val);
++      pair.second.status.is_ascii_mode = val;
++    }
++    return;
++  }
++  rime_api->set_option(to_session_id(ipc_id ? ipc_id : m_active_session), opt.c_str(), val);
+ }
+ 
+ void RimeWithWeaselHandler::OnUpdateUI(std::function<void()> const& cb) {
+@@ -555,7 +752,7 @@
  }
  
  bool RimeWithWeaselHandler::_IsDeployerRunning() {
@@ -209,7 +450,41 @@ index 3f4e59d9f410c79ad605460c5492314d71bdfb65..94b33c77799da0f9c2b1aca94a9cd212
    bool deployer_detected = hMutex && GetLastError() == ERROR_ALREADY_EXISTS;
    if (hMutex) {
      CloseHandle(hMutex);
-@@ -578,6 +713,7 @@
+@@ -563,14 +760,30 @@
+   return deployer_detected;
+ }
+ 
+-void RimeWithWeaselHandler::_UpdateUI(WeaselSessionId ipc_id) {
++void RimeWithWeaselHandler::_UpdateUI(WeaselSessionId ipc_id,
++                                      bool show_notifications) {
+   // if m_ui nullptr, _UpdateUI meaningless
+   if (!m_ui)
+     return;
+ 
+-  Status& weasel_status = m_ui->status();
++  // Work on a value, so UI::Update can compare against the painted state.
++  Status weasel_status = m_ui->status();
+   Context weasel_context;
+-
++  if (!ipc_id) {
++    weasel_status.disabled = m_disabled;
++    const PendingNotification message = _PeekNotification(0);
++    if (show_notifications && message.type == "deploy") {
++      _ShowMessage(weasel_context, weasel_status, message);
++      _ConsumeNotification(message.serial);
++    } else {
++      m_ui->Hide();
++      m_ui->Update(weasel_context, weasel_status);
++    }
++    return;
++  }
++  if (m_disabled || ipc_id != m_active_session ||
++      m_session_status_map.find(ipc_id) == m_session_status_map.end())
++    return;
+   RimeSessionId session_id = to_session_id(ipc_id);
+   bool is_tsf = _IsSessionTSF(session_id);
+ 
+@@ -578,12 +791,16 @@
      weasel_status.disabled = m_disabled;
  
    _GetStatus(weasel_status, ipc_id, weasel_context);
@@ -217,7 +492,67 @@ index 3f4e59d9f410c79ad605460c5492314d71bdfb65..94b33c77799da0f9c2b1aca94a9cd212
  
    if (!is_tsf) {
      _GetContext(weasel_context, session_id);
-@@ -643,31 +779,72 @@
+   }
+ 
+   SessionStatus& session_status = get_session_status(ipc_id);
++  const PendingNotification message = _PeekNotification(session_id);
++  const bool may_show = show_notifications &&
++      (!is_tsf || session_status.input_position_valid || message.type == "deploy");
+   if (rime_api->get_option(session_id, "inline_preedit"))
+     session_status.style.client_caps |= INLINE_PREEDIT_CAPABLE;
+   else
+@@ -592,17 +809,22 @@
+   if (weasel_status.composing && !is_tsf) {
+     m_ui->Update(weasel_context, weasel_status);
+     m_ui->Show();
+-  } else if (!_ShowMessage(weasel_context, weasel_status) && !is_tsf) {
++  } else if (may_show && !_ShowMessage(weasel_context, weasel_status, message) && !is_tsf) {
+     m_ui->Hide();
+     m_ui->Update(weasel_context, weasel_status);
+-  }
+-
++  } else if (!may_show && !message.type.empty() && is_tsf) {
++    // A mode-only response may precede its read-only caret grant. Keep the
++    // current owner's latest event until a fresh rectangle arrives.
++    m_ui->Hide();
++  }
++
++  // Silent focus refreshes and deferred tips still publish the actual mode
++  // to the tray callback. This does not show or restart the floating window.
++  m_ui->status() = weasel_status;
+   _RefreshTrayIcon(session_id, _UpdateUICallback);
+ 
+-  m_message_type.clear();
+-  m_message_value.clear();
+-  m_message_label.clear();
+-  m_option_name.clear();
++  if (may_show || !show_notifications || (weasel_status.composing && !is_tsf))
++    _ConsumeNotification(message.serial);
+ }
+ 
+ void RimeWithWeaselHandler::_LoadSchemaSpecificSettings(
+@@ -613,11 +835,16 @@
+   RimeConfig config;
+   if (!rime_api->schema_open(schema_id.c_str(), &config))
+     return;
++  SessionStatus& session_status = get_session_status(ipc_id);
++  // Loading background session metadata must not mutate the foreground UI.
++  const auto foreground_notifications = m_show_notifications;
+   _UpdateShowNotifications(&config);
+-  m_ui->style() = m_base_style;
+-  _UpdateUIStyle(&config, m_ui, false);
+-  SessionStatus& session_status = get_session_status(ipc_id);
+-  session_status.style = m_ui->style();
++  session_status.show_notifications = m_show_notifications;
++  m_show_notifications = foreground_notifications;
++  UI schema_ui;
++  schema_ui.style() = m_base_style;
++  _UpdateUIStyle(&config, &schema_ui, false);
++  session_status.style = schema_ui.style();
+   UIStyle& style = session_status.style;
+   // load schema color style config
+   const int BUF_SIZE = 255;
+@@ -643,31 +870,78 @@
      update_color_scheme();
    // load schema icon start
    {
@@ -279,6 +614,10 @@ index 3f4e59d9f410c79ad605460c5492314d71bdfb65..94b33c77799da0f9c2b1aca94a9cd212
 +    }
 +  }
    rime_api->config_close(&config);
++  if (ipc_id == m_active_session) {
++    m_ui->style() = session_status.style;
++    m_show_notifications = session_status.show_notifications;
++  }
 +}
 +
 +void RimeWithWeaselHandler::_RefreshModeStyle(WeaselSessionId ipc_id) {
@@ -303,7 +642,9 @@ index 3f4e59d9f410c79ad605460c5492314d71bdfb65..94b33c77799da0f9c2b1aca94a9cd212
 +      session.__synced = false;
 +    }
 +  }
-+  if (m_ui && m_ui->style() != session.style) {
++  if (ipc_id == m_active_session)
++    m_show_notifications = session.show_notifications;
++  if (m_ui && ipc_id == m_active_session && m_ui->style() != session.style) {
 +    m_ui->style() = session.style;
 +    // UI::Update can skip repaint when only the style changed.
 +    m_ui->Refresh();
@@ -311,8 +652,45 @@ index 3f4e59d9f410c79ad605460c5492314d71bdfb65..94b33c77799da0f9c2b1aca94a9cd212
  }
  
  void RimeWithWeaselHandler::_LoadAppInlinePreeditSet(WeaselSessionId ipc_id,
-@@ -738,14 +915,14 @@
-     else if (m_message_value == "failure") {
+@@ -678,9 +952,9 @@
+   rime_api->get_property(session_id, "client_app", _app_name,
+                          sizeof(_app_name) - 1);
+   std::string app_name(_app_name);
+-  if (!ignore_app_name && m_last_app_name == app_name)
+-    return;
+-  m_last_app_name = app_name;
++  if (!ignore_app_name && session_status.client_app == app_name)
++    return;
++  session_status.client_app = app_name;
+   bool inline_preedit = session_status.style.inline_preedit;
+   bool found = false;
+   if (!app_name.empty()) {
+@@ -720,54 +994,55 @@
+     _UpdateInlinePreeditStatus(ipc_id);
+ }
+ 
+-bool RimeWithWeaselHandler::_ShowMessage(Context& ctx, Status& status) {
++bool RimeWithWeaselHandler::_ShowMessage(Context& ctx, Status& status,
++                                        const PendingNotification& message) {
+   // show as auxiliary string
+   std::wstring& tips(ctx.aux.str);
+   bool show_icon = false;
+-  if (m_message_type == "deploy") {
+-    if (m_message_value == "start")
++  if (message.type == "deploy") {
++    if (message.value == "start")
+       if (GetThreadUILanguage() == MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US))
+         tips = L"Deploying RIME";
+       else
+         tips = L"正在部署 RIME";
+-    else if (m_message_value == "success")
++    else if (message.value == "success")
+       if (GetThreadUILanguage() == MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US))
+         tips = L"Deployed";
+       else
+         tips = L"部署完成";
+-    else if (m_message_value == "failure") {
++    else if (message.value == "failure") {
        if (GetThreadUILanguage() ==
            MAKELANGID(LANG_CHINESE, SUBLANG_CHINESE_TRADITIONAL))
 -        tips = L"有錯誤，請查看日誌 %TEMP%\\rime.weasel\\rime.weasel.*.INFO";
@@ -325,11 +703,43 @@ index 3f4e59d9f410c79ad605460c5492314d71bdfb65..94b33c77799da0f9c2b1aca94a9cd212
          tips =
              L"There is an error, please check the logs "
 -            L"%TEMP%\\rime.weasel\\rime.weasel.*.INFO";
+-    }
+-  } else if (m_message_type == "schema") {
 +            STELLAE_LOG_INFO_GLOB;
-     }
-   } else if (m_message_type == "schema") {
++    }
++  } else if (message.type == "schema") {
      tips = /*L"【" + */ status.schema_name /* + L"】"*/;
-@@ -785,6 +962,7 @@
+-  } else if (m_message_type == "option") {
++  } else if (message.type == "option") {
+     status.type = SCHEMA;
+-    if (m_message_value == "!ascii_mode") {
++    if (message.value == "!ascii_mode") {
+       show_icon = true;
+-    } else if (m_message_value == "ascii_mode") {
++    } else if (message.value == "ascii_mode") {
+       show_icon = true;
+     } else
+-      tips = u8tow(m_message_label);
+-
+-    if (m_message_value == "full_shape" || m_message_value == "!full_shape")
++      tips = u8tow(message.label);
++
++    if (message.value == "full_shape" || message.value == "!full_shape")
+       status.type = FULL_SHAPE;
+   }
+   if (tips.empty() && !show_icon)
+     return m_ui->IsCountingDown();
+-  auto foption = m_show_notifications.find(m_option_name);
++  auto foption = m_show_notifications.find(message.option);
+   auto falways = m_show_notifications.find("always");
+   if ((!add_session && (foption != m_show_notifications.end() ||
+                         falways != m_show_notifications.end())) ||
+-      m_message_type == "deploy") {
++      message.type == "deploy") {
+     m_ui->Update(ctx, status);
+     if (m_show_notifications_time)
+       m_ui->ShowWithTimeout(m_show_notifications_time);
+@@ -785,6 +1060,7 @@
  }
  
  bool RimeWithWeaselHandler::_Respond(WeaselSessionId ipc_id, EatLine eat) {
@@ -337,7 +747,7 @@ index 3f4e59d9f410c79ad605460c5492314d71bdfb65..94b33c77799da0f9c2b1aca94a9cd212
    std::set<std::string> actions;
    std::list<std::string> messages;
  
-@@ -803,17 +981,7 @@
+@@ -803,17 +1079,7 @@
    RIME_STRUCT(RimeStatus, status);
    if (rime_api->get_status(session_id, &status)) {
      is_composing = !!status.is_composing;
@@ -356,7 +766,7 @@ index 3f4e59d9f410c79ad605460c5492314d71bdfb65..94b33c77799da0f9c2b1aca94a9cd212
      if (m_global_ascii_mode &&
          (session_status.status.is_ascii_mode != status.is_ascii_mode)) {
        for (auto& pair : m_session_status_map) {
-@@ -830,6 +998,8 @@
+@@ -830,6 +1096,8 @@
    if (rime_api->get_context(session_id, &ctx)) {
      if (is_composing) {
        actions.insert("ctx");
@@ -365,7 +775,7 @@ index 3f4e59d9f410c79ad605460c5492314d71bdfb65..94b33c77799da0f9c2b1aca94a9cd212
        switch (session_status.style.preedit_type) {
          case UIStyle::PREVIEW:
            if (ctx.commit_text_preview != NULL) {
-@@ -919,40 +1089,10 @@
+@@ -919,40 +1187,10 @@
      rime_api->free_context(&ctx);
    }
  
@@ -410,7 +820,40 @@ index 3f4e59d9f410c79ad605460c5492314d71bdfb65..94b33c77799da0f9c2b1aca94a9cd212
  }
  
  static inline COLORREF blend_colors(COLORREF fcolor, COLORREF bcolor) {
-@@ -1454,10 +1594,12 @@
+@@ -1427,9 +1665,10 @@
+     stat.composing = !!status.is_composing;
+     stat.disabled = !!status.is_disabled;
+     stat.full_shape = !!status.is_full_shape;
+-    if (schema_id != m_last_schema_id) {
++    if (schema_id != session_status.mode_schema_id) {
+       session_status.__synced = false;
+-      m_last_schema_id = schema_id;
++      if (ipc_id == m_active_session)
++        m_last_schema_id = schema_id;
+       if (schema_id != ".default") {  // don't load for schema select menu
+         bool inline_preedit = session_status.style.inline_preedit;
+         _LoadSchemaSpecificSettings(ipc_id, schema_id);
+@@ -1437,15 +1676,10 @@
+         if (session_status.style.inline_preedit != inline_preedit)
+           // in case of inline_preedit set in schema
+           _UpdateInlinePreeditStatus(ipc_id);
+-        // refresh icon after schema changed
+-        _RefreshTrayIcon(session_id, _UpdateUICallback);
+-        m_ui->style() = session_status.style;
+-        if (m_show_notifications.find("schema") != m_show_notifications.end() &&
+-            m_show_notifications_time > 0) {
+-          ctx.aux.str = stat.schema_name;
+-          m_ui->Update(ctx, stat);
+-          m_ui->ShowWithTimeout(m_show_notifications_time);
+-        }
++        if (ipc_id == m_active_session)
++          m_ui->style() = session_status.style;
++        // Explicit schema notifications use the same owned-position path
++        // as mode changes. A focus refresh itself must never open a tip.
+       }
+     }
+     rime_api->free_status(&status);
+@@ -1454,10 +1688,12 @@
  
  void RimeWithWeaselHandler::_GetContext(Context& weasel_context,
                                          RimeSessionId session_id) {
@@ -2725,7 +3168,6 @@ index 1bba123500dd2ace509374538fed09a92adaa301..35aacd802813661e26256a76919021f3
 +  return Deserializer::Ptr(new Styler(pTarget));
 +}
 diff --git a/WeaselIPC/WeaselClientImpl.cpp b/WeaselIPC/WeaselClientImpl.cpp
-index 26122ad50a1550c4e4b8daccc5de5625141d33ee..96f45b32eb59d494319e3fe601e2c65dbbb5333c 100644
 --- a/WeaselIPC/WeaselClientImpl.cpp
 +++ b/WeaselIPC/WeaselClientImpl.cpp
 @@ -1,5 +1,6 @@
@@ -2736,7 +3178,7 @@ index 26122ad50a1550c4e4b8daccc5de5625141d33ee..96f45b32eb59d494319e3fe601e2c65d
  #include <StringAlgorithm.hpp>
  
  using namespace weasel;
-@@ -17,7 +18,8 @@ ClientImpl::~ClientImpl() {
+@@ -17,7 +18,8 @@
  // http://stackoverflow.com/questions/557081/how-do-i-get-the-hmodule-for-the-currently-executing-code
  HMODULE GetCurrentModule() {  // NB: XP+ solution!
    HMODULE hModule = NULL;
@@ -2746,7 +3188,7 @@ index 26122ad50a1550c4e4b8daccc5de5625141d33ee..96f45b32eb59d494319e3fe601e2c65d
                      (LPCTSTR)GetCurrentModule, &hModule);
  
    return hModule;
-@@ -42,6 +44,7 @@ void ClientImpl::_InitializeClientInfo() {
+@@ -42,6 +44,7 @@
  }
  
  bool ClientImpl::Connect(ServerLauncher const& launcher) {
@@ -2754,7 +3196,7 @@ index 26122ad50a1550c4e4b8daccc5de5625141d33ee..96f45b32eb59d494319e3fe601e2c65d
    return channel.Connect();
  }
  
-@@ -49,6 +52,7 @@ void ClientImpl::Disconnect() {
+@@ -49,6 +52,7 @@
    if (_Active())
      EndSession();
    channel.Disconnect();
@@ -2762,18 +3204,19 @@ index 26122ad50a1550c4e4b8daccc5de5625141d33ee..96f45b32eb59d494319e3fe601e2c65d
  }
  
  void ClientImpl::ShutdownServer() {
-@@ -56,12 +60,36 @@ void ClientImpl::ShutdownServer() {
+@@ -56,12 +60,36 @@
  }
  
  bool ClientImpl::ProcessKeyEvent(KeyEvent const& keyEvent) {
 -  if (!_Active())
 -    return false;
-+  return ProcessKeyEventOutcome(keyEvent).Handled();
-+}
- 
+-
 -  LRESULT ret =
 -      _SendMessage(WEASEL_IPC_PROCESS_KEY_EVENT, keyEvent, session_id);
 -  return ret != 0;
++  return ProcessKeyEventOutcome(keyEvent).Handled();
++}
++
 +KeyEventOutcome ClientImpl::ProcessKeyEventOutcome(KeyEvent const& keyEvent) {
 +  KeyEventOutcome result;
 +  if (!_Active()) {
@@ -2804,7 +3247,35 @@ index 26122ad50a1550c4e4b8daccc5de5625141d33ee..96f45b32eb59d494319e3fe601e2c65d
  }
  
  bool ClientImpl::CommitComposition() {
-@@ -170,8 +198,33 @@ bool ClientImpl::Echo() {
+@@ -126,6 +154,10 @@
+   int height = max(0, min(127, (rc.bottom - rc.top) >> hi_res));
+   DWORD compressed_rect = ((hi_res & 0x01) << 31) | ((height & 0x7f) << 24) |
+                           ((top & 0xfff) << 12) | (left & 0xfff);
++  // Zero is reserved for invalidation. For an origin point that also encodes
++  // to zero, the high-resolution bit alone decodes to the same point.
++  if (compressed_rect == 0 && (rc.left || rc.top || rc.right || rc.bottom))
++    compressed_rect = 0x80000000u;
+   _SendMessage(WEASEL_IPC_UPDATE_INPUT_POS, compressed_rect, session_id);
+ }
+ 
+@@ -142,13 +174,14 @@
+   _SendMessage(WEASEL_IPC_TRAY_COMMAND, menuId, session_id);
+ }
+ 
+-void ClientImpl::StartSession() {
++bool ClientImpl::StartSession() {
+   if (_Active() && Echo())
+-    return;
++    return true;
+ 
+   _WriteClientInfo();
+   UINT ret = _SendMessage(WEASEL_IPC_START_SESSION, 0, 0);
+   session_id = ret;
++  return _Active();
+ }
+ 
+ void ClientImpl::EndSession() {
+@@ -170,8 +203,37 @@
    if (!_Active())
      return false;
  
@@ -2815,19 +3286,23 @@ index 26122ad50a1550c4e4b8daccc5de5625141d33ee..96f45b32eb59d494319e3fe601e2c65d
 +  return outcome.Complete() && outcome.reply == expected;
 +}
 +
-+bool ClientImpl::QueryMetadata(SessionMetadata& metadata) {
++bool ClientImpl::QueryMetadata(SessionMetadata& metadata, bool focus) {
 +  if (!_Active()) return false;
 +  try {
-+    PipeMessage request{WEASEL_IPC_QUERY_METADATA, 0, session_id};
++    PipeMessage request{focus ? WEASEL_IPC_FOCUS_IN : WEASEL_IPC_QUERY_METADATA,
++                        focus ? kFocusInWithMetadata : 0, session_id};
 +    DWORD result = 0;
 +    SessionMetadata captured = metadata;
 +    ResponseParser parser(nullptr, nullptr, &captured.status,
 +                          &captured.config, &captured.style);
-+    if (!channel.TransactLocalResponse(request, result, std::ref(parser)) ||
-+        result != session_id) {
++    if (!channel.TransactLocalResponse(request, result, std::ref(parser), focus)) {
 +      if (!channel.Connected()) session_id = 0;
 +      return false;
 +    }
++    // An older server has applied ordinary FocusIn and acknowledged it with
++    // zero. Refresh solely the metadata without sending FocusIn again.
++    if (focus && result == 0) return QueryMetadata(metadata, false);
++    if (result != session_id) return false;
 +    metadata = std::move(captured);
 +    return true;
 +  } catch (DWORD) {
@@ -2840,18 +3315,18 @@ index 26122ad50a1550c4e4b8daccc5de5625141d33ee..96f45b32eb59d494319e3fe601e2c65d
  }
  
  bool ClientImpl::GetResponseData(ResponseHandler const& handler) {
-@@ -182,6 +235,10 @@ bool ClientImpl::GetResponseData(ResponseHandler const& handler) {
-   return channel.HandleResponseData(handler);
- }
+@@ -180,6 +242,10 @@
+   }
  
-+std::uint64_t ClientImpl::ResponseGeneration() const {
-+  return channel.ResponseGeneration();
+   return channel.HandleResponseData(handler);
 +}
 +
++std::uint64_t ClientImpl::ResponseGeneration() const {
++  return channel.ResponseGeneration();
+ }
+ 
  bool ClientImpl::_WriteClientInfo() {
-   channel << L"action=session\n";
-   channel << L"session.client_app=" << app_name.c_str() << L"\n";
-@@ -193,11 +250,27 @@ bool ClientImpl::_WriteClientInfo() {
+@@ -193,11 +259,27 @@
  LRESULT ClientImpl::_SendMessage(WEASEL_IPC_COMMAND Msg,
                                   DWORD wParam,
                                   DWORD lParam) {
@@ -2883,7 +3358,7 @@ index 26122ad50a1550c4e4b8daccc5de5625141d33ee..96f45b32eb59d494319e3fe601e2c65d
    }
  }
  
-@@ -224,6 +297,10 @@ bool Client::ProcessKeyEvent(KeyEvent const& keyEvent) {
+@@ -224,6 +306,10 @@
    return m_pImpl->ProcessKeyEvent(keyEvent);
  }
  
@@ -2894,12 +3369,23 @@ index 26122ad50a1550c4e4b8daccc5de5625141d33ee..96f45b32eb59d494319e3fe601e2c65d
  bool Client::CommitComposition() {
    return m_pImpl->CommitComposition();
  }
-@@ -280,6 +357,14 @@ bool Client::Echo() {
+@@ -256,8 +342,8 @@
+   m_pImpl->FocusOut();
+ }
+ 
+-void Client::StartSession() {
+-  m_pImpl->StartSession();
++bool Client::StartSession() {
++  return m_pImpl->StartSession();
+ }
+ 
+ void Client::EndSession() {
+@@ -280,6 +366,14 @@
    return m_pImpl->Echo();
  }
  
-+bool Client::QueryMetadata(SessionMetadata& metadata) {
-+  return m_pImpl->QueryMetadata(metadata);
++bool Client::QueryMetadata(SessionMetadata& metadata, bool focus) {
++  return m_pImpl->QueryMetadata(metadata, focus);
 +}
 +
  bool Client::GetResponseData(ResponseHandler handler) {
@@ -2910,20 +3396,25 @@ index 26122ad50a1550c4e4b8daccc5de5625141d33ee..96f45b32eb59d494319e3fe601e2c65d
 +  return m_pImpl->ResponseGeneration();
 +}
 diff --git a/WeaselIPC/WeaselClientImpl.h b/WeaselIPC/WeaselClientImpl.h
-index 7602792869408ccf24b4e82ada2b8be8ec0f56ed..816c6490935b7c6c3cc76e8e869855c64c39e99e 100644
 --- a/WeaselIPC/WeaselClientImpl.h
 +++ b/WeaselIPC/WeaselClientImpl.h
-@@ -17,7 +17,9 @@ class ClientImpl {
+@@ -12,12 +12,14 @@
+   bool Connect(ServerLauncher const& launcher);
+   void Disconnect();
+   void ShutdownServer();
+-  void StartSession();
++  bool StartSession();
+   void EndSession();
    void StartMaintenance();
    void EndMaintenance();
    bool Echo();
-+  bool QueryMetadata(SessionMetadata& metadata);
++  bool QueryMetadata(SessionMetadata& metadata, bool focus);
    bool ProcessKeyEvent(KeyEvent const& keyEvent);
 +  KeyEventOutcome ProcessKeyEventOutcome(KeyEvent const& keyEvent);
    bool CommitComposition();
    bool ClearComposition();
    bool SelectCandidateOnCurrentPage(size_t index);
-@@ -28,12 +30,15 @@ class ClientImpl {
+@@ -28,12 +30,15 @@
    void FocusOut();
    void TrayCommand(UINT menuId);
    bool GetResponseData(ResponseHandler const& handler);
@@ -2940,10 +3431,9 @@ index 7602792869408ccf24b4e82ada2b8be8ec0f56ed..816c6490935b7c6c3cc76e8e869855c6
    bool _Connected() const { return channel.Connected(); }
    bool _Active() const { return channel.Connected() && session_id != 0; }
 diff --git a/WeaselIPCServer/WeaselServerImpl.cpp b/WeaselIPCServer/WeaselServerImpl.cpp
-index 11225c445de8cb3c8f10810cc988cbf33bfe7462..8e5fcc6790f7eb68e99a6d078ee61e1a6143e856 100644
 --- a/WeaselIPCServer/WeaselServerImpl.cpp
 +++ b/WeaselIPCServer/WeaselServerImpl.cpp
-@@ -1,26 +1,67 @@
+@@ -1,32 +1,95 @@
 -﻿#include "stdafx.h"
 +#include "stdafx.h"
  #include "WeaselServerImpl.h"
@@ -3015,10 +3505,10 @@ index 11225c445de8cb3c8f10810cc988cbf33bfe7462..8e5fcc6790f7eb68e99a6d078ee61e1a
  };
  }  // namespace weasel
  
-@@ -28,6 +69,28 @@ using namespace weasel;
+ using namespace weasel;
  
  extern CAppModule _Module;
- 
++
 +static void JoinWithSentMessages(boost::thread& thread) {
 +  HANDLE handle = thread.native_handle();
 +  for (;;) {
@@ -3040,11 +3530,10 @@ index 11225c445de8cb3c8f10810cc988cbf33bfe7462..8e5fcc6790f7eb68e99a6d078ee61e1a
 +                            "Wait for IPC thread shutdown");
 +  }
 +}
-+
+ 
  ServerImpl::ServerImpl()
      : m_pRequestHandler(NULL),
-       m_darkMode(IsUserDarkMode()),
-@@ -41,23 +104,24 @@ ServerImpl::~ServerImpl() {
+@@ -41,23 +104,24 @@
  
  void ServerImpl::_Finailize() {
    if (pipeThread != nullptr) {
@@ -3075,7 +3564,7 @@ index 11225c445de8cb3c8f10810cc988cbf33bfe7462..8e5fcc6790f7eb68e99a6d078ee61e1a
      m_darkMode = IsUserDarkMode();
      m_pRequestHandler->UpdateColorTheme(m_darkMode);
    }
-@@ -100,10 +164,8 @@ LRESULT ServerImpl::OnEndSystemSession(UINT uMsg,
+@@ -100,10 +164,8 @@
                                         WPARAM wParam,
                                         LPARAM lParam,
                                         BOOL& bHandled) {
@@ -3088,7 +3577,7 @@ index 11225c445de8cb3c8f10810cc988cbf33bfe7462..8e5fcc6790f7eb68e99a6d078ee61e1a
    return 0;
  }
  
-@@ -111,6 +173,8 @@ LRESULT ServerImpl::OnCommand(UINT uMsg,
+@@ -111,6 +173,8 @@
                                WPARAM wParam,
                                LPARAM lParam,
                                BOOL& bHandled) {
@@ -3097,7 +3586,7 @@ index 11225c445de8cb3c8f10810cc988cbf33bfe7462..8e5fcc6790f7eb68e99a6d078ee61e1a
    UINT uID = LOWORD(wParam);
    switch (uID) {
      case ID_WEASELTRAY_ENABLE_ASCII:
-@@ -140,7 +204,7 @@ DWORD ServerImpl::OnCommand(WEASEL_IPC_COMMAND uMsg,
+@@ -140,7 +204,7 @@
  }
  
  int ServerImpl::Start() {
@@ -3106,7 +3595,7 @@ index 11225c445de8cb3c8f10810cc988cbf33bfe7462..8e5fcc6790f7eb68e99a6d078ee61e1a
    instanceName += getUsername();
    HANDLE hMutexOneInstance = ::CreateMutex(NULL, FALSE, instanceName.c_str());
    bool areYouOK = (::GetLastError() == ERROR_ALREADY_EXISTS ||
-@@ -171,17 +235,30 @@ int ServerImpl::Run() {
+@@ -171,17 +235,30 @@
    // auto handler = boost::bind(&ServerImpl::HandlePipeMessage, this);
    // auto listener = boost::bind(&PipeServer::Listen, channel.get(), handler);
    //
@@ -3141,10 +3630,12 @@ index 11225c445de8cb3c8f10810cc988cbf33bfe7462..8e5fcc6790f7eb68e99a6d078ee61e1a
    return nRet;
  }
  
-@@ -191,6 +268,16 @@ DWORD ServerImpl::OnEcho(WEASEL_IPC_COMMAND uMsg, DWORD wParam, DWORD lParam) {
+@@ -189,6 +266,16 @@
+   if (!m_pRequestHandler)
+     return 0;
    return m_pRequestHandler->FindSession(lParam);
- }
- 
++}
++
 +DWORD ServerImpl::OnQueryMetadata(WEASEL_IPC_COMMAND uMsg,
 +                                   DWORD wParam, DWORD lParam) {
 +  if (!m_pRequestHandler) return 0;
@@ -3153,12 +3644,10 @@ index 11225c445de8cb3c8f10810cc988cbf33bfe7462..8e5fcc6790f7eb68e99a6d078ee61e1a
 +    return true;
 +  };
 +  return m_pRequestHandler->QueryMetadata(lParam, eat) ? lParam : 0;
-+}
-+
+ }
+ 
  DWORD ServerImpl::OnStartSession(WEASEL_IPC_COMMAND uMsg,
-                                  DWORD wParam,
-                                  DWORD lParam) {
-@@ -214,7 +301,8 @@ DWORD ServerImpl::OnEndSession(WEASEL_IPC_COMMAND uMsg,
+@@ -214,7 +301,8 @@
  
  DWORD ServerImpl::OnKeyEvent(WEASEL_IPC_COMMAND uMsg,
                               DWORD wParam,
@@ -3168,7 +3657,7 @@ index 11225c445de8cb3c8f10810cc988cbf33bfe7462..8e5fcc6790f7eb68e99a6d078ee61e1a
    if (!m_pRequestHandler /* || !m_pSharedMemory*/)
      return 0;
  
-@@ -222,7 +310,11 @@ DWORD ServerImpl::OnKeyEvent(WEASEL_IPC_COMMAND uMsg,
+@@ -222,7 +310,11 @@
      *channel << msg;
      return true;
    };
@@ -3181,7 +3670,31 @@ index 11225c445de8cb3c8f10810cc988cbf33bfe7462..8e5fcc6790f7eb68e99a6d078ee61e1a
  }
  
  DWORD ServerImpl::OnShutdownServer(WEASEL_IPC_COMMAND uMsg,
-@@ -375,14 +467,21 @@ DWORD ServerImpl::OnChangePage(WEASEL_IPC_COMMAND uMsg,
+@@ -237,8 +329,9 @@
+                             DWORD lParam) {
+   if (!m_pRequestHandler)
+     return 0;
+-  m_pRequestHandler->FocusIn(wParam, lParam);
+-  return 0;
++  const bool withMetadata = wParam == kFocusInWithMetadata;
++  m_pRequestHandler->FocusIn(withMetadata ? 0 : wParam, lParam);
++  return withMetadata ? OnQueryMetadata(WEASEL_IPC_QUERY_METADATA, 0, lParam) : 0;
+ }
+ 
+ DWORD ServerImpl::OnFocusOut(WEASEL_IPC_COMMAND uMsg,
+@@ -255,6 +348,11 @@
+                                         DWORD lParam) {
+   if (!m_pRequestHandler)
+     return 0;
++  // Preserve the client's empty-rectangle marker before decoding a caret.
++  if (wParam == 0) {
++    m_pRequestHandler->UpdateInputPosition(RECT{}, lParam);
++    return 0;
++  }
+   /*
+    * 移位标志 = 1bit == 0
+    * height: 0~127 = 7bit
+@@ -375,14 +473,21 @@
    }
  
  template <typename _Resp>
@@ -3205,14 +3718,15 @@ index 11225c445de8cb3c8f10810cc988cbf33bfe7462..8e5fcc6790f7eb68e99a6d078ee61e1a
    PIPE_MSG_HANDLE(WEASEL_IPC_SHUTDOWN_SERVER, OnShutdownServer)
    PIPE_MSG_HANDLE(WEASEL_IPC_FOCUS_IN, OnFocusIn)
    PIPE_MSG_HANDLE(WEASEL_IPC_FOCUS_OUT, OnFocusOut)
-@@ -403,38 +502,228 @@ void ServerImpl::HandlePipeMessage(PipeMessage pipe_msg, _Resp resp) {
+@@ -403,38 +508,228 @@
  }
  
  PipeServer::PipeServer(std::wstring&& pn_cmd, SECURITY_ATTRIBUTES* s)
 -    : PipeChannel(std::move(pn_cmd), s) {}
-+    : PipeChannel(std::move(pn_cmd), s), security_attributes(s) {}
- 
+-
 -void PipeServer::Listen(ServerHandler const& handler) {
++    : PipeChannel(std::move(pn_cmd), s), security_attributes(s) {}
++
 +void PipeServer::Listen(ServerHandler handler) {
    for (;;) {
      HANDLE pipe = INVALID_HANDLE_VALUE;
@@ -3259,6 +3773,9 @@ index 11225c445de8cb3c8f10810cc988cbf33bfe7462..8e5fcc6790f7eb68e99a6d078ee61e1a
 +    } catch (...) {
 +      std::lock_guard guard(state_mutex);
        _FinalizePipe(pipe);
+-    }
+-    boost::this_thread::interruption_point();
+-  }
 +      throw;
 +    }
 +    std::lock_guard guard(state_mutex);
@@ -3287,14 +3804,10 @@ index 11225c445de8cb3c8f10810cc988cbf33bfe7462..8e5fcc6790f7eb68e99a6d078ee61e1a
 +    } catch (...) {
 +      _FinalizePipe(pipe);
 +      throw;
-     }
--    boost::this_thread::interruption_point();
-   }
- }
- 
--PipeServer::ServerRunner PipeServer::GetServerRunner(
--    ServerHandler const& handler) {
--  return [&handler, this]() { Listen(handler); };
++    }
++  }
++}
++
 +void PipeServer::Stop() {
 +  std::lock_guard guard(state_mutex);
 +  stopping = true;
@@ -3388,9 +3901,12 @@ index 11225c445de8cb3c8f10810cc988cbf33bfe7462..8e5fcc6790f7eb68e99a6d078ee61e1a
 +  ClearBufferStream();
  }
  
+ PipeServer::ServerRunner PipeServer::GetServerRunner(
+     ServerHandler const& handler) {
+-  return [&handler, this]() { Listen(handler); };
+-}
+-
 -void PipeServer::_ProcessPipeThread(HANDLE pipe, ServerHandler const& handler) {
-+PipeServer::ServerRunner PipeServer::GetServerRunner(
-+    ServerHandler const& handler) {
 +  return [handler, this]() { Listen(handler); };
 +}
 +
@@ -3429,21 +3945,23 @@ index 11225c445de8cb3c8f10810cc988cbf33bfe7462..8e5fcc6790f7eb68e99a6d078ee61e1a
        Res msg;
 -      _Receive(pipe, &msg, sizeof(msg));
 -      handler(msg, [this, pipe](Msg resp) { _Send(pipe, resp); });
+-    }
 +      const char* request_body = _ReceiveRequest(worker, msg);
 +      if (stopping)
 +        break;
 +      handler(msg,
 +              [this, worker](Msg resp) { _SendResponse(worker, resp); },
 +              request_body);
-     }
++    }
 +  } catch (DWORD) {
 +    // A disconnected peer or Stop() ends this transport connection.
    } catch (...) {
 -    _FinalizePipe(pipe);
+-  }
 +    std::lock_guard guard(state_mutex);
 +    if (!worker_error)
 +      worker_error = std::current_exception();
-   }
++  }
 +  std::lock_guard guard(state_mutex);
 +  _FinalizePipe(worker->pipe);
 +  worker->finished = true;
@@ -7043,10 +7561,9 @@ index 648732cc121a8627497fd264d8effbf98368c8ed..844a125bb01bfbf4a5c8b7af1add9f81
 +  weasel::UIStyle _style;
 +};
 diff --git a/WeaselTSF/Compartment.cpp b/WeaselTSF/Compartment.cpp
-index a45e0d1f902d727e911d164a080dadbb6b8b7f10..716049afb310e3a7e7e1142c7103c466d6dd79cd 100644
 --- a/WeaselTSF/Compartment.cpp
 +++ b/WeaselTSF/Compartment.cpp
-@@ -1,278 +1,417 @@
+@@ -1,278 +1,290 @@
 -#include "stdafx.h"
 -#include "WeaselTSF.h"
 -#include "Compartment.h"
@@ -7328,170 +7845,11 @@ index a45e0d1f902d727e911d164a080dadbb6b8b7f10..716049afb310e3a7e7e1142c7103c466
 +#include "stdafx.h"
 +#include "WeaselTSF.h"
 +#include "Compartment.h"
-+#include <resource.h>
 +#include <functional>
 +#include <cwchar>
-+#include <commctrl.h>
-+#pragma comment(lib, "comctl32.lib")
 +#include "CandidateList.h"
 +#include "LanguageBar.h"
-+
-+namespace {
-+const GUID kGlobalNativeOpen = stellae::identity::kGlobalNativeOpenGuid;
-+constexpr UINT kApplyGlobalNativeOpen = WM_APP + 0x3a1;
-+}  // namespace
-+
-+struct WeaselTSF::NativeOpenWindowBinding {
-+  com_ptr<WeaselTSF> service;
-+  std::weak_ptr<ActivationBindings> activation;
-+};
-+
-+LRESULT CALLBACK WeaselTSF::_NativeOpenWindowProc(HWND window, UINT message,
-+    WPARAM wParam, LPARAM lParam, UINT_PTR subclass, DWORD_PTR reference) {
-+  auto binding = reinterpret_cast<NativeOpenWindowBinding*>(reference);
-+  // A nested Apply may destroy this token. Copy both leases before any callout.
-+  const com_ptr<WeaselTSF> service = binding->service;
-+  const auto activation = binding->activation.lock();
-+  if (message == WM_NCDESTROY) {
-+    RemoveWindowSubclass(window, _NativeOpenWindowProc, subclass);
-+    delete binding;
-+    return DefSubclassProc(window, message, wParam, lParam);
-+  }
-+  if (message == kApplyGlobalNativeOpen) {
-+    if (service->_CurrentActivation(activation))
-+      service->_ApplyGlobalKeyboardOpen();
-+    return 0;
-+  }
-+  return DefSubclassProc(window, message, wParam, lParam);
-+}
-+
-+HRESULT WeaselTSF::_InitGlobalKeyboardOpen(const Activation& activation) {
-+  if (!_CurrentActivation(activation)) return E_UNEXPECTED;
-+  const com_ptr<ITfThreadMgr> thread = activation->thread;
-+  if (!_CurrentActivation(activation)) return E_UNEXPECTED;
-+  // A system class removes custom-class registration/unregistration ownership.
-+  HWND window = CreateWindowExW(0, L"STATIC", L"", 0, 0, 0, 0, 0,
-+      HWND_MESSAGE, nullptr, g_hInst, nullptr);
-+  if (!window) return HRESULT_FROM_WIN32(GetLastError());
-+  if (!_CurrentActivation(activation)) { DestroyWindow(window); return E_UNEXPECTED; }
-+  auto binding = new NativeOpenWindowBinding{this, activation};
-+  if (!SetWindowSubclass(window, _NativeOpenWindowProc, 1,
-+          reinterpret_cast<DWORD_PTR>(binding))) {
-+    const DWORD error = GetLastError();
-+    delete binding;
-+    DestroyWindow(window);
-+    return error ? HRESULT_FROM_WIN32(error) : E_FAIL;
-+  }
-+  activation->nativeWindow = window;
-+  if (!_CurrentActivation(activation)) {
-+    _UninitGlobalKeyboardOpen(*activation);
-+    return E_UNEXPECTED;
-+  }
-+
-+  com_ptr<ITfCompartmentMgr> manager;
-+  HRESULT result = thread->GetGlobalCompartment(&manager);
-+  if (FAILED(result) || !_CurrentActivation(activation))
-+    return FAILED(result) ? result : E_UNEXPECTED;
-+  com_ptr<ITfCompartment> compartment;
-+  result = manager->GetCompartment(kGlobalNativeOpen, &compartment);
-+  if (FAILED(result) || !_CurrentActivation(activation))
-+    return FAILED(result) ? result : E_UNEXPECTED;
-+  CComVariant initial;
-+  result = compartment->GetValue(&initial);
-+  if (FAILED(result) || !_CurrentActivation(activation))
-+    return FAILED(result) ? result : E_UNEXPECTED;
-+  if (initial.vt == VT_EMPTY) {
-+    CComVariant open(static_cast<LONG>(TRUE));
-+    result = compartment->SetValue(activation->client, &open);
-+    if (FAILED(result) || !_CurrentActivation(activation))
-+      return FAILED(result) ? result : E_UNEXPECTED;
-+  } else if (initial.vt != VT_I4) return E_UNEXPECTED;
-+
-+  const std::weak_ptr<ActivationBindings> weak = activation;
-+  com_ptr<CCompartmentEventSink> sink;
-+  sink.Attach(new CCompartmentEventSink([this, weak](REFGUID) {
-+    const auto owner = weak.lock();
-+    if (owner && _CurrentActivation(owner) && owner->nativeWindow)
-+      PostMessageW(owner->nativeWindow, kApplyGlobalNativeOpen, 0, 0);
-+    return S_OK; // SetValue remains outside the compartment notification.
-+  }));
-+  result = sink->_Advise(static_cast<IUnknown*>(manager.p), kGlobalNativeOpen);
-+  if (result != S_OK || !_CurrentActivation(activation)) {
-+    activation->RecordCleanup(sink->_Unadvise());
-+    return FAILED(result) ? result : E_UNEXPECTED;
-+  }
-+  activation->globalCompartment.Attach(compartment.Detach());
-+  activation->globalSink.Attach(sink.Detach());
-+  activation->globalOpenEnabled = true;
-+  return S_OK;
-+}
-+
-+void WeaselTSF::_UninitGlobalKeyboardOpen(ActivationBindings& activation) {
-+  activation.globalOpenEnabled = false;
-+  const HWND window = activation.nativeWindow;
-+  activation.nativeWindow = nullptr;
-+  com_ptr<CCompartmentEventSink> sink;
-+  com_ptr<ITfCompartment> compartment;
-+  sink.Attach(activation.globalSink.Detach());
-+  compartment.Attach(activation.globalCompartment.Detach());
-+  if (sink) activation.RecordCleanup(sink->_Unadvise());
-+  if (window && IsWindow(window) && !DestroyWindow(window)) {
-+    const DWORD error = GetLastError();
-+    activation.RecordCleanup(error ? HRESULT_FROM_WIN32(error) : E_FAIL);
-+    // Its window-owned token remains valid and rejects the retired weak cell.
-+    // No custom class or raw activation pointer can dangle after this failure.
-+  }
-+}
-+
-+void WeaselTSF::_QueueGlobalKeyboardOpen() {
-+  const auto activation = _activation;
-+  if (activation && activation->nativeWindow)
-+    PostMessageW(activation->nativeWindow, kApplyGlobalNativeOpen, 0, 0);
-+}
-+
-+HRESULT WeaselTSF::_ReadGlobalKeyboardOpen(BOOL& open) {
-+  const auto activation = _activation;
-+  if (!activation || !activation->globalCompartment) return E_UNEXPECTED;
-+  const com_ptr<ITfCompartment> compartment = activation->globalCompartment;
-+  CComVariant value;
-+  const HRESULT result = compartment->GetValue(&value);
-+  if (!_CurrentActivation(activation)) return E_UNEXPECTED;
-+  if (FAILED(result)) return result;
-+  if (value.vt != VT_I4) return E_UNEXPECTED;
-+  open = value.lVal != 0;
-+  return S_OK;
-+}
-+
-+HRESULT WeaselTSF::_ToggleGlobalKeyboardOpen() {
-+  const auto activation = _activation;
-+  BOOL open;
-+  HRESULT result = _ReadGlobalKeyboardOpen(open);
-+  if (FAILED(result) || !_CurrentActivation(activation))
-+    return FAILED(result) ? result : E_UNEXPECTED;
-+  const com_ptr<ITfCompartment> compartment = activation->globalCompartment;
-+  if (!_CurrentActivation(activation)) return E_UNEXPECTED;
-+  CComVariant value(static_cast<LONG>(!open));
-+  result = compartment->SetValue(activation->client, &value);
-+  if (SUCCEEDED(result) && _CurrentActivation(activation)) _ApplyGlobalKeyboardOpen();
-+  return result;
-+}
-+
-+void WeaselTSF::_ApplyGlobalKeyboardOpen() {
-+  const auto activation = _activation;
-+  if (!activation || !activation->globalOpenEnabled) return;
-+  BOOL open;
-+  if (FAILED(_ReadGlobalKeyboardOpen(open)) || !_CurrentActivation(activation)) return;
-+  const BOOL currentOpen = _IsKeyboardOpen();
-+  if (!_CurrentActivation(activation)) return;
-+  if (currentOpen != open) {
-+    const HRESULT result = _SetKeyboardOpen(open);
-+    if (FAILED(result) || !_CurrentActivation(activation)) return;
-+  }
-+  _EnableLanguageBar(open);
-+  if (!_CurrentActivation(activation)) return;
-+  const com_ptr<CLangBarItemButton> button = activation->languageButton;
-+  if (button) button->UpdateWeaselStatus(_status);
-+}
++#include <resource.h>
 +
 +STDAPI CCompartmentEventSink::QueryInterface(REFIID riid,
 +                                             _Outptr_ void** ppvObj) {
@@ -7642,7 +8000,42 @@ index a45e0d1f902d727e911d164a080dadbb6b8b7f10..716049afb310e3a7e7e1142c7103c466
 +}
 +
 +HRESULT WeaselTSF::_SetKeyboardOpen(BOOL open) {
-+  return _SetCompartmentDWORD(static_cast<DWORD>(open), GUID_COMPARTMENT_KEYBOARD_OPENCLOSE);
++  const auto activation = _activation;
++  if (!activation || activation->settingKeyboardOpen) return E_UNEXPECTED;
++  activation->settingKeyboardOpen = true;
++  const HRESULT result = _SetCompartmentDWORD(static_cast<DWORD>(open),
++      GUID_COMPARTMENT_KEYBOARD_OPENCLOSE);
++  activation->settingKeyboardOpen = false;
++  return result;
++}
++
++void WeaselTSF::_ToggleAsciiMode(const Activation& activation) {
++  const com_ptr<CCandidateList> candidate = _cand;
++  const auto current = [&]() {
++    return _CurrentActivation(activation) && _cand == candidate && !_producerResponse;
++  };
++  if (!current() || !_EnsureServerConnected() || !current()) return;
++  if (_HasCurrentPreedit() || _IsComposing()) _AbortComposition(true);
++  if (!current()) return;
++  _InvalidateModePosition(true);
++  if (!current()) return;
++  weasel::SessionMetadata metadata;
++  metadata.status = _status;
++  if (candidate) metadata.style = candidate->style();
++  // Another session can change a global ASCII mode while this TSF client is idle.
++  if (!m_client.QueryMetadata(metadata, false) || !current()) return;
++  const auto binding = _textEditBinding;
++  const auto epoch = _modePositionEpoch;
++  _HandleLangBarMenuSelect(metadata.status.ascii_mode ? ID_WEASELTRAY_DISABLE_ASCII
++                                                      : ID_WEASELTRAY_ENABLE_ASCII);
++  if (!current()) return;
++  if (!m_client.QueryMetadata(metadata, false) || !current()) return;
++  _status = metadata.status;
++  if (candidate) candidate->style() = std::move(metadata.style);
++  _UpdateLanguageBar(_status);
++  // The shortcut has no text-context prerequisite. Only its popup needs a caret.
++  if (current() && binding && _textEditBinding == binding && _modePositionEpoch == epoch)
++    _RefreshIdleModePosition(binding->context, false);
 +}
 +
 +HRESULT WeaselTSF::_GetCompartmentDWORD(DWORD& value, const GUID guid) {
@@ -7723,17 +8116,14 @@ index a45e0d1f902d727e911d164a080dadbb6b8b7f10..716049afb310e3a7e7e1142c7103c466
 +HRESULT WeaselTSF::_HandleCompartment(const Activation& activation, REFGUID guid) {
 +  if (!_CurrentActivation(activation)) return S_OK;
 +  if (IsEqualGUID(guid, GUID_COMPARTMENT_KEYBOARD_OPENCLOSE)) {
-+    const BOOL open = _IsKeyboardOpen();
-+    if (!_CurrentActivation(activation)) return S_OK;
-+    if (!open) {
-+      _AbortComposition(true);
-+      if (!_CurrentActivation(activation)) return S_OK;
-+      _status.composing = false;
-+    }
-+    _EnableLanguageBar(open);
-+    if (!_CurrentActivation(activation)) return S_OK;
-+    const com_ptr<CLangBarItemButton> button = activation->languageButton;
-+    if (button) button->UpdateWeaselStatus(_status);
++    if (activation->settingKeyboardOpen) return S_OK;
++    DWORD open = FALSE;
++    if (_GetCompartmentDWORD(open, guid) != S_OK || !_CurrentActivation(activation))
++      return S_OK;
++    // Native TSF owns the shortcut. If its compartment cannot reopen within
++    // this callback, the next physical shortcut may arrive on the open edge.
++    if (!open) _SetKeyboardOpen(TRUE);
++    _ToggleAsciiMode(activation);
 +  } else if (IsEqualGUID(guid, GUID_COMPARTMENT_KEYBOARD_INPUTMODE_CONVERSION)) {
 +    const BOOL open = _IsKeyboardOpen();
 +    if (!_CurrentActivation(activation)) return S_OK;
@@ -7808,10 +8198,9 @@ index d030666acb67376d5a1e929c5f5891856a88aedb..886e8722aef632bc986ccfce44a59b34
 +  LONG _refCount;
 +};
 diff --git a/WeaselTSF/Composition.cpp b/WeaselTSF/Composition.cpp
-index e94cea0a57575bf0f9fbe9742a7eaaf6d7b6fd3b..c79a5d28fc9539720069d58e1de63257d4be5f23 100644
 --- a/WeaselTSF/Composition.cpp
 +++ b/WeaselTSF/Composition.cpp
-@@ -1,421 +1,837 @@
+@@ -1,421 +1,990 @@
 -#include "stdafx.h"
 -#include "WeaselTSF.h"
 -#include "EditSession.h"
@@ -8412,6 +8801,159 @@ index e94cea0a57575bf0f9fbe9742a7eaaf6d7b6fd3b..c79a5d28fc9539720069d58e1de63257
 +  if (closed && stillMatching) intent->terminated = true;
 +  return result;
 +}
++
++// BEGIN idle-mode-caret: this READ path never creates or edits composition.
++class CIdleCaretEditSession : public CEditSession {
++ public:
++  CIdleCaretEditSession(com_ptr<WeaselTSF> service,
++      const std::shared_ptr<WeaselTSF::ModeCaretRequest>& request)
++      : CEditSession(service, request->binding->context), request_(request) {}
++  STDMETHODIMP DoEditSession(TfEditCookie ec) override;
++ private:
++  bool Current() const { return _pTextService->_IsCurrentModeCaret(request_); }
++  HRESULT OwnedScreenBounds(ITfContextView* view, RECT& bounds);
++  std::shared_ptr<WeaselTSF::ModeCaretRequest> request_;
++};
++
++HRESULT CIdleCaretEditSession::OwnedScreenBounds(ITfContextView* view, RECT& bounds) {
++  HRESULT result = view->GetScreenExt(&bounds);
++  if (!Current()) return S_FALSE;
++  if (result == S_OK)
++    return bounds.right > bounds.left && bounds.bottom > bounds.top ? S_OK : S_FALSE;
++  HWND window = nullptr;
++  result = view->GetWnd(&window);
++  if (!Current()) return S_FALSE;
++  if (FAILED(result)) return result;
++  if (!window) return S_FALSE;
++  if (!::GetWindowRect(window, &bounds)) return HRESULT_FROM_WIN32(GetLastError());
++  if (!Current()) return S_FALSE;
++  return bounds.right > bounds.left && bounds.bottom > bounds.top ? S_OK : S_FALSE;
++}
++
++STDAPI CIdleCaretEditSession::DoEditSession(TfEditCookie ec) {
++  if (!Current()) return S_FALSE;
++  com_ptr<ITfContextView> view;
++  HRESULT result = _pContext->GetActiveView(&view);
++  if (!Current()) return S_FALSE;
++  if (FAILED(result) || !view) return FAILED(result) ? result : S_FALSE;
++  // The selection range is used only while this context's READ grant is held.
++  // Releasing even a discarded host range can reenter, so retain it locally.
++  TF_SELECTION selection = {};
++  ULONG fetched = 0;
++  result = _pContext->GetSelection(ec, TF_DEFAULT_SELECTION, 1, &selection, &fetched);
++  com_ptr<ITfRange> selected;
++  selected.Attach(selection.range);
++  if (!Current()) return S_FALSE;
++  RECT rect = {};
++  bool hasCaret = false;
++  if (result == S_OK && fetched == 1 && selected) {
++    com_ptr<ITfContext> rangeOwner;
++    result = selected->GetContext(&rangeOwner);
++    if (!Current()) return S_FALSE;
++    if (result == S_OK) {
++      const bool sameOwner = response_owner::SameIdentity(rangeOwner, _pContext);
++      if (!Current()) return S_FALSE;
++      if (sameOwner) {
++        com_ptr<ITfRange> query;
++        result = selected->Clone(&query);
++        if (!Current()) return S_FALSE;
++        if (result == S_OK && query) {
++          const TfAnchor anchor = selection.style.ase == TF_AE_START ? TF_ANCHOR_START : TF_ANCHOR_END;
++          result = query->Collapse(ec, anchor);
++          if (!Current()) return S_FALSE;
++          if (result == S_OK) {
++            BOOL clipped = FALSE;
++            result = view->GetTextExt(ec, query, &rect, &clipped);
++            if (!Current()) return S_FALSE;
++            hasCaret = result == S_OK && (rect.left != 0 || rect.top != 0) &&
++                rect.right >= rect.left && rect.bottom > rect.top;
++          }
++        }
++      }
++    }
++  }
++  if (!Current()) return S_FALSE;
++  if (!hasCaret) return S_FALSE;
++  RECT bounds = {};
++  const HRESULT bounded = request_->enhanced ? OwnedScreenBounds(view, bounds) : S_FALSE;
++  if (!Current()) return S_FALSE;
++  if (request_->enhanced && bounded == S_OK &&
++      (rect.left < bounds.left || rect.left > bounds.right ||
++       rect.top < bounds.top || rect.top > bounds.bottom)) return S_FALSE;
++  // A display extent is not a caret. Recheck the active view after host calls.
++  com_ptr<ITfContextView> active;
++  result = _pContext->GetActiveView(&active);
++  if (!Current()) return S_FALSE;
++  if (FAILED(result)) return result;
++  const bool sameView = response_owner::SameIdentity(active, view);
++  if (!Current() || !sameView) return S_FALSE;
++  request_->rect = rect;
++  request_->positioned = true;
++  // Async grants may arrive before an engine response has been copied. The
++  // publisher waits rather than invalidating that content receive buffer.
++  _pTextService->_PublishModePosition(request_);
++  return S_OK;
++}
++
++bool WeaselTSF::_IsCurrentModeCaret(const std::shared_ptr<ModeCaretRequest>& request) const {
++  return request && _modeCaretRequest == request && _modeFocusActive &&
++      request->epoch == _modePositionEpoch && _CurrentActivation(request->activation) &&
++      _textEditBinding == request->binding && request->binding &&
++      request->binding->context && request->binding->candidate &&
++      _cand == request->binding->candidate && !_status.composing;
++}
++
++void WeaselTSF::_InvalidateModePosition(bool notifyServer) {
++  ++_modePositionEpoch;
++  const auto retired = std::move(_modeCaretRequest);
++  if (notifyServer) m_client.UpdateInputPosition(RECT{});
++}
++
++void WeaselTSF::_PublishModePosition(const std::shared_ptr<ModeCaretRequest>& request) {
++  if (!_IsCurrentModeCaret(request) || _producerResponse) return;
++  if (request->invalidate) {
++    request->invalidate = false;
++    m_client.UpdateInputPosition(RECT{});
++    if (!_IsCurrentModeCaret(request)) return;
++  }
++  if (!request->positioned || request->published) return;
++  request->published = true;
++  m_client.UpdateInputPosition(request->rect);
++}
++
++void WeaselTSF::_RefreshIdleModePosition(ITfContext* owner, bool invalidateServer) {
++  const auto activation = _activation;
++  const auto binding = _textEditBinding;
++  const auto epoch = ++_modePositionEpoch;
++  const auto retired = std::move(_modeCaretRequest);
++  const auto current = [&]() {
++    return _CurrentActivation(activation) && _modePositionEpoch == epoch && _modeFocusActive &&
++        binding && binding->context && binding->candidate && _textEditBinding == binding &&
++        _cand == binding->candidate;
++  };
++  if (!current() || !owner) return;
++  const bool sameOwner = response_owner::SameIdentity(owner, binding->context);
++  if (!current() || !sameOwner) return;
++  const bool deferInvalidation = static_cast<bool>(_producerResponse);
++  if (invalidateServer && !deferInvalidation) m_client.UpdateInputPosition(RECT{});
++  if (!current() || _status.composing) return;
++  auto request = std::make_shared<ModeCaretRequest>();
++  request->activation = activation;
++  request->binding = binding;
++  request->epoch = epoch;
++  request->invalidate = invalidateServer && deferInvalidation;
++  request->enhanced = binding->candidate->style().enhanced_position;
++  _modeCaretRequest = request;
++  com_ptr<CIdleCaretEditSession> session;
++  session.Attach(new CIdleCaretEditSession(this, request));
++  if (!_IsCurrentModeCaret(request)) return;
++  HRESULT granted = E_FAIL;
++  // A mode hint must not wait for the host to calculate the caret inline.
++  binding->context->RequestEditSession(activation->client, session,
++      TF_ES_ASYNC | TF_ES_READ, &granted);
++  _PublishModePosition(request);
++}
++// END idle-mode-caret.
 +
 +/* Get Text Extent */
 +class CGetTextExtentEditSession : public CEditSession {
@@ -9466,10 +10008,9 @@ index a18bdb4f0e0af10853d76dd290cf970d67c93999..2eb40b8e4f2c0eccbfde3f3903cf5c9d
 +  return SetAttributeInfo(_pDisplayAttribute);
 +}
 diff --git a/WeaselTSF/EditSession.cpp b/WeaselTSF/EditSession.cpp
-index 8f4d503676f507f4728ac31c64a7bda4b6046136..4a30c88b37dd2ad2ce3a7382284fa80a33e36344 100644
 --- a/WeaselTSF/EditSession.cpp
 +++ b/WeaselTSF/EditSession.cpp
-@@ -1,47 +1,824 @@
+@@ -1,47 +1,899 @@
 -#include "stdafx.h"
 -#include "WeaselTSF.h"
 -#include "CandidateList.h"
@@ -9530,6 +10071,9 @@ index 8f4d503676f507f4728ac31c64a7bda4b6046136..4a30c88b37dd2ad2ce3a7382284fa80a
 +std::uint64_t WeaselTSF::_PromptTrace(prompt_trace::Stage stage, ITfContext* origin,
 +    ITfComposition* captured, std::uint64_t flags, HRESULT result,
 +    std::int64_t commit, std::int64_t preedit, int empty, std::uint64_t generation) {
++#if STELLAE_SHIFT_CALLBACK_TRACE
++  return 0;
++#else
 +  prompt_trace::LastErrorGuard preserve;
 +  try {
 +  auto& recorder = prompt_trace::Get();
@@ -9548,9 +10092,13 @@ index 8f4d503676f507f4728ac31c64a7bda4b6046136..4a30c88b37dd2ad2ce3a7382284fa80a
 +  return recorder.Emit(stage, this, origin, _pEditSessionContext.p, captured,
 +      _pComposition.p, generation, commit, preedit, flags, empty, result);
 +  } catch (...) { prompt_trace::Get().Fail(); return 0; }
++#endif
 +}
 +void WeaselTSF::_PromptTraceRange(prompt_trace::Stage stage, TfEditCookie ec,
 +    ITfContext* origin, ITfComposition* captured, ITfRange* range, std::uint64_t flags) {
++#if STELLAE_SHIFT_CALLBACK_TRACE
++  return;
++#else
 +  prompt_trace::LastErrorGuard preserve;
 +  try {
 +  if (!prompt_trace::Get().Enabled()) return;
@@ -9559,6 +10107,7 @@ index 8f4d503676f507f4728ac31c64a7bda4b6046136..4a30c88b37dd2ad2ce3a7382284fa80a
 +  _PromptTrace(stage, origin, captured, flags, result, -1, -1,
 +      result == S_OK ? (empty ? 1 : 0) : -1);
 +  } catch (...) { prompt_trace::Get().Fail(); }
++#endif
 +}
 +#endif
 +
@@ -10313,6 +10862,16 @@ index 8f4d503676f507f4728ac31c64a7bda4b6046136..4a30c88b37dd2ad2ce3a7382284fa80a
 +
 +bool WeaselTSF::_ProduceKeyResponse(ITfContext* owner, const weasel::KeyEvent& key,
 +    TestedKeyPublication* publication) {
++  // System input-method shortcuts still reach Rime, but do not acquire an
++  // auxiliary caret or issue position traffic while Windows changes services.
++  const bool systemShortcut =
++      (key.mask & (ibus::ALT_MASK | ibus::SUPER_MASK | ibus::META_MASK | ibus::HYPER_MASK)) != 0 ||
++      key.keycode == ibus::Alt_L || key.keycode == ibus::Alt_R ||
++      key.keycode == ibus::Super_L || key.keycode == ibus::Super_R ||
++      key.keycode == ibus::Meta_L || key.keycode == ibus::Meta_R ||
++      key.keycode == ibus::Hyper_L || key.keycode == ibus::Hyper_R ||
++      key.keycode == ibus::Menu;
++  const bool shiftKey = key.keycode == ibus::Shift_L || key.keycode == ibus::Shift_R;
 +  auto packet = _PrepareResponse(owner);
 +  if (packet->stage == response_owner::Stage::UnsupportedEndpoint) {
 +    _PromptTrace(prompt_trace::KeyBypass, owner,
@@ -10328,7 +10887,33 @@ index 8f4d503676f507f4728ac31c64a7bda4b6046136..4a30c88b37dd2ad2ce3a7382284fa80a
 +    // This key has not been sent to the engine. The caller retains its MSG.
 +    return false;
 +  }
-+  if (!_BeginResponse(packet)) return false;
++  // Invalidate an old field before a real mode notification can be emitted,
++  // without a host READ in this key's pre-engine path. System shortcuts only
++  // retire our local geometry; they do not own an in-IME mode popup.
++  const auto pendingCaret = _modeCaretRequest;
++  // A trailing release can arrive before the prior mode key's READ is granted.
++  // Keep that read only for the same live context; clear the wire position as usual.
++  const bool keepPendingCaret = !systemShortcut && (key.mask & ibus::RELEASE_MASK) &&
++      _IsCurrentModeCaret(pendingCaret) && !pendingCaret->published &&
++      pendingCaret->binding->context.p == owner;
++  if (keepPendingCaret) {
++    m_client.UpdateInputPosition(RECT{});
++  } else {
++    _InvalidateModePosition(!systemShortcut);
++  }
++  if (!_BeginResponse(packet)) {
++    // Once this old producer is retired, deliver any genuine focus entry
++    // deferred while its response body was still owned.
++    if (_deferredResponseFocus && !_producerResponse) {
++      _deferredResponseFocus = false;
++      OnSetThreadFocus();
++    }
++    return false;
++  }
++  const weasel::Status previousStatus = _status;
++  const com_ptr<CCandidateList> candidate = _cand;
++  const std::wstring previousZhungIcon = candidate ? candidate->style().current_zhung_icon : L"";
++  const std::wstring previousAsciiIcon = candidate ? candidate->style().current_ascii_icon : L"";
 +  const auto outcome = m_client.ProcessKeyEventOutcome(key);
 +  // Unknown means this write may already have reached the engine. Consume this
 +  // key to avoid duplicating its possible effect through raw fallback, without
@@ -10339,6 +10924,37 @@ index 8f4d503676f507f4728ac31c64a7bda4b6046136..4a30c88b37dd2ad2ce3a7382284fa80a
 +  // Unknown owns a possible engine effect too; its Actual must not resend it.
 +  if (consume && publication) publication->Publish();
 +  _CaptureResponse(packet, &outcome);
++#if STELLAE_SHIFT_CALLBACK_TRACE && STELLAE_ENABLE_PROMPT_TRACE
++  if (shiftKey && packet->response) {
++    const auto& response = *packet->response;
++    prompt_trace::ShiftScope::Response(this, response.generation,
++        prompt_trace::ShiftMode(response.status.ascii_mode,
++            response.style.current_zhung_icon.c_str()) |
++            (response.status.composing ? 8U : 0U), packet->captureResult,
++        consume);
++  }
++#endif
++  if (_lastResponse == packet && packet->response && SUCCEEDED(packet->captureResult)) {
++    const auto& response = *packet->response;
++    const bool modeChanged =
++        previousStatus.ascii_mode != response.status.ascii_mode ||
++        previousStatus.schema_id != response.status.schema_id ||
++        previousStatus.full_shape != response.status.full_shape ||
++        previousStatus.type != response.status.type ||
++        previousZhungIcon != response.style.current_zhung_icon ||
++        previousAsciiIcon != response.style.current_ascii_icon;
++    if (_status.composing) {
++      _InvalidateModePosition(false);
++    } else if (!systemShortcut && (modeChanged || (outcome.Handled() && !shiftKey))) {
++      // The body is already copied. Only a changed mode or a handled ordinary
++      // key may request fresh owned geometry. A chord's trailing Shift release
++      // with unchanged mode does not trigger another auxiliary host READ.
++      _RefreshIdleModePosition(owner, false);
++    } else if (keepPendingCaret) {
++      // A host may have granted the saved READ while this response was unread.
++      _PublishModePosition(pendingCaret);
++    }
++  }
 +  return consume;
 +}
 diff --git a/WeaselTSF/Globals.cpp b/WeaselTSF/Globals.cpp
@@ -11019,10 +11635,9 @@ index 8eb062e99f6d33add5650be7b53680a27650b1d5..98f87dd74fbeba4b5765f5f36a84aee3
 + };
 +*/
 diff --git a/WeaselTSF/KeyEventSink.cpp b/WeaselTSF/KeyEventSink.cpp
-index c885dddf9479c98c2df29edab086feacc84653df..74f0ba903b2ec9914ede65929b001bc6a8b24718 100644
 --- a/WeaselTSF/KeyEventSink.cpp
 +++ b/WeaselTSF/KeyEventSink.cpp
-@@ -1,201 +1,402 @@
+@@ -1,201 +1,385 @@
 -#include "stdafx.h"
 -#include "WeaselIPC.h"
 -#include "WeaselTSF.h"
@@ -11254,9 +11869,6 @@ index c885dddf9479c98c2df29edab086feacc84653df..74f0ba903b2ec9914ede65929b001bc6
 +  return identity;
 +}
 +
-+// Keep native enable/disable separate from Rime's logical language switch.
-+static const TF_PRESERVEDKEY kNativeOpenKey = {VK_SPACE, TF_MOD_CONTROL};
-+
 +// One registered callback object identifies one activation. A late callback
 +// from a retired source cannot enter the next activation through service this.
 +class CActivationEventSink final : public ITfThreadMgrEventSink,
@@ -11358,6 +11970,7 @@ index c885dddf9479c98c2df29edab086feacc84653df..74f0ba903b2ec9914ede65929b001bc6
 +                                 WPARAM wParam,
 +                                 LPARAM lParam,
 +                                 BOOL* pfEaten,
++                                 const KeyCallbackSnapshot& snapshot,
 +                                 TestedKeyPublication* publication) {
 +  *pfEaten = FALSE;
 +  const auto activation = _activation;
@@ -11366,18 +11979,7 @@ index c885dddf9479c98c2df29edab086feacc84653df..74f0ba903b2ec9914ede65929b001bc6
 +  };
 +  if (!current()) return;
 +  auto& keys = *activation->keyState;
-+  const DWORD shiftMessageTime = (wParam == VK_SHIFT || wParam == VK_LSHIFT ||
-+      wParam == VK_RSHIFT) ? static_cast<DWORD>(GetMessageTime()) : 0;
 +  _PromptTrace(prompt_trace::KeyEnter, pContext);
-+  // when _IsKeyboardDisabled don't eat the key,
-+  // when keyboard closable and keyboard closed, don't eat the key
-+  const bool open = !_isToOpenClose || _IsKeyboardOpen();
-+  if (!current()) return;
-+  if (!open) {
-+    _PromptTrace(prompt_trace::KeyBypass, pContext, nullptr, prompt_trace::BypassClosed);
-+    *pfEaten = FALSE;
-+    return;
-+  }
 +  const bool disabled = _IsKeyboardDisabled(pContext);
 +  if (!current()) return;
 +  if (disabled) {
@@ -11396,7 +11998,8 @@ index c885dddf9479c98c2df29edab086feacc84653df..74f0ba903b2ec9914ede65929b001bc6
 +  }
 +  weasel::KeyEvent ke;
 +  BYTE keyState[256];
-+  const BOOL keyboardStateValid = GetKeyboardState(keyState);
++  memcpy(keyState, snapshot.keyState, sizeof(keyState));
++  const BOOL keyboardStateValid = snapshot.keyboardStateValid;
 +  if (!keyboardStateValid) {
 +    _PromptTrace(prompt_trace::KeyBypass, pContext, nullptr, prompt_trace::BypassConvert);
 +    return; // Never convert using a previous callback's keyboard bitmap.
@@ -11408,8 +12011,8 @@ index c885dddf9479c98c2df29edab086feacc84653df..74f0ba903b2ec9914ede65929b001bc6
 +  } else {
 +    if (ke.keycode == ibus::Shift_L || ke.keycode == ibus::Shift_R)
 +      ke.shift_snapshot = weasel::CaptureShiftSnapshot(ke, KeyInfo(lParam),
-+          keyboardStateValid, keyState, GetKeyboardLayout(0),
-+          static_cast<UINT>(wParam), shiftMessageTime);
++          keyboardStateValid, keyState, snapshot.layout,
++          static_cast<UINT>(wParam), snapshot.messageTime);
 +    // cheet key code when vertical auto reverse happened, swap up and down
 +    if (candidate->GetIsReposition()) {
 +      if (ke.keycode == ibus::Up)
@@ -11417,6 +12020,9 @@ index c885dddf9479c98c2df29edab086feacc84653df..74f0ba903b2ec9914ede65929b001bc6
 +      else if (ke.keycode == ibus::Down)
 +        ke.keycode = ibus::Up;
 +    }
++#if STELLAE_SHIFT_CALLBACK_TRACE && STELLAE_ENABLE_PROMPT_TRACE
++    prompt_trace::ShiftScope::Forward(this, ke.shift_snapshot.flags, ke.mask);
++#endif
 +    *pfEaten = (BOOL)_ProduceKeyResponse(pContext, ke, publication);
 +    if (!current()) return; // Keep handled, but never inject a stale Caps tail into B.
 +    const std::uint64_t kind = ke.keycode == ibus::space ? prompt_trace::SpaceSelection :
@@ -11459,12 +12065,15 @@ index c885dddf9479c98c2df29edab086feacc84653df..74f0ba903b2ec9914ede65929b001bc6
 +  if (fForeground) {
 +    const com_ptr<CCandidateList> candidate = _cand;
 +    if (!candidate) return S_OK;
-+    _ApplyGlobalKeyboardOpen();
-+    if (_cand != candidate) return S_OK;
-+    m_client.FocusIn();
++    _RefreshModeFocus();
 +  } else {
-+    m_client.FocusOut();
-+    _AbortComposition();
++    const auto target = _responseIntent;
++    _modeFocusActive = false;
++    _modeFocusNeedsNotify = false;
++    _deferredResponseFocus = false;
++    _InvalidateModePosition(false);
++    if (!_modeFocusActive) m_client.FocusOut();
++    _AbortComposition(true, target);
 +  }
 +
 +  return S_OK;
@@ -11478,12 +12087,29 @@ index c885dddf9479c98c2df29edab086feacc84653df..74f0ba903b2ec9914ede65929b001bc6
 +    WPARAM key, LPARAM info, bool test, bool release, BOOL* eaten) {
 +  if (!eaten) return E_POINTER;
 +  *eaten = FALSE;
-+  // Read message metadata before any host COM call or Test/Actual lookup.
 +  // A repeated callback for our injection must not take a physical key's credit.
 +  if (key == VK_CAPITAL &&
 +      static_cast<ULONG_PTR>(::GetMessageExtraInfo()) == kStellaeCapsCompensationTag)
 +    return S_OK;
 +  if (!keys) return S_OK;
++  // Preserve this callback's keyboard state across host COM reentry.
++  // The optional Shift sidecar alone needs a layout and message timestamp.
++  KeyCallbackSnapshot snapshot;
++  const bool shift = key == VK_SHIFT || key == VK_LSHIFT || key == VK_RSHIFT;
++  if (shift) snapshot.messageTime = static_cast<DWORD>(::GetMessageTime());
++  snapshot.keyboardStateValid = ::GetKeyboardState(snapshot.keyState);
++  if (shift) snapshot.layout = ::GetKeyboardLayout(0);
++#if STELLAE_SHIFT_CALLBACK_TRACE && STELLAE_ENABLE_PROMPT_TRACE
++  prompt_trace::ShiftScope shiftTrace(this, context, key, info, test, release,
++      snapshot.messageTime, snapshot.keyboardStateValid, snapshot.keyState,
++      [](void* value) noexcept -> unsigned {
++        const auto* service = static_cast<WeaselTSF*>(value);
++        const auto& candidate = service->_cand;
++        return prompt_trace::ShiftMode(service->_status.ascii_mode,
++            candidate ? candidate->style().current_zhung_icon.c_str() : nullptr) |
++            (service->_status.composing ? 8U : 0U);
++      }, eaten);
++#endif
 +  const com_ptr<CCandidateList> candidate = _CurrentActivation(activation) ? _cand : nullptr;
 +  const auto current = [&]() {
 +    return _CurrentActivation(activation) && candidate && _cand == candidate;
@@ -11498,7 +12124,13 @@ index c885dddf9479c98c2df29edab086feacc84653df..74f0ba903b2ec9914ede65929b001bc6
 +          (release ? prompt_trace::ActualUpCallback : prompt_trace::ActualDownCallback)) |
 +      (records.Present() ? prompt_trace::PendingPresent : 0);
 +  if (current()) _PromptTrace(prompt_trace::CallbackEnter, context, nullptr, flags);
++#if STELLAE_SHIFT_CALLBACK_TRACE && STELLAE_ENABLE_PROMPT_TRACE
++  shiftTrace.CreditPresent(records.Present());
++#endif
 +  if (!test && records.Take(owner, key, info)) {
++#if STELLAE_SHIFT_CALLBACK_TRACE && STELLAE_ENABLE_PROMPT_TRACE
++    shiftTrace.Mark(prompt_trace::ShiftAck);
++#endif
 +    // Taking a credit may release a host identity; its result still belongs
 +    // to this old key even if that Release retires the activation.
 +    *eaten = TRUE;
@@ -11508,6 +12140,9 @@ index c885dddf9479c98c2df29edab086feacc84653df..74f0ba903b2ec9914ede65929b001bc6
 +  }
 +  if (!current()) return S_OK;
 +  if (test && records.Matches(owner, key, info)) {
++#if STELLAE_SHIFT_CALLBACK_TRACE && STELLAE_ENABLE_PROMPT_TRACE
++    shiftTrace.Mark(prompt_trace::ShiftDedup);
++#endif
 +    *eaten = TRUE;
 +    _PromptTrace(prompt_trace::CallbackReturned, context, nullptr,
 +        flags | prompt_trace::PendingMatched | prompt_trace::OperationTrue);
@@ -11518,12 +12153,12 @@ index c885dddf9479c98c2df29edab086feacc84653df..74f0ba903b2ec9914ede65929b001bc6
 +  if (test) {
 +    TestedKeyPublication publication{records, records.Prepare(owner, key, info)};
 +    if (!current()) return S_OK;
-+    _ProcessKeyEvent(context, candidate, key, info, eaten, &publication);
++    _ProcessKeyEvent(context, candidate, key, info, eaten, snapshot, &publication);
 +    // Caps compatibility can consume without a handled engine response.
 +    // Do not recreate a credit already taken by a nested Actual callback.
 +    if (*eaten && !publication.published) publication.Publish();
 +  } else {
-+    _ProcessKeyEvent(context, candidate, key, info, eaten);
++    _ProcessKeyEvent(context, candidate, key, info, eaten, snapshot);
 +  }
 +  if (current()) _PromptTrace(prompt_trace::CallbackReturned, context, nullptr,
 +      flags | (*eaten ? prompt_trace::OperationTrue : 0));
@@ -11554,16 +12189,8 @@ index c885dddf9479c98c2df29edab086feacc84653df..74f0ba903b2ec9914ede65929b001bc6
 +      context, key, info, false, true, eaten);
 +}
 +
-+STDAPI WeaselTSF::OnPreservedKey(ITfContext* pContext,
-+                                 REFGUID rguid,
-+                                 BOOL* pfEaten) {
++STDAPI WeaselTSF::OnPreservedKey(ITfContext*, REFGUID, BOOL* pfEaten) {
 +  *pfEaten = FALSE;
-+  const auto activation = _activation;
-+  if (activation && activation->globalOpenEnabled &&
-+      IsEqualGUID(rguid, activation->preservedCommand) && !_IsKeyboardDisabled() &&
-+      _CurrentActivation(activation)) {
-+    *pfEaten = SUCCEEDED(_ToggleGlobalKeyboardOpen());
-+  }
 +  return S_OK;
 +}
 +
@@ -11588,46 +12215,16 @@ index c885dddf9479c98c2df29edab086feacc84653df..74f0ba903b2ec9914ede65929b001bc6
 +}
 +
 +void WeaselTSF::_UninitKeyEventSink(ActivationBindings& activation) {
-+  const bool advised = activation.keyAdvised, preserved = activation.preservedKey;
-+  activation.keyAdvised = activation.preservedKey = false;
++  const bool advised = activation.keyAdvised;
++  activation.keyAdvised = false;
 +  com_ptr<ITfKeystrokeMgr> manager;
 +  manager.Attach(activation.keyManager.Detach());
 +  if (!manager) return;
-+  if (preserved) activation.RecordCleanup(manager->UnpreserveKey(activation.preservedCommand, &kNativeOpenKey));
 +  if (advised) activation.RecordCleanup(manager->UnadviseKeyEventSink(activation.client));
 +  // A retained old proxy keeps only its own key state for late Actual ACKs.
 +  // It cannot process a fresh key after this activation has been retired.
 +}
-+
-+BOOL WeaselTSF::_InitPreservedKey(const Activation& activation) {
-+  if (!_CurrentActivation(activation) || !activation->keyManager) return FALSE;
-+  // UnpreserveKey has no client/cookie parameter. Give this resource its own
-+  // command identity, while keeping the existing physical Ctrl+Space command.
-+  GUID command;
-+  if (FAILED(CoCreateGuid(&command))) return FALSE;
-+  const com_ptr<ITfKeystrokeMgr> manager = activation->keyManager;
-+  if (!_CurrentActivation(activation)) return FALSE;
-+  const HRESULT result = manager->PreserveKey(activation->client, command,
-+      &kNativeOpenKey, L"", 0);
-+  if (result != S_OK || !_CurrentActivation(activation)) {
-+    if (result == S_OK)
-+      activation->RecordCleanup(manager->UnpreserveKey(command, &kNativeOpenKey));
-+    return FALSE;
-+  }
-+  activation->preservedCommand = command;
-+  activation->preservedKey = true;
-+  return TRUE;
-+}
-+
-+void WeaselTSF::_UninitPreservedKey(ActivationBindings& activation) {
-+  const bool registered = activation.preservedKey;
-+  activation.preservedKey = false;
-+  const com_ptr<ITfKeystrokeMgr> manager = activation.keyManager;
-+  if (registered && manager)
-+    activation.RecordCleanup(manager->UnpreserveKey(activation.preservedCommand, &kNativeOpenKey));
-+}
 diff --git a/WeaselTSF/LanguageBar.cpp b/WeaselTSF/LanguageBar.cpp
-index a03b6159c980e3bb4108de8850299f8e6a9e3423..a571cc7e988a53983802f4914eacabd29904b355 100644
 --- a/WeaselTSF/LanguageBar.cpp
 +++ b/WeaselTSF/LanguageBar.cpp
 @@ -1,4 +1,4 @@
@@ -11636,7 +12233,7 @@ index a03b6159c980e3bb4108de8850299f8e6a9e3423..a571cc7e988a53983802f4914eacabd2
  #include <resource.h>
  #include <thread>
  #include <shellapi.h>
-@@ -34,16 +34,6 @@ static void HMENU2ITfMenu(HMENU hMenu, ITfMenu* pTfMenu) {
+@@ -34,16 +34,6 @@
    }
  }
  
@@ -11653,7 +12250,7 @@ index a03b6159c980e3bb4108de8850299f8e6a9e3423..a571cc7e988a53983802f4914eacabd2
  static bool open(const std::wstring& path) {
    return (uintptr_t)ShellExecuteW(NULL, L"open", path.c_str(), NULL, NULL,
                                    SW_SHOWNORMAL) > 32;
-@@ -57,9 +47,10 @@ static bool explore(const std::wstring& path) {
+@@ -57,9 +47,10 @@
  
  CLangBarItemButton::CLangBarItemButton(com_ptr<WeaselTSF> pTextService,
                                         REFGUID guid,
@@ -11666,7 +12263,7 @@ index a03b6159c980e3bb4108de8850299f8e6a9e3423..a571cc7e988a53983802f4914eacabd2
        _current_schema_zhung_icon(),
        _current_schema_ascii_icon() {
    DllAddRef();
-@@ -111,7 +102,7 @@ STDAPI CLangBarItemButton::GetInfo(TF_LANGBARITEMINFO* pInfo) {
+@@ -111,7 +102,7 @@
    pInfo->dwStyle = TF_LBI_STYLE_BTN_BUTTON | TF_LBI_STYLE_BTN_MENU |
                     TF_LBI_STYLE_SHOWNINTRAY;
    pInfo->ulSort = 1;
@@ -11675,7 +12272,7 @@ index a03b6159c980e3bb4108de8850299f8e6a9e3423..a571cc7e988a53983802f4914eacabd2
    return S_OK;
  }
  
-@@ -157,12 +148,17 @@ STDAPI CLangBarItemButton::GetTooltipString(BSTR* pbstrToolTip) {
+@@ -157,12 +148,17 @@
  STDAPI CLangBarItemButton::OnClick(TfLBIClick click,
                                     POINT pt,
                                     const RECT* prcArea) {
@@ -11695,7 +12292,7 @@ index a03b6159c980e3bb4108de8850299f8e6a9e3423..a571cc7e988a53983802f4914eacabd2
      }
    } else if (click == TF_LBI_CLK_RIGHT) {
      /* Open menu */
-@@ -182,7 +178,7 @@ STDAPI CLangBarItemButton::OnClick(TfLBIClick click,
+@@ -182,7 +178,7 @@
            popupMenu, TPM_NONOTIFY | TPM_RETURNCMD | TPM_HORPOSANIMATION, pt.x,
            pt.y, hwnd, NULL);
        DestroyMenu(menu);
@@ -11704,7 +12301,7 @@ index a03b6159c980e3bb4108de8850299f8e6a9e3423..a571cc7e988a53983802f4914eacabd2
      }
    }
    return S_OK;
-@@ -197,7 +193,9 @@ STDAPI CLangBarItemButton::InitMenu(ITfMenu* pMenu) {
+@@ -197,7 +193,9 @@
  }
  
  STDAPI CLangBarItemButton::OnMenuSelect(UINT wID) {
@@ -11715,7 +12312,7 @@ index a03b6159c980e3bb4108de8850299f8e6a9e3423..a571cc7e988a53983802f4914eacabd2
    return S_OK;
  }
  
-@@ -206,7 +204,7 @@ STDAPI CLangBarItemButton::GetIcon(HICON* phIcon) {
+@@ -206,7 +204,7 @@
      if (_style.current_ascii_icon.empty())
        *phIcon = (HICON)LoadImageW(g_hInst, MAKEINTRESOURCEW(IDI_EN), IMAGE_ICON,
                                    GetSystemMetrics(SM_CXSMICON),
@@ -11724,7 +12321,7 @@ index a03b6159c980e3bb4108de8850299f8e6a9e3423..a571cc7e988a53983802f4914eacabd2
      else
        *phIcon =
            (HICON)LoadImageW(NULL, _style.current_ascii_icon.c_str(), IMAGE_ICON,
-@@ -216,7 +214,7 @@ STDAPI CLangBarItemButton::GetIcon(HICON* phIcon) {
+@@ -216,7 +214,7 @@
      if (_style.current_zhung_icon.empty())
        *phIcon = (HICON)LoadImageW(g_hInst, MAKEINTRESOURCEW(IDI_ZH), IMAGE_ICON,
                                    GetSystemMetrics(SM_CXSMICON),
@@ -11733,7 +12330,7 @@ index a03b6159c980e3bb4108de8850299f8e6a9e3423..a571cc7e988a53983802f4914eacabd2
      else
        *phIcon =
            (HICON)LoadImageW(NULL, _style.current_zhung_icon.c_str(), IMAGE_ICON,
-@@ -227,35 +225,40 @@ STDAPI CLangBarItemButton::GetIcon(HICON* phIcon) {
+@@ -227,35 +225,40 @@
  }
  
  STDAPI CLangBarItemButton::GetText(BSTR* pbstrText) {
@@ -11780,7 +12377,7 @@ index a03b6159c980e3bb4108de8850299f8e6a9e3423..a571cc7e988a53983802f4914eacabd2
    if (stat.ascii_mode != ascii_mode) {
      ascii_mode = stat.ascii_mode;
    }
-@@ -265,12 +268,14 @@ void CLangBarItemButton::UpdateWeaselStatus(weasel::Status stat) {
+@@ -265,12 +268,14 @@
    if (_current_schema_ascii_icon != _style.current_ascii_icon) {
      _current_schema_ascii_icon = _style.current_ascii_icon;
    }
@@ -11797,7 +12394,7 @@ index a03b6159c980e3bb4108de8850299f8e6a9e3423..a571cc7e988a53983802f4914eacabd2
    BOOL isChange = FALSE;
  
    if (fSet) {
-@@ -285,17 +290,31 @@ void CLangBarItemButton::SetLangbarStatus(DWORD dwStatus, BOOL fSet) {
+@@ -285,17 +290,31 @@
      }
    }
  
@@ -11835,7 +12432,7 @@ index a03b6159c980e3bb4108de8850299f8e6a9e3423..a571cc7e988a53983802f4914eacabd2
  }
  
  void WeaselTSF::_HandleLangBarMenuSelect(UINT wID) {
-@@ -303,8 +322,7 @@ void WeaselTSF::_HandleLangBarMenuSelect(UINT wID) {
+@@ -303,8 +322,7 @@
    switch (wID) {
      case ID_WEASELTRAY_RERUN_SERVICE:
      case ID_WEASELTRAY_INSTALLDIR:
@@ -11845,7 +12442,7 @@ index a03b6159c980e3bb4108de8850299f8e6a9e3423..a571cc7e988a53983802f4914eacabd2
          if (wID == ID_WEASELTRAY_RERUN_SERVICE) {
            std::thread th([dir]() {
              ShellExecuteW(NULL, L"open", (dir + L"\\start_service.bat").c_str(),
-@@ -316,11 +334,11 @@ void WeaselTSF::_HandleLangBarMenuSelect(UINT wID) {
+@@ -316,11 +334,11 @@
        }
        break;
      case ID_WEASELTRAY_USERCONFIG:
@@ -11859,7 +12456,7 @@ index a03b6159c980e3bb4108de8850299f8e6a9e3423..a571cc7e988a53983802f4914eacabd2
          dir = std::wstring(_path);
        }
        if (!dir.empty() && fs::exists(dir))
-@@ -345,92 +363,102 @@ void WeaselTSF::_HandleLangBarMenuSelect(UINT wID) {
+@@ -345,92 +363,101 @@
  }
  
  HWND WeaselTSF::_GetFocusedContextWindow() {
@@ -11893,11 +12490,12 @@ index a03b6159c980e3bb4108de8850299f8e6a9e3423..a571cc7e988a53983802f4914eacabd2
 -    HWND hwndForeground = GetForegroundWindow();
 -    if (GetWindowThreadProcessId(hwndForeground, NULL) == GetCurrentThreadId())
 -      hwnd = hwndForeground;
+-  }
+-
 +    HWND foreground = GetForegroundWindow();
 +    if (GetWindowThreadProcessId(foreground, NULL) == GetCurrentThreadId())
 +      hwnd = foreground;
-   }
--
++  }
    return hwnd;
  }
  
@@ -11906,14 +12504,6 @@ index a03b6159c980e3bb4108de8850299f8e6a9e3423..a571cc7e988a53983802f4914eacabd2
 -  BOOL fRet = FALSE;
 -
 -  if (_pThreadMgr->QueryInterface(&pLangBarItemMgr) != S_OK)
--    return FALSE;
--
--  if ((_pLangBarButton = new CLangBarItemButton(this, GUID_LBI_INPUTMODE,
--                                                _cand->style())) == NULL)
--    return FALSE;
--
--  if (pLangBarItemMgr->AddItem(_pLangBarButton) != S_OK) {
--    _pLangBarButton = NULL;
 +BOOL WeaselTSF::_InitLanguageBar(const Activation& activation) {
 +  const com_ptr<CCandidateList> candidate = _cand;
 +  const com_ptr<ITfThreadMgr> thread = activation->thread;
@@ -11931,18 +12521,22 @@ index a03b6159c980e3bb4108de8850299f8e6a9e3423..a571cc7e988a53983802f4914eacabd2
 +  if (!current()) {
 +    activation->RecordCleanup(manager->RemoveItem(button));
      return FALSE;
-   }
+-
+-  if ((_pLangBarButton = new CLangBarItemButton(this, GUID_LBI_INPUTMODE,
+-                                                _cand->style())) == NULL)
+-    return FALSE;
+-
+-  if (pLangBarItemMgr->AddItem(_pLangBarButton) != S_OK) {
+-    _pLangBarButton = NULL;
+-    return FALSE;
+-  }
 -
 -  _pLangBarButton->Show(TRUE);
 -  fRet = TRUE;
 -
 -  return fRet;
-+  activation->languageManager = manager;
-+  activation->languageButton = button;
-+  button->Show(TRUE);
-+  return current();
- }
- 
+-}
+-
 -void WeaselTSF::_UninitLanguageBar() {
 -  com_ptr<ITfLangBarItemMgr> pLangBarItemMgr;
 -
@@ -11954,6 +12548,13 @@ index a03b6159c980e3bb4108de8850299f8e6a9e3423..a571cc7e988a53983802f4914eacabd2
 -  }
 -
 -  _pLangBarButton = NULL;
++  }
++  activation->languageManager = manager;
++  activation->languageButton = button;
++  button->Show(TRUE);
++  return current();
++}
++
 +void WeaselTSF::_UninitLanguageBar(ActivationBindings& activation) {
 +  com_ptr<ITfLangBarItemMgr> manager;
 +  com_ptr<CLangBarItemButton> button;
@@ -11980,11 +12581,16 @@ index a03b6159c980e3bb4108de8850299f8e6a9e3423..a571cc7e988a53983802f4914eacabd2
 -
 -  _pLangBarButton->UpdateWeaselStatus(stat);
 +  const Activation activation = _activation;
++  const auto binding = _textEditBinding;
++  const auto updateEpoch = ++_languageBarUpdateEpoch;
++  const bool focused = _modeFocusActive;
 +  if (!activation) return;
 +  const com_ptr<CLangBarItemButton> button = activation->languageButton;
 +  const com_ptr<ITfThreadMgr> thread = activation->thread;
 +  const auto current = [&]() {
-+    return _CurrentActivation(activation) && button && thread;
++    return _CurrentActivation(activation) && button && thread &&
++        _textEditBinding == binding && _languageBarUpdateEpoch == updateEpoch &&
++        _modeFocusActive == focused && _status == stat;
 +  };
 +  if (!current()) return;
 +  com_ptr<ITfCompartmentMgr> manager;
@@ -12015,22 +12621,20 @@ index a03b6159c980e3bb4108de8850299f8e6a9e3423..a571cc7e988a53983802f4914eacabd2
 -  if (!_pLangBarButton)
 -    return;
 -  _pLangBarButton->Show(show);
+-}
+-
+-void WeaselTSF::_EnableLanguageBar(BOOL enable) {
+-  if (!_pLangBarButton)
+-    return;
+-  _pLangBarButton->SetLangbarStatus(TF_LBI_STATUS_DISABLED, !enable);
+-}
 +  const Activation activation = _activation;
 +  const com_ptr<CLangBarItemButton> button =
 +      activation ? activation->languageButton : nullptr;
 +  if (_CurrentActivation(activation) && button) button->Show(show);
- }
- 
- void WeaselTSF::_EnableLanguageBar(BOOL enable) {
--  if (!_pLangBarButton)
--    return;
--  _pLangBarButton->SetLangbarStatus(TF_LBI_STATUS_DISABLED, !enable);
-+  const Activation activation = _activation;
-+  const com_ptr<CLangBarItemButton> button =
-+      activation ? activation->languageButton : nullptr;
-+  if (_CurrentActivation(activation) && button)
-+    button->SetLangbarStatus(TF_LBI_STATUS_DISABLED, !enable);
- }
++}
++
++// end-of-file
 diff --git a/WeaselTSF/LanguageBar.h b/WeaselTSF/LanguageBar.h
 index 2c0513ab3054ac5d61041e27a798421ab2040f8c..6ae46a9260b871da1693ea4aa28b022ff2f11638 100644
 --- a/WeaselTSF/LanguageBar.h
@@ -12139,10 +12743,9 @@ index 2c0513ab3054ac5d61041e27a798421ab2040f8c..6ae46a9260b871da1693ea4aa28b022f
 +};
 diff --git a/WeaselTSF/PromptTrace.h b/WeaselTSF/PromptTrace.h
 new file mode 100644
-index 0000000000000000000000000000000000000000..b3c5207867584a8538a6344aa5482492d4be718a
 --- /dev/null
 +++ b/WeaselTSF/PromptTrace.h
-@@ -0,0 +1,256 @@
+@@ -0,0 +1,376 @@
 +#pragma once
 +#ifndef STELLAE_ENABLE_PROMPT_TRACE
 +#define STELLAE_ENABLE_PROMPT_TRACE 0
@@ -12150,10 +12753,20 @@ index 0000000000000000000000000000000000000000..b3c5207867584a8538a6344aa5482492
 +#if STELLAE_ENABLE_PROMPT_TRACE != 0 && STELLAE_ENABLE_PROMPT_TRACE != 1
 +#error STELLAE_ENABLE_PROMPT_TRACE must be 0 or 1
 +#endif
++#ifndef STELLAE_SHIFT_CALLBACK_TRACE
++#define STELLAE_SHIFT_CALLBACK_TRACE 0
++#endif
++#if STELLAE_SHIFT_CALLBACK_TRACE != 0 && STELLAE_SHIFT_CALLBACK_TRACE != 1
++#error STELLAE_SHIFT_CALLBACK_TRACE must be 0 or 1
++#endif
++#if STELLAE_SHIFT_CALLBACK_TRACE && !STELLAE_ENABLE_PROMPT_TRACE
++#error Shift callback trace requires the opt-in recorder
++#endif
 +#include <cstdint>
 +#if STELLAE_ENABLE_PROMPT_TRACE
 +// Temporary, opt-in numeric diagnostic. No text/key payload is accepted.
 +#include <windows.h>
++#include <atomic>
 +#include <StellaeIdentity.h>
 +#include <cwchar>
 +#include <locale>
@@ -12191,7 +12804,9 @@ index 0000000000000000000000000000000000000000..b3c5207867584a8538a6344aa5482492
 +  KeyFocus = 70, DocumentFocus = 71, ContextPush = 72, ContextPop = 73,
 +  ThreadFocus = 74, ThreadFocusReturned = 75, ThreadBlur = 76,
 +  EndEdit = 80, RangeCompared = 81, CaretOutside = 82, SelectionRead = 83, CompositionRangeRead = 84, Deactivate = 90,
-+  CaptureStop = 99
++  CaptureStop = 99,
++  ShiftEnter = 100, ShiftAck = 101, ShiftDedup = 102, ShiftForward = 103,
++  ShiftResponse = 104, ShiftExit = 105
 +};
 +// The low flags are compositional state, not a keycode or a string.
 +enum Flag : std::uint64_t {
@@ -12262,6 +12877,10 @@ index 0000000000000000000000000000000000000000..b3c5207867584a8538a6344aa5482492
 +                     std::int64_t commit, std::int64_t preedit,
 +                     std::uint64_t flags, std::int64_t empty, HRESULT result) noexcept {
 +    LastErrorGuard preserve;
++#if STELLAE_SHIFT_CALLBACK_TRACE
++    // This build accepts no ordinary-key, body-length, or UI trace rows.
++    if (stage < ShiftEnter || stage > ShiftExit) return 0;
++#endif
 +    Lock lock(lock_);
 +    try {
 +      Refresh();
@@ -12397,6 +13016,110 @@ index 0000000000000000000000000000000000000000..b3c5207867584a8538a6344aa5482492
 +  std::vector<std::pair<const void*, std::uint64_t>> ids_;
 +};
 +inline Recorder& Get() { static Recorder value; return value; }
++#if STELLAE_SHIFT_CALLBACK_TRACE
++// Numeric logical mode only. The icon path is never retained or emitted.
++inline unsigned ShiftMode(bool ascii, const wchar_t* path) noexcept {
++  if (ascii) return 3;
++  if (!path || !*path) return 0;
++  const wchar_t* base = path;
++  for (const wchar_t* at = path; *at; ++at)
++    if (*at == L'\\' || *at == L'/') base = at + 1;
++  constexpr wchar_t english[] = L"smart-english.ico";
++  unsigned i = 0;
++  for (; english[i] && base[i]; ++i) {
++    const wchar_t ch = base[i] >= L'A' && base[i] <= L'Z' ? base[i] + 32 : base[i];
++    if (ch != english[i]) return 1;
++  }
++  return !english[i] && !base[i] ? 2 : 1;
++}
++
++// A stack scope, not a last-event slot: nested callbacks retain their parent.
++// No host call, response scan, input conversion, or keyboard sampling is added.
++class ShiftScope {
++ public:
++  using Mode = unsigned (*)(void*) noexcept;
++  ShiftScope(void* service, const void* context, WPARAM key, LPARAM info,
++      bool test, bool release, DWORD messageTime, BOOL valid, const BYTE* state,
++      Mode mode, const BOOL* eaten) noexcept
++      : previous_(current_), owner_(service), context_(context), mode_(mode),
++        eaten_(eaten), time_(messageTime), info_(static_cast<UINT32>(info)) {
++    LastErrorGuard preserve;
++    current_ = this; // A nested non-Shift must not borrow the outer Shift scope.
++    if (key != VK_SHIFT && key != VK_LSHIFT && key != VK_RSHIFT) return;
++    if (!Get().Enabled()) return;
++    id_ = ++serial_;
++    parent_ = previous_ ? previous_->id_ : 0;
++    flags_ = (test ? 1ULL : 0) | (release ? 2ULL : 0) | (valid ? 4ULL : 0) |
++        ((info_ & 0x40000000U) ? 128ULL : 0) |
++        ((info_ & 0x80000000U) ? 256ULL : 0) |
++        ((key == VK_RSHIFT || (key == VK_SHIFT && ((info_ >> 16) & 255) == 0x36)) ? 512ULL : 0);
++    if (valid && state) {
++      flags_ |= (state[VK_LSHIFT] & 0x80) ? 8ULL : 0;
++      flags_ |= (state[VK_RSHIFT] & 0x80) ? 16ULL : 0;
++      flags_ |= ((state[VK_CONTROL] | state[VK_LCONTROL] | state[VK_RCONTROL]) & 0x80) ? 32ULL : 0;
++      flags_ |= ((state[VK_MENU] | state[VK_LMENU] | state[VK_RMENU]) & 0x80) ? 64ULL : 0;
++      flags_ |= ((state[VK_LWIN] | state[VK_RWIN]) & 0x80) ? 1024ULL : 0;
++    }
++    Emit(ShiftEnter, ModeNow(), S_OK);
++  }
++  ~ShiftScope() noexcept {
++    LastErrorGuard preserve;
++    if (id_) {
++      if (eaten_ && *eaten_) flags_ |= 32768ULL;
++      Emit(ShiftExit, ModeNow(), S_OK);
++    }
++    current_ = previous_;
++  }
++  void CreditPresent(bool present) noexcept {
++    if (present) flags_ |= 2048ULL;
++  }
++  void Mark(Stage stage) noexcept {
++    if (stage == ShiftAck) flags_ |= 4096ULL;
++    if (stage == ShiftDedup) flags_ |= 8192ULL;
++    Emit(stage, ModeNow(), S_OK);
++  }
++  static void Forward(void* owner, unsigned snapshotFlags, unsigned mask) noexcept {
++    auto* scope = Current(owner);
++    if (!scope) return;
++    scope->flags_ |= 16384ULL | ((snapshotFlags & 31ULL) << 16) |
++        (static_cast<std::uint64_t>(mask & 65535U) << 32);
++    scope->Emit(ShiftForward, scope->ModeNow(), S_OK);
++  }
++  static void Response(void* owner, std::uint64_t generation, unsigned mode,
++      HRESULT result, bool consumed) noexcept {
++    auto* scope = Current(owner);
++    if (!scope) return;
++    if (consumed) scope->flags_ |= 32768ULL;
++    scope->Emit(ShiftResponse, mode, result, static_cast<std::int64_t>(generation));
++  }
++ private:
++  static ShiftScope* Current(void* owner) noexcept {
++    return current_ && current_->id_ && current_->owner_ == owner ? current_ : nullptr;
++  }
++  unsigned ModeNow() const noexcept { return id_ && mode_ ? mode_(owner_) : 0; }
++  void Emit(Stage stage, unsigned mode, HRESULT result, std::int64_t detail = -1) noexcept {
++    if (!id_) return;
++    LastErrorGuard preserve;
++    // generation packs parent:callback IDs. preedit_len is keyinfo, except
++    // ShiftResponse, where it is the owned immutable response generation.
++    Get().Emit(stage, owner_, context_, nullptr, nullptr, nullptr,
++        ((parent_ & 0xffffffffULL) << 32) | (id_ & 0xffffffffULL), time_,
++        detail < 0 ? static_cast<std::int64_t>(info_) : detail,
++        flags_, mode, result);
++  }
++  inline static thread_local ShiftScope* current_ = nullptr;
++  inline static std::atomic<std::uint64_t> serial_{0};
++  ShiftScope* previous_;
++  void* owner_;
++  const void* context_;
++  Mode mode_;
++  const BOOL* eaten_;
++  std::uint64_t id_ = 0, parent_ = 0, flags_ = 0;
++  DWORD time_;
++  UINT32 info_;
++};
++#endif
++
 +#endif
 +}  // namespace prompt_trace
 diff --git a/WeaselTSF/Register.cpp b/WeaselTSF/Register.cpp
@@ -13106,19 +13829,29 @@ index 0000000000000000000000000000000000000000..6ab46ee736c8ee6134675ef88c059b0a
 +
 +}  // namespace response_owner
 diff --git a/WeaselTSF/TextEditSink.cpp b/WeaselTSF/TextEditSink.cpp
-index a6bc1f02d6202f2cd8670039f86478f9fa9447fc..e0a68bb80b57dd61213ec3034153ec91087a5fe0 100644
 --- a/WeaselTSF/TextEditSink.cpp
 +++ b/WeaselTSF/TextEditSink.cpp
-@@ -1,118 +1,265 @@
+@@ -1,118 +1,279 @@
  #include "stdafx.h"
  #include "WeaselTSF.h"
-+#include "CandidateList.h"
-+#include "ResponseParser.h"
- 
+-
 -static BOOL IsRangeCovered(TfEditCookie ec,
 -                           ITfRange* pRangeTest,
 -                           ITfRange* pRangeCover) {
 -  LONG lResult;
+-
+-  if (pRangeCover->CompareStart(ec, pRangeTest, TF_ANCHOR_START, &lResult) !=
+-          S_OK ||
+-      lResult > 0)
+-    return FALSE;
+-  if (pRangeCover->CompareEnd(ec, pRangeTest, TF_ANCHOR_END, &lResult) !=
+-          S_OK ||
+-      lResult < 0)
+-    return FALSE;
+-  return TRUE;
++#include "CandidateList.h"
++#include "ResponseParser.h"
++
 +// A registration forwards only while its exact cell is current. The weak cell
 +// prevents a service/binding/proxy cycle; the locked cell's candidate retains
 +// the service throughout a forwarded call.
@@ -13166,16 +13899,7 @@ index a6bc1f02d6202f2cd8670039f86478f9fa9447fc..e0a68bb80b57dd61213ec3034153ec91
 +  WeaselTSF* service_;
 +  std::weak_ptr<WeaselTSF::TextEditBinding> binding_;
 +};
- 
--  if (pRangeCover->CompareStart(ec, pRangeTest, TF_ANCHOR_START, &lResult) !=
--          S_OK ||
--      lResult > 0)
--    return FALSE;
--  if (pRangeCover->CompareEnd(ec, pRangeTest, TF_ANCHOR_END, &lResult) !=
--          S_OK ||
--      lResult < 0)
--    return FALSE;
--  return TRUE;
++
 +static HRESULT IsRangeCovered(TfEditCookie ec,
 +                              ITfRange* pRangeTest,
 +                              ITfRange* pRangeCover,
@@ -13245,6 +13969,10 @@ index a6bc1f02d6202f2cd8670039f86478f9fa9447fc..e0a68bb80b57dd61213ec3034153ec91
 +  const bool ownSelection = selection_status == S_OK && fSelectionChanged &&
 +      _ObserveResponseSelection(context, ecReadOnly);
 +  if (!current()) return S_OK;
++  if (selection_status == S_OK && fSelectionChanged && !_status.composing) {
++    _RefreshIdleModePosition(context);
++    if (!current()) return S_OK;
++  }
 +  const bool targetMatches = intent && response_owner::SameIdentity(intent->owner, context);
 +  if (!current()) return S_OK;
 +  const bool editContextMatches = response_owner::SameIdentity(context, editContext);
@@ -13291,6 +14019,7 @@ index a6bc1f02d6202f2cd8670039f86478f9fa9447fc..e0a68bb80b57dd61213ec3034153ec91
 +      return S_OK;
      }
 -    pEnumTextChanges->Release();
+-  }
 +    if (range_result != S_OK || !range) return S_OK;
 +
 +    TF_SELECTION tfSelection = {};
@@ -13322,7 +14051,7 @@ index a6bc1f02d6202f2cd8670039f86478f9fa9447fc..e0a68bb80b57dd61213ec3034153ec91
 +    if (!rangeCurrent()) return S_OK;
 +    if (sameOwner && compare_result == S_OK && !covered && targetMatches)
 +      _AbortComposition(true, intent);
-   }
++  }
 +
    return S_OK;
  }
@@ -13331,25 +14060,28 @@ index a6bc1f02d6202f2cd8670039f86478f9fa9447fc..e0a68bb80b57dd61213ec3034153ec91
 -                                 TfLayoutCode lcode,
 -                                 ITfContextView* pContextView) {
 -  if (!_IsComposing())
--    return S_OK;
++STDAPI WeaselTSF::OnLayoutChange(ITfContext* context,
++                                 TfLayoutCode code,
++                                 ITfContextView* view) {
++  const auto binding = _textEditBinding;
++  const com_ptr<CCandidateList> candidate = _cand;
++  if (!binding || !candidate || binding->candidate != candidate) return S_OK;
++  const auto current = [this, binding, candidate]() {
++    return _textEditBinding == binding && _cand == candidate;
++  };
++  const bool same = response_owner::SameIdentity(context, binding->context);
++  if (!current() || !same) return S_OK;
++  if (!_IsComposing() && !_HasCurrentPreedit()) {
++    if (code == TF_LC_CHANGE) _RefreshIdleModePosition(context);
++    else if (code == TF_LC_DESTROY) _InvalidateModePosition(!_producerResponse);
+     return S_OK;
 -
 -  if (pContext != _pTextEditSinkContext)
 -    return S_OK;
 -
 -  if (lcode == TF_LC_CHANGE)
 -    _UpdateCompositionWindow(pContext);
-+STDAPI WeaselTSF::OnLayoutChange(ITfContext* context,
-+                                 TfLayoutCode code,
-+                                 ITfContextView* view) {
-+  const auto binding = _textEditBinding;
-+  const com_ptr<CCandidateList> candidate = _cand;
-+  if (!binding || !candidate || binding->candidate != candidate ||
-+      (! _IsComposing() && !_HasCurrentPreedit())) return S_OK;
-+  const auto current = [this, binding, candidate]() {
-+    return _textEditBinding == binding && _cand == candidate;
-+  };
-+  const bool same = response_owner::SameIdentity(context, binding->context);
-+  if (!current() || !same) return S_OK;
++  }
 +  if (code == TF_LC_CHANGE) {
 +    const auto packet = candidate->PresentedResponse();
 +    const auto intent = packet ? packet->outputIntent.lock() : nullptr;
@@ -13363,8 +14095,7 @@ index a6bc1f02d6202f2cd8670039f86478f9fa9447fc..e0a68bb80b57dd61213ec3034153ec91
 -BOOL WeaselTSF::_InitTextEditSink(com_ptr<ITfDocumentMgr> pDocMgr) {
 -  com_ptr<ITfSource> pSource;
 -  BOOL fRet;
-+WeaselTSF::TextEditBinding::~TextEditBinding() { Disconnect(); }
- 
+-
 -  /* clear out any previous sink first */
 -  if (_dwTextEditSinkCookie != TF_INVALID_COOKIE) {
 -    _pTextEditSinkContext->QueryInterface(&pSource);
@@ -13377,6 +14108,10 @@ index a6bc1f02d6202f2cd8670039f86478f9fa9447fc..e0a68bb80b57dd61213ec3034153ec91
 -  }
 -  if (pDocMgr == NULL)
 -    return TRUE;
+-
+-  if (pDocMgr->GetTop(&_pTextEditSinkContext) != S_OK)
++WeaselTSF::TextEditBinding::~TextEditBinding() { Disconnect(); }
++
 +void WeaselTSF::TextEditBinding::Disconnect() {
 +  // Revoke our two exact cookies before a host callback can retire us again.
 +  // A nested focus owns another cell, never these out parameters or cookies.
@@ -13386,14 +14121,17 @@ index a6bc1f02d6202f2cd8670039f86478f9fa9447fc..e0a68bb80b57dd61213ec3034153ec91
 +  if (edit != TF_INVALID_COOKIE) source->UnadviseSink(edit);
 +  if (layout != TF_INVALID_COOKIE) source->UnadviseSink(layout);
 +}
- 
--  if (pDocMgr->GetTop(&_pTextEditSinkContext) != S_OK)
++
 +BOOL WeaselTSF::_InitTextEditSink(ITfDocumentMgr* documentSource,
 +    std::shared_ptr<TextEditBinding>* issued) {
 +  auto request = std::make_shared<TextEditBinding>();
 +  if (documentSource) request->candidate = _cand;
 +  const auto previous = std::move(_textEditBinding);
 +  _textEditBinding = request;
++  _modeFocusActive = false;
++  _modeFocusNeedsNotify = false;
++  _deferredResponseFocus = false;
++  _InvalidateModePosition(false);
 +  if (issued) *issued = request;
 +  // Capture the request's activation before AddRef can reenter with B. The
 +  // caller's raw callback argument stays borrowed until this local owns it.
@@ -13408,27 +14146,12 @@ index a6bc1f02d6202f2cd8670039f86478f9fa9447fc..e0a68bb80b57dd61213ec3034153ec91
 +  const auto stale = [&]() {
 +    request->Disconnect();
      return FALSE;
-+  };
-+  if (!current()) return stale();
-+  if (!document) return TRUE;
-+  if (!request->candidate) return FALSE;  // No active candidate/activation.
- 
+-
 -  if (_pTextEditSinkContext == NULL)
 -    return TRUE;
-+  HRESULT result = document->GetTop(&request->context);
-+  if (!current()) return stale();
-+  if (result != S_OK) return FALSE;
-+  if (!request->context) return TRUE;
-+  result = request->context->QueryInterface(IID_ITfSource,
-+      reinterpret_cast<void**>(&request->source));
-+  if (!current()) return stale();
-+  if (result != S_OK || !request->source) return FALSE;
- 
+-
 -  fRet = FALSE;
-+  com_ptr<CTextEditEventSink> observer;
-+  observer.Attach(new CTextEditEventSink(this, request));
-+  request->observer = static_cast<ITfTextEditSink*>(observer.p);
- 
+-
 -  pSource.Release();
 -
 -  if (_pTextEditSinkContext->QueryInterface(IID_ITfSource, (void**)&pSource) ==
@@ -13447,6 +14170,29 @@ index a6bc1f02d6202f2cd8670039f86478f9fa9447fc..e0a68bb80b57dd61213ec3034153ec91
 -  if (fRet == FALSE) {
 -    _pTextEditSinkContext = nullptr;
 -  }
+-
+-  return fRet;
+-}
++  };
++  if (!current()) return stale();
++  if (!document) return TRUE;
++  if (!request->candidate) return FALSE;  // No active candidate/activation.
++  request->document = document;
++  if (!current()) return stale();
++
++  HRESULT result = document->GetTop(&request->context);
++  if (!current()) return stale();
++  if (result != S_OK) return FALSE;
++  if (!request->context) return TRUE;
++  result = request->context->QueryInterface(IID_ITfSource,
++      reinterpret_cast<void**>(&request->source));
++  if (!current()) return stale();
++  if (result != S_OK || !request->source) return FALSE;
++
++  com_ptr<CTextEditEventSink> observer;
++  observer.Attach(new CTextEditEventSink(this, request));
++  request->observer = static_cast<ITfTextEditSink*>(observer.p);
++
 +  // Cookies are first returned to this call's stack. Advise may reenter and
 +  // retire the cell before writing the out value; that late value is still
 +  // recorded here and disconnected from this exact ITfSource, not B's.
@@ -13455,8 +14201,7 @@ index a6bc1f02d6202f2cd8670039f86478f9fa9447fc..e0a68bb80b57dd61213ec3034153ec91
 +      request->observer, &cookie);
 +  if (result == S_OK) request->editCookie = cookie;
 +  if (!current()) return stale();
- 
--  return fRet;
++
 +  cookie = TF_INVALID_COOKIE;
 +  result = request->source->AdviseSink(IID_ITfTextLayoutSink,
 +      request->observer, &cookie);
@@ -13464,12 +14209,11 @@ index a6bc1f02d6202f2cd8670039f86478f9fa9447fc..e0a68bb80b57dd61213ec3034153ec91
 +  if (!current()) return stale();
 +  return request->editCookie != TF_INVALID_COOKIE ||
 +      request->layoutCookie != TF_INVALID_COOKIE;
- }
++}
 diff --git a/WeaselTSF/ThreadMgrEventSink.cpp b/WeaselTSF/ThreadMgrEventSink.cpp
-index a46ca37868c73124f8f7c91ec1bf2604995030d2..e626a3e3ce1bf2652041ecafd1cbbccfb77cb4c9 100644
 --- a/WeaselTSF/ThreadMgrEventSink.cpp
 +++ b/WeaselTSF/ThreadMgrEventSink.cpp
-@@ -1,62 +1,162 @@
+@@ -1,62 +1,195 @@
 -#include "stdafx.h"
 -#include "WeaselTSF.h"
 -
@@ -13545,6 +14289,19 @@ index a46ca37868c73124f8f7c91ec1bf2604995030d2..e626a3e3ce1bf2652041ecafd1cbbccf
 +  const auto target = _responseIntent;
 +  com_ptr<ITfContext> source = target ? target->owner : _pEditSessionContext;
 +  if (!_CurrentActivation(activation)) return S_OK;
++  const auto binding = _textEditBinding;
++  if (binding && binding->document) {
++    const bool closesCurrent = response_owner::SameIdentity(binding->document, document);
++    if (_CurrentActivation(activation) && _textEditBinding == binding && closesCurrent) {
++      _modeFocusActive = false;
++      _modeFocusNeedsNotify = false;
++      _deferredResponseFocus = false;
++      _InvalidateModePosition(false);
++      if (_CurrentActivation(activation) && _textEditBinding == binding && !_modeFocusActive)
++        m_client.FocusOut();
++    }
++  }
++  if (!_CurrentActivation(activation)) return S_OK;
 +  com_ptr<ITfDocumentMgr> owner;
 +  if (source && SUCCEEDED(source->GetDocumentMgr(&owner))) {
 +    if (!_CurrentActivation(activation)) return S_OK;
@@ -13578,9 +14335,17 @@ index a46ca37868c73124f8f7c91ec1bf2604995030d2..e626a3e3ce1bf2652041ecafd1cbbccf
 +    if (!same) _AbortComposition(true, target);
 +    if (!current()) return S_OK;
 +  }
-+  if (focused) _ApplyGlobalKeyboardOpen();
-+  if (!current()) return S_OK;
 +  candidate->UpdateDocumentFocus(focused);
++  if (!current()) return S_OK;
++  if (focused) {
++    _RefreshModeFocus();
++  } else {
++    _modeFocusActive = false;
++    _modeFocusNeedsNotify = false;
++    _deferredResponseFocus = false;
++    _InvalidateModePosition(false);
++    m_client.FocusOut();
++  }
 +  return S_OK;
 +}
 +
@@ -13667,8 +14432,20 @@ index a46ca37868c73124f8f7c91ec1bf2604995030d2..e626a3e3ce1bf2652041ecafd1cbbccf
 +  std::shared_ptr<TextEditBinding> replacement;
 +  _InitTextEditSink(focused, &replacement);
 +  if (_CurrentActivation(activation) && _cand == candidate &&
-+      _textEditBinding == replacement)
++      _textEditBinding == replacement) {
 +    candidate->UpdateDocumentFocus(focused);
++    if (_CurrentActivation(activation) && _cand == candidate &&
++        _textEditBinding == replacement) {
++      if (focused) _RefreshModeFocus();
++      else {
++        _modeFocusActive = false;
++        _modeFocusNeedsNotify = false;
++        _deferredResponseFocus = false;
++        _InvalidateModePosition(false);
++        m_client.FocusOut();
++      }
++    }
++  }
 +}
 +
 +BOOL WeaselTSF::_InitThreadMgrEventSink(const Activation& activation) {
@@ -13695,10 +14472,9 @@ index a46ca37868c73124f8f7c91ec1bf2604995030d2..e626a3e3ce1bf2652041ecafd1cbbccf
 +  activation.RecordCleanup(activation.threadEvents.Disconnect());
 +}
 diff --git a/WeaselTSF/WeaselTSF.cpp b/WeaselTSF/WeaselTSF.cpp
-index 590d3b8f2b91a9220688ec21414140810b98f966..d49ed15f0150c27150eab287d665d31e065dfca4 100644
 --- a/WeaselTSF/WeaselTSF.cpp
 +++ b/WeaselTSF/WeaselTSF.cpp
-@@ -1,263 +1,390 @@
+@@ -1,263 +1,418 @@
 -﻿#include "stdafx.h"
 -
 -#include <WeaselIPCData.h>
@@ -14072,7 +14848,6 @@ index 590d3b8f2b91a9220688ec21414140810b98f966..d49ed15f0150c27150eab287d665d31e
 +  oldThreadSink.Attach(threadEventsSink.Detach());
 +  oldFocusSink.Attach(threadFocusSink.Detach());
 +  oldKeySink.Attach(keySink.Detach());
-+  _UninitGlobalKeyboardOpen(*this);
 +  _UninitThreadMgrEventSink(*this);
 +  _UninitKeyEventSink(*this);
 +  _UninitLanguageBar(*this);
@@ -14101,6 +14876,9 @@ index 590d3b8f2b91a9220688ec21414140810b98f966..d49ed15f0150c27150eab287d665d31e
 +  const com_ptr<WeaselTSF> keepAlive(this);
 +  const auto activation = std::move(_activation);
 +  if (!activation) return S_OK;
++  _modeFocusActive = false;
++  _modeFocusNeedsNotify = false;
++  _InvalidateModePosition(false);
 +  com_ptr<CCandidateList> candidate;
 +  candidate.Attach(_cand.Detach());
 +  const auto binding = std::move(_textEditBinding);
@@ -14183,52 +14961,73 @@ index 590d3b8f2b91a9220688ec21414140810b98f966..d49ed15f0150c27150eab287d665d31e
 +  _EnsureServerConnected();
 +  if (!_CurrentActivation(activation)) return fail();
 +
-+  // The existing optional Ctrl+Space registration remains optional.
-+  if (_InitPreservedKey(activation)) {
-+    const HRESULT result = _InitGlobalKeyboardOpen(activation);
-+    if (!_CurrentActivation(activation)) return fail();
-+    if (FAILED(result)) {
-+      _UninitGlobalKeyboardOpen(*activation);
-+      _UninitPreservedKey(*activation);
-+    }
-+  }
-+  if (!_CurrentActivation(activation)) return fail();
-+  if (activation->globalOpenEnabled) _ApplyGlobalKeyboardOpen();
-+  else if (!_IsKeyboardOpen()) {
++  if (!_IsKeyboardOpen()) {
 +    if (!_CurrentActivation(activation)) return fail();
 +    _SetKeyboardOpen(TRUE);
 +  }
 +  return _CurrentActivation(activation) && _cand == candidate ? S_OK : fail();
 +}
 +
-+STDMETHODIMP WeaselTSF::OnSetThreadFocus() {
++void WeaselTSF::_RefreshModeFocus(bool notifyServer, bool refreshMetadata) {
++  const auto activation = _activation;
++  const auto binding = _textEditBinding;
 +  const com_ptr<CCandidateList> candidate = _cand;
-+  if (!candidate) return S_OK;
-+  _PromptTrace(prompt_trace::ThreadFocus, _pEditSessionContext, _pComposition);
-+  _ApplyGlobalKeyboardOpen();
-+  if (_cand != candidate) return S_OK;
-+  // The fixed native-close policy must not depend on host HKCU visibility
-+  // or whether a thread-focus notification preceded the close notification.
++  if (!_CurrentActivation(activation) || !candidate) return;
++  // Repeated key/document focus still retires pending geometry and clears the
++  // server's old tip. Only its redundant metadata read can be coalesced.
++  // Thread focus always refreshes, including hosts that omitted a prior blur.
++  const bool metadataNeeded = refreshMetadata || !_modeFocusActive || _modeFocusNeedsNotify;
++  _modeFocusActive = true;
++  const auto epoch = ++_modePositionEpoch;
++  const auto retired = std::move(_modeCaretRequest);
++  _modeFocusNeedsNotify = _modeFocusNeedsNotify || notifyServer;
++  const auto current = [&]() {
++    return _CurrentActivation(activation) && _cand == candidate &&
++        _textEditBinding == binding && _modePositionEpoch == epoch && _modeFocusActive;
++  };
++  // A focus callback can reenter response preparation. Copy that producer's
++  // body before issuing any ordinary FocusIn transaction on its client.
 +  if (_producerResponse) {
 +    _deferredResponseFocus = true;
-+    return S_OK;
++    return;
++  }
++  const bool focus = _modeFocusNeedsNotify;
++  _modeFocusNeedsNotify = false;
++  if (!metadataNeeded) {
++    if (focus) m_client.FocusIn();
++    return;
 +  }
 +  weasel::SessionMetadata metadata;
 +  metadata.status = _status;
 +  metadata.style = candidate->style();
-+  if (m_client.QueryMetadata(metadata) && _cand == candidate) {
++  if (m_client.QueryMetadata(metadata, focus) && current()) {
 +    _status = metadata.status;
 +    candidate->style() = std::move(metadata.style);
 +    _UpdateLanguageBar(_status);
 +  }
++}
++
++STDMETHODIMP WeaselTSF::OnSetThreadFocus() {
++  const com_ptr<CCandidateList> candidate = _cand;
++  if (!candidate) return S_OK;
++  _PromptTrace(prompt_trace::ThreadFocus, _pEditSessionContext, _pComposition);
++  // Thread-focus metadata keeps its separate receive stream. Genuine key or
++  // document focus entries request FocusIn through the same guarded helper.
++  _RefreshModeFocus(!_modeFocusActive, true);
 +  // This event has no content response body or content generation.
 +  _PromptTrace(prompt_trace::ThreadFocusReturned, _pEditSessionContext,
 +      _pComposition, 0, S_OK, -1, -1, -1, 0);
 +  return S_OK;
 +}
 +STDMETHODIMP WeaselTSF::OnKillThreadFocus() {
++  const auto target = _responseIntent;
 +  _PromptTrace(prompt_trace::ThreadBlur, _pEditSessionContext, _pComposition);
-+  _AbortComposition();
++  _modeFocusActive = false;
++  _modeFocusNeedsNotify = false;
++  _deferredResponseFocus = false;
++  _InvalidateModePosition(false);
++  if (!_modeFocusActive) m_client.FocusOut();
++  _AbortComposition(true, target);
 +  return S_OK;
 +}
 +BOOL WeaselTSF::_InitThreadFocusSink(const Activation& activation) {
@@ -14274,6 +15073,8 @@ index 590d3b8f2b91a9220688ec21414140810b98f966..d49ed15f0150c27150eab287d665d31e
 +bool WeaselTSF::_Reconnect() {
 +  const com_ptr<CCandidateList> candidate = _cand;
 +  if (!candidate) return false;
++  _InvalidateModePosition(false);
++  _deferredResponseFocus = false;
 +  // Retire local eligibility before replacing the engine session. Keep these
 +  // references until the new connection state is coherent and old owned work
 +  // has been submitted; releasing a native resource may call the host.
@@ -14300,13 +15101,12 @@ index 590d3b8f2b91a9220688ec21414140810b98f966..d49ed15f0150c27150eab287d665d31e
 +  weasel::Status status;
 +  auto style = candidate->style();
 +  if (m_client.Connect(NULL)) {
-+    m_client.StartSession();
-+    // Echo has no body and invalidates the receive buffer. Copy the actual
-+    // StartSession response first, then verify the nonzero session by Echo.
++    active = m_client.StartSession();
++    // Copy the accepted StartSession response before host callbacks and the
++    // final Echo, which has no body and invalidates the receive buffer.
 +    weasel::ResponseParser parser(NULL, NULL, &status, NULL, &style);
 +    parsed = m_client.ResponseGeneration() != 0 &&
 +        m_client.GetResponseData(std::ref(parser));
-+    active = m_client.Echo();
 +  }
 +  if (active && parsed) {
 +    _status = status;
@@ -14321,6 +15121,10 @@ index 590d3b8f2b91a9220688ec21414140810b98f966..d49ed15f0150c27150eab287d665d31e
 +  candidate->CancelUI(previousCandidate);
 +  if (previousDraft != previousCandidate) candidate->CancelUI(previousDraft);
 +  if (_cand == candidate && !_lastResponse) _UpdateLanguageBar(_status);
++  if (_cand == candidate && _modeFocusActive) {
++    _modeFocusNeedsNotify = true;
++    _RefreshModeFocus();
++  }
 +
 +  // Host callbacks above may have reconnected or processed another packet.
 +  // Return the actual current session state, never the pre-callback result.
@@ -14353,7 +15157,6 @@ index 590d3b8f2b91a9220688ec21414140810b98f966..d49ed15f0150c27150eab287d665d31e
 +  return false;
 +}
 diff --git a/WeaselTSF/WeaselTSF.h b/WeaselTSF/WeaselTSF.h
-index 696d3cce4b9c394d2420ff1cae7cbbdbcb527a49..4911e187550d3d5d9feb40e465b0453fc8b7469b 100644
 --- a/WeaselTSF/WeaselTSF.h
 +++ b/WeaselTSF/WeaselTSF.h
 @@ -3,10 +3,18 @@
@@ -14375,7 +15178,7 @@ index 696d3cce4b9c394d2420ff1cae7cbbdbcb527a49..4911e187550d3d5d9feb40e465b0453f
  
  class WeaselTSF : public ITfTextInputProcessorEx,
                    public ITfThreadMgrEventSink,
-@@ -18,8 +26,35 @@ class WeaselTSF : public ITfTextInputProcessorEx,
+@@ -18,8 +26,36 @@
                    public ITfActiveLanguageProfileNotifySink,
                    public ITfEditSession,
                    public ITfDisplayAttributeProvider {
@@ -14389,6 +15192,7 @@ index 696d3cce4b9c394d2420ff1cae7cbbdbcb527a49..4911e187550d3d5d9feb40e465b0453f
 +  friend class CLangBarItemButton;
 +  friend class CActivationEventSink;
 +  friend class CTextEditEventSink;
++  friend class CIdleCaretEditSession;
    WeaselTSF();
 +#if STELLAE_ENABLE_PROMPT_TRACE
 +  std::uint64_t _PromptTrace(prompt_trace::Stage stage, ITfContext* origin = nullptr,
@@ -14411,7 +15215,7 @@ index 696d3cce4b9c394d2420ff1cae7cbbdbcb527a49..4911e187550d3d5d9feb40e465b0453f
    ~WeaselTSF();
  
    /* IUnknown */
-@@ -103,25 +138,56 @@ class WeaselTSF : public ITfTextInputProcessorEx,
+@@ -103,25 +139,57 @@
    // STDMETHODIMP OnChange(_In_ REFGUID guid);
  
    /* Compartments */
@@ -14419,6 +15223,7 @@ index 696d3cce4b9c394d2420ff1cae7cbbdbcb527a49..4911e187550d3d5d9feb40e465b0453f
 +  BOOL _IsKeyboardDisabled(ITfContext* targetContext = nullptr);
    BOOL _IsKeyboardOpen();
    HRESULT _SetKeyboardOpen(BOOL fOpen);
++  void _ToggleAsciiMode(const Activation& activation);
    HRESULT _GetCompartmentDWORD(DWORD& value, const GUID guid);
    HRESULT _SetCompartmentDWORD(const DWORD& value, const GUID guid);
  
@@ -14477,7 +15282,7 @@ index 696d3cce4b9c394d2420ff1cae7cbbdbcb527a49..4911e187550d3d5d9feb40e465b0453f
  
    /* Language bar */
    HWND _GetFocusedContextWindow();
-@@ -131,22 +197,18 @@ class WeaselTSF : public ITfTextInputProcessorEx,
+@@ -131,22 +199,18 @@
    bool _EnsureServerConnected();
  
    /* UI */
@@ -14504,7 +15309,7 @@ index 696d3cce4b9c394d2420ff1cae7cbbdbcb527a49..4911e187550d3d5d9feb40e465b0453f
    void HandleUICallback(size_t* const sel,
                          size_t* const hov,
                          bool* const next,
-@@ -154,66 +216,208 @@ class WeaselTSF : public ITfTextInputProcessorEx,
+@@ -154,65 +218,220 @@
  
   private:
    /* ui callback functions private */
@@ -14542,6 +15347,7 @@ index 696d3cce4b9c394d2420ff1cae7cbbdbcb527a49..4911e187550d3d5d9feb40e465b0453f
 +
 +  struct TextEditBinding {
 +    com_ptr<CCandidateList> candidate;
++    com_ptr<ITfDocumentMgr> document;
 +    com_ptr<ITfContext> context;
 +    com_ptr<ITfSource> source;
 +    com_ptr<IUnknown> observer;
@@ -14549,6 +15355,21 @@ index 696d3cce4b9c394d2420ff1cae7cbbdbcb527a49..4911e187550d3d5d9feb40e465b0453f
 +    ~TextEditBinding();
 +    void Disconnect();
 +  };
++  // Status notifications have their own READ-only geometry lifetime. They do
++  // not borrow a composition, response intent, or an old document's rectangle.
++  struct ModeCaretRequest {
++    Activation activation;
++    std::shared_ptr<TextEditBinding> binding;
++    std::uint64_t epoch = 0;
++    bool enhanced = false, positioned = false, published = false;
++    bool invalidate = false;
++    RECT rect = {};
++  };
++  bool _IsCurrentModeCaret(const std::shared_ptr<ModeCaretRequest>& request) const;
++  void _InvalidateModePosition(bool notifyServer);
++  void _RefreshIdleModePosition(ITfContext* owner, bool invalidateServer = true);
++  void _PublishModePosition(const std::shared_ptr<ModeCaretRequest>& request);
++  void _RefreshModeFocus(bool notifyServer = true, bool refreshMetadata = false);
 +  void _RefreshContextBinding(ITfContext* context, bool popped);
 +  BOOL _InitTextEditSink(ITfDocumentMgr* documentSource,
 +      std::shared_ptr<TextEditBinding>* issued = nullptr);
@@ -14558,21 +15379,28 @@ index 696d3cce4b9c394d2420ff1cae7cbbdbcb527a49..4911e187550d3d5d9feb40e465b0453f
 +  HRESULT _HandleKeyCallback(Activation activation,
 +      std::shared_ptr<KeyCallbackState> keys, ITfContext* context,
 +      WPARAM key, LPARAM info, bool test, bool release, BOOL* eaten);
++  // Freeze this callback's thread-message facts before any host COM reentry.
++  struct KeyCallbackSnapshot {
++    DWORD messageTime = 0;
++    HKL layout = nullptr;
++    BYTE keyState[256] = {};
++    BOOL keyboardStateValid = FALSE;
++  };
 +  void _ProcessKeyEvent(ITfContext* pContext,
 +                        const com_ptr<CCandidateList>& candidate,
 +                        WPARAM wParam, LPARAM lParam, BOOL* pfEaten,
++                        const KeyCallbackSnapshot& snapshot,
 +                        TestedKeyPublication* publication = nullptr);
 +
-+  BOOL _InitPreservedKey(const Activation& activation);
-+  static void _UninitPreservedKey(ActivationBindings& activation);
 +
 +  BOOL _InitLanguageBar(const Activation& activation);
 +  static void _UninitLanguageBar(ActivationBindings& activation);
    void _UpdateLanguageBar(weasel::Status stat);
    void _ShowLanguageBar(BOOL show);
-   void _EnableLanguageBar(BOOL enable);
- 
+-  void _EnableLanguageBar(BOOL enable);
+-
 -  BOOL _InsertText(com_ptr<ITfContext> pContext, const std::wstring& ext);
++
  
    void _DeleteCandidateList();
  
@@ -14599,16 +15427,6 @@ index 696d3cce4b9c394d2420ff1cae7cbbdbcb527a49..4911e187550d3d5d9feb40e465b0453f
 +  static void _UninitCompartment(ActivationBindings& activation);
 +  HRESULT _HandleCompartment(const Activation& activation, REFGUID guidCompartment);
 +
-+  HRESULT _InitGlobalKeyboardOpen(const Activation& activation);
-+  static void _UninitGlobalKeyboardOpen(ActivationBindings& activation);
-+  HRESULT _ReadGlobalKeyboardOpen(BOOL& open);
-+  HRESULT _ToggleGlobalKeyboardOpen();
-+  void _ApplyGlobalKeyboardOpen();
-+  void _QueueGlobalKeyboardOpen();
-+  struct NativeOpenWindowBinding;
-+  static LRESULT CALLBACK _NativeOpenWindowProc(HWND window, UINT message,
-+      WPARAM wParam, LPARAM lParam, UINT_PTR subclass, DWORD_PTR reference);
-+
 +  bool _Reconnect();
 +  unsigned int _serverConnectFailures = 0;
 +  bool _GetRootDir(std::wstring& dir);
@@ -14616,6 +15434,11 @@ index 696d3cce4b9c394d2420ff1cae7cbbdbcb527a49..4911e187550d3d5d9feb40e465b0453f
 +  bool isImmersive() const;
 +
 +  std::shared_ptr<TextEditBinding> _textEditBinding;
++  std::shared_ptr<ModeCaretRequest> _modeCaretRequest;
++  std::uint64_t _modePositionEpoch = 0;
++  std::uint64_t _languageBarUpdateEpoch = 0;
++  bool _modeFocusActive = false;
++  bool _modeFocusNeedsNotify = false;
 +  struct SourceSubscription {
 +    com_ptr<ITfSource> source;
 +    DWORD cookie = TF_INVALID_COOKIE;
@@ -14724,14 +15547,11 @@ index 696d3cce4b9c394d2420ff1cae7cbbdbcb527a49..4911e187550d3d5d9feb40e465b0453f
 +    com_ptr<ITfThreadFocusSink> threadFocusSink;
 +    com_ptr<ITfKeyEventSink> keySink;
 +    com_ptr<ITfKeystrokeMgr> keyManager;
-+    bool keyAdvised = false, preservedKey = false;
-+    GUID preservedCommand = GUID_NULL;
++    bool keyAdvised = false;
++    bool settingKeyboardOpen = false;
 +    com_ptr<ITfLangBarItemMgr> languageManager;
 +    com_ptr<CLangBarItemButton> languageButton;
-+    com_ptr<CCompartmentEventSink> keyboardSink, conversionSink, globalSink;
-+    com_ptr<ITfCompartment> globalCompartment;
-+    HWND nativeWindow = nullptr;
-+    bool globalOpenEnabled = false;
++    com_ptr<CCompartmentEventSink> keyboardSink, conversionSink;
 +    std::shared_ptr<KeyCallbackState> keyState = std::make_shared<KeyCallbackState>();
 +    HRESULT cleanupResult = S_OK;
 +    void RecordCleanup(HRESULT result) {
@@ -14749,13 +15569,12 @@ index 696d3cce4b9c394d2420ff1cae7cbbdbcb527a49..4911e187550d3d5d9feb40e465b0453f
 -  com_ptr<CCompartmentEventSink> _pConvertionCompartmentSink;
 -
    com_ptr<ITfComposition> _pComposition;
- 
--  com_ptr<CLangBarItemButton> _pLangBarButton;
 -
+-  com_ptr<CLangBarItemButton> _pLangBarButton;
+ 
    com_ptr<CCandidateList> _cand;
  
-   LONG _cRef;  // COM ref count
-@@ -223,14 +427,21 @@ class WeaselTSF : public ITfTextInputProcessorEx,
+@@ -223,14 +442,20 @@
  
    /* Weasel Related */
    weasel::Client m_client;
@@ -14778,7 +15597,6 @@ index 696d3cce4b9c394d2420ff1cae7cbbdbcb527a49..4911e187550d3d5d9feb40e465b0453f
 -  BOOL _isToOpenClose = false;
 +  // Fixed product policy: native keyboard open/close in every TSF host.
 +  // Keep logical language switching independent of this native state.
-+  const BOOL _isToOpenClose = TRUE;
  };
 diff --git a/WeaselTSF/WeaselTSF.rc b/WeaselTSF/WeaselTSF.rc
 index 648bad1d09558829b6f53d375e5469e239cdf6c2..689b813e4f764379bc33c411a8ae629a2462f00c 100644
@@ -16692,10 +17510,9 @@ index fee38f6c3f939a75ceb931859e49058ba976eef6..1128727ed1d46128b158fdc58f010869
                                     height + size.cy);
      _candidateTextRects[i].OffsetRect(offsetX, offsetY);
 diff --git a/WeaselUI/WeaselPanel.cpp b/WeaselUI/WeaselPanel.cpp
-index 18964a0f8907121ef3ad49ac39a139b7e21a2eae..7c72aa9e091fc488b033f4976b0cce2896108885 100644
 --- a/WeaselUI/WeaselPanel.cpp
 +++ b/WeaselUI/WeaselPanel.cpp
-@@ -64,6 +64,7 @@ WeaselPanel::WeaselPanel(weasel::UI& ui)
+@@ -64,6 +64,7 @@
        hide_candidates(false),
        pDWR(ui.pdwr()),
        _UICallback(ui.uiCallback()),
@@ -16703,7 +17520,7 @@ index 18964a0f8907121ef3ad49ac39a139b7e21a2eae..7c72aa9e091fc488b033f4976b0cce28
        _m_gdiplusToken(0) {
    m_iconDisabled.LoadIconW(IDI_RELOAD, STATUS_ICON_SIZE, STATUS_ICON_SIZE,
                             LR_DEFAULTCOLOR);
-@@ -96,6 +97,30 @@ WeaselPanel::~WeaselPanel() {
+@@ -96,6 +97,30 @@
    // pDWR.reset();
  }
  
@@ -16734,24 +17551,36 @@ index 18964a0f8907121ef3ad49ac39a139b7e21a2eae..7c72aa9e091fc488b033f4976b0cce28
  void WeaselPanel::_ResizeWindow() {
    CDCHandle dc = GetDC();
    CSize m_size = m_layout->GetContentSize();
-@@ -130,6 +155,7 @@ void WeaselPanel::_CreateLayout() {
+@@ -130,9 +155,16 @@
  
  // 更新界面
  void WeaselPanel::Refresh() {
 +  const bool style_changed = m_ostyle != m_style;
++  const bool status_changed =
++      !m_has_refreshed_status || !(m_ostatus == m_status);
    bool should_show_icon =
        (m_status.ascii_mode || !m_status.composing || !m_ctx.aux.empty());
    m_candidateCount = (BYTE)m_ctx.cinfo.candies.size();
-@@ -163,7 +189,7 @@ void WeaselPanel::Refresh() {
++  // Sticky reset adapted from rime/weasel 4210a7a67ae1dac08045d72262b8691b592b8eb5.
++  if (m_lastCandidateCount > 0 && m_candidateCount == 0)
++    m_sticky = false;
++  m_lastCandidateCount = m_candidateCount;
+   // check if to hide candidates window
+   // show tips status, two kind of situation: 1) only aux strings, don't care
+   // icon status; 2)only icon(ascii mode switching)
+@@ -163,8 +195,10 @@
      ReleaseDC(dc);
      _ResizeWindow();
      _RepositionWindow();
 -    if (m_ctx != m_octx) {
-+    if (m_ctx != m_octx || style_changed) {
++    if (m_ctx != m_octx || style_changed || status_changed) {
        m_octx = m_ctx;
++      m_ostatus = m_status;
++      m_has_refreshed_status = true;
        RedrawWindow();
      }
-@@ -268,7 +294,6 @@ LRESULT WeaselPanel::OnLeftClickedUp(UINT uMsg,
+   }
+@@ -268,7 +302,6 @@
  
    ::KillTimer(m_hWnd, AUTOREV_TIMER);
    bar_scale_ = 1.0;
@@ -16759,7 +17588,7 @@ index 18964a0f8907121ef3ad49ac39a139b7e21a2eae..7c72aa9e091fc488b033f4976b0cce28
    {
      // select by click
      CRect rect = m_layout->GetCandidateRect((int)m_ctx.cinfo.highlighted);
-@@ -281,6 +306,7 @@ LRESULT WeaselPanel::OnLeftClickedUp(UINT uMsg,
+@@ -281,6 +314,7 @@
        if (_UICallback) {
          m_mouse_entry = false;
          _UICallback(&i, NULL, NULL, NULL);
@@ -16767,7 +17596,7 @@ index 18964a0f8907121ef3ad49ac39a139b7e21a2eae..7c72aa9e091fc488b033f4976b0cce28
          if (!m_status.composing)
            DestroyWindow();
        }
-@@ -394,8 +420,9 @@ LRESULT WeaselPanel::OnLeftClickedDown(UINT uMsg,
+@@ -394,8 +428,9 @@
          } else {
            RedrawWindow();
          }
@@ -16779,7 +17608,7 @@ index 18964a0f8907121ef3ad49ac39a139b7e21a2eae..7c72aa9e091fc488b033f4976b0cce28
          bHandled = true;
          return 0;
        }
-@@ -405,18 +432,13 @@ LRESULT WeaselPanel::OnLeftClickedDown(UINT uMsg,
+@@ -405,18 +440,13 @@
    return 0;
  }
  
@@ -16805,7 +17634,7 @@ index 18964a0f8907121ef3ad49ac39a139b7e21a2eae..7c72aa9e091fc488b033f4976b0cce28
  }
  
  LRESULT WeaselPanel::OnMouseMove(UINT uMsg,
-@@ -450,6 +472,7 @@ LRESULT WeaselPanel::OnMouseMove(UINT uMsg,
+@@ -450,6 +480,7 @@
          if (m_style.hover_type == UIStyle::HoverType::HILITE) {
            if (_UICallback)
              _UICallback(NULL, &i, NULL, NULL);
@@ -16813,7 +17642,7 @@ index 18964a0f8907121ef3ad49ac39a139b7e21a2eae..7c72aa9e091fc488b033f4976b0cce28
          } else if (m_hoverIndex != i) {
            m_hoverIndex = static_cast<int>(i);
            InvalidateRect(&rcw, true);
-@@ -582,18 +605,25 @@ bool WeaselPanel::_DrawPreedit(const Text& text,
+@@ -582,18 +613,25 @@
                                 const CRect& rc) {
    bool drawn = false;
    std::wstring const& t = text.str;
@@ -16845,7 +17674,7 @@ index 18964a0f8907121ef3ad49ac39a139b7e21a2eae..7c72aa9e091fc488b033f4976b0cce28
  
        int x = rc.left;
        int y = rc.top;
-@@ -607,7 +637,7 @@ bool WeaselPanel::_DrawPreedit(const Text& text,
+@@ -607,7 +645,7 @@
          else
            rc_before = CRect(x, rc.top, rc.left + beforeSz.cx, rc.bottom);
          _TextOut(rc_before, str_before.c_str(), str_before.length(),
@@ -16854,7 +17683,7 @@ index 18964a0f8907121ef3ad49ac39a139b7e21a2eae..7c72aa9e091fc488b033f4976b0cce28
          if (m_style.layout_type == UIStyle::LAYOUT_VERTICAL_TEXT)
            y += beforeSz.cy + DPI_SCALE(m_style.hilite_spacing);
          else
-@@ -624,7 +654,7 @@ bool WeaselPanel::_DrawPreedit(const Text& text,
+@@ -624,7 +662,7 @@
          else
            rc_hi = CRect(x, rc.top, x + hilitedSz.cx, rc.bottom);
          _TextOut(rc_hi, str_highlight.c_str(), str_highlight.length(),
@@ -16863,7 +17692,7 @@ index 18964a0f8907121ef3ad49ac39a139b7e21a2eae..7c72aa9e091fc488b033f4976b0cce28
          if (m_style.layout_type == UIStyle::LAYOUT_VERTICAL_TEXT)
            y += rc_hi.Height() + DPI_SCALE(m_style.hilite_spacing);
          else
-@@ -639,14 +669,14 @@ bool WeaselPanel::_DrawPreedit(const Text& text,
+@@ -639,14 +677,14 @@
          else
            rc_after = CRect(x, rc.top, x + afterSz.cx, rc.bottom);
          _TextOut(rc_after, str_after.c_str(), str_after.length(),
@@ -16881,7 +17710,7 @@ index 18964a0f8907121ef3ad49ac39a139b7e21a2eae..7c72aa9e091fc488b033f4976b0cce28
          COLORNOTTRANSPARENT(m_style.prevpage_color) &&
          COLORNOTTRANSPARENT(m_style.nextpage_color)) {
        const std::wstring pre = L"<";
-@@ -654,14 +684,14 @@ bool WeaselPanel::_DrawPreedit(const Text& text,
+@@ -654,14 +692,14 @@
        CRect prc = m_layout->GetPrepageRect();
        // clickable color / disabled color
        int color =
@@ -16898,7 +17727,7 @@ index 18964a0f8907121ef3ad49ac39a139b7e21a2eae..7c72aa9e091fc488b033f4976b0cce28
                                         : m_style.nextpage_color;
        if (m_istorepos)
          nrc.OffsetRect(0, m_offsety_preedit);
-@@ -681,11 +711,12 @@ bool WeaselPanel::_DrawPreeditBack(const Text& text,
+@@ -681,11 +719,12 @@
    IDWriteTextFormat1* txtFormat = pDWR->pPreeditTextFormat.Get();
  
    if (!t.empty()) {
@@ -16914,7 +17743,7 @@ index 18964a0f8907121ef3ad49ac39a139b7e21a2eae..7c72aa9e091fc488b033f4976b0cce28
  
        int x = rc.left;
        int y = rc.top;
-@@ -885,7 +916,7 @@ bool WeaselPanel::_DrawCandidates(CDCHandle& dc, bool back) {
+@@ -885,7 +924,7 @@
          if (m_istorepos)
            rect.OffsetRect(0, m_offsetys[i]);
          _TextOut(rect, text.c_str(), text.length(), candidate_text_color,
@@ -16923,7 +17752,7 @@ index 18964a0f8907121ef3ad49ac39a139b7e21a2eae..7c72aa9e091fc488b033f4976b0cce28
        }
        // Draw comment
        std::wstring comment = comments.at(i).str;
-@@ -1005,27 +1036,33 @@ void WeaselPanel::DoPaint(CDCHandle dc) {
+@@ -1005,27 +1044,33 @@
        drawn |= _DrawCandidates(memDC, true);
      // background and candidates back, hilite back drawing end
  
@@ -16946,6 +17775,8 @@ index 18964a0f8907121ef3ad49ac39a139b7e21a2eae..7c72aa9e091fc488b033f4976b0cce28
 -    if (FAILED(pDWR->pRenderTarget->EndDraw())) {
 -      _InitFontRes(true);
 -      Refresh();
+-    }
+-    // end texts drawing
 +    // A GDI-only status icon has no DirectWrite work to submit.
 +    const bool draw_text = !m_ctx.aux.str.empty() ||
 +        (!m_layout->IsInlinePreedit() && !m_ctx.preedit.str.empty()) ||
@@ -16972,12 +17803,19 @@ index 18964a0f8907121ef3ad49ac39a139b7e21a2eae..7c72aa9e091fc488b033f4976b0cce28
 +        Refresh();
 +      }
 +      // end texts drawing
-     }
--    // end texts drawing
++    }
  
      // status icon (I guess Metro IME stole my idea :)
      if (m_layout->ShouldDisplayStatusIcon()) {
-@@ -1104,8 +1141,12 @@ LRESULT WeaselPanel::OnDestroy(UINT uMsg,
+@@ -1094,6 +1139,7 @@
+                               BOOL& bHandled) {
+   m_mouse_entry = false;
+   m_hoverIndex = -1;
++  m_has_refreshed_status = false;
+   Refresh();
+   return TRUE;
+ }
+@@ -1104,8 +1150,12 @@
                                 BOOL& bHandled) {
    m_hoverIndex = -1;
    m_sticky = false;
@@ -16992,7 +17830,19 @@ index 18964a0f8907121ef3ad49ac39a139b7e21a2eae..7c72aa9e091fc488b033f4976b0cce28
    return 0;
  }
  
-@@ -1226,7 +1267,8 @@ void WeaselPanel::_TextOut(const CRect& rc,
+@@ -1121,6 +1171,11 @@
+   if (!m_layout)
+     return;  // avoid handling nullptr in _RepositionWindow
+   m_redraw_by_monitor_change = false;
++  // Preserve the existing movement and mouse-follow paths after resetting.
++  // Sticky reset adapted from rime/weasel 4210a7a67ae1dac08045d72262b8691b592b8eb5.
++  if (m_ctx.empty() || abs(rc.left - m_inputPos.left) > 50 ||
++      abs(rc.bottom - m_inputPos.bottom) > 50)
++    m_sticky = false;
+   // if ascii_tip_follow_cursor set, move tip icon to mouse cursor
+   if (m_style.ascii_tip_follow_cursor && m_ctx.empty() &&
+       (!m_status.composing) && m_layout->ShouldDisplayStatusIcon()) {
+@@ -1226,7 +1281,8 @@
                             const std::wstring& psz,
                             const size_t& cch,
                             const int& inColor,
@@ -17002,7 +17852,7 @@ index 18964a0f8907121ef3ad49ac39a139b7e21a2eae..7c72aa9e091fc488b033f4976b0cce28
    if (pTextFormat == NULL)
      return;
    float r = (float)(GetRValue(inColor)) / 255.0f;
-@@ -1239,8 +1281,17 @@ void WeaselPanel::_TextOut(const CRect& rc,
+@@ -1239,8 +1295,17 @@
    } else
      pDWR->SetBrushColor(D2D1::ColorF(r, g, b, alpha));
  
@@ -17023,10 +17873,9 @@ index 18964a0f8907121ef3ad49ac39a139b7e21a2eae..7c72aa9e091fc488b033f4976b0cce28
      DWRITE_FLOW_DIRECTION flow = m_style.vertical_text_left_to_right
                                       ? DWRITE_FLOW_DIRECTION_LEFT_TO_RIGHT
 diff --git a/WeaselUI/WeaselPanel.h b/WeaselUI/WeaselPanel.h
-index 478e79863ae4f1752a53b54715841b106f0ecf61..1c540b42cc1ce251a2d3aef9e2e8efc9156f1969 100644
 --- a/WeaselUI/WeaselPanel.h
 +++ b/WeaselUI/WeaselPanel.h
-@@ -35,6 +35,7 @@ class WeaselPanel
+@@ -35,6 +35,7 @@
    MESSAGE_HANDLER(WM_MOUSEWHEEL, OnMouseWheel)
    MESSAGE_HANDLER(WM_MOUSEMOVE, OnMouseMove)
    MESSAGE_HANDLER(WM_MOUSELEAVE, OnMouseLeave)
@@ -17034,7 +17883,7 @@ index 478e79863ae4f1752a53b54715841b106f0ecf61..1c540b42cc1ce251a2d3aef9e2e8efc9
    CHAIN_MSG_MAP(CDoubleBufferImpl<WeaselPanel>)
    END_MSG_MAP()
  
-@@ -59,6 +60,9 @@ class WeaselPanel
+@@ -59,6 +60,9 @@
  
    WeaselPanel(weasel::UI& ui);
    ~WeaselPanel();
@@ -17044,7 +17893,7 @@ index 478e79863ae4f1752a53b54715841b106f0ecf61..1c540b42cc1ce251a2d3aef9e2e8efc9
  
    void MoveTo(RECT const& rc);
    void Refresh();
-@@ -66,12 +70,8 @@ class WeaselPanel
+@@ -66,12 +70,8 @@
    bool GetIsReposition() { return m_istorepos; }
    void RedrawWindow();
  
@@ -17058,7 +17907,7 @@ index 478e79863ae4f1752a53b54715841b106f0ecf61..1c540b42cc1ce251a2d3aef9e2e8efc9
  
   private:
    template <typename T>
-@@ -99,7 +99,8 @@ class WeaselPanel
+@@ -99,7 +99,8 @@
                  const std::wstring& psz,
                  const size_t& cch,
                  const int& inColor,
@@ -17068,7 +17917,24 @@ index 478e79863ae4f1752a53b54715841b106f0ecf61..1c540b42cc1ce251a2d3aef9e2e8efc9
  
    void _LayerUpdate(const CRect& rc, CDCHandle dc);
  
-@@ -141,6 +142,7 @@ class WeaselPanel
+@@ -107,6 +108,8 @@
+   weasel::Context& m_ctx;
+   weasel::Context& m_octx;
+   weasel::Status& m_status;
++  weasel::Status m_ostatus;
++  bool m_has_refreshed_status = false;
+   weasel::UIStyle& m_style;
+   weasel::UIStyle& m_ostyle;
+ 
+@@ -134,6 +137,7 @@
+ 
+   CRect rcw;
+   BYTE m_candidateCount;
++  BYTE m_lastCandidateCount = 0;
+ 
+   bool hide_candidates;
+   bool m_sticky;
+@@ -141,6 +145,7 @@
    PDWR pDWR;
    std::function<void(size_t* const, size_t* const, bool* const, bool* const)>&
        _UICallback;
@@ -17077,65 +17943,124 @@ index 478e79863ae4f1752a53b54715841b106f0ecf61..1c540b42cc1ce251a2d3aef9e2e8efc9
    float dpiScaleLayout = 1.0f;
    int m_hoverIndex = -1;
 diff --git a/WeaselUI/WeaselUI.cpp b/WeaselUI/WeaselUI.cpp
-index 53a9b92fe20752ac1500a7149cf582bbc6ca95fd..4d93e14fe85d7e6cf9b8827a413fa3dc38b8c910 100644
 --- a/WeaselUI/WeaselUI.cpp
 +++ b/WeaselUI/WeaselUI.cpp
-@@ -8,7 +8,7 @@ class weasel::UIImpl {
+@@ -8,102 +8,112 @@
   public:
    WeaselPanel panel;
  
 -  UIImpl(weasel::UI& ui) : panel(ui), shown(false) {}
+-  ~UIImpl() {}
 +  UIImpl(weasel::UI& ui) : panel(ui) {}
-   ~UIImpl() {}
++  ~UIImpl() { CancelTimeout(); }
    void Refresh() {
      if (!panel.IsWindow())
-@@ -23,7 +23,7 @@ class weasel::UIImpl {
+       return;
+     if (timer) {
+       Hide();
+-      KillTimer(panel.m_hWnd, AUTOHIDE_TIMER);
+-      timer = 0;
+     }
+     panel.Refresh();
+   }
    void Show();
    void Hide();
    void ShowWithTimeout(size_t millisec);
 -  bool IsShown() const { return shown; }
++  void CancelTimeout();
 +  bool IsShown() const { return panel.IsWindow() && panel.IsWindowVisible(); }
  
    static VOID CALLBACK OnTimer(_In_ HWND hwnd,
                                 _In_ UINT uMsg,
-@@ -31,7 +31,6 @@ class weasel::UIImpl {
+                                _In_ UINT_PTR idEvent,
                                 _In_ DWORD dwTime);
    static const int AUTOHIDE_TIMER = 20121220;
-   static UINT_PTR timer;
+-  static UINT_PTR timer;
 -  bool shown;
++  static constexpr const wchar_t* OWNER_PROPERTY =
++      L"RimeStellae.Notification.Owner";
++  UINT_PTR timer = 0;
++  ULONGLONG deadline = 0;
  };
  
- UINT_PTR UIImpl::timer = 0;
-@@ -40,7 +39,6 @@ void UIImpl::Show() {
+-UINT_PTR UIImpl::timer = 0;
++void UIImpl::CancelTimeout() {
++  if (panel.IsWindow()) {
++    KillTimer(panel.m_hWnd, AUTOHIDE_TIMER);
++    if (::GetPropW(panel.m_hWnd, OWNER_PROPERTY) == reinterpret_cast<HANDLE>(this))
++      ::RemovePropW(panel.m_hWnd, OWNER_PROPERTY);
++  }
++  timer = 0;
++  deadline = 0;
++}
+ 
+ void UIImpl::Show() {
++  CancelTimeout();
    if (!panel.IsWindow())
      return;
    panel.ShowWindow(SW_SHOWNA);
 -  shown = true;
-   if (timer) {
-     KillTimer(panel.m_hWnd, AUTOHIDE_TIMER);
-     timer = 0;
-@@ -51,7 +49,6 @@ void UIImpl::Hide() {
+-  if (timer) {
+-    KillTimer(panel.m_hWnd, AUTOHIDE_TIMER);
+-    timer = 0;
+-  }
+ }
+ 
+ void UIImpl::Hide() {
++  CancelTimeout();
    if (!panel.IsWindow())
      return;
    panel.ShowWindow(SW_HIDE);
 -  shown = false;
-   if (timer) {
-     KillTimer(panel.m_hWnd, AUTOHIDE_TIMER);
-     timer = 0;
-@@ -63,7 +60,6 @@ void UIImpl::ShowWithTimeout(size_t millisec) {
+-  if (timer) {
+-    KillTimer(panel.m_hWnd, AUTOHIDE_TIMER);
+-    timer = 0;
+-  }
+ }
+ 
+ void UIImpl::ShowWithTimeout(size_t millisec) {
++  CancelTimeout();
+   if (!panel.IsWindow())
      return;
    DLOG(INFO) << "ShowWithTimeout: " << millisec;
++  // Bind the timeout to this actual window. A retired window's queued timer
++  // must not hide a different UI instance or a newer notification cycle.
++  const UINT duration = static_cast<UINT>((std::min)(
++      (std::max)(millisec, size_t(USER_TIMER_MINIMUM)),
++      size_t(USER_TIMER_MAXIMUM)));
++  deadline = GetTickCount64() + duration;
++  if (!::SetPropW(panel.m_hWnd, OWNER_PROPERTY, reinterpret_cast<HANDLE>(this))) {
++    Hide();
++    return;
++  }
++  timer = SetTimer(panel.m_hWnd, AUTOHIDE_TIMER, duration, &UIImpl::OnTimer);
++  if (!timer) {
++    Hide();
++    return;
++  }
    panel.ShowWindow(SW_SHOWNA);
 -  shown = true;
-   SetTimer(panel.m_hWnd, AUTOHIDE_TIMER, static_cast<UINT>(millisec),
-            &UIImpl::OnTimer);
-   timer = UINT_PTR(this);
-@@ -78,28 +74,25 @@ VOID CALLBACK UIImpl::OnTimer(_In_ HWND hwnd,
-   timer = 0;
-   if (self) {
-     self->Hide();
+-  SetTimer(panel.m_hWnd, AUTOHIDE_TIMER, static_cast<UINT>(millisec),
+-           &UIImpl::OnTimer);
+-  timer = UINT_PTR(this);
+ }
+ VOID CALLBACK UIImpl::OnTimer(_In_ HWND hwnd,
+                               _In_ UINT uMsg,
+                               _In_ UINT_PTR idEvent,
+                               _In_ DWORD dwTime) {
+   DLOG(INFO) << "OnTimer:";
+-  KillTimer(hwnd, idEvent);
+-  UIImpl* self = (UIImpl*)timer;
+-  timer = 0;
+-  if (self) {
+-    self->Hide();
 -    self->shown = false;
-   }
+-  }
++  UIImpl* self = reinterpret_cast<UIImpl*>(::GetPropW(hwnd, OWNER_PROPERTY));
++  if (!self || !self->panel.IsWindow() || self->panel.m_hWnd != hwnd ||
++      !self->timer || idEvent != AUTOHIDE_TIMER || GetTickCount64() < self->deadline)
++    return;
++  self->Hide();
  }
  
  bool UI::Create(HWND parent) {
@@ -17163,7 +18088,12 @@ index 53a9b92fe20752ac1500a7149cf582bbc6ca95fd..4d93e14fe85d7e6cf9b8827a413fa3dc
  }
  
  void UI::Destroy(bool full) {
-@@ -149,6 +142,10 @@ bool UI::IsShown() const {
+   if (pimpl_) {
++    pimpl_->Hide();
+     // destroy panel
+     if (pimpl_->panel.IsWindow()) {
+       pimpl_->panel.DestroyWindow();
+@@ -149,6 +159,10 @@
    return pimpl_ && pimpl_->IsShown();
  }
  
@@ -17174,6 +18104,21 @@ index 53a9b92fe20752ac1500a7149cf582bbc6ca95fd..4d93e14fe85d7e6cf9b8827a413fa3dc
  void UI::Refresh() {
    if (pimpl_) {
      pimpl_->Refresh();
+@@ -162,10 +176,13 @@
+ }
+ 
+ void UI::Update(const Context& ctx, const Status& status) {
+-  if (ctx_ == ctx && status_ == status)
++  // status() is mutable. Compare with the last update, not an aliased caller.
++  if (ctx_ == ctx && has_updated_status_ && updated_status_ == status)
+     return;
+   ctx_ = ctx;
+   status_ = status;
++  updated_status_ = status;
++  has_updated_status_ = true;
+   if (style_.candidate_abbreviate_length > 0) {
+     for (auto& c : ctx_.cinfo.candies) {
+       if (c.str.length() > (size_t)style_.candidate_abbreviate_length) {
 diff --git a/WeaselUI/WeaselUI.vcxproj b/WeaselUI/WeaselUI.vcxproj
 index 216bce16e02b73225227eb32fa5ea9ae3b2680d5..f47d0f645bd1939ca3bada8ad2a8100634390922 100644
 --- a/WeaselUI/WeaselUI.vcxproj
@@ -18269,10 +19214,9 @@ index 6fe8adef669b79cf9b644a6ab885afd81d0cf453..6154d3215c147f619bb3758b38b77d86
    KeyEvent(UINT _keycode, UINT _mask) : keycode(_keycode), mask(_mask) {}
    KeyEvent(UINT x) { *reinterpret_cast<UINT*>(this) = x; }
 diff --git a/include/PipeChannel.h b/include/PipeChannel.h
-index bebc73a087ac2bf917b20751ed8a48a1e2fa6c45..6138b8237a494dbd1374bc4da0326cd22de02ed1 100644
 --- a/include/PipeChannel.h
 +++ b/include/PipeChannel.h
-@@ -1,163 +1,230 @@
+@@ -1,163 +1,235 @@
 -#pragma once
 -#include <string>
 -#include <memory>
@@ -18592,7 +19536,8 @@ index bebc73a087ac2bf917b20751ed8a48a1e2fa6c45..6138b8237a494dbd1374bc4da0326cd2
 +  // the published content buffer, or its response generation on success.
 +  // Failure invalidates the connection and both pending/published bodies.
 +  template <typename Handler>
-+  bool TransactLocalResponse(Msg& msg, _TyRes& result, Handler handler) {
++  bool TransactLocalResponse(Msg& msg, _TyRes& result, Handler handler,
++                             bool acceptEmptyReply = false) {
 +    static_assert(_ResSize == sizeof(Res), "A reply header must be complete");
 +    try {
 +      if (!_Ensure()) {
@@ -18603,9 +19548,13 @@ index bebc73a087ac2bf917b20751ed8a48a1e2fa6c45..6138b8237a494dbd1374bc4da0326cd2
 +      Res reply{};
 +      TransactionPhase phase = TransactionPhase::WriteAttempted;
 +      _WritePipe(hpipe, _MsgSize, reinterpret_cast<char*>(&msg));
-+      if (!_ReceiveInto(hpipe, &reply, _ResSize, body.get(), buff_size, phase) ||
-+          !handler(reinterpret_cast<LPWSTR>(body.get()),
-+                   static_cast<UINT>(buff_size / sizeof(wchar_t)))) {
++      const bool hasResponse = _ReceiveInto(hpipe, &reply, _ResSize, body.get(), buff_size, phase);
++      if (!hasResponse && acceptEmptyReply && reply == Res{}) {
++        result = reply;
++        return true;
++      }
++      if (!hasResponse || !handler(reinterpret_cast<LPWSTR>(body.get()),
++                                   static_cast<UINT>(buff_size / sizeof(wchar_t)))) {
 +        _AbandonTransaction();
 +        return false;
 +      }
@@ -18667,14 +19616,25 @@ index bebc73a087ac2bf917b20751ed8a48a1e2fa6c45..6138b8237a494dbd1374bc4da0326cd2
 +};
 +};  // namespace weasel
 diff --git a/include/RimeWithWeasel.h b/include/RimeWithWeasel.h
-index 6fb0a4cab82cba3943a0c2ea6c2bc54caa1938a9..13abe49b66064507a4865ba5e4d179c4c8e128d6 100644
 --- a/include/RimeWithWeasel.h
 +++ b/include/RimeWithWeasel.h
-@@ -27,6 +27,12 @@
+@@ -3,6 +3,9 @@
+ #include <WeaselUI.h>
+ #include <map>
+ #include <string>
++#include <atomic>
++#include <mutex>
++#include <cstdint>
+ 
+ #include <rime_api.h>
+ 
+@@ -27,8 +30,18 @@
    }
    weasel::UIStyle style;
    RimeStatus status;
 +  std::string mode_schema_id;
++  std::string client_app;
++  std::map<std::string, bool> show_notifications;
 +  std::string mode_option;
 +  bool mode_horizontal[2] = {false, false};
 +  int mode_spacing[2] = {0, 0};
@@ -18682,8 +19642,12 @@ index 6fb0a4cab82cba3943a0c2ea6c2bc54caa1938a9..13abe49b66064507a4865ba5e4d179c4
 +  std::wstring mode_zhung_icon[2];
    bool __synced;
    RimeSessionId session_id;
++  RECT input_position = {};
++  bool input_position_valid = false;
  };
-@@ -52,6 +58,7 @@
+ typedef std::map<DWORD, SessionStatus> SessionStatusMap;
+ typedef DWORD WeaselSessionId;
+@@ -52,6 +65,7 @@
                                                 WeaselSessionId ipc_id,
                                                 EatLine eat);
    virtual bool ChangePage(bool backward, WeaselSessionId ipc_id, EatLine eat);
@@ -18691,14 +19655,47 @@ index 6fb0a4cab82cba3943a0c2ea6c2bc54caa1938a9..13abe49b66064507a4865ba5e4d179c4
    virtual void FocusIn(DWORD param, WeaselSessionId ipc_id);
    virtual void FocusOut(DWORD param, WeaselSessionId ipc_id);
    virtual void UpdateInputPosition(RECT const& rc, WeaselSessionId ipc_id);
-@@ -68,6 +75,7 @@
+@@ -67,12 +81,23 @@
+  private:
    void _Setup();
    bool _IsDeployerRunning();
-   void _UpdateUI(WeaselSessionId ipc_id);
+-  void _UpdateUI(WeaselSessionId ipc_id);
++  void _UpdateUI(WeaselSessionId ipc_id, bool show_notifications = true);
 +  void _RefreshModeStyle(WeaselSessionId ipc_id);
    void _LoadSchemaSpecificSettings(WeaselSessionId ipc_id,
                                     const std::string& schema_id);
    void _LoadAppInlinePreeditSet(WeaselSessionId ipc_id,
+                                 bool ignore_app_name = false);
+-  bool _ShowMessage(weasel::Context& ctx, weasel::Status& status);
++  struct PendingNotification {
++    RimeSessionId owner = 0;
++    std::string type, value, label, option;
++    ULONGLONG created = 0;
++    std::uint64_t serial = 0;
++  };
++  bool _ShowMessage(weasel::Context& ctx, weasel::Status& status,
++                    const PendingNotification& message);
++  void _ClearNotification();
++  PendingNotification _PeekNotification(RimeSessionId owner);
++  void _ConsumeNotification(std::uint64_t serial);
+   bool _Respond(WeaselSessionId ipc_id, EatLine eat);
+   void _ReadClientInfo(WeaselSessionId ipc_id, LPWSTR buffer);
+   void _GetCandidateInfo(weasel::CandidateInfo& cinfo, RimeContext& ctx);
+@@ -110,10 +135,10 @@
+                        uintptr_t session_id,
+                        const char* message_type,
+                        const char* message_value);
+-  static std::string m_message_type;
+-  static std::string m_message_value;
+-  static std::string m_message_label;
+-  static std::string m_option_name;
++  std::atomic<RimeSessionId> m_notification_session{0};
++  std::mutex m_notification_mutex;
++  PendingNotification m_notification;
++  std::uint64_t m_notification_serial = 0;
+   SessionStatusMap m_session_status_map;
+   bool m_current_dark_mode;
+   bool m_global_ascii_mode;
 diff --git a/include/ShiftKeySnapshot.h b/include/ShiftKeySnapshot.h
 new file mode 100644
 index 0000000000000000000000000000000000000000..a3424e4b1b6261eb6b00c5d9c8e4919f7d1c8fa8
@@ -18762,10 +19759,9 @@ index 0000000000000000000000000000000000000000..a3424e4b1b6261eb6b00c5d9c8e4919f
 +}  // namespace weasel
 diff --git a/include/ShiftKeySnapshotWin.h b/include/ShiftKeySnapshotWin.h
 new file mode 100644
-index 0000000000000000000000000000000000000000..c2068ad50b5add9e1984f8b65c042758155e723e
 --- /dev/null
 +++ b/include/ShiftKeySnapshotWin.h
-@@ -0,0 +1,37 @@
+@@ -0,0 +1,41 @@
 +#pragma once
 +#include <windows.h>
 +#include <KeyEvent.h>
@@ -18780,7 +19776,11 @@ index 0000000000000000000000000000000000000000..c2068ad50b5add9e1984f8b65c042758
 +  if (!keyboard_state_valid || !state ||
 +      (key.keycode != ibus::Shift_L && key.keycode != ibus::Shift_R))
 +    return result;
-+  const bool left = (state[VK_LSHIFT] & 0x80) != 0;
++  // Left Shift's release is the event transition, as in the upstream tracker.
++  // A queued bitmap may already include the next tap. Keep the other Shift
++  // and printable-key evidence, and leave the native right-Shift path intact.
++  const bool left = !(info.isKeyUp && key.keycode == ibus::Shift_L) &&
++      (state[VK_LSHIFT] & 0x80) != 0;
 +  const bool right = (state[VK_RSHIFT] & 0x80) != 0;
 +  const bool own = key.keycode == ibus::Shift_L ? left : right;
 +  if (own == static_cast<bool>(info.isKeyUp)) return result;
@@ -18805,10 +19805,9 @@ index 0000000000000000000000000000000000000000..c2068ad50b5add9e1984f8b65c042758
 +}  // namespace weasel
 diff --git a/include/StellaeIdentity.h b/include/StellaeIdentity.h
 new file mode 100644
-index 0000000000000000000000000000000000000000..e249dfa4da4dac3116fd5b85bb9d553a482e4905
 --- /dev/null
 +++ b/include/StellaeIdentity.h
-@@ -0,0 +1,47 @@
+@@ -0,0 +1,46 @@
 +#pragma once
 +// Generated from identity.json. Update the identity source, then regenerate.
 +#include <guiddef.h>
@@ -18851,7 +19850,6 @@ index 0000000000000000000000000000000000000000..e249dfa4da4dac3116fd5b85bb9d553a
 +namespace identity {
 +constexpr GUID kTextServiceClsid = {0x0230f8de, 0x23d2, 0x4e61, {0xb4, 0x5b, 0xb6, 0xdb, 0x84, 0xe7, 0x11, 0x45}};
 +constexpr GUID kProfileGuid = {0x73e8015b, 0xb517, 0x45ee, {0x85, 0x84, 0x38, 0xc0, 0x1c, 0xed, 0xd2, 0x24}};
-+constexpr GUID kGlobalNativeOpenGuid = {0x02fde9c3, 0xee7b, 0x419e, {0xa8, 0x05, 0x3b, 0x75, 0xb8, 0x1e, 0x47, 0xa1}};
 +constexpr GUID kDisplayAttributeInputGuid = {0xa3bf1237, 0x4948, 0x447a, {0x91, 0x6f, 0x99, 0x96, 0x1a, 0x91, 0x29, 0xd2}};
 +constexpr GUID kLanguageBarItemButtonGuid = {0xd158250c, 0xb66b, 0x402d, {0x96, 0x62, 0x03, 0x25, 0xdd, 0x1f, 0xcb, 0x58}};
 +}  // namespace identity
@@ -18875,7 +19873,6 @@ index 09625e4d34705a27354b4de81debfc6dfecd7f43..961f37377e770c46d49e1252a93a3608
  #define STRINGIZE(x) #x
  #define VERSION_STR(x) STRINGIZE(x)
 diff --git a/include/WeaselIPC.h b/include/WeaselIPC.h
-index 3065cb57d49095eefbc04eddbe5ec2801216f8b4..f39eca5ad811277d8878a63b9f27147ec84b5153 100644
 --- a/include/WeaselIPC.h
 +++ b/include/WeaselIPC.h
 @@ -1,13 +1,14 @@
@@ -18896,7 +19893,7 @@ index 3065cb57d49095eefbc04eddbe5ec2801216f8b4..f39eca5ad811277d8878a63b9f27147e
  
  #define WEASEL_IPC_METADATA_SIZE 1024
  #define WEASEL_IPC_BUFFER_SIZE (4 * 1024)
-@@ -32,10 +33,29 @@ enum WEASEL_IPC_COMMAND {
+@@ -32,10 +33,32 @@
    WEASEL_IPC_SELECT_CANDIDATE_ON_CURRENT_PAGE,
    WEASEL_IPC_HIGHLIGHT_CANDIDATE_ON_CURRENT_PAGE,
    WEASEL_IPC_CHANGE_PAGE,
@@ -18905,6 +19902,9 @@ index 3065cb57d49095eefbc04eddbe5ec2801216f8b4..f39eca5ad811277d8878a63b9f27147e
  };
  
  namespace weasel {
++// Requests metadata after ordinary FocusIn on the same pipe transaction.
++constexpr DWORD kFocusInWithMetadata = 0x80000000;
++
 +// Metadata has no commit or candidate body and never enters text delivery.
 +struct SessionMetadata {
 +  Status status;
@@ -18926,7 +19926,7 @@ index 3065cb57d49095eefbc04eddbe5ec2801216f8b4..f39eca5ad811277d8878a63b9f27147e
  struct PipeMessage {
    WEASEL_IPC_COMMAND Msg;
    DWORD wParam;
-@@ -74,6 +94,7 @@ struct RequestHandler {
+@@ -74,6 +97,7 @@
    virtual bool ChangePage(bool backward, DWORD session_id, EatLine eat) {
      return false;
    }
@@ -18934,18 +19934,27 @@ index 3065cb57d49095eefbc04eddbe5ec2801216f8b4..f39eca5ad811277d8878a63b9f27147e
    virtual void FocusIn(DWORD param, DWORD session_id) {}
    virtual void FocusOut(DWORD param, DWORD session_id) {}
    virtual void UpdateInputPosition(RECT const& rc, DWORD session_id) {}
-@@ -120,8 +141,10 @@ class Client {
+@@ -111,7 +135,7 @@
+   // 终止服务
+   void ShutdownServer();
+   // 發起會話
+-  void StartSession();
++  bool StartSession();
+   // 結束會話
+   void EndSession();
+   // 進入維護模式
+@@ -120,8 +144,10 @@
    void EndMaintenance();
    // 测试连接
    bool Echo();
-+  bool QueryMetadata(SessionMetadata& metadata);
++  bool QueryMetadata(SessionMetadata& metadata, bool focus = false);
    // 请求服务处理按键消息
    bool ProcessKeyEvent(KeyEvent const& keyEvent);
 +  KeyEventOutcome ProcessKeyEventOutcome(KeyEvent const& keyEvent);
    // 上屏正在編輯的文字
    bool CommitComposition();
    // 清除正在編輯的文字
-@@ -142,6 +165,8 @@ class Client {
+@@ -142,6 +168,8 @@
    void TrayCommand(UINT menuId);
    // 读取server返回的数据
    bool GetResponseData(ResponseHandler handler);
@@ -18955,7 +19964,6 @@ index 3065cb57d49095eefbc04eddbe5ec2801216f8b4..f39eca5ad811277d8878a63b9f27147e
   private:
    ClientImpl* m_pImpl;
 diff --git a/include/WeaselUI.h b/include/WeaselUI.h
-index da17956a275d73a1c67d3a6e070403b007376b94..9ca438db999fe02ce50e1031b00182b0c7eac115 100755
 --- a/include/WeaselUI.h
 +++ b/include/WeaselUI.h
 @@ -1,4 +1,4 @@
@@ -18964,7 +19972,7 @@ index da17956a275d73a1c67d3a6e070403b007376b94..9ca438db999fe02ce50e1031b00182b0
  
  #include <WeaselIPCData.h>
  #include <vector>
-@@ -49,6 +49,7 @@ class UI {
+@@ -49,6 +49,7 @@
    void ShowWithTimeout(size_t millisec);
    bool IsCountingDown() const;
    bool IsShown() const;
@@ -18972,7 +19980,7 @@ index da17956a275d73a1c67d3a6e070403b007376b94..9ca438db999fe02ce50e1031b00182b0
  
    // 重绘界面
    void Refresh();
-@@ -78,6 +79,13 @@ class UI {
+@@ -78,6 +79,13 @@
      _UICallback = func;
    }
  
@@ -18986,7 +19994,13 @@ index da17956a275d73a1c67d3a6e070403b007376b94..9ca438db999fe02ce50e1031b00182b0
   private:
    UIImpl* pimpl_;
    PDWR pDWR;
-@@ -89,6 +97,7 @@ class UI {
+@@ -85,10 +93,13 @@
+   Context ctx_;
+   Context octx_;
+   Status status_;
++  Status updated_status_;
++  bool has_updated_status_ = false;
+   UIStyle style_;
    UIStyle ostyle_;
    std::function<void(size_t* const, size_t* const, bool* const, bool* const)>
        _UICallback;
@@ -18994,7 +20008,7 @@ index da17956a275d73a1c67d3a6e070403b007376b94..9ca438db999fe02ce50e1031b00182b0
  };
  
  class DirectWriteResources {
-@@ -115,6 +124,19 @@ class DirectWriteResources {
+@@ -115,6 +126,19 @@
          reinterpret_cast<IDWriteTextLayout**>(
              pTextLayout.ReleaseAndGetAddressOf()));
    }
@@ -19014,7 +20028,7 @@ index da17956a275d73a1c67d3a6e070403b007376b94..9ca438db999fe02ce50e1031b00182b0
    void DrawRect(D2D1_RECT_F* const rect,
                  const float& strokeWidth = 1.0f,
                  ID2D1StrokeStyle* const sstyle = (ID2D1StrokeStyle*)0) {
-@@ -149,6 +171,7 @@ class DirectWriteResources {
+@@ -149,6 +173,7 @@
    ComPtr<IDWriteFactory2> pDWFactory;
    ComPtr<ID2D1DCRenderTarget> pRenderTarget;
    ComPtr<IDWriteTextFormat1> pPreeditTextFormat;

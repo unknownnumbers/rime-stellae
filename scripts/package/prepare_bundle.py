@@ -24,11 +24,40 @@ def safe_name(name):
     return value
 
 
+def stage_math_upgrade(repo, stage, archive_path, inputs):
+    if digest(archive_path) != inputs['indexedMath']['sha256']:
+        raise SystemExit('The indexed math archive differs from the pinned source.')
+    upgrade = repo/'installer/migrations/upgrade.json'
+    spec = json.loads(upgrade.read_text('utf-8'))
+    if spec['format'] != 'stellae-bundle-user-upgrade-v1':
+        raise SystemExit('Unexpected user upgrade manifest.')
+    migrations = stage/'shared-payload/migrations'
+    migrations.mkdir()
+    shutil.copyfile(upgrade, migrations/'upgrade.json')
+    notices = (
+        'AUTHORS-OpenCC.txt', 'LICENSE-CC-BY-SA-4.0.txt', 'LICENSE-OpenCC-Apache-2.0.txt',
+        'LICENSE-Unicode-3.0.txt', 'LICENSE-Wikidata-CC0.txt', 'LICENSE-pypinyin-MIT.txt',
+        'NOTICE-science-sources.txt', 'NOTICE.txt', 'SOURCE.json',
+    )
+    with zipfile.ZipFile(archive_path) as archive:
+        for name, expected in (
+            ('english.tsv', spec['math']['catalogSha256']),
+            *[(f'english_index/{row["name"]}', row['sha256']) for row in spec['math']['index']],
+        ):
+            if hashlib.sha256(archive.read(f'rymcp_dlc/math/{name}')).hexdigest() != expected:
+                raise SystemExit(f'The math upgrade archive does not match {name}.')
+        for name in (*notices, *[f'english_index/{row["name"]}' for row in spec['math']['index']]):
+            target = migrations/'math'/safe_name(name)
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_bytes(archive.read(f'rymcp_dlc/math/{name}'))
+
+
 def main():
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument('--base', type=Path, required=True)
     p.add_argument('--official', type=Path, required=True)
     p.add_argument('--schemes', type=Path, required=True)
+    p.add_argument('--indexed-math', type=Path)
     p.add_argument('--stage', type=Path, required=True)
     p.add_argument('--repository', type=Path, required=True)
     p.add_argument('--inputs', type=Path, help='Use an explicit review manifest; the release build uses the repository manifest.')
@@ -41,6 +70,10 @@ def main():
     stage.mkdir(parents=True, exist_ok=False)
     payload = stage/'shared-payload/data'
     payload.mkdir(parents=True)
+    if 'indexedMath' in inputs:
+        if a.indexed_math is None:
+            raise SystemExit('The bundle requires the pinned indexed math archive.')
+        stage_math_upgrade(repo, stage, a.indexed_math, inputs)
     by_hash = {}
     for file in a.base.rglob('*'):
         if file.is_file():

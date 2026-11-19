@@ -2,31 +2,40 @@
 #Requires -Version 7.2
 param(
  [Parameter(Mandatory)][string]$OutputDirectory,
- [Parameter(Mandatory)][string]$ServerOverlayDirectory
+ [Parameter(Mandatory)][string]$NativeProductDirectory,
+ [Parameter(Mandatory)][string]$NativeSourceDirectory,
+ [string]$SourceRef=$env:GITHUB_SHA,
+ [string]$SchemeArchive,
+ [string]$IndexedMathArchive,
+ [string]$ProjectSourceArchive
 )
 Set-StrictMode -Version Latest
 $ErrorActionPreference='Stop'
 if($env:GITHUB_ACTIONS -ne 'true' -or -not $IsWindows){throw 'Use a disposable hosted Windows runner'}
+if($SourceRef -cnotmatch '^[0-9a-f]{40}$'){throw 'Pin the frontend source revision before building'}
 $repo=(Resolve-Path -LiteralPath (Join-Path $PSScriptRoot '../..')).Path
 $inputs=Get-Content -LiteralPath (Join-Path $repo 'installer/bundle-inputs.json') -Raw|ConvertFrom-Json
 if(-not $inputs.schemes -or $inputs.schemes.commit -notmatch '^[0-9a-f]{40}$' -or $inputs.schemes.sha256 -notmatch '^[0-9a-f]{64}$'){throw 'Pin the scheme source and archive before building'}
 if(Test-Path -LiteralPath $OutputDirectory){throw 'Use a new package output directory'}
 $null=New-Item -ItemType Directory -Path $OutputDirectory
 $output=(Resolve-Path -LiteralPath $OutputDirectory).Path
-$serverOverlays=(Resolve-Path -LiteralPath $ServerOverlayDirectory).Path
+$nativeProducts=(Resolve-Path -LiteralPath $NativeProductDirectory).Path
+$nativeSources=(Resolve-Path -LiteralPath $NativeSourceDirectory).Path
 $cache=Join-Path $output 'inputs'
 $null=New-Item -ItemType Directory -Path $cache
-function Fetch($Spec,[string]$Name){
+function Fetch($Spec,[string]$Name,[string]$ReviewedArchive=''){
   if($Spec.url -notmatch '^https://github.com/[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+/releases/download/[^/]+/[^/]+$'){throw 'Expected a public pinned release URL'}
   $path=Join-Path $cache $Name
-  Invoke-WebRequest $Spec.url -OutFile $path
+  if($ReviewedArchive){Copy-Item -LiteralPath $ReviewedArchive -Destination $path}
+  else{Invoke-WebRequest $Spec.url -OutFile $path}
   if((Get-FileHash -LiteralPath $path).Hash.ToLowerInvariant() -cne $Spec.sha256){throw 'Public input SHA256 differs'}
   return $path
 }
 $base=Fetch $inputs.frontendInstaller 'frontend-61052.exe'
 $baseSources=Fetch $inputs.frontendSources 'frontend-61052-source.zip'
 $seven=Fetch $inputs.sevenZipSources '7z2405-src.tar.xz'
-$scheme=Fetch $inputs.schemes ('rymcp-'+$inputs.bundleVersion+'-stellae-schemes.zip')
+$scheme=Fetch $inputs.schemes ('rymcp-'+$inputs.bundleVersion+'-stellae-schemes.zip') $SchemeArchive
+$math=Fetch $inputs.indexedMath ('rymcp-dlc-math-'+$inputs.bundleVersion+'.zip') $IndexedMathArchive
 $native=Get-Content -LiteralPath (Join-Path $repo 'native/source-manifest.json') -Raw|ConvertFrom-Json
 $officialSpec=@($native.assets|Where-Object {$_.id -eq 'shared-data'})[0]
 $official=Fetch $officialSpec 'official-weasel-0.17.4.exe'
@@ -35,13 +44,13 @@ if($LASTEXITCODE){throw 'Original installer extraction failed'}
 & 7z.exe x $official ('-o'+(Join-Path $output 'official')) 'data/*' -y|Out-File (Join-Path $output 'extract-official.log')
 if($LASTEXITCODE){throw 'Official shared extraction failed'}
 $stage=Join-Path $output 'stage/output'
-& python (Join-Path $PSScriptRoot 'prepare_bundle.py') --repository $repo --base (Join-Path $output 'base') --official (Join-Path $output 'official') --schemes $scheme --stage $stage
+& python (Join-Path $PSScriptRoot 'prepare_bundle.py') --repository $repo --base (Join-Path $output 'base') --official (Join-Path $output 'official') --schemes $scheme --indexed-math $math --stage $stage
 if($LASTEXITCODE){throw 'Bundle source assembly failed'}
-& python (Join-Path $PSScriptRoot 'apply_server_overlays.py') --repository $repo --stage $stage --overlays $serverOverlays --source-ref $env:GITHUB_SHA --run-id $env:GITHUB_RUN_ID
-if($LASTEXITCODE){throw 'Same-run server overlay verification failed'}
-& python (Join-Path $PSScriptRoot 'render_installed_docs.py') --repository $repo --output-directory $stage --ref $env:GITHUB_SHA
+& python (Join-Path $PSScriptRoot 'apply_frontend_overlays.py') --stage $stage --products $nativeProducts --sources $nativeSources --source-ref $SourceRef
+if($LASTEXITCODE){throw 'Native frontend verification failed'}
+& python (Join-Path $PSScriptRoot 'render_installed_docs.py') --repository $repo --output-directory $stage --ref $SourceRef
 if($LASTEXITCODE){throw 'Documentation rendering failed'}
-& python (Join-Path $PSScriptRoot 'index_bundle.py') --stage $stage --ref $env:GITHUB_SHA
+& python (Join-Path $PSScriptRoot 'index_bundle.py') --stage $stage --ref $SourceRef
 if($LASTEXITCODE){throw 'Bundle payload index failed'}
 & python (Join-Path $PSScriptRoot 'verify_pe.py') --root $stage --report (Join-Path $output 'pe-verification.json')
 if($LASTEXITCODE){throw 'Reused product PE validation failed'}
@@ -59,7 +68,8 @@ try{
 $installer=Join-Path $stage ('archives/stellae-rymcp-'+$inputs.bundleVersion+'-installer.exe')
 $release=Join-Path $output 'release'
 $null=New-Item -ItemType Directory -Path $release
-Copy-Item -LiteralPath $installer,(Join-Path $stage 'package-manifest.json'),(Join-Path $stage 'package-license-index.json'),(Join-Path $stage 'bundle-provenance.json'),(Join-Path $stage 'server-overlay-verification.json'),(Join-Path $output 'pe-verification.json'),$seven -Destination $release
+Copy-Item -LiteralPath $installer,(Join-Path $stage 'package-manifest.json'),(Join-Path $stage 'package-license-index.json'),(Join-Path $stage 'bundle-provenance.json'),(Join-Path $output 'pe-verification.json'),$seven -Destination $release
+Copy-Item -LiteralPath (Join-Path $stage 'server-overlay-verification.json') -Destination (Join-Path $release 'frontend-overlay-verification.json')
 & 7z.exe x $installer ('-o'+(Join-Path $output 'actual')) -aou -y|Out-File (Join-Path $output 'extract-actual.log')
 if($LASTEXITCODE){throw 'Final installer extraction failed'}
 & python (Join-Path $PSScriptRoot 'verify_bundle.py') --stage $stage --extracted (Join-Path $output 'actual') --report (Join-Path $release 'payload-verification.json')
@@ -67,21 +77,15 @@ if($LASTEXITCODE){throw 'Final installer payload verification failed'}
 $parts=Join-Path $output 'source-parts'
 $null=New-Item -ItemType Directory -Path $parts
 Copy-Item -LiteralPath $baseSources,$scheme -Destination $parts
-foreach($arch in @('x64','x86')){
-  $from=Join-Path $serverOverlays $arch
-  $to=Join-Path $output ('server-'+$arch+'-source')
-  $null=New-Item -ItemType Directory -Path $to
-  foreach($item in Get-ChildItem -LiteralPath $from -Force){
-    if($item.Name -in @('StellaeServer.exe','SHA256SUMS.txt')){continue}
-    Copy-Item -LiteralPath $item.FullName -Destination (Join-Path $to $item.Name) -Recurse
-  }
-  Get-ChildItem -LiteralPath $to -File -Recurse|Sort-Object FullName|ForEach-Object{
-    (Get-FileHash -LiteralPath $_.FullName).Hash.ToLowerInvariant()+'  '+[IO.Path]::GetRelativePath($to,$_.FullName).Replace('\','/')
-  }|Set-Content -LiteralPath (Join-Path $to 'SOURCE-SHA256SUMS.txt') -Encoding ASCII
-  Compress-Archive -Path (Join-Path $to '*') -DestinationPath (Join-Path $parts ('server-'+$arch+'-source.zip')) -CompressionLevel Optimal
+$project=Join-Path $parts 'bundle-project-source.zip'
+if($ProjectSourceArchive){
+  Copy-Item -LiteralPath $ProjectSourceArchive -Destination $project
+}else{
+  & git -C $repo archive --format=zip ('--output='+$project) $SourceRef
+  if($LASTEXITCODE){throw 'Bundle project source archive failed'}
 }
-Push-Location $repo
-try{& git archive --format=zip ('--output='+(Join-Path $parts 'bundle-project-source.zip')) HEAD;if($LASTEXITCODE){throw 'Bundle project source archive failed'}}finally{Pop-Location}
+& python -c 'from zipfile import ZipFile; import sys; assert ZipFile(sys.argv[1]).comment.decode("ascii") == sys.argv[2]' $project $SourceRef
+if($LASTEXITCODE){throw 'Bundle project archive revision differs'}
 Copy-Item -LiteralPath (Join-Path $stage 'bundle-inputs.json'),(Join-Path $stage 'SOURCES.md') -Destination $parts
 Compress-Archive -Path (Join-Path $parts '*') -DestinationPath (Join-Path $release ('stellae-rymcp-'+$inputs.bundleVersion+'-source.zip')) -CompressionLevel Optimal
 Write-Output ('BUNDLE_OUTPUT '+$output)

@@ -7,6 +7,8 @@ from pathlib import Path
 import re
 import struct
 
+from apply_frontend_overlays import PRODUCTS
+
 
 def digest(path):
     return hashlib.sha256(path.read_bytes()).hexdigest()
@@ -72,11 +74,12 @@ provenance = load(a.stage / 'bundle-provenance.json')
 inputs = load(a.stage / 'bundle-inputs.json')
 base = load(a.stage / 'base-package-license-index.json')
 licenses = {row['installed_path']: row for row in load(a.stage / 'package-license-index.json')['files']}
+full_frontend = 'nativeFrontend' in inputs
 overlay = load(a.stage / 'server-overlay-verification.json')
 source_ref = manifest['sourceRef']
 if (not re.fullmatch('[a-f0-9]{40}', source_ref)
         or not overlay['passed'] or overlay['sourceRef'] != source_ref
-        or not isinstance(overlay['runId'], int) or overlay['runId'] < 1
+        or (not full_frontend and (not isinstance(overlay['runId'], int) or overlay['runId'] < 1))
         or provenance['bundleVersion'] != manifest['bundleVersion']
         or inputs['bundleVersion'] != manifest['bundleVersion']
         or inputs['frontendVersion'] != manifest['frontendVersion']):
@@ -95,28 +98,37 @@ staged_images = {path.relative_to(a.stage).as_posix() for path in a.stage.rglob(
                  and not path.relative_to(a.stage).as_posix().startswith('archives/')}
 if len(base_images) != 14 or set(current) != set(base_images) or staged_images != set(base_images):
     raise SystemExit('The complete native image set differs')
-expected = {'x64': ('StellaeServer.exe', 0x8664), 'x86': ('Win32/StellaeServer.exe', 0x14c)}
-specs = inputs['serverOverlays']['architectures']
-proof_rows = overlay['rebuiltServers']
-if (set(specs) != set(expected) or len(proof_rows) != 2
-        or len({row['installed_path'] for row in proof_rows}) != 2
-        or overlay['nativeImages'] != 14 or overlay['unchangedNativeImages'] != 12
+machines = {'x64': 0x8664, 'x86': 0x014c}
+expected = ({name: (arch, machines[arch]) for arch, products in PRODUCTS.items() for name in products}
+            if full_frontend else {'StellaeServer.exe': ('x64', machines['x64']),
+                                   'Win32/StellaeServer.exe': ('x86', machines['x86'])})
+specs = {} if full_frontend else inputs['serverOverlays']['architectures']
+proof_rows = overlay['rebuiltImages' if full_frontend else 'rebuiltServers']
+unchanged = len(base_images) - len(expected)
+if (not full_frontend and set(specs) != set(machines)
+        or len(proof_rows) != len(expected)
+        or {row['installed_path'] for row in proof_rows} != set(expected)
+        or overlay['nativeImages'] != len(base_images) or overlay['unchangedNativeImages'] != unchanged
         or overlay['runtimeEnginesPreserved'] is not True):
-    raise SystemExit('Expected exactly two rebuilt and twelve retained images')
+    raise SystemExit('The rebuilt and retained native image sets differ')
 proof = {row['installed_path']: row for row in proof_rows}
 rebuilt = []
-for arch, (name, machine) in expected.items():
+for name, (arch, machine) in expected.items():
     row = current[name]
-    spec = specs[arch]
-    if (row['source'] != 'rebuiltServer' or proof.get(name) != row
-            or spec['installedPath'] != name or spec['machine'] != machine
-            or row['original_sha256'] != spec['baseSha256']
+    if (row['source'] != ('rebuiltFrontend' if full_frontend else 'rebuiltServer') or proof.get(name) != row
             or row['original_sha256'] != base_images[name]['sha256']
-            or row['source_ref'] != source_ref or row['source_run'] != overlay['runId']
+            or row['source_ref'] != source_ref
             or row['architecture'] != arch
-            or row['corresponding_source'] != 'server-' + arch + '-source.zip'
-            or not re.fullmatch('[a-f0-9]{64}', row['assembled_source_sha256'])):
-        raise SystemExit('Rebuilt server provenance differs: ' + name)
+            or row['corresponding_source'] != ('bundle-project-source.zip' if full_frontend
+                                               else 'server-' + arch + '-source.zip')):
+        kind = 'frontend' if full_frontend else 'server'
+        raise SystemExit(f'Rebuilt {kind} provenance differs: {name}')
+    if not full_frontend:
+        spec = specs[arch]
+        if (spec['installedPath'] != name or spec['machine'] != machine or row['original_sha256'] != spec['baseSha256']
+                or row['source_run'] != overlay['runId']
+                or not re.fullmatch('[a-f0-9]{64}', row['assembled_source_sha256'])):
+            raise SystemExit('Rebuilt server provenance differs: ' + name)
     path = contained(a.stage, name)
     if (digest(path) != row['sha256'] or installed[name]['sha256'] != row['sha256']
             or row['sha256'] not in hashes or image_machine(path) != machine):
@@ -128,8 +140,11 @@ for arch, (name, machine) in expected.items():
             or not set(base_images[name].get('source_ids', [])).issubset(license_row['source_ids'])
             or 'project-code' not in license_row['source_ids']):
         raise SystemExit('Rebuilt server inherited notices differ: ' + name)
-    rebuilt.append({'path': name, 'sha256': row['sha256'], 'original_sha256': row['original_sha256'],
-                    'sourceRef': source_ref, 'runId': row['source_run']})
+    rebuilt_row = {'path': name, 'sha256': row['sha256'], 'original_sha256': row['original_sha256'],
+                   'sourceRef': source_ref}
+    if not full_frontend:
+        rebuilt_row['runId'] = row['source_run']
+    rebuilt.append(rebuilt_row)
 
 retained = []
 for name, row in current.items():
@@ -140,15 +155,17 @@ for name, row in current.items():
             or installed[name]['sha256'] != row['sha256'] or row['sha256'] not in hashes):
         raise SystemExit('Reused product differs: ' + name)
     retained.append({'path': name, 'sha256': row['sha256']})
-if len(retained) != 12 or len(rebuilt) != 2:
+if len(retained) != unchanged or len(rebuilt) != len(expected):
     raise SystemExit('Native image verification is incomplete')
 
 report = {'format': 'stellae-bundle-extraction-v1', 'passed': True,
           'bundleVersion': manifest['bundleVersion'], 'frontendVersion': manifest['frontendVersion'],
-          'sourceRef': source_ref, 'sourceRunId': overlay['runId'],
+          'sourceRef': source_ref,
           'verifiedInputFiles': len(manifest['files']), 'installedProfileRecordsVerified': len(profile_records),
           'extractedFiles': len(files), 'reusedImages': retained, 'rebuiltImages': rebuilt,
           'nativeImages': len(current), 'physicalKeyboardTested': False}
+if not full_frontend:
+    report['sourceRunId'] = overlay['runId']
 a.report.write_text(json.dumps(report, indent=2) + '\n', encoding='utf-8')
 print(json.dumps({'passed': True, 'verifiedInputFiles': len(manifest['files']),
                   'reusedImages': len(retained), 'rebuiltImages': len(rebuilt)}))

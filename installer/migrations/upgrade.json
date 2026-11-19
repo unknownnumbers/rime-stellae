@@ -1,0 +1,31 @@
+{
+  "format": "stellae-bundle-user-upgrade-v1",
+  "previousLua": [
+    {
+      "path": "lua/cn_translator.lua",
+      "sha256": "b6f219123cd9b24d7becbc955cceda20dbc21b51c05a21ec0d33a27185fdfa1e"
+    },
+    {
+      "path": "lua/en_dlc.lua",
+      "sha256": "601348fcfa0e44986e3302be29f87c113d78308b482a1085071c16553c2b4164"
+    }
+  ],
+  "math": {
+    "catalogSha256": "526754af1bc9d7fdadfe78ba917621dfa8d9db681e4dce4ddcb3cef1bcd3bb7e",
+    "manifestSha256": "2d868259e53921b2368fa6dcc271acbd2853ea01634e078ba3eea116e8d6652c",
+    "index": [
+      {
+        "name": "words.txt",
+        "sha256": "eeab4e73888ebabe54d957825a67fa47e805cc44a1c60c6cfe12f36122dd0d0a"
+      },
+      {
+        "name": "keys.bin",
+        "sha256": "1e5e19cdcf61706d816ebf26e301d4f4052bf98cd817c0a2c8bf32590d06df78"
+      },
+      {
+        "name": "postings.bin",
+        "sha256": "101b911f48d172ade0f26dcaef9f893f385629d52a882c85eec37e6eacdd7544"
+      }
+    ]
+  }
+}

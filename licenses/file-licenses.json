@@ -403,6 +403,15 @@
       ]
     },
     {
+      "path": "installer/migrations/upgrade.json",
+      "source_ids": [
+        "project-code"
+      ],
+      "references": [
+        "LICENSE"
+      ]
+    },
+    {
       "path": "installer/bundle.nsi",
       "source_ids": [
         "project-code"
@@ -1369,6 +1378,15 @@
       ]
     },
     {
+      "path": "scripts/native/Build-FrontendOverlay.ps1",
+      "source_ids": [
+        "project-code"
+      ],
+      "references": [
+        "LICENSE"
+      ]
+    },
+    {
       "path": "scripts/native/Build-Weasel.ps1",
       "source_ids": [
         "project-code"
@@ -1406,6 +1424,15 @@
     },
     {
       "path": "scripts/package/apply_server_overlays.py",
+      "source_ids": [
+        "project-code"
+      ],
+      "references": [
+        "LICENSE"
+      ]
+    },
+    {
+      "path": "scripts/package/apply_frontend_overlays.py",
       "source_ids": [
         "project-code"
       ],

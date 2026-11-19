@@ -66,20 +66,29 @@ for path in sorted(root.rglob('*')):
         if original_license.get('project_license')=='GPL-3.0-only' and 'project' not in scheme_ids:scheme_ids.append('project')
         row['source_ids']=origin.get('generated_source_ids',[])+['scheme:'+key for key in scheme_ids]
         row['resolved_references']=[scheme_reference(name) for name in row['license_record'].get('license',row['license_record']).get('references',[])]
-    elif origin and origin['source'] in {'frontendInstaller','rebuiltServer'} and installed in old and old[installed]['sha256']==origin.get('original_sha256',digest):
+    elif origin and origin['source'] in {'frontendInstaller','rebuiltServer','rebuiltFrontend'} and installed in old and old[installed]['sha256']==origin.get('original_sha256',digest):
         row['license_record']=old[installed]
         row['license_reference_root']='.'
         row['license_index']='base-package-license-index.json'
         row['source_ids']=list(dict.fromkeys(origin.get('generated_source_ids',[])+old[installed].get('source_ids',[])))
-        if origin['source']=='rebuiltServer':
+        if origin['source'] in {'rebuiltServer','rebuiltFrontend'}:
             row['corresponding_source']=origin['corresponding_source']
             row['rebuild_source_ref']=origin['source_ref']
-            row['rebuild_run_id']=origin['source_run']
+            if origin['source']=='rebuiltServer':
+                row['rebuild_run_id']=origin['source_run']
     elif origin and origin['source']=='officialSharedData':
         refs=['licenses/package/prelude-LICENSE.txt'] if path.name=='pinyin.yaml' else ['scheme-notices/licenses/radical-stroke/stroke-LGPL-3.0.txt','scheme-notices/licenses/radical-stroke/stroke-AUTHORS']
         row['license_record']={'terms':'LGPL-3.0; retain original authors and source headers','references':refs}
     elif relative.startswith('scheme-notices/'):
         row['license_record']={'terms':'See the retained source distribution and its per-file index','references':['scheme-notices/package-license-index.json']}
+    elif relative.startswith('shared-payload/migrations/math/'):
+        math = 'shared-payload/migrations/math/'
+        source = provenance['inputs']['indexedMath']
+        row['license_record'] = {
+            'terms': 'CC-BY-SA-4.0' if relative.startswith(math+'english_index/') else 'Original notice or source metadata',
+            'references': [math+'LICENSE-CC-BY-SA-4.0.txt', math+'NOTICE.txt', math+'SOURCE.json'],
+            'source_archive': source['url'], 'source_archive_sha256': source['sha256'],
+        }
     else:
         docs=relative in {'README.txt','SOURCES.md','THIRD_PARTY_NOTICES.md','LICENSE-DOCS'}
         row['license_record']={'terms':'CC-BY-SA-4.0' if docs else 'GPL-3.0-only','references':['licenses/CC-BY-SA-4.0.txt' if docs else 'LICENSE.txt']}

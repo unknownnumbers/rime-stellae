@@ -1,6 +1,6 @@
 {
   "format": "stellae-rymcp-bundle-inputs-v1",
-  "bundleVersion": "2026.11.16",
+  "bundleVersion": "2026.11.19",
   "frontendVersion": "0.17.4.61052",
   "frontendInstaller": {
     "url": "https://github.com/unknownnumbers/rime-stellae/releases/download/v0.17.4.61052/stellae-0.17.4.61052-installer.exe",
@@ -15,23 +15,39 @@
     "sha256": "63f341cf80b8d287c6e945519b3da0fa75553c85572a471b7fa6e68f9a90b790"
   },
   "schemes": {
-    "url": "https://github.com/unknownnumbers/RymCp-IME/releases/download/v2026.11.16/rymcp-2026.11.16-stellae-schemes.zip",
-    "sha256": "69615404ca32db81e4e5f57ac96f97bf27496c6a7abf85c83957655a086bec32",
-    "commit": "bf6af2cf142588fb2bfb0c5a2ef36a153fcc63b8"
+    "url": "https://github.com/unknownnumbers/RymCp-IME/releases/download/v2026.11.19/rymcp-2026.11.19-stellae-schemes.zip",
+    "sha256": "ef0d608e1802a06f2feb03a18d630e8fad512d25a9a7991db3b263436e797771",
+    "commit": "9e973a23b0e23726135b20827de8dba2b789d708"
   },
-  "serverOverlays": {
-    "format": "stellae-same-run-server-overlays-v1",
-    "architectures": {
-      "x86": {
-        "baseSha256": "2c279067ff0681c80bcd9f3909c670604b46058cb200c1323816a2a39875d8d3",
-        "installedPath": "Win32/StellaeServer.exe",
-        "machine": 332
-      },
-      "x64": {
-        "baseSha256": "50ab26e7bb8d60c310ea1245bf513a7f92069203ec84cf4ad0735201ee809e14",
-        "installedPath": "StellaeServer.exe",
-        "machine": 34404
-      }
+  "nativeFrontend": {
+    "sourceFiles": {
+      "RimeWithWeasel/RimeWithWeasel.cpp": "311bd6cd45507d48784fcbf669685c41610f0dad78bdb00a16ec056066554425",
+      "WeaselIPC/WeaselClientImpl.cpp": "cbcee2bd46fc2fac4a6d8d94f0a34df21476e4c7f127e6698b49cd2326fdd21a",
+      "WeaselIPC/WeaselClientImpl.h": "3d5c95afd3d0fbdafbbf4d1231e3882d07a72c7b80bfc36a755ea8ee270c6777",
+      "WeaselIPCServer/WeaselServerImpl.cpp": "688127f9c4252444d83535f1d098c98f29bf2511b9c1df22673d0a334dae6bc2",
+      "WeaselTSF/Compartment.cpp": "f97eae35493dff57b64d64296f6dc01495e66317ae2637997c2643f228da1508",
+      "WeaselTSF/Composition.cpp": "57369f3bf7cf1894b11e8cc490562ae7cbb36dfc76bb0dc90a1b5aacf2ebbbc1",
+      "WeaselTSF/EditSession.cpp": "91655df1522781c824d02cf3a1b2561f0c5dd74f033af495e77eeac59b0844d2",
+      "WeaselTSF/KeyEventSink.cpp": "76c6b1e62a3d274b2cc66bec36501ea2aacb6580b132cad8a5e357e43143ebed",
+      "WeaselTSF/LanguageBar.cpp": "d1562a7f47461deccdccd5c2d2f9b765b4dd2b58737b89480f2342879b346eab",
+      "WeaselTSF/PromptTrace.h": "d4f38820f921b37b5e7d2b72b6ff39bcf76ad99ae7a2df9e595dd0292fc16c2e",
+      "WeaselTSF/TextEditSink.cpp": "9282195a425e016ea2cde09fda5506f45de9a59a387bd37005ab5cf026dad975",
+      "WeaselTSF/ThreadMgrEventSink.cpp": "23e52c0d6ca9fb8aff1660201f001dbd4ce41b9b64bc45be84c2247fa06c7a54",
+      "WeaselTSF/WeaselTSF.cpp": "806eb94b2ff4b85afe2441519cbd9187054facd572436d73c20303771d287d37",
+      "WeaselTSF/WeaselTSF.h": "7cbeb75e98662b60d500ef64477999170f6c3102a6e3a5fc55fd43554c6ea3fb",
+      "WeaselUI/WeaselPanel.cpp": "8877e271dcd3d844b5f1f9a91a061aeb8dea49e358b46a69bda95574915f4597",
+      "WeaselUI/WeaselPanel.h": "4c6dbb6d60da072ca680277c28d5af258a12dceec23a607b969d3c27f196bc49",
+      "WeaselUI/WeaselUI.cpp": "0147debd7bbf4b2a5fa8bf623063cedb7700c4b4887fe9aedb1f86fbfbbc0c80",
+      "include/PipeChannel.h": "6d28bc03e9e70803e85b652d45ee257e6ddefb0c00a35cdc1799da4dfe8d3f3b",
+      "include/RimeWithWeasel.h": "7e098a2101ea0515aa27ac221fe473513f4dd4d2243e55d6f67ea8872c96954c",
+      "include/ShiftKeySnapshotWin.h": "827ba6411731876d4d6f28a6724aae55243ed989ef93dce9a000a76d09369a9e",
+      "include/StellaeIdentity.h": "665df00b74dfa51219d3d9b53b8fc749e6377ef6185bd27a750fb81aa841a2ab",
+      "include/WeaselIPC.h": "45622e826cdfbbbb802477c2b2572fd7325eb20ba8241fd83f7ee96f8fb0f7dc",
+      "include/WeaselUI.h": "13662010d99f7204e5d484882fc5ecaa81624b01359512a5c5fcdaa219d8a7d7"
     }
+  },
+  "indexedMath": {
+    "url": "https://github.com/unknownnumbers/RymCp-IME/releases/download/v2026.11.19/rymcp-dlc-math-2026.11.19.zip",
+    "sha256": "e6b568f0292a62a667bfcf43ec35f18c53219e4883dffc383c09b242437ba922"
   }
 }

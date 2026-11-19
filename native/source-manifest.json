@@ -1,6 +1,6 @@
 {
   "schema": "stellae-native-sources/1",
-  "date": "2026-11-16",
+  "date": "2026-11-19",
   "status": "source-inputs-pinned; validation is recorded in docs/BUILD.md",
   "productComposition": {
     "frontend": "0.17.4.61052; TSF/legacy IME/Server/Deployer/Setup; x64 and Win32",
@@ -53,7 +53,7 @@
     {
       "id": "stellae61052",
       "path": "native/weasel/stellae-61052.patch",
-      "sha256": "27d2858219414964acf86c55313f5fd4f41d4f08ef12f7c85bc0a92a1e9ba7a5",
+      "sha256": "3f08a39bc5df907145617de0f94deca783c7772ddbdc69e0b7703a8cf8a18570",
       "source": "weasel"
     },
     {

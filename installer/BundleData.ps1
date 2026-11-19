@@ -46,7 +46,69 @@ function Hash([string]$Path){
     return ([BitConverter]::ToString($algorithm.ComputeHash($stream))).Replace('-','').ToLowerInvariant()
   }finally{if($stream){$stream.Dispose()};$algorithm.Dispose()}
 }
-$report=[ordered]@{format='stellae-shared-update-v1';action=$Action;passed=$false;sharedConflicts=@();userOverrides=@();removed=@();installed=@()}
+function Add-LegacyMathIndex($Migration,$MigrationDirectory,[string]$UserRoot){
+  $math=Resolve-Child $UserRoot 'rymcp_dlc/math'
+  $catalog=Resolve-Child $math 'english.tsv'
+  $manifest=Resolve-Child $math 'manifest.tsv'
+  if(-not (Test-Path -LiteralPath $catalog -PathType Leaf) -or
+     -not (Test-Path -LiteralPath $manifest -PathType Leaf)){return 'not-present'}
+  if((Hash $catalog) -cne $Migration.catalogSha256 -or
+     (Hash $manifest) -cne $Migration.manifestSha256){return 'preserved-catalog'}
+
+  $index=Resolve-Child $math 'english_index'
+  if((Test-Path -LiteralPath $index) -and -not (Test-Path -LiteralPath $index -PathType Container)){
+    return 'preserved-index'
+  }
+  $names=@($Migration.index | ForEach-Object {$_.name} | Sort-Object)
+  if(($names -join ',') -cne 'keys.bin,postings.bin,words.txt'){throw 'Unexpected math index migration files'}
+  $pending=@()
+  foreach($entry in $Migration.index){
+    $origin=Resolve-Child $MigrationDirectory ('math/english_index/'+$entry.name)
+    if((Hash $origin) -cne $entry.sha256){throw 'Prepared math index differs from the migration manifest'}
+    $target=Resolve-Child $index $entry.name
+    if(Test-Path -LiteralPath $target){
+      if(-not (Test-Path -LiteralPath $target -PathType Leaf) -or (Hash $target) -cne $entry.sha256){
+        return 'preserved-index'
+      }
+    }else{
+      $pending+=@([pscustomobject]@{name=$entry.name;origin=$origin;target=$target;sha256=$entry.sha256})
+    }
+  }
+  if($pending.Count -eq 0){return 'current'}
+
+  $stage=Resolve-Child $math ('.english-index-'+[Guid]::NewGuid().ToString('N'))
+  $null=New-Item -ItemType Directory -Path $stage
+  $added=@()
+  try{
+    foreach($entry in $pending){
+      $file=Join-Path $stage $entry.name
+      [IO.File]::Copy($entry.origin,$file,$false)
+      if((Hash $file) -cne $entry.sha256){throw 'Staged math index differs from the migration manifest'}
+    }
+    if(-not (Test-Path -LiteralPath $index)){
+      [IO.Directory]::Move($stage,$index)
+    }else{
+      foreach($entry in $pending){
+        [IO.File]::Move((Join-Path $stage $entry.name),$entry.target)
+        $added+=@($entry)
+      }
+    }
+  }catch{
+    foreach($entry in $added){
+      if((Test-Path -LiteralPath $entry.target -PathType Leaf) -and (Hash $entry.target) -ceq $entry.sha256){
+        [IO.File]::Delete($entry.target)
+      }
+    }
+    throw
+  }finally{
+    if(Test-Path -LiteralPath $stage -PathType Container){
+      foreach($entry in $pending){[IO.File]::Delete((Join-Path $stage $entry.name))}
+      [IO.Directory]::Delete($stage)
+    }
+  }
+  return 'installed'
+}
+$report=[ordered]@{format='stellae-shared-update-v1';action=$Action;passed=$false;sharedConflicts=@();userOverrides=@();removed=@();installed=@();upgradedUserLua=@();mathIndex='not-requested'}
 if($Action -eq 'Uninstall'){
   foreach($entry in $previous.Values){
     $path=Resolve-Child $shared $entry.path
@@ -72,7 +134,7 @@ if($Action -eq 'Uninstall'){
   $declared=@{}
   foreach($entry in $spec.files){
     if($declared.ContainsKey($entry.path)){throw 'Duplicate shared path'}
-    $declared[$entry.path]=$true
+    $declared[$entry.path]=$entry
     $origin=Resolve-Child (Join-Path $payload 'data') $entry.path
     if(-not (Test-Path -LiteralPath $origin -PathType Leaf) -or (Hash $origin) -cne $entry.sha256){throw 'Shared payload bytes differ from the manifest'}
     $target=Resolve-Child $shared $entry.path
@@ -104,6 +166,30 @@ if($Action -eq 'Uninstall'){
     $base=[Microsoft.Win32.RegistryKey]::OpenBaseKey([Microsoft.Win32.RegistryHive]::CurrentUser,[Microsoft.Win32.RegistryView]::Registry32)
     try{$key=$base.OpenSubKey('Software\RimeStellae');try{if($key){$UserDirectory=[string]$key.GetValue('RimeUserDir','')}}finally{if($key){$key.Dispose()}}}finally{$base.Dispose()}
     if(-not $UserDirectory){$UserDirectory=Join-Path $env:APPDATA 'RimeStellae'}
+  }
+  $migrationDirectory=Resolve-Child $payload 'migrations'
+  $migrationPath=Resolve-Child $migrationDirectory 'upgrade.json'
+  if(Test-Path -LiteralPath $migrationPath -PathType Leaf){
+    $migration=Get-Content -LiteralPath $migrationPath -Raw|ConvertFrom-Json
+    if($migration.format -cne 'stellae-bundle-user-upgrade-v1'){throw 'Unexpected user upgrade format'}
+    foreach($entry in $migration.previousLua){
+      if($entry.path -cnotin @('lua/cn_translator.lua','lua/en_dlc.lua') -or -not $declared.ContainsKey($entry.path)){
+        throw 'Unexpected prior Lua migration path'
+      }
+      $target=Resolve-Child $UserDirectory $entry.path
+      if(-not (Test-Path -LiteralPath $target -PathType Leaf) -or (Hash $target) -cne $entry.sha256){continue}
+      $origin=Resolve-Child (Join-Path $payload 'data') $entry.path
+      $stage=Join-Path (Split-Path $target -Parent) ('.bundle-'+[Guid]::NewGuid().ToString('N'))
+      try{
+        [IO.File]::Copy($origin,$stage,$false)
+        if((Hash $stage) -cne $declared[$entry.path].sha256){throw 'Staged Lua differs from the shared manifest'}
+        $backup=$stage+'.backup'
+        [IO.File]::Replace($stage,$target,$backup)
+        [IO.File]::Delete($backup)
+        $report.upgradedUserLua+=@($entry.path)
+      }finally{[IO.File]::Delete($stage)}
+    }
+    $report.mathIndex=Add-LegacyMathIndex $migration.math $migrationDirectory $UserDirectory
   }
   # Only test source/configuration path presence. Never open a learning database.
   $overridePaths=@('default.custom.yaml','weasel.custom.yaml')+@($spec.files|ForEach-Object {$_.path})
