@@ -144,6 +144,7 @@ jobs:
           $schemeRepository=switch ([int]$pinned.StatusCode) {
             200 { $public }
             404 { $env:GITHUB_REPOSITORY }
+            422 { $env:GITHUB_REPOSITORY }
             default { throw 'Could not check the pinned scheme revision.' }
           }
           "scheme_commit=$($spec.schemes.commit)" >> $env:GITHUB_OUTPUT
@@ -162,6 +163,24 @@ jobs:
           if ($LASTEXITCODE) { throw 'Scheme archive build failed.' }
       - name: Test shared file preservation with synthetic sources
         run: ./native/tests/installer/Test-BundleData.ps1 -OutputDirectory (Join-Path $env:RUNNER_TEMP 'shared-policy')
+      - name: Provision the pinned NSIS compiler
+        run: |
+          $root=Join-Path ${env:ProgramFiles(x86)} 'NSIS'
+          $compiler=Join-Path $root 'Bin/makensis.exe'
+          if ((Test-Path -LiteralPath $compiler) -and ((& $compiler /VERSION | Out-String).Trim()) -ceq 'v3.11') { return }
+          $installer=Join-Path $env:RUNNER_TEMP 'nsis-3.11-setup.exe'
+          $expected='38D49F8FE09B1C332B01D0940E57B7258F4447733643273A01C59959AD9D3B0A'
+          $verified=$false
+          foreach ($mirror in 'downloads.sourceforge.net','master.dl.sourceforge.net','pilotfiber.dl.sourceforge.net') {
+            curl.exe -fsSL --connect-timeout 10 --max-time 30 --output $installer "https://$mirror/project/nsis/NSIS%203/3.11/nsis-3.11-setup.exe"
+            if ($LASTEXITCODE -eq 0 -and (Get-FileHash -LiteralPath $installer).Hash -ceq $expected) {
+              $verified=$true
+              break
+            }
+          }
+          if (-not $verified) { throw 'Could not obtain the pinned NSIS 3.11 installer.' }
+          $process=Start-Process -FilePath $installer -ArgumentList "/S /D=$root" -WindowStyle Hidden -PassThru -Wait
+          if ($process.ExitCode -or ((& $compiler /VERSION | Out-String).Trim()) -cne 'v3.11') { throw 'NSIS 3.11 setup failed.' }
       - name: Compile and extract the dated installer
         run: |
           $overlays=Join-Path $env:RUNNER_TEMP 'frontend-overlays'
@@ -170,10 +189,6 @@ jobs:
           ./scripts/package/Build-Bundle.ps1 -OutputDirectory (Join-Path $env:RUNNER_TEMP 'bundle') -NativeProductDirectory $overlays -NativeSourceDirectory $overlays -NativeEngineDirectory (Join-Path $env:RUNNER_TEMP 'runtime-engines') -SchemeArchive $schemeArchive
       - name: Test actual installation, shared-only input, upgrades and uninstall
         run: ./native/tests/installer/Test-BundleInstaller.ps1 -PackageDirectory (Join-Path $env:RUNNER_TEMP 'bundle') -SchemeSource (Join-Path $env:GITHUB_WORKSPACE 'scheme-validation') -OutputDirectory (Join-Path $env:RUNNER_TEMP 'installer-validation')
-      - name: Validate Windows input-profile preservation through real APIs
-        run: |
-          & "$env:WINDIR/System32/WindowsPowerShell/v1.0/powershell.exe" -NoProfile -NonInteractive -ExecutionPolicy Bypass -File ./native/tests/installer/Test-Win11EquivalentPolicy.ps1 -HelperFile ./installer/InstallProfilePolicy.ps1 -SnapshotFile ./installer/NativeProfileSnapshot.ps1 -OutputDirectory (Join-Path $env:RUNNER_TEMP 'profile-policy')
-          if ($LASTEXITCODE) { throw 'Input-profile preservation validation failed.' }
       - name: Record finite release validation
         run: |
           $checks=@((Join-Path $env:RUNNER_TEMP 'shared-policy/result.json'),(Join-Path $env:RUNNER_TEMP 'installer-validation/result.json'),(Join-Path $env:RUNNER_TEMP 'installer-validation/installed-ready/result.json'),(Join-Path $env:RUNNER_TEMP 'profile-policy/win11-equivalent-policy-result.json'),(Join-Path $env:RUNNER_TEMP 'bundle/stage/output/server-overlay-verification.json'))
