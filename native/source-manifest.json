@@ -1,11 +1,11 @@
 {
   "schema": "stellae-native-sources/1",
-  "date": "2026-11-19",
+  "date": "2026-11-20",
   "status": "source-inputs-pinned; validation is recorded in docs/BUILD.md",
   "productComposition": {
     "frontend": "0.17.4.61052; TSF/legacy IME/Server/Deployer/Setup; x64 and Win32",
-    "runtimeEngineX64": "N01 with step-only GC",
-    "runtimeEngineX86": "R5",
+    "runtimeEngineX64": "N01 with full Lua garbage collection",
+    "runtimeEngineX86": "R5 with full Lua garbage collection",
     "frontendBuildSdk": "R5 for complete frontend builds; fixed librime C API headers and published engine export tables for frontend image updates",
     "installerProvided": true,
     "bundledInputSchemes": false,
@@ -65,7 +65,7 @@
     {
       "id": "luaN01",
       "path": "native/engine/librime-lua-n01.patch",
-      "sha256": "e218a7bedc28231132dbe7029f86c44cd2a0d639c8747c5a138f7503f6bc32d6",
+      "sha256": "a1a39f91974554168e4c13ebd2e8122fe62c0243c119589d7d6379504a00812a",
       "source": "librimeLua"
     },
     {
@@ -77,7 +77,7 @@
     {
       "id": "luaR5",
       "path": "native/engine/librime-lua-r5-sdk.patch",
-      "sha256": "69a76f624a2b1359090ee95360a80f7a79a90a5e2a8888537721a96a5faebaa6",
+      "sha256": "2199fe11317660f41bf77d416d97b79a3127fdf683788316f96e022fe9610a15",
       "source": "librimeLua"
     }
   ],

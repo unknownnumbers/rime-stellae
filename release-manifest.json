@@ -457,13 +457,13 @@
     },
     {
       "path": "native/engine/librime-lua-n01.patch",
-      "bytes": 3707,
-      "sha256": "e218a7bedc28231132dbe7029f86c44cd2a0d639c8747c5a138f7503f6bc32d6"
+      "bytes": 3348,
+      "sha256": "a1a39f91974554168e4c13ebd2e8122fe62c0243c119589d7d6379504a00812a"
     },
     {
       "path": "native/engine/librime-lua-r5-sdk.patch",
-      "bytes": 3681,
-      "sha256": "69a76f624a2b1359090ee95360a80f7a79a90a5e2a8888537721a96a5faebaa6"
+      "bytes": 3021,
+      "sha256": "2199fe11317660f41bf77d416d97b79a3127fdf683788316f96e022fe9610a15"
     },
     {
       "path": "native/engine/librime-n01.patch",
@@ -487,8 +487,8 @@
     },
     {
       "path": "native/source-manifest.json",
-      "bytes": 12518,
-      "sha256": "defe64a8c5002150611c1fe0b69b1e717a8f2371e2c079e512c82f767f31b74c"
+      "bytes": 12566,
+      "sha256": "add89088f607a821dc864d42ea8ee6b4573062e309f28c4c43f3e13ff00956a9"
     },
     {
       "path": "native/tests/installer/Export-SyntheticLearning.py",

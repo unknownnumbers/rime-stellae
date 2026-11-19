@@ -54,19 +54,6 @@ index c2d00c4..fe98265 100644
  };
  
  namespace LuaImpl {
-diff --git a/src/lua_gears.cc b/src/lua_gears.cc
-index 9e1f704..06617f4 100644
---- a/src/lua_gears.cc
-+++ b/src/lua_gears.cc
-@@ -24,7 +24,7 @@ bool LuaTranslation::Next() {
- }
- 
- LuaTranslation::~LuaTranslation() {
--  lua_->gc();
-+  lua_->gc_step(32);
- }
- 
- static std::vector<std::string> split_string(const std::string& str, const std::string& delimiter) {
 diff --git a/src/modules.cc b/src/modules.cc
 index 6ca704e..fbe06b2 100644
 --- a/src/modules.cc
