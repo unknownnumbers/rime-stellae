@@ -1,9 +1,9 @@
 {
   "format": "stellae-source-release-v1",
-  "date": "2026-11-19",
+  "date": "2026-11-20",
   "kind": "frontend-source-and-bundle-packaging",
   "frontendVersion": "0.17.4.61052",
-  "bundleVersion": "2026.11.19",
+  "bundleVersion": "2026.11.20",
   "nativeBinariesIncluded": false,
   "personalLearningIncluded": false,
   "productionInputSchemesIncluded": false,
@@ -17,8 +17,8 @@
     },
     {
       "path": ".github/workflows/bundle.yml",
-      "bytes": 7215,
-      "sha256": "071a90e73908bbd5794a43f7331c6238b7ecaf655e1b2ed6fb6ed7d79a777be0"
+      "bytes": 11063,
+      "sha256": "8f50ea5206f690500165d6fad41df0332eefb7c4f05c7d70bf7c7f2aaa33e8e2"
     },
     {
       "path": ".github/workflows/native.yml",
@@ -107,8 +107,8 @@
     },
     {
       "path": "docs/BUILD.md",
-      "bytes": 1389,
-      "sha256": "ba6bf14671843bc660484819e02a5c8f2372d823174fd02158cc2671f18440d5"
+      "bytes": 1507,
+      "sha256": "0194c50a1cffafbb3284aef1fdeb527fa1fe4d2597eb7d9c81ab007287189637"
     },
     {
       "path": "docs/PC.md",
@@ -117,8 +117,8 @@
     },
     {
       "path": "docs/SOURCES.md",
-      "bytes": 1235,
-      "sha256": "d86f7ad66aa05841fc1f94f3c3d061de00296120d33af3049b275e15e8564f94"
+      "bytes": 1180,
+      "sha256": "b88ae778313a4e56cc080c1340a33aaa344bc503730a914c0dd3303456729ab1"
     },
     {
       "path": "installer/BundleData.ps1",
@@ -137,8 +137,8 @@
     },
     {
       "path": "installer/bundle-inputs.json",
-      "bytes": 3747,
-      "sha256": "d0d5d90c929e16fb430c3370d4de17b85c6757aab40d6e2bc3d4baf5c242eebd"
+      "bytes": 3821,
+      "sha256": "fe3720547440df1dd2424de44da732618e42028df95d4266e6f94ea8da4d8f2e"
     },
     {
       "path": "installer/bundle.nsi",
@@ -187,8 +187,8 @@
     },
     {
       "path": "licenses/file-licenses.json",
-      "bytes": 41713,
-      "sha256": "93e8aa7a2bd5a9c9e1f97feed36f042da374d14386e75aabf724f097b5414559"
+      "bytes": 41890,
+      "sha256": "38a79cb7c3ce72fe32acecfc6b1a50e8cd69aa8e8a8199172b5d655461aa4892"
     },
     {
       "path": "licenses/native-dependencies/boost/LICENSE_1_0.txt",
@@ -626,6 +626,11 @@
       "sha256": "46b98d4b953225d8ff94aaff6118ff1c04ab212ca0ee826992f13926bed56828"
     },
     {
+      "path": "native/tests/package/test_runtime_engines.py",
+      "bytes": 9973,
+      "sha256": "416d2984ef86a8096725f8da723ce9d4df3e95937230f891c8df3573f850d8eb"
+    },
+    {
       "path": "native/tests/package/test_server_overlays.py",
       "bytes": 19385,
       "sha256": "714f3e49393781dac45bf9347ffefbe73ec38da64f0bc4952acefc45eaa96ad4"
@@ -702,8 +707,8 @@
     },
     {
       "path": "scripts/package/Build-Bundle.ps1",
-      "bytes": 6642,
-      "sha256": "374a9d0283905b621ed2b9c8545b6050199173dd3368d6982b469dd54ff79448"
+      "bytes": 7441,
+      "sha256": "28dd55a1b99f5e9384045ed2954e651170fdf75d0a903dcb47166bdbd8414e44"
     },
     {
       "path": "scripts/package/Prepare-Package.ps1",
@@ -712,8 +717,8 @@
     },
     {
       "path": "scripts/package/apply_frontend_overlays.py",
-      "bytes": 6377,
-      "sha256": "92ada1c938b0e899e9cd55c2a353ade460d0b7bda60e0c765b44bdfac7b22312"
+      "bytes": 13326,
+      "sha256": "4971d867db2cd5bcb47a3f281227fc23513b829dc567064a4b154a283a023aa5"
     },
     {
       "path": "scripts/package/apply_server_overlays.py",
@@ -722,8 +727,8 @@
     },
     {
       "path": "scripts/package/index_bundle.py",
-      "bytes": 7486,
-      "sha256": "fa9fc49a5e5a37255019d6f10cb206dc231899376c995b3abec52e7adf9a728c"
+      "bytes": 7813,
+      "sha256": "d9a058d5cae79db4ac951a6be90929ea755b7b04753b73ab865e02fd6daa44d3"
     },
     {
       "path": "scripts/package/index_payload.py",
@@ -742,8 +747,8 @@
     },
     {
       "path": "scripts/package/verify_bundle.py",
-      "bytes": 9075,
-      "sha256": "bed5c7cce8c3a4635b16e30e37d5239cef016e4a790340cd427c0a1bd2d14100"
+      "bytes": 11352,
+      "sha256": "5fc38510b6605c61f4db8929a76815435c87bb7e7b196b1f34309f64e30db15a"
     },
     {
       "path": "scripts/package/verify_pe.py",
@@ -753,7 +758,7 @@
     {
       "path": "scripts/verify_release.py",
       "bytes": 8032,
-      "sha256": "2661a429cb86c964258dbf2f64b6f57a90b6026a29ebb4da8e63d88eb1c5e072"
+      "sha256": "7be59b766e9b6ed688b28f7c76ed5b6ceff602d51241b09cc209ad63e3cdb0e0"
     }
   ]
 }

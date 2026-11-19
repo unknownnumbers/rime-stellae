@@ -5,9 +5,9 @@ import hashlib
 import json
 from pathlib import Path
 import re
-import struct
+from zipfile import ZipFile
 
-from apply_frontend_overlays import PRODUCTS
+from apply_frontend_overlays import ENGINES, MACHINES, PRODUCTS, image_machine
 
 
 def digest(path):
@@ -25,20 +25,11 @@ def contained(root, relative):
     return path
 
 
-def image_machine(path):
-    raw = path.read_bytes()
-    if len(raw) < 64 or raw[:2] != b'MZ':
-        raise SystemExit('Invalid native image header')
-    offset = struct.unpack_from('<I', raw, 0x3c)[0]
-    if offset + 6 > len(raw) or raw[offset:offset + 4] != b'PE\0\0':
-        raise SystemExit('Invalid native PE header')
-    return struct.unpack_from('<H', raw, offset + 4)[0]
-
-
 p = argparse.ArgumentParser(description=__doc__)
 p.add_argument('--stage', type=Path, required=True)
 p.add_argument('--extracted', type=Path, required=True)
 p.add_argument('--report', type=Path, required=True)
+p.add_argument('--engine-sources', type=Path)
 a = p.parse_args()
 files = [path for path in a.extracted.rglob('*') if path.is_file()]
 hashes = {digest(path) for path in files}
@@ -98,31 +89,47 @@ staged_images = {path.relative_to(a.stage).as_posix() for path in a.stage.rglob(
                  and not path.relative_to(a.stage).as_posix().startswith('archives/')}
 if len(base_images) != 14 or set(current) != set(base_images) or staged_images != set(base_images):
     raise SystemExit('The complete native image set differs')
-machines = {'x64': 0x8664, 'x86': 0x014c}
-expected = ({name: (arch, machines[arch]) for arch, products in PRODUCTS.items() for name in products}
-            if full_frontend else {'StellaeServer.exe': ('x64', machines['x64']),
-                                   'Win32/StellaeServer.exe': ('x86', machines['x86'])})
+expected = ({name: arch for arch, products in PRODUCTS.items() for name in products}
+            if full_frontend else {'StellaeServer.exe': 'x64', 'Win32/StellaeServer.exe': 'x86'})
 specs = {} if full_frontend else inputs['serverOverlays']['architectures']
 proof_rows = overlay['rebuiltImages' if full_frontend else 'rebuiltServers']
-unchanged = len(base_images) - len(expected)
-if (not full_frontend and set(specs) != set(machines)
+engine_rows = overlay.get('rebuiltRuntimeEngines', [])
+engine_spec = inputs.get('nativeEngines')
+expected_engines = {name: arch for arch, (_, name) in ENGINES.items()} if engine_spec else {}
+unchanged = len(base_images) - len(expected) - len(expected_engines)
+if (('nativeEngines' in inputs and
+        (not full_frontend or engine_spec != {arch: variant for arch, (variant, _) in ENGINES.items()}))
+        or (a.engine_sources is not None) != bool(expected_engines)
+        or (not full_frontend and set(specs) != set(MACHINES))
         or len(proof_rows) != len(expected)
         or {row['installed_path'] for row in proof_rows} != set(expected)
+        or len(engine_rows) != len(expected_engines)
+        or {row['installed_path'] for row in engine_rows} != set(expected_engines)
         or overlay['nativeImages'] != len(base_images) or overlay['unchangedNativeImages'] != unchanged
-        or overlay['runtimeEnginesPreserved'] is not True):
+        or overlay['runtimeEnginesPreserved'] is not (not expected_engines)):
     raise SystemExit('The rebuilt and retained native image sets differ')
-proof = {row['installed_path']: row for row in proof_rows}
+proof = {row['installed_path']: row for row in proof_rows + engine_rows}
 rebuilt = []
-for name, (arch, machine) in expected.items():
+rebuilt_engines = []
+engine_extractions = [path for path in files if re.fullmatch(r'rime(?:_\d+)?\.dll', path.name, re.IGNORECASE)]
+if expected_engines and len(engine_extractions) != len(expected_engines):
+    raise SystemExit('The extracted installer must contain exactly one runtime for each architecture')
+for name, arch in (expected | expected_engines).items():
     row = current[name]
-    if (row['source'] != ('rebuiltFrontend' if full_frontend else 'rebuiltServer') or proof.get(name) != row
+    machine = MACHINES[arch]
+    engine = name in expected_engines
+    kind = 'rebuiltRuntimeEngine' if engine else ('rebuiltFrontend' if full_frontend else 'rebuiltServer')
+    label = 'runtime engine' if engine else ('frontend' if full_frontend else 'server')
+    if engine:
+        variant = ENGINES[arch][0]
+        corresponding_source = f'{variant}-{arch}-source.zip'
+    else:
+        corresponding_source = 'bundle-project-source.zip' if full_frontend else f'server-{arch}-source.zip'
+    if (row['source'] != kind or proof.get(name) != row
             or row['original_sha256'] != base_images[name]['sha256']
-            or row['source_ref'] != source_ref
-            or row['architecture'] != arch
-            or row['corresponding_source'] != ('bundle-project-source.zip' if full_frontend
-                                               else 'server-' + arch + '-source.zip')):
-        kind = 'frontend' if full_frontend else 'server'
-        raise SystemExit(f'Rebuilt {kind} provenance differs: {name}')
+            or row['source_ref'] != source_ref or row['architecture'] != arch
+            or row['corresponding_source'] != corresponding_source):
+        raise SystemExit(f'Rebuilt {label} provenance differs: {name}')
     if not full_frontend:
         spec = specs[arch]
         if (spec['installedPath'] != name or spec['machine'] != machine or row['original_sha256'] != spec['baseSha256']
@@ -139,12 +146,32 @@ for name, (arch, machine) in expected.items():
             or license_row['license_record'] != base_images[name]
             or not set(base_images[name].get('source_ids', [])).issubset(license_row['source_ids'])
             or 'project-code' not in license_row['source_ids']):
-        raise SystemExit('Rebuilt server inherited notices differ: ' + name)
+        raise SystemExit('Rebuilt image inherited notices differ: ' + name)
     rebuilt_row = {'path': name, 'sha256': row['sha256'], 'original_sha256': row['original_sha256'],
                    'sourceRef': source_ref}
     if not full_frontend:
         rebuilt_row['runId'] = row['source_run']
-    rebuilt.append(rebuilt_row)
+    if engine:
+        archive = contained(a.engine_sources, corresponding_source)
+        archive_sha = digest(archive)
+        with ZipFile(archive) as source:
+            source_index = json.loads(source.read('source-archive-manifest.json'))
+        if (not re.fullmatch('[a-f0-9]{64}', row['native_manifest_sha256'])
+                or row['variant'] != variant or row['corresponding_source_sha256'] != archive_sha
+                or license_row['corresponding_source'] != corresponding_source
+                or license_row['corresponding_source_sha256'] != archive_sha
+                or license_row['native_manifest_sha256'] != row['native_manifest_sha256']
+                or license_row['engine_variant'] != variant or source_index['variant'] != variant
+                or {'publicBuildCommit', 'publicBuildRunId'}.intersection(source_index)
+                or sum(digest(path) == row['sha256'] and image_machine(path) == machine
+                       for path in engine_extractions) != 1):
+            raise SystemExit('Extracted runtime or its corresponding source differs: ' + name)
+        rebuilt_engines.append({
+            **rebuilt_row, 'architecture': arch, 'variant': variant,
+            'correspondingSource': corresponding_source, 'correspondingSourceSha256': archive_sha,
+        })
+    else:
+        rebuilt.append(rebuilt_row)
 
 retained = []
 for name, row in current.items():
@@ -155,7 +182,8 @@ for name, row in current.items():
             or installed[name]['sha256'] != row['sha256'] or row['sha256'] not in hashes):
         raise SystemExit('Reused product differs: ' + name)
     retained.append({'path': name, 'sha256': row['sha256']})
-if len(retained) != unchanged or len(rebuilt) != len(expected):
+if (len(retained) != unchanged or len(rebuilt) != len(expected)
+        or len(rebuilt_engines) != len(expected_engines)):
     raise SystemExit('Native image verification is incomplete')
 
 report = {'format': 'stellae-bundle-extraction-v1', 'passed': True,
@@ -166,6 +194,9 @@ report = {'format': 'stellae-bundle-extraction-v1', 'passed': True,
           'nativeImages': len(current), 'physicalKeyboardTested': False}
 if not full_frontend:
     report['sourceRunId'] = overlay['runId']
+if rebuilt_engines:
+    report['rebuiltRuntimeEngines'] = rebuilt_engines
 a.report.write_text(json.dumps(report, indent=2) + '\n', encoding='utf-8')
 print(json.dumps({'passed': True, 'verifiedInputFiles': len(manifest['files']),
-                  'reusedImages': len(retained), 'rebuiltImages': len(rebuilt)}))
+                  'reusedImages': len(retained), 'rebuiltImages': len(rebuilt),
+                  'rebuiltRuntimeEngines': len(rebuilt_engines)}))

@@ -2,7 +2,7 @@ name: Build and validate RymCp bundle
 
 on:
   push:
-    branches: ['release/2026.11.19']
+    branches: ['release/stellae-2026.11.20']
   workflow_dispatch:
 
 permissions:
@@ -17,6 +17,41 @@ defaults:
     working-directory: frontend
 
 jobs:
+  runtime-engines:
+    runs-on: windows-2022
+    timeout-minutes: 70
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - architecture: x64
+            compiler: x64
+            variant: engine-n01
+          - architecture: x86
+            compiler: x64_x86
+            variant: engine-r5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: frontend
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: ${{ matrix.compiler }}
+      - name: Assemble fixed engine sources
+        run: ./scripts/native/Prepare-Sources.ps1 -Variant '${{ matrix.variant }}' -Destination (Join-Path $env:RUNNER_TEMP 'runtime-source')
+      - name: Compile and test the runtime engine
+        run: ./scripts/native/Build-Engine.ps1 -Variant '${{ matrix.variant }}' -Architecture '${{ matrix.architecture }}' -SourcePath (Join-Path $env:RUNNER_TEMP 'runtime-source') -CacheDirectory (Join-Path $env:RUNNER_TEMP 'runtime-cache') -OutputDirectory (Join-Path $env:RUNNER_TEMP 'runtime-output')
+      - uses: actions/upload-artifact@v4
+        with:
+          name: bundle-runtime-${{ matrix.architecture }}
+          path: ${{ runner.temp }}/runtime-output
+          if-no-files-found: error
+          retention-days: 14
+
   frontend-images:
     runs-on: windows-2022
     timeout-minutes: 45
@@ -69,7 +104,7 @@ jobs:
           if-no-files-found: warn
 
   bundle:
-    needs: frontend-images
+    needs: [frontend-images, runtime-engines]
     runs-on: windows-2022
     timeout-minutes: 90
     steps:
@@ -88,6 +123,14 @@ jobs:
         with:
           name: frontend-images-x86
           path: ${{ runner.temp }}/frontend-overlays/x86
+      - uses: actions/download-artifact@v4
+        with:
+          name: bundle-runtime-x64
+          path: ${{ runner.temp }}/runtime-engines/x64
+      - uses: actions/download-artifact@v4
+        with:
+          name: bundle-runtime-x86
+          path: ${{ runner.temp }}/runtime-engines/x86
       - name: Check source and fixed scheme input
         id: inputs
         run: |
@@ -96,32 +139,54 @@ jobs:
           if($LASTEXITCODE){throw 'Source inventory failed'}
           $spec=Get-Content -LiteralPath installer/bundle-inputs.json -Raw|ConvertFrom-Json
           if(-not $spec.schemes -or $spec.schemes.commit -notmatch '^[0-9a-f]{40}$'){throw 'The source must pin the scheme commit'}
+          $public='unknownnumbers/RymCp-IME'
+          $pinned=Invoke-WebRequest -Uri "$env:GITHUB_API_URL/repos/$public/commits/$($spec.schemes.commit)" -SkipHttpErrorCheck -TimeoutSec 25
+          $schemeRepository=switch ([int]$pinned.StatusCode) {
+            200 { $public }
+            404 { $env:GITHUB_REPOSITORY }
+            default { throw 'Could not check the pinned scheme revision.' }
+          }
           "scheme_commit=$($spec.schemes.commit)" >> $env:GITHUB_OUTPUT
+          "scheme_repository=$schemeRepository" >> $env:GITHUB_OUTPUT
       - uses: actions/checkout@v4
         with:
-          repository: unknownnumbers/RymCp-IME
+          repository: ${{ steps.inputs.outputs.scheme_repository }}
           ref: ${{ steps.inputs.outputs.scheme_commit }}
           path: scheme-validation
           persist-credentials: false
+      - name: Rebuild the pinned scheme archive
+        run: |
+          $spec=Get-Content -LiteralPath installer/bundle-inputs.json -Raw|ConvertFrom-Json
+          $scheme=Join-Path $env:GITHUB_WORKSPACE 'scheme-validation'
+          python (Join-Path $scheme 'scripts/build_scheme_packages.py') --profile stellae --version $spec.bundleVersion --output-dir (Join-Path $env:RUNNER_TEMP 'scheme-input') --source-ref $spec.schemes.commit
+          if ($LASTEXITCODE) { throw 'Scheme archive build failed.' }
       - name: Test shared file preservation with synthetic sources
         run: ./native/tests/installer/Test-BundleData.ps1 -OutputDirectory (Join-Path $env:RUNNER_TEMP 'shared-policy')
       - name: Compile and extract the dated installer
         run: |
           $overlays=Join-Path $env:RUNNER_TEMP 'frontend-overlays'
-          ./scripts/package/Build-Bundle.ps1 -OutputDirectory (Join-Path $env:RUNNER_TEMP 'bundle') -NativeProductDirectory $overlays -NativeSourceDirectory $overlays
+          $spec=Get-Content -LiteralPath installer/bundle-inputs.json -Raw|ConvertFrom-Json
+          $schemeArchive=Join-Path $env:RUNNER_TEMP "scheme-input/rymcp-$($spec.bundleVersion)-stellae-schemes.zip"
+          ./scripts/package/Build-Bundle.ps1 -OutputDirectory (Join-Path $env:RUNNER_TEMP 'bundle') -NativeProductDirectory $overlays -NativeSourceDirectory $overlays -NativeEngineDirectory (Join-Path $env:RUNNER_TEMP 'runtime-engines') -SchemeArchive $schemeArchive
       - name: Test actual installation, shared-only input, upgrades and uninstall
         run: ./native/tests/installer/Test-BundleInstaller.ps1 -PackageDirectory (Join-Path $env:RUNNER_TEMP 'bundle') -SchemeSource (Join-Path $env:GITHUB_WORKSPACE 'scheme-validation') -OutputDirectory (Join-Path $env:RUNNER_TEMP 'installer-validation')
+      - name: Validate Windows input-profile preservation through real APIs
+        run: |
+          & "$env:WINDIR/System32/WindowsPowerShell/v1.0/powershell.exe" -NoProfile -NonInteractive -ExecutionPolicy Bypass -File ./native/tests/installer/Test-Win11EquivalentPolicy.ps1 -HelperFile ./installer/InstallProfilePolicy.ps1 -SnapshotFile ./installer/NativeProfileSnapshot.ps1 -OutputDirectory (Join-Path $env:RUNNER_TEMP 'profile-policy')
+          if ($LASTEXITCODE) { throw 'Input-profile preservation validation failed.' }
       - name: Record finite release validation
         run: |
           $checks=@((Join-Path $env:RUNNER_TEMP 'shared-policy/result.json'),(Join-Path $env:RUNNER_TEMP 'installer-validation/result.json'),(Join-Path $env:RUNNER_TEMP 'installer-validation/installed-ready/result.json'),(Join-Path $env:RUNNER_TEMP 'profile-policy/win11-equivalent-policy-result.json'),(Join-Path $env:RUNNER_TEMP 'bundle/stage/output/server-overlay-verification.json'))
           foreach($path in $checks){$report=Get-Content -LiteralPath $path -Raw|ConvertFrom-Json;if(-not $report.passed){throw 'A required validation failed'}}
           $release=Join-Path $env:RUNNER_TEMP 'bundle/release'
           $overlay=Get-Content -LiteralPath (Join-Path $release 'frontend-overlay-verification.json') -Raw|ConvertFrom-Json
-          [ordered]@{passed=$true;bundleVersion='2026.11.19';frontendVersion='0.17.4.61052';sourceRef=$env:GITHUB_SHA;rebuiltImages=$overlay.rebuiltImages.Count;unchangedNativeImages=$overlay.unchangedNativeImages;runtimeEnginesPreserved=$true;sharedOnlyN01AndR5InputTested=$true;bundlePresetAndUserPriorityTested=$true;actualInstalledProfileReadyWithoutTestRedeploy=$true;bare61052UpgradeTested=$true;installedUpgradeAndUninstallTested=$true;physicalKeyboardTested=$false;actualWindows11Tested=$false}|ConvertTo-Json|Set-Content -LiteralPath (Join-Path $release 'validation.json') -Encoding UTF8
+          if ($overlay.runtimeEnginesPreserved -ne $false -or $overlay.rebuiltRuntimeEngines.Count -ne 2) { throw 'The installer must contain both rebuilt engines.' }
+          $spec=Get-Content -LiteralPath installer/bundle-inputs.json -Raw|ConvertFrom-Json
+          [ordered]@{passed=$true;bundleVersion=$spec.bundleVersion;frontendVersion=$spec.frontendVersion;sourceRef=$env:GITHUB_SHA;rebuiltImages=$overlay.rebuiltImages.Count;rebuiltRuntimeEngines=$overlay.rebuiltRuntimeEngines.Count;unchangedNativeImages=$overlay.unchangedNativeImages;sharedOnlyN01AndR5InputTested=$true;bundlePresetAndUserPriorityTested=$true;actualInstalledProfileReadyWithoutTestRedeploy=$true;bare61052UpgradeTested=$true;installedUpgradeAndUninstallTested=$true;physicalKeyboardTested=$false;actualWindows11Tested=$false}|ConvertTo-Json|Set-Content -LiteralPath (Join-Path $release 'validation.json') -Encoding UTF8
           Get-ChildItem -LiteralPath $release -File|Where-Object {$_.Name -ne 'SHA256SUMS.txt'}|Sort-Object Name|ForEach-Object{(Get-FileHash -LiteralPath $_.FullName).Hash.ToLowerInvariant()+'  '+$_.Name}|Set-Content -LiteralPath (Join-Path $release 'SHA256SUMS.txt') -Encoding ASCII
       - uses: actions/upload-artifact@v4
         with:
-          name: stellae-rymcp-2026.11.19-release
+          name: stellae-rymcp-2026.11.20-release
           path: ${{ runner.temp }}/bundle/release
           if-no-files-found: error
           retention-days: 30
@@ -129,7 +194,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: stellae-rymcp-2026.11.19-validation
+          name: stellae-rymcp-2026.11.20-validation
           path: |
             ${{ runner.temp }}/bundle/*.json
             ${{ runner.temp }}/bundle/*.log

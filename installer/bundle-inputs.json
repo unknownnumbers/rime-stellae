@@ -1,6 +1,6 @@
 {
   "format": "stellae-rymcp-bundle-inputs-v1",
-  "bundleVersion": "2026.11.19",
+  "bundleVersion": "2026.11.20",
   "frontendVersion": "0.17.4.61052",
   "frontendInstaller": {
     "url": "https://github.com/unknownnumbers/rime-stellae/releases/download/v0.17.4.61052/stellae-0.17.4.61052-installer.exe",
@@ -15,9 +15,13 @@
     "sha256": "63f341cf80b8d287c6e945519b3da0fa75553c85572a471b7fa6e68f9a90b790"
   },
   "schemes": {
-    "url": "https://github.com/unknownnumbers/RymCp-IME/releases/download/v2026.11.19/rymcp-2026.11.19-stellae-schemes.zip",
-    "sha256": "ef0d608e1802a06f2feb03a18d630e8fad512d25a9a7991db3b263436e797771",
-    "commit": "9e973a23b0e23726135b20827de8dba2b789d708"
+    "url": "https://github.com/unknownnumbers/RymCp-IME/releases/download/v2026.11.20/rymcp-2026.11.20-stellae-schemes.zip",
+    "sha256": "248aef5a9d4e86c9eb85dd32fdb401b190385de8a49306768020e3fc5490cc2f",
+    "commit": "1e6de17cac462b3e12042241658a285699a59392"
+  },
+  "nativeEngines": {
+    "x64": "engine-n01",
+    "x86": "engine-r5"
   },
   "nativeFrontend": {
     "sourceFiles": {

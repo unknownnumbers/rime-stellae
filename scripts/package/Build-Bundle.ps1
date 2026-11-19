@@ -4,6 +4,7 @@ param(
  [Parameter(Mandatory)][string]$OutputDirectory,
  [Parameter(Mandatory)][string]$NativeProductDirectory,
  [Parameter(Mandatory)][string]$NativeSourceDirectory,
+ [string]$NativeEngineDirectory,
  [string]$SourceRef=$env:GITHUB_SHA,
  [string]$SchemeArchive,
  [string]$IndexedMathArchive,
@@ -21,6 +22,15 @@ $null=New-Item -ItemType Directory -Path $OutputDirectory
 $output=(Resolve-Path -LiteralPath $OutputDirectory).Path
 $nativeProducts=(Resolve-Path -LiteralPath $NativeProductDirectory).Path
 $nativeSources=(Resolve-Path -LiteralPath $NativeSourceDirectory).Path
+$runtimeSources=@()
+$engineArguments=@()
+if($inputs.PSObject.Properties['nativeEngines']){
+  if(-not $NativeEngineDirectory){throw 'The bundle requires freshly built runtime engines'}
+  $engineDirectory=(Resolve-Path -LiteralPath $NativeEngineDirectory).Path
+  $engineSourceDirectory=Join-Path $output 'engine-sources'
+  $engineArguments=@('--engines',$engineDirectory,'--native-manifest',(Join-Path $repo 'native/source-manifest.json'),'--engine-sources',$engineSourceDirectory)
+  $runtimeSources=@('--engine-sources',$engineSourceDirectory)
+}elseif($NativeEngineDirectory){throw 'Unexpected runtime engine artifacts'}
 $cache=Join-Path $output 'inputs'
 $null=New-Item -ItemType Directory -Path $cache
 function Fetch($Spec,[string]$Name,[string]$ReviewedArchive=''){
@@ -46,7 +56,7 @@ if($LASTEXITCODE){throw 'Official shared extraction failed'}
 $stage=Join-Path $output 'stage/output'
 & python (Join-Path $PSScriptRoot 'prepare_bundle.py') --repository $repo --base (Join-Path $output 'base') --official (Join-Path $output 'official') --schemes $scheme --indexed-math $math --stage $stage
 if($LASTEXITCODE){throw 'Bundle source assembly failed'}
-& python (Join-Path $PSScriptRoot 'apply_frontend_overlays.py') --stage $stage --products $nativeProducts --sources $nativeSources --source-ref $SourceRef
+& python (Join-Path $PSScriptRoot 'apply_frontend_overlays.py') --stage $stage --products $nativeProducts --sources $nativeSources --source-ref $SourceRef @engineArguments
 if($LASTEXITCODE){throw 'Native frontend verification failed'}
 & python (Join-Path $PSScriptRoot 'render_installed_docs.py') --repository $repo --output-directory $stage --ref $SourceRef
 if($LASTEXITCODE){throw 'Documentation rendering failed'}
@@ -72,11 +82,14 @@ Copy-Item -LiteralPath $installer,(Join-Path $stage 'package-manifest.json'),(Jo
 Copy-Item -LiteralPath (Join-Path $stage 'server-overlay-verification.json') -Destination (Join-Path $release 'frontend-overlay-verification.json')
 & 7z.exe x $installer ('-o'+(Join-Path $output 'actual')) -aou -y|Out-File (Join-Path $output 'extract-actual.log')
 if($LASTEXITCODE){throw 'Final installer extraction failed'}
-& python (Join-Path $PSScriptRoot 'verify_bundle.py') --stage $stage --extracted (Join-Path $output 'actual') --report (Join-Path $release 'payload-verification.json')
+& python (Join-Path $PSScriptRoot 'verify_bundle.py') --stage $stage --extracted (Join-Path $output 'actual') --report (Join-Path $release 'payload-verification.json') @runtimeSources
 if($LASTEXITCODE){throw 'Final installer payload verification failed'}
 $parts=Join-Path $output 'source-parts'
 $null=New-Item -ItemType Directory -Path $parts
 Copy-Item -LiteralPath $baseSources,$scheme -Destination $parts
+if($runtimeSources){
+  Get-ChildItem -LiteralPath $engineSourceDirectory -File | Copy-Item -Destination $parts
+}
 $project=Join-Path $parts 'bundle-project-source.zip'
 if($ProjectSourceArchive){
   Copy-Item -LiteralPath $ProjectSourceArchive -Destination $project

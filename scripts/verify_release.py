@@ -135,7 +135,7 @@ def main():
     if args.write_manifest:
         manifest = {
             'format': 'stellae-source-release-v1',
-            'date': '2026-11-19',
+            'date': '2026-11-20',
             'kind': 'frontend-source-and-bundle-packaging',
             'frontendVersion': '0.17.4.61052',
             'bundleVersion': json.loads((ROOT / 'installer/bundle-inputs.json').read_text('utf-8'))['bundleVersion'],
