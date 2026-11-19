@@ -6,7 +6,7 @@
     "frontend": "0.17.4.61052; TSF/legacy IME/Server/Deployer/Setup; x64 and Win32",
     "runtimeEngineX64": "N01 with step-only GC",
     "runtimeEngineX86": "R5",
-    "frontendBuildSdk": "R5 for complete frontend builds; fixed librime C API headers and published engine export tables for server-only updates",
+    "frontendBuildSdk": "R5 for complete frontend builds; fixed librime C API headers and published engine export tables for frontend image updates",
     "installerProvided": true,
     "bundledInputSchemes": false,
     "promptTraceCompiled": false

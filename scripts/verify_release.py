@@ -138,7 +138,7 @@ def main():
             'date': '2026-11-19',
             'kind': 'frontend-source-and-bundle-packaging',
             'frontendVersion': '0.17.4.61052',
-            'bundleVersion': '2026.11.16',
+            'bundleVersion': json.loads((ROOT / 'installer/bundle-inputs.json').read_text('utf-8'))['bundleVersion'],
             'nativeBinariesIncluded': False,
             'personalLearningIncluded': False,
             'productionInputSchemesIncluded': False,

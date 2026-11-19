@@ -3,7 +3,7 @@
   "date": "2026-11-19",
   "kind": "frontend-source-and-bundle-packaging",
   "frontendVersion": "0.17.4.61052",
-  "bundleVersion": "2026.11.16",
+  "bundleVersion": "2026.11.19",
   "nativeBinariesIncluded": false,
   "personalLearningIncluded": false,
   "productionInputSchemesIncluded": false,
@@ -487,8 +487,8 @@
     },
     {
       "path": "native/source-manifest.json",
-      "bytes": 12515,
-      "sha256": "fc49eec58b241ae90a165b219c4a6572a5c65855ddde4ddd455f4e9242bec498"
+      "bytes": 12518,
+      "sha256": "defe64a8c5002150611c1fe0b69b1e717a8f2371e2c079e512c82f767f31b74c"
     },
     {
       "path": "native/tests/installer/Export-SyntheticLearning.py",
@@ -752,8 +752,8 @@
     },
     {
       "path": "scripts/verify_release.py",
-      "bytes": 7957,
-      "sha256": "7e944384935ae32c5a84368418de220ae0f2094f890fdc7480fa0cbb3d25eb67"
+      "bytes": 8032,
+      "sha256": "2661a429cb86c964258dbf2f64b6f57a90b6026a29ebb4da8e63d88eb1c5e072"
     }
   ]
 }
