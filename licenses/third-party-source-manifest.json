@@ -1,5 +1,5 @@
 {
-  "prepared_at": "2026-10-31",
+  "prepared_at": "2026-11-24",
   "scope": "Unmodified upstream licensing and attribution files used by the frontend, engines, plugins, build inputs and package resources.",
   "files": [
     {
@@ -614,6 +614,18 @@
       "url": "https://github.com/rockdaboot/libpsl/releases/download/0.21.5/libpsl-0.21.5.tar.gz",
       "scope_note": "Original MPL2 and source-direction header of list/public_suffix_list.dat, extracted from the fixed source archive.",
       "saved_representation": "Original source bytes retained without edits."
+    },
+    {
+      "repo": "notofonts/noto-cjk",
+      "ref": "523d033d6cb47f4a80c58a35753646f5c3608a78",
+      "path": "installer/default-fonts/OFL.txt",
+      "url": "https://github.com/notofonts/noto-cjk/blob/523d033d6cb47f4a80c58a35753646f5c3608a78/LICENSE",
+      "bytes": 4301,
+      "sha256": "6a73f9541c2de74158c0e7cf6b0a58ef774f5a780bf191f2d7ec9cc53efe2bf2",
+      "git_blob_sha1": "d952d62c065f3f35fb83a173496e90b21525aef3",
+      "saved_representation": "Complete OFL-1.1 notice retained without edits; bytes are also pinned by the candidate font manifest.",
+      "upstream_git_blob_sha1": "d952d62c065f3f35fb83a173496e90b21525aef3",
+      "saved_bytes_match_upstream_blob": true
     }
   ]
 }

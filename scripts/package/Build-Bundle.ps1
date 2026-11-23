@@ -8,7 +8,8 @@ param(
  [string]$SourceRef=$env:GITHUB_SHA,
  [string]$SchemeArchive,
  [string]$IndexedMathArchive,
- [string]$ProjectSourceArchive
+ [string]$ProjectSourceArchive,
+ [string]$DefaultFontDirectory
 )
 Set-StrictMode -Version Latest
 $ErrorActionPreference='Stop'
@@ -33,6 +34,24 @@ if($inputs.PSObject.Properties['nativeEngines']){
 }elseif($NativeEngineDirectory){throw 'Unexpected runtime engine artifacts'}
 $cache=Join-Path $output 'inputs'
 $null=New-Item -ItemType Directory -Path $cache
+$fontDefinitions=Join-Path $repo 'installer/default-fonts'
+$fontManifest=Join-Path $fontDefinitions 'font-manifest.json'
+if(-not $DefaultFontDirectory){
+  $DefaultFontDirectory=Join-Path $cache 'default-fonts'
+  $null=New-Item -ItemType Directory -Path $DefaultFontDirectory
+  Copy-Item -LiteralPath $fontManifest,(Join-Path $fontDefinitions 'OFL.txt'),(Join-Path $fontDefinitions 'NOTICE.txt') -Destination $DefaultFontDirectory
+  $fontInputs=Get-Content -LiteralPath $fontManifest -Raw|ConvertFrom-Json
+  foreach($font in $fontInputs.files){
+    if($font.file -cne 'NotoSansCJK-Regular.ttc' -or
+       $font.source -cnotmatch '^https://raw\.githubusercontent\.com/notofonts/noto-cjk/[0-9a-f]{40}/Sans/OTC/NotoSansCJK-Regular\.ttc$'){
+      throw 'The font collection source must be pinned to the upstream TTC'
+    }
+    Invoke-WebRequest $font.source -OutFile (Join-Path $DefaultFontDirectory $font.file)
+  }
+}
+$DefaultFontDirectory=(Resolve-Path -LiteralPath $DefaultFontDirectory).ProviderPath
+if((Get-FileHash -LiteralPath (Join-Path $DefaultFontDirectory 'font-manifest.json')).Hash -cne
+   (Get-FileHash -LiteralPath $fontManifest).Hash){throw 'The offline font manifest differs from the reviewed source'}
 function Fetch($Spec,[string]$Name,[string]$ReviewedArchive=''){
   if($Spec.url -notmatch '^https://github.com/[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+/releases/download/[^/]+/[^/]+$'){throw 'Expected a public pinned release URL'}
   $path=Join-Path $cache $Name
@@ -55,7 +74,7 @@ if($LASTEXITCODE){throw 'Original installer extraction failed'}
 & 7z.exe x $official ('-o'+(Join-Path $output 'official')) 'data/*' -y|Out-File (Join-Path $output 'extract-official.log')
 if($LASTEXITCODE){throw 'Official shared extraction failed'}
 $stage=Join-Path $output 'stage/output'
-& python (Join-Path $PSScriptRoot 'prepare_bundle.py') --repository $repo --base (Join-Path $output 'base') --official (Join-Path $output 'official') --schemes $scheme --indexed-math $math --stage $stage
+& python (Join-Path $PSScriptRoot 'prepare_bundle.py') --repository $repo --base (Join-Path $output 'base') --official (Join-Path $output 'official') --schemes $scheme --indexed-math $math --stage $stage --default-font-directory $DefaultFontDirectory
 if($LASTEXITCODE){throw 'Bundle source assembly failed'}
 & python (Join-Path $PSScriptRoot 'apply_frontend_overlays.py') --stage $stage --products $nativeProducts --sources $nativeSources --source-ref $SourceRef @engineArguments
 if($LASTEXITCODE){throw 'Native frontend verification failed'}

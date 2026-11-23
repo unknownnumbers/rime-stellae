@@ -1,5 +1,5 @@
 diff --git a/RimeWithWeasel/RimeWithWeasel.cpp b/RimeWithWeasel/RimeWithWeasel.cpp
-index 3f4e59d9f410c79ad605460c5492314d71bdfb65..d2087b37808b225b51780290cb8403e4c0fb25b3 100644
+index 3f4e59d9f410c79ad605460c5492314d71bdfb65..ebfeb853e68a33996a60b305842504b09ec44af0 100644
 --- a/RimeWithWeasel/RimeWithWeasel.cpp
 +++ b/RimeWithWeasel/RimeWithWeasel.cpp
 @@ -1,4 +1,4 @@
@@ -125,7 +125,7 @@ index 3f4e59d9f410c79ad605460c5492314d71bdfb65..d2087b37808b225b51780290cb8403e4
    m_active_session = 0;
    m_disabled = true;
    m_session_status_map.clear();
-@@ -235,37 +320,35 @@ DWORD RimeWithWeaselHandler::AddSession(LPWSTR buffer, EatLine eat) {
+@@ -235,59 +320,62 @@ DWORD RimeWithWeaselHandler::AddSession(LPWSTR buffer, EatLine eat) {
    RIME_STRUCT(RimeStatus, status);
    if (rime_api->get_status(session_id, &status)) {
      std::string schema_id = status.schema_id;
@@ -171,15 +171,63 @@ index 3f4e59d9f410c79ad605460c5492314d71bdfb65..d2087b37808b225b51780290cb8403e4
    return 0;
  }
  
-@@ -301,6 +384,7 @@ void RimeWithWeaselHandler::UpdateColorTheme(BOOL darkMode) {
+ void RimeWithWeaselHandler::UpdateColorTheme(BOOL darkMode) {
++  ReloadAppearance(darkMode);
++}
++
++bool RimeWithWeaselHandler::ReloadAppearance(BOOL darkMode) {
++  if (!m_ui || m_disabled)
++    return false;
+   RimeConfig config = {NULL};
+-  if (rime_api->config_open("weasel", &config)) {
+-    if (m_ui) {
+-      _UpdateUIStyle(&config, m_ui, true);
+-      m_current_dark_mode = darkMode;
+-      if (darkMode) {
+-        const int BUF_SIZE = 255;
+-        char buffer[BUF_SIZE + 1] = {0};
+-        if (rime_api->config_get_string(&config, "style/color_scheme_dark",
+-                                        buffer, BUF_SIZE)) {
+-          std::string color_name(buffer);
+-          _UpdateUIStyleColor(&config, m_ui->style(), color_name);
+-        }
+-      }
+-      m_base_style = m_ui->style();
++  if (!rime_api->config_open("weasel", &config))
++    return false;
++
++  _UpdateUIStyle(&config, m_ui, true);
++  m_current_dark_mode = darkMode;
++  if (darkMode) {
++    const int BUF_SIZE = 255;
++    char buffer[BUF_SIZE + 1] = {0};
++    if (rime_api->config_get_string(&config, "style/color_scheme_dark",
++                                   buffer, BUF_SIZE)) {
++      std::string color_name(buffer);
++      _UpdateUIStyleColor(&config, m_ui->style(), color_name);
+     }
+-    rime_api->config_close(&config);
+   }
++  m_base_style = m_ui->style();
++  rime_api->config_close(&config);
+ 
+   for (auto& pair : m_session_status_map) {
+     RIME_STRUCT(RimeStatus, status);
+@@ -300,7 +388,12 @@ void RimeWithWeaselHandler::UpdateColorTheme(BOOL darkMode) {
+       rime_api->free_status(&status);
      }
    }
-   m_ui->style() = get_session_status(m_active_session).style;
-+  _RefreshModeStyle(m_active_session);
+-  m_ui->style() = get_session_status(m_active_session).style;
++  const auto active = m_session_status_map.find(m_active_session);
++  m_ui->style() = active == m_session_status_map.end() ? m_base_style : active->second.style;
++  _RefreshModeStyle(m_active_session, false);
++  if (m_ui->IsShown() && !m_ui->IsCountingDown())
++    m_ui->Refresh();
++  return true;
  }
  
  BOOL RimeWithWeaselHandler::ProcessKeyEvent(KeyEvent keyEvent,
-@@ -310,11 +394,45 @@ BOOL RimeWithWeaselHandler::ProcessKeyEvent(KeyEvent keyEvent,
+@@ -310,11 +403,45 @@ BOOL RimeWithWeaselHandler::ProcessKeyEvent(KeyEvent keyEvent,
               << ", mask = " << keyEvent.mask << ", ipc_id = " << ipc_id;
    if (m_disabled)
      return FALSE;
@@ -228,7 +276,7 @@ index 3f4e59d9f410c79ad605460c5492314d71bdfb65..d2087b37808b225b51780290cb8403e4
      bool isVimBackInCommandMode =
          (keyEvent.keycode == ibus::Keycode::Escape) ||
          ((keyEvent.mask & (1 << 2)) &&
-@@ -329,7 +447,6 @@ BOOL RimeWithWeaselHandler::ProcessKeyEvent(KeyEvent keyEvent,
+@@ -329,7 +456,6 @@ BOOL RimeWithWeaselHandler::ProcessKeyEvent(KeyEvent keyEvent,
    }
    _Respond(ipc_id, eat);
    _UpdateUI(ipc_id);
@@ -236,7 +284,7 @@ index 3f4e59d9f410c79ad605460c5492314d71bdfb65..d2087b37808b225b51780290cb8403e4
    return (BOOL)handled;
  }
  
-@@ -339,7 +456,6 @@ void RimeWithWeaselHandler::CommitComposition(WeaselSessionId ipc_id) {
+@@ -339,7 +465,6 @@ void RimeWithWeaselHandler::CommitComposition(WeaselSessionId ipc_id) {
      return;
    rime_api->commit_composition(to_session_id(ipc_id));
    _UpdateUI(ipc_id);
@@ -244,7 +292,7 @@ index 3f4e59d9f410c79ad605460c5492314d71bdfb65..d2087b37808b225b51780290cb8403e4
  }
  
  void RimeWithWeaselHandler::ClearComposition(WeaselSessionId ipc_id) {
-@@ -348,7 +464,6 @@ void RimeWithWeaselHandler::ClearComposition(WeaselSessionId ipc_id) {
+@@ -348,7 +473,6 @@ void RimeWithWeaselHandler::ClearComposition(WeaselSessionId ipc_id) {
      return;
    rime_api->clear_composition(to_session_id(ipc_id));
    _UpdateUI(ipc_id);
@@ -252,7 +300,7 @@ index 3f4e59d9f410c79ad605460c5492314d71bdfb65..d2087b37808b225b51780290cb8403e4
  }
  
  void RimeWithWeaselHandler::SelectCandidateOnCurrentPage(
-@@ -385,17 +500,60 @@ bool RimeWithWeaselHandler::ChangePage(bool backward,
+@@ -385,17 +509,60 @@ bool RimeWithWeaselHandler::ChangePage(bool backward,
    return res;
  }
  
@@ -315,7 +363,7 @@ index 3f4e59d9f410c79ad605460c5492314d71bdfb65..d2087b37808b225b51780290cb8403e4
    if (m_ui)
      m_ui->Hide();
    m_active_session = 0;
-@@ -406,20 +564,50 @@ void RimeWithWeaselHandler::UpdateInputPosition(RECT const& rc,
+@@ -406,20 +573,50 @@ void RimeWithWeaselHandler::UpdateInputPosition(RECT const& rc,
    DLOG(INFO) << "Update input position: (" << rc.left << ", " << rc.top
               << "), ipc_id = " << ipc_id
               << ", m_active_session = " << m_active_session;
@@ -374,7 +422,7 @@ index 3f4e59d9f410c79ad605460c5492314d71bdfb65..d2087b37808b225b51780290cb8403e4
  
  void RimeWithWeaselHandler::OnNotify(void* context_object,
                                       uintptr_t session_id,
-@@ -430,19 +618,35 @@ void RimeWithWeaselHandler::OnNotify(void* context_object,
+@@ -430,19 +627,35 @@ void RimeWithWeaselHandler::OnNotify(void* context_object,
        reinterpret_cast<RimeWithWeaselHandler*>(context_object);
    if (!self || !message_type || !message_value)
      return;
@@ -414,7 +462,7 @@ index 3f4e59d9f410c79ad605460c5492314d71bdfb65..d2087b37808b225b51780290cb8403e4
  }
  
  void RimeWithWeaselHandler::_ReadClientInfo(WeaselSessionId ipc_id,
-@@ -537,17 +741,14 @@ void RimeWithWeaselHandler::EndMaintenance() {
+@@ -537,17 +750,14 @@ void RimeWithWeaselHandler::EndMaintenance() {
  void RimeWithWeaselHandler::SetOption(WeaselSessionId ipc_id,
                                        const std::string& opt,
                                        bool val) {
@@ -438,7 +486,7 @@ index 3f4e59d9f410c79ad605460c5492314d71bdfb65..d2087b37808b225b51780290cb8403e4
  }
  
  void RimeWithWeaselHandler::OnUpdateUI(std::function<void()> const& cb) {
-@@ -555,7 +756,7 @@ void RimeWithWeaselHandler::OnUpdateUI(std::function<void()> const& cb) {
+@@ -555,7 +765,7 @@ void RimeWithWeaselHandler::OnUpdateUI(std::function<void()> const& cb) {
  }
  
  bool RimeWithWeaselHandler::_IsDeployerRunning() {
@@ -447,7 +495,7 @@ index 3f4e59d9f410c79ad605460c5492314d71bdfb65..d2087b37808b225b51780290cb8403e4
    bool deployer_detected = hMutex && GetLastError() == ERROR_ALREADY_EXISTS;
    if (hMutex) {
      CloseHandle(hMutex);
-@@ -563,14 +764,30 @@ bool RimeWithWeaselHandler::_IsDeployerRunning() {
+@@ -563,14 +773,30 @@ bool RimeWithWeaselHandler::_IsDeployerRunning() {
    return deployer_detected;
  }
  
@@ -481,7 +529,7 @@ index 3f4e59d9f410c79ad605460c5492314d71bdfb65..d2087b37808b225b51780290cb8403e4
    RimeSessionId session_id = to_session_id(ipc_id);
    bool is_tsf = _IsSessionTSF(session_id);
  
-@@ -578,12 +795,16 @@ void RimeWithWeaselHandler::_UpdateUI(WeaselSessionId ipc_id) {
+@@ -578,12 +804,16 @@ void RimeWithWeaselHandler::_UpdateUI(WeaselSessionId ipc_id) {
      weasel_status.disabled = m_disabled;
  
    _GetStatus(weasel_status, ipc_id, weasel_context);
@@ -498,7 +546,7 @@ index 3f4e59d9f410c79ad605460c5492314d71bdfb65..d2087b37808b225b51780290cb8403e4
    if (rime_api->get_option(session_id, "inline_preedit"))
      session_status.style.client_caps |= INLINE_PREEDIT_CAPABLE;
    else
-@@ -592,17 +813,22 @@ void RimeWithWeaselHandler::_UpdateUI(WeaselSessionId ipc_id) {
+@@ -592,17 +822,22 @@ void RimeWithWeaselHandler::_UpdateUI(WeaselSessionId ipc_id) {
    if (weasel_status.composing && !is_tsf) {
      m_ui->Update(weasel_context, weasel_status);
      m_ui->Show();
@@ -526,7 +574,7 @@ index 3f4e59d9f410c79ad605460c5492314d71bdfb65..d2087b37808b225b51780290cb8403e4
  }
  
  void RimeWithWeaselHandler::_LoadSchemaSpecificSettings(
-@@ -613,11 +839,16 @@ void RimeWithWeaselHandler::_LoadSchemaSpecificSettings(
+@@ -613,11 +848,16 @@ void RimeWithWeaselHandler::_LoadSchemaSpecificSettings(
    RimeConfig config;
    if (!rime_api->schema_open(schema_id.c_str(), &config))
      return;
@@ -547,7 +595,7 @@ index 3f4e59d9f410c79ad605460c5492314d71bdfb65..d2087b37808b225b51780290cb8403e4
    UIStyle& style = session_status.style;
    // load schema color style config
    const int BUF_SIZE = 255;
-@@ -643,31 +874,78 @@ void RimeWithWeaselHandler::_LoadSchemaSpecificSettings(
+@@ -643,31 +883,79 @@ void RimeWithWeaselHandler::_LoadSchemaSpecificSettings(
      update_color_scheme();
    // load schema icon start
    {
@@ -615,7 +663,7 @@ index 3f4e59d9f410c79ad605460c5492314d71bdfb65..d2087b37808b225b51780290cb8403e4
 +  }
 +}
 +
-+void RimeWithWeaselHandler::_RefreshModeStyle(WeaselSessionId ipc_id) {
++void RimeWithWeaselHandler::_RefreshModeStyle(WeaselSessionId ipc_id, bool repaint) {
 +  auto found = m_session_status_map.find(ipc_id);
 +  if (found == m_session_status_map.end() || !found->second.session_id)
 +    return;
@@ -642,12 +690,13 @@ index 3f4e59d9f410c79ad605460c5492314d71bdfb65..d2087b37808b225b51780290cb8403e4
 +  if (m_ui && ipc_id == m_active_session && m_ui->style() != session.style) {
 +    m_ui->style() = session.style;
 +    // UI::Update can skip repaint when only the style changed.
-+    m_ui->Refresh();
++    if (repaint)
++      m_ui->Refresh();
 +  }
  }
  
  void RimeWithWeaselHandler::_LoadAppInlinePreeditSet(WeaselSessionId ipc_id,
-@@ -678,9 +956,9 @@ void RimeWithWeaselHandler::_LoadAppInlinePreeditSet(WeaselSessionId ipc_id,
+@@ -678,9 +966,9 @@ void RimeWithWeaselHandler::_LoadAppInlinePreeditSet(WeaselSessionId ipc_id,
    rime_api->get_property(session_id, "client_app", _app_name,
                           sizeof(_app_name) - 1);
    std::string app_name(_app_name);
@@ -659,7 +708,7 @@ index 3f4e59d9f410c79ad605460c5492314d71bdfb65..d2087b37808b225b51780290cb8403e4
    bool inline_preedit = session_status.style.inline_preedit;
    bool found = false;
    if (!app_name.empty()) {
-@@ -720,54 +998,55 @@ void RimeWithWeaselHandler::_LoadAppInlinePreeditSet(WeaselSessionId ipc_id,
+@@ -720,54 +1008,55 @@ void RimeWithWeaselHandler::_LoadAppInlinePreeditSet(WeaselSessionId ipc_id,
      _UpdateInlinePreeditStatus(ipc_id);
  }
  
@@ -731,7 +780,7 @@ index 3f4e59d9f410c79ad605460c5492314d71bdfb65..d2087b37808b225b51780290cb8403e4
      m_ui->Update(ctx, status);
      if (m_show_notifications_time)
        m_ui->ShowWithTimeout(m_show_notifications_time);
-@@ -785,6 +1064,7 @@ inline std::string _GetLabelText(const std::vector<Text>& labels,
+@@ -785,6 +1074,7 @@ inline std::string _GetLabelText(const std::vector<Text>& labels,
  }
  
  bool RimeWithWeaselHandler::_Respond(WeaselSessionId ipc_id, EatLine eat) {
@@ -739,7 +788,7 @@ index 3f4e59d9f410c79ad605460c5492314d71bdfb65..d2087b37808b225b51780290cb8403e4
    std::set<std::string> actions;
    std::list<std::string> messages;
  
-@@ -803,17 +1083,7 @@ bool RimeWithWeaselHandler::_Respond(WeaselSessionId ipc_id, EatLine eat) {
+@@ -803,17 +1093,7 @@ bool RimeWithWeaselHandler::_Respond(WeaselSessionId ipc_id, EatLine eat) {
    RIME_STRUCT(RimeStatus, status);
    if (rime_api->get_status(session_id, &status)) {
      is_composing = !!status.is_composing;
@@ -758,7 +807,7 @@ index 3f4e59d9f410c79ad605460c5492314d71bdfb65..d2087b37808b225b51780290cb8403e4
      if (m_global_ascii_mode &&
          (session_status.status.is_ascii_mode != status.is_ascii_mode)) {
        for (auto& pair : m_session_status_map) {
-@@ -830,6 +1100,8 @@ bool RimeWithWeaselHandler::_Respond(WeaselSessionId ipc_id, EatLine eat) {
+@@ -830,6 +1110,8 @@ bool RimeWithWeaselHandler::_Respond(WeaselSessionId ipc_id, EatLine eat) {
    if (rime_api->get_context(session_id, &ctx)) {
      if (is_composing) {
        actions.insert("ctx");
@@ -767,7 +816,7 @@ index 3f4e59d9f410c79ad605460c5492314d71bdfb65..d2087b37808b225b51780290cb8403e4
        switch (session_status.style.preedit_type) {
          case UIStyle::PREVIEW:
            if (ctx.commit_text_preview != NULL) {
-@@ -919,40 +1191,10 @@ bool RimeWithWeaselHandler::_Respond(WeaselSessionId ipc_id, EatLine eat) {
+@@ -919,40 +1201,10 @@ bool RimeWithWeaselHandler::_Respond(WeaselSessionId ipc_id, EatLine eat) {
      rime_api->free_context(&ctx);
    }
  
@@ -812,7 +861,7 @@ index 3f4e59d9f410c79ad605460c5492314d71bdfb65..d2087b37808b225b51780290cb8403e4
  }
  
  static inline COLORREF blend_colors(COLORREF fcolor, COLORREF bcolor) {
-@@ -1427,9 +1669,10 @@ void RimeWithWeaselHandler::_GetStatus(Status& stat,
+@@ -1427,9 +1679,10 @@ void RimeWithWeaselHandler::_GetStatus(Status& stat,
      stat.composing = !!status.is_composing;
      stat.disabled = !!status.is_disabled;
      stat.full_shape = !!status.is_full_shape;
@@ -825,7 +874,7 @@ index 3f4e59d9f410c79ad605460c5492314d71bdfb65..d2087b37808b225b51780290cb8403e4
        if (schema_id != ".default") {  // don't load for schema select menu
          bool inline_preedit = session_status.style.inline_preedit;
          _LoadSchemaSpecificSettings(ipc_id, schema_id);
-@@ -1437,15 +1680,10 @@ void RimeWithWeaselHandler::_GetStatus(Status& stat,
+@@ -1437,15 +1690,10 @@ void RimeWithWeaselHandler::_GetStatus(Status& stat,
          if (session_status.style.inline_preedit != inline_preedit)
            // in case of inline_preedit set in schema
            _UpdateInlinePreeditStatus(ipc_id);
@@ -845,7 +894,7 @@ index 3f4e59d9f410c79ad605460c5492314d71bdfb65..d2087b37808b225b51780290cb8403e4
        }
      }
      rime_api->free_status(&status);
-@@ -1454,10 +1692,12 @@ void RimeWithWeaselHandler::_GetStatus(Status& stat,
+@@ -1454,10 +1702,12 @@ void RimeWithWeaselHandler::_GetStatus(Status& stat,
  
  void RimeWithWeaselHandler::_GetContext(Context& weasel_context,
                                          RimeSessionId session_id) {
@@ -881,7 +930,7 @@ index 9a07343b46d01d022ac67c2bf65b187d1b213a45..76c3f16cef50f7ffaeadfc5268dec9fc
  }
  
 diff --git a/WeaselDeployer/Configurator.cpp b/WeaselDeployer/Configurator.cpp
-index 15023226746b715a55935d8d043762348b3acc42..89cb7874727686b8c780408d0d3be41e5d5b0513 100644
+index 15023226746b715a55935d8d043762348b3acc42..7d1fa01da71c3cb1bc57bef9c9bf871ec9c9ad7b 100644
 --- a/WeaselDeployer/Configurator.cpp
 +++ b/WeaselDeployer/Configurator.cpp
 @@ -1,4 +1,5 @@
@@ -890,7 +939,22 @@ index 15023226746b715a55935d8d043762348b3acc42..89cb7874727686b8c780408d0d3be41e
  #include "WeaselDeployer.h"
  #include "Configurator.h"
  #include "SwitcherSettingsDialog.h"
-@@ -42,7 +43,7 @@ void Configurator::Initialize() {
+@@ -26,9 +27,11 @@ static void CreateFileIfNotExist(std::string filename) {
+     o.close();
+   }
+ }
+-Configurator::Configurator() {
+-  CreateFileIfNotExist("default.custom.yaml");
+-  CreateFileIfNotExist("weasel.custom.yaml");
++Configurator::Configurator(bool create_custom_files) {
++  if (create_custom_files) {
++    CreateFileIfNotExist("default.custom.yaml");
++    CreateFileIfNotExist("weasel.custom.yaml");
++  }
+ }
+ 
+ void Configurator::Initialize() {
+@@ -42,7 +45,7 @@ void Configurator::Initialize() {
    weasel_traits.distribution_name = distribution_name.c_str();
    weasel_traits.distribution_code_name = WEASEL_CODE_NAME;
    weasel_traits.distribution_version = WEASEL_VERSION;
@@ -899,7 +963,42 @@ index 15023226746b715a55935d8d043762348b3acc42..89cb7874727686b8c780408d0d3be41e
    std::string log_dir = WeaselLogPath().u8string();
    weasel_traits.log_dir = log_dir.c_str();
    RimeApi* rime_api = rime_get_api();
-@@ -114,9 +115,9 @@ int Configurator::Run(bool installing) {
+@@ -90,7 +93,8 @@ int Configurator::Run(bool installing) {
+   if (!api)
+     return 1;
+ 
+-  bool reconfigured = false;
++  bool switcher_changed = false;
++  bool appearance_changed = false;
+ 
+   RimeSwitcherSettings* switcher_settings = api->switcher_settings_init();
+   UIStyleSettings ui_style_settings;
+@@ -101,22 +105,30 @@ int Configurator::Run(bool installing) {
+       installing && !api->is_first_run(ui_style_settings.settings());
+ 
+   (skip_switcher_settings ||
+-   configure_switcher(api, switcher_settings, &reconfigured)) &&
++   configure_switcher(api, switcher_settings, &switcher_changed)) &&
+       (skip_ui_style_settings ||
+-       configure_ui(api, &ui_style_settings, &reconfigured));
++       configure_ui(api, &ui_style_settings, &appearance_changed));
+ 
+   api->custom_settings_destroy((RimeCustomSettings*)switcher_settings);
+ 
+-  if (installing || reconfigured) {
+-    return UpdateWorkspace(reconfigured);
++  if (installing || switcher_changed) {
++    return UpdateWorkspace(switcher_changed || appearance_changed);
++  }
++  if (appearance_changed) {
++    int result = UpdateAppearance();
++    if (result) {
++      MSG_BY_IDS(IDS_STR_ERR_UNKNOWN, IDS_STR_WEASEL,
++                 MB_OK | MB_ICONEXCLAMATION);
++    }
++    return result;
+   }
+   return 0;
  }
  
  int Configurator::UpdateWorkspace(bool report_errors) {
@@ -911,7 +1010,7 @@ index 15023226746b715a55935d8d043762348b3acc42..89cb7874727686b8c780408d0d3be41e
      return 1;
    }
    if (GetLastError() == ERROR_ALREADY_EXISTS) {
-@@ -134,7 +135,7 @@ int Configurator::UpdateWorkspace(bool report_errors) {
+@@ -134,7 +146,7 @@ int Configurator::UpdateWorkspace(bool report_errors) {
  
    weasel::Client client;
    if (client.Connect()) {
@@ -920,9 +1019,30 @@ index 15023226746b715a55935d8d043762348b3acc42..89cb7874727686b8c780408d0d3be41e
      client.StartMaintenance();
    }
  
-@@ -156,9 +157,9 @@ int Configurator::UpdateWorkspace(bool report_errors) {
+@@ -155,10 +167,30 @@ int Configurator::UpdateWorkspace(bool report_errors) {
+   return 0;
  }
  
++int Configurator::UpdateAppearance() {
++  HANDLE mutex = CreateMutex(NULL, TRUE, STELLAE_DEPLOYER_MUTEX);
++  if (!mutex)
++    return 1;
++  if (GetLastError() == ERROR_ALREADY_EXISTS) {
++    CloseHandle(mutex);
++    return 1;
++  }
++  const bool compiled =
++      rime_get_api()->deploy_config_file("weasel.yaml", "config_version");
++  CloseHandle(mutex);
++  if (!compiled)
++    return 1;
++
++  weasel::Client client;
++  if (!client.Connect())
++    return FindWindow(WEASEL_IPC_WINDOW, WEASEL_IPC_WINDOW) ? 2 : 0;
++  return client.ReloadAppearance() ? 0 : 2;
++}
++
  int Configurator::DictManagement() {
 -  HANDLE hMutex = CreateMutex(NULL, TRUE, L"WeaselDeployerMutex");
 +  HANDLE hMutex = CreateMutex(NULL, TRUE, STELLAE_DEPLOYER_MUTEX);
@@ -932,7 +1052,7 @@ index 15023226746b715a55935d8d043762348b3acc42..89cb7874727686b8c780408d0d3be41e
      return 1;
    }
    if (GetLastError() == ERROR_ALREADY_EXISTS) {
-@@ -173,7 +174,7 @@ int Configurator::DictManagement() {
+@@ -173,7 +205,7 @@ int Configurator::DictManagement() {
  
    weasel::Client client;
    if (client.Connect()) {
@@ -941,7 +1061,7 @@ index 15023226746b715a55935d8d043762348b3acc42..89cb7874727686b8c780408d0d3be41e
      client.StartMaintenance();
    }
  
-@@ -196,9 +197,9 @@ int Configurator::DictManagement() {
+@@ -196,9 +228,9 @@ int Configurator::DictManagement() {
  }
  
  int Configurator::SyncUserData() {
@@ -953,7 +1073,7 @@ index 15023226746b715a55935d8d043762348b3acc42..89cb7874727686b8c780408d0d3be41e
      return 1;
    }
    if (GetLastError() == ERROR_ALREADY_EXISTS) {
-@@ -213,7 +214,7 @@ int Configurator::SyncUserData() {
+@@ -213,7 +245,7 @@ int Configurator::SyncUserData() {
  
    weasel::Client client;
    if (client.Connect()) {
@@ -985,7 +1105,7 @@ index 587cbc714149302897dfebe179804fba7131f1bc..48cbd11eb79476e04cb445f40667902b
    if (ret == ERROR_SUCCESS) {
      WCHAR value[MAX_PATH];
 diff --git a/WeaselDeployer/WeaselDeployer.cpp b/WeaselDeployer/WeaselDeployer.cpp
-index a57801435a7cd33247884614f650a230e7b9f0a3..c6a9ecfa9d53bd778541c0c1ce11727e6d2c9d3a 100644
+index a57801435a7cd33247884614f650a230e7b9f0a3..dc18c3b83e4c069a38889df86c1bf9dff888818c 100644
 --- a/WeaselDeployer/WeaselDeployer.cpp
 +++ b/WeaselDeployer/WeaselDeployer.cpp
 @@ -1,6 +1,7 @@
@@ -1005,7 +1125,18 @@ index a57801435a7cd33247884614f650a230e7b9f0a3..c6a9ecfa9d53bd778541c0c1ce11727e
    if (!hMutex) {
      ret = 1;
    } else if (GetLastError() == ERROR_ALREADY_EXISTS) {
-@@ -66,16 +67,16 @@ static int Run(LPTSTR lpCmdLine) {
+@@ -59,23 +60,26 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
+ }
+ 
+ static int Run(LPTSTR lpCmdLine) {
+-  Configurator configurator;
++  const bool appearance_only = !wcscmp(L"/deploy-appearance", lpCmdLine);
++  Configurator configurator(!appearance_only);
+   configurator.Initialize();
++  if (appearance_only)
++    return configurator.UpdateAppearance();
+ 
+   if (!wcscmp(L"/?", lpCmdLine) || !wcscmp(L"/help", lpCmdLine)) {
      WCHAR msg[1024] = {0};
      if (LoadString(GetModuleHandle(NULL), IDS_STR_HELP, msg,
                     sizeof(msg) / sizeof(TCHAR))) {
@@ -1027,25 +1158,29 @@ index a57801435a7cd33247884614f650a230e7b9f0a3..c6a9ecfa9d53bd778541c0c1ce11727e
      return 0;
    }
 diff --git a/WeaselDeployer/WeaselDeployer.rc b/WeaselDeployer/WeaselDeployer.rc
-index d8b9e1769bd38aeb087a695fae53d90e5eb6a02b..3c5d59324521deac266e8e71014c3e66bab0ef7c 100644
+index d8b9e1769bd38aeb087a695fae53d90e5eb6a02b..5bd7a144e41ebf87d02a6f1a46f527ee249ae47a 100644
 GIT binary patch
-delta 723
-zcmZ2;l&R-9(}qdxtSchcHwjK=<dmO$u4f$!h_^Y1V;4J^HCadC4umlw$!BwvU<V6C
-z!3)u8Ob}L!#4{+XK-vi^yF>m1-(;0Q0Zu1|PzFy19|o7nEA=W-MK;F<PG{V_%fOA1
-z7i8s&2}Si&;xtN?CMyPOPqs3WnOqabHF-ja#ALfJvB?G<X1u`+B@C$yIY5}mkUF`r
-zBXM$EDA!~?<0v$l#Lj52m%t`%Rxq((gE%zK3g*0Jc2l5Ec5r+JWf{0^;z4yFRwv(u
-zD4*;Q5<rv#QwTVYiE(pG_y$I7aquki5Ht?fB|_q0^Ms@hMIs!j%`|ym+XKlUhD?TB
-zV2~*=6e9;6g90${Y>5iur<kr6$6@N^!cObSdM00h-dV?pQ_;i8;6#Q?esg;-FAq-1
-P`7;}Fn!H(ib|X6gpcLmf
+delta 1166
+zcmZ2;lxe|frVW$WSyx1?ZxWo$$SFVhT+ccd5N~r1$1Zj-YqE~O9SCDWlF#NS!44LP
+zf)}FGm>{eciDyt&fpi$t<bC2wT#^Bt6Q);%M+f^)J|Ll_Y0hB8pu=FsU<xEH7<d`D
+z7!;t;nZcjIm%#~0f^fv-zzoUBKQg7vK`IS_IxL~IIgmC7>vsmK3}%RDaA61n>IeYR
+z{tV#^ehfYgo(#d04_Z4<wvjWMoR(#>S;|>}5#quf@*nsns{{&gIx&O-mH9BZOkSy1
+zi7K)=HgG!Q=3NGEjJ%)#crl@<eoCB1snTS{VC~6PMlzFY!nh_+2$7g<*CjUDpu>ze
+zn4yFrl_3WR6B$w`7j`60jtk|QtY;jBCX?714Gv(iNt+c+EZ889in9uV1y%((u&&G+
+zn84bcmgU08CSU-L_hoidppog|_zKE0aM{Fz8dz9^?=D37WQULdq5><0KtM4uZjK4x
+zz=$n%K8rjAO`Yo!A*plogd`PqP}-Ar2F6DoLkdGC5GR7;NP!`ZAs;AKGFh=ycJc->
+z7HvadVxn)7RN5SpbwrYgP}Bw{ina%mK|uHC0@IfQLosqXV^9F5G+Uz5<5SGw6~|%f
+s<ibwt$$BPVfZ@H45vQVulfmT!F8R&vy}Ud)CFjp<#A)(o?b(g&09H6WwEzGB
 
-delta 619
-zcmeA<&a~zz(}qdxZ2U2Qie6_=E{Hq_Wp2*k*aa6>6SxCY@gm7*@;g(J&1r%qEHI__
-zM5i&q*cB4b;Or!6C%Bpw@*nsZ4JL2Yt7J6TyfJV(<K|liZj5{odtXc_s-F_4Q93!G
-z!(;NI4vEPuz9N$^beM66Go&&kG86;JoXH1`Z6^nGs!R?rPC*lohFPv)lEMaKcUU1T
-zKW8@u?x-}!S4>cA1r0Px&647}CU20Ru=$OP6c3UE@4^&;+;%dNXt!}qJ`oy)+kJYB
-zoA-ooV1zmn6y7|LAmH`WPm`Q5IgcY`^PH#*c*t`k!9srXi=+-kBnN6UO?GR4z>5?@
-z3<{tyn$*EDIl)MTKrpUAcOnY^qOtYlD3dQhr><i}k=WQPKY2prI%KiU{(ZbWC<4W^
-N8c}p@=AP5Y4gii7=o<h4
+delta 779
+zcmZ2*nrY2ZrVW$W+4*Ds6ur(CoSew1IC(+;8a4=ja|XvQb|`zYn!p{HFq_~N78v`U
+z=rkr6yF%g_oSh^c#x(gsrIO&j?pe{{(ZT+D3?Qh)pfg#}PMKGS!H~g>!ID9T!IZ&x
+zGNX#{<aKsNtcDE642F}h=jd;q<08NaGd4`&10SQo<aqr`MuW{C_3twAL7ewuLQ(yc
+zIE~WD4JJC1Cv?e7)-jft{G~%{a)Ge|cQ`{TLn1>lkj$B!Z(=+7mT?D~STxjppmwXx
+z9Hv@qF#F7`Lm*Dq?E*Rd$}FOtzWI8NJtK#J0W|ou9Hzj-<B-!UID3QZCLSaYO=p~Z
+ztYgY#i_lFl7rhG&AmACj$tvMdcsw+j!}QDMUA^lVIbp8Bh}?P6hv1Q$k_?O7$!vl?
+zn<u2)U;{;-WH2!NN*ELv(irj?@_;M?A+dR0&NE3ApKU(YQNoDg&cLo{0)A7O+|k{F
+yq9@-Z8il_xM0``kF(wqTg)_iO7g=m`@&sNUWP!<nUBa7Z&B;S?(PsI1jqCuKvIv9#
 
 diff --git a/WeaselDeployer/WeaselDeployer.vcxproj b/WeaselDeployer/WeaselDeployer.vcxproj
 index 88fbaa2fecc2c2db12ea51784657527cfc5d6651..02e9d401539bc04e8fdd42fed9a18162479e028e 100644
@@ -3160,6 +3295,7 @@ index 1bba123500dd2ace509374538fed09a92adaa301..35aacd802813661e26256a76919021f3
 +  return Deserializer::Ptr(new Styler(pTarget));
 +}
 diff --git a/WeaselIPC/WeaselClientImpl.cpp b/WeaselIPC/WeaselClientImpl.cpp
+index 26122ad50a1550c4e4b8daccc5de5625141d33ee..bc851573d7a7d0b20b51e5216b16f17a2a6e180f 100644
 --- a/WeaselIPC/WeaselClientImpl.cpp
 +++ b/WeaselIPC/WeaselClientImpl.cpp
 @@ -1,5 +1,6 @@
@@ -3170,7 +3306,7 @@ diff --git a/WeaselIPC/WeaselClientImpl.cpp b/WeaselIPC/WeaselClientImpl.cpp
  #include <StringAlgorithm.hpp>
  
  using namespace weasel;
-@@ -17,7 +18,8 @@
+@@ -17,7 +18,8 @@ ClientImpl::~ClientImpl() {
  // http://stackoverflow.com/questions/557081/how-do-i-get-the-hmodule-for-the-currently-executing-code
  HMODULE GetCurrentModule() {  // NB: XP+ solution!
    HMODULE hModule = NULL;
@@ -3180,7 +3316,7 @@ diff --git a/WeaselIPC/WeaselClientImpl.cpp b/WeaselIPC/WeaselClientImpl.cpp
                      (LPCTSTR)GetCurrentModule, &hModule);
  
    return hModule;
-@@ -42,6 +44,7 @@
+@@ -42,6 +44,7 @@ void ClientImpl::_InitializeClientInfo() {
  }
  
  bool ClientImpl::Connect(ServerLauncher const& launcher) {
@@ -3188,7 +3324,7 @@ diff --git a/WeaselIPC/WeaselClientImpl.cpp b/WeaselIPC/WeaselClientImpl.cpp
    return channel.Connect();
  }
  
-@@ -49,6 +52,7 @@
+@@ -49,6 +52,7 @@ void ClientImpl::Disconnect() {
    if (_Active())
      EndSession();
    channel.Disconnect();
@@ -3196,19 +3332,18 @@ diff --git a/WeaselIPC/WeaselClientImpl.cpp b/WeaselIPC/WeaselClientImpl.cpp
  }
  
  void ClientImpl::ShutdownServer() {
-@@ -56,12 +60,36 @@
+@@ -56,12 +60,36 @@ void ClientImpl::ShutdownServer() {
  }
  
  bool ClientImpl::ProcessKeyEvent(KeyEvent const& keyEvent) {
 -  if (!_Active())
 -    return false;
--
++  return ProcessKeyEventOutcome(keyEvent).Handled();
++}
+ 
 -  LRESULT ret =
 -      _SendMessage(WEASEL_IPC_PROCESS_KEY_EVENT, keyEvent, session_id);
 -  return ret != 0;
-+  return ProcessKeyEventOutcome(keyEvent).Handled();
-+}
-+
 +KeyEventOutcome ClientImpl::ProcessKeyEventOutcome(KeyEvent const& keyEvent) {
 +  KeyEventOutcome result;
 +  if (!_Active()) {
@@ -3239,7 +3374,7 @@ diff --git a/WeaselIPC/WeaselClientImpl.cpp b/WeaselIPC/WeaselClientImpl.cpp
  }
  
  bool ClientImpl::CommitComposition() {
-@@ -126,6 +154,10 @@
+@@ -126,6 +154,10 @@ void ClientImpl::UpdateInputPosition(RECT const& rc) {
    int height = max(0, min(127, (rc.bottom - rc.top) >> hi_res));
    DWORD compressed_rect = ((hi_res & 0x01) << 31) | ((height & 0x7f) << 24) |
                            ((top & 0xfff) << 12) | (left & 0xfff);
@@ -3250,7 +3385,7 @@ diff --git a/WeaselIPC/WeaselClientImpl.cpp b/WeaselIPC/WeaselClientImpl.cpp
    _SendMessage(WEASEL_IPC_UPDATE_INPUT_POS, compressed_rect, session_id);
  }
  
-@@ -142,13 +174,14 @@
+@@ -142,13 +174,14 @@ void ClientImpl::TrayCommand(UINT menuId) {
    _SendMessage(WEASEL_IPC_TRAY_COMMAND, menuId, session_id);
  }
  
@@ -3267,7 +3402,15 @@ diff --git a/WeaselIPC/WeaselClientImpl.cpp b/WeaselIPC/WeaselClientImpl.cpp
  }
  
  void ClientImpl::EndSession() {
-@@ -170,8 +203,37 @@
+@@ -166,12 +199,45 @@ void ClientImpl::EndMaintenance() {
+   session_id = 0;
+ }
+ 
++bool ClientImpl::ReloadAppearance() {
++  return _SendMessage(WEASEL_IPC_RELOAD_APPEARANCE, 0, 0) == 1;
++}
++
+ bool ClientImpl::Echo() {
    if (!_Active())
      return false;
  
@@ -3307,18 +3450,18 @@ diff --git a/WeaselIPC/WeaselClientImpl.cpp b/WeaselIPC/WeaselClientImpl.cpp
  }
  
  bool ClientImpl::GetResponseData(ResponseHandler const& handler) {
-@@ -180,6 +242,10 @@
-   }
- 
+@@ -182,6 +248,10 @@ bool ClientImpl::GetResponseData(ResponseHandler const& handler) {
    return channel.HandleResponseData(handler);
-+}
-+
-+std::uint64_t ClientImpl::ResponseGeneration() const {
-+  return channel.ResponseGeneration();
  }
  
++std::uint64_t ClientImpl::ResponseGeneration() const {
++  return channel.ResponseGeneration();
++}
++
  bool ClientImpl::_WriteClientInfo() {
-@@ -193,11 +259,27 @@
+   channel << L"action=session\n";
+   channel << L"session.client_app=" << app_name.c_str() << L"\n";
+@@ -193,11 +263,27 @@ bool ClientImpl::_WriteClientInfo() {
  LRESULT ClientImpl::_SendMessage(WEASEL_IPC_COMMAND Msg,
                                   DWORD wParam,
                                   DWORD lParam) {
@@ -3350,7 +3493,7 @@ diff --git a/WeaselIPC/WeaselClientImpl.cpp b/WeaselIPC/WeaselClientImpl.cpp
    }
  }
  
-@@ -224,6 +306,10 @@
+@@ -224,6 +310,10 @@ bool Client::ProcessKeyEvent(KeyEvent const& keyEvent) {
    return m_pImpl->ProcessKeyEvent(keyEvent);
  }
  
@@ -3361,7 +3504,7 @@ diff --git a/WeaselIPC/WeaselClientImpl.cpp b/WeaselIPC/WeaselClientImpl.cpp
  bool Client::CommitComposition() {
    return m_pImpl->CommitComposition();
  }
-@@ -256,8 +342,8 @@
+@@ -256,8 +346,8 @@ void Client::FocusOut() {
    m_pImpl->FocusOut();
  }
  
@@ -3372,7 +3515,18 @@ diff --git a/WeaselIPC/WeaselClientImpl.cpp b/WeaselIPC/WeaselClientImpl.cpp
  }
  
  void Client::EndSession() {
-@@ -280,6 +366,14 @@
+@@ -272,6 +362,10 @@ void Client::EndMaintenance() {
+   m_pImpl->EndMaintenance();
+ }
+ 
++bool Client::ReloadAppearance() {
++  return m_pImpl->ReloadAppearance();
++}
++
+ void Client::TrayCommand(UINT menuId) {
+   m_pImpl->TrayCommand(menuId);
+ }
+@@ -280,6 +374,14 @@ bool Client::Echo() {
    return m_pImpl->Echo();
  }
  
@@ -3388,9 +3542,10 @@ diff --git a/WeaselIPC/WeaselClientImpl.cpp b/WeaselIPC/WeaselClientImpl.cpp
 +  return m_pImpl->ResponseGeneration();
 +}
 diff --git a/WeaselIPC/WeaselClientImpl.h b/WeaselIPC/WeaselClientImpl.h
+index 7602792869408ccf24b4e82ada2b8be8ec0f56ed..c0091c6e3845123b6bf56e5d6fbc6a2c1d62fe2d 100644
 --- a/WeaselIPC/WeaselClientImpl.h
 +++ b/WeaselIPC/WeaselClientImpl.h
-@@ -12,12 +12,14 @@
+@@ -12,12 +12,15 @@ class ClientImpl {
    bool Connect(ServerLauncher const& launcher);
    void Disconnect();
    void ShutdownServer();
@@ -3399,6 +3554,7 @@ diff --git a/WeaselIPC/WeaselClientImpl.h b/WeaselIPC/WeaselClientImpl.h
    void EndSession();
    void StartMaintenance();
    void EndMaintenance();
++  bool ReloadAppearance();
    bool Echo();
 +  bool QueryMetadata(SessionMetadata& metadata, bool focus);
    bool ProcessKeyEvent(KeyEvent const& keyEvent);
@@ -3406,7 +3562,7 @@ diff --git a/WeaselIPC/WeaselClientImpl.h b/WeaselIPC/WeaselClientImpl.h
    bool CommitComposition();
    bool ClearComposition();
    bool SelectCandidateOnCurrentPage(size_t index);
-@@ -28,12 +30,15 @@
+@@ -28,12 +31,15 @@ class ClientImpl {
    void FocusOut();
    void TrayCommand(UINT menuId);
    bool GetResponseData(ResponseHandler const& handler);
@@ -3423,9 +3579,10 @@ diff --git a/WeaselIPC/WeaselClientImpl.h b/WeaselIPC/WeaselClientImpl.h
    bool _Connected() const { return channel.Connected(); }
    bool _Active() const { return channel.Connected() && session_id != 0; }
 diff --git a/WeaselIPCServer/WeaselServerImpl.cpp b/WeaselIPCServer/WeaselServerImpl.cpp
+index 11225c445de8cb3c8f10810cc988cbf33bfe7462..e6b36dfb7be6b9656cd5047c1caa04d9eee99e72 100644
 --- a/WeaselIPCServer/WeaselServerImpl.cpp
 +++ b/WeaselIPCServer/WeaselServerImpl.cpp
-@@ -1,32 +1,95 @@
+@@ -1,26 +1,67 @@
 -﻿#include "stdafx.h"
 +#include "stdafx.h"
  #include "WeaselServerImpl.h"
@@ -3497,10 +3654,10 @@ diff --git a/WeaselIPCServer/WeaselServerImpl.cpp b/WeaselIPCServer/WeaselServer
  };
  }  // namespace weasel
  
- using namespace weasel;
+@@ -28,6 +69,28 @@ using namespace weasel;
  
  extern CAppModule _Module;
-+
+ 
 +static void JoinWithSentMessages(boost::thread& thread) {
 +  HANDLE handle = thread.native_handle();
 +  for (;;) {
@@ -3522,10 +3679,11 @@ diff --git a/WeaselIPCServer/WeaselServerImpl.cpp b/WeaselIPCServer/WeaselServer
 +                            "Wait for IPC thread shutdown");
 +  }
 +}
- 
++
  ServerImpl::ServerImpl()
      : m_pRequestHandler(NULL),
-@@ -41,23 +104,24 @@
+       m_darkMode(IsUserDarkMode()),
+@@ -41,23 +104,24 @@ ServerImpl::~ServerImpl() {
  
  void ServerImpl::_Finailize() {
    if (pipeThread != nullptr) {
@@ -3556,7 +3714,7 @@ diff --git a/WeaselIPCServer/WeaselServerImpl.cpp b/WeaselIPCServer/WeaselServer
      m_darkMode = IsUserDarkMode();
      m_pRequestHandler->UpdateColorTheme(m_darkMode);
    }
-@@ -100,10 +164,8 @@
+@@ -100,10 +164,8 @@ LRESULT ServerImpl::OnEndSystemSession(UINT uMsg,
                                         WPARAM wParam,
                                         LPARAM lParam,
                                         BOOL& bHandled) {
@@ -3569,7 +3727,7 @@ diff --git a/WeaselIPCServer/WeaselServerImpl.cpp b/WeaselIPCServer/WeaselServer
    return 0;
  }
  
-@@ -111,6 +173,8 @@
+@@ -111,6 +173,8 @@ LRESULT ServerImpl::OnCommand(UINT uMsg,
                                WPARAM wParam,
                                LPARAM lParam,
                                BOOL& bHandled) {
@@ -3578,7 +3736,7 @@ diff --git a/WeaselIPCServer/WeaselServerImpl.cpp b/WeaselIPCServer/WeaselServer
    UINT uID = LOWORD(wParam);
    switch (uID) {
      case ID_WEASELTRAY_ENABLE_ASCII:
-@@ -140,7 +204,7 @@
+@@ -140,7 +204,7 @@ DWORD ServerImpl::OnCommand(WEASEL_IPC_COMMAND uMsg,
  }
  
  int ServerImpl::Start() {
@@ -3587,7 +3745,7 @@ diff --git a/WeaselIPCServer/WeaselServerImpl.cpp b/WeaselIPCServer/WeaselServer
    instanceName += getUsername();
    HANDLE hMutexOneInstance = ::CreateMutex(NULL, FALSE, instanceName.c_str());
    bool areYouOK = (::GetLastError() == ERROR_ALREADY_EXISTS ||
-@@ -171,17 +235,30 @@
+@@ -171,17 +235,30 @@ int ServerImpl::Run() {
    // auto handler = boost::bind(&ServerImpl::HandlePipeMessage, this);
    // auto listener = boost::bind(&PipeServer::Listen, channel.get(), handler);
    //
@@ -3622,12 +3780,10 @@ diff --git a/WeaselIPCServer/WeaselServerImpl.cpp b/WeaselIPCServer/WeaselServer
    return nRet;
  }
  
-@@ -189,6 +266,16 @@
-   if (!m_pRequestHandler)
-     return 0;
+@@ -191,6 +268,16 @@ DWORD ServerImpl::OnEcho(WEASEL_IPC_COMMAND uMsg, DWORD wParam, DWORD lParam) {
    return m_pRequestHandler->FindSession(lParam);
-+}
-+
+ }
+ 
 +DWORD ServerImpl::OnQueryMetadata(WEASEL_IPC_COMMAND uMsg,
 +                                   DWORD wParam, DWORD lParam) {
 +  if (!m_pRequestHandler) return 0;
@@ -3636,10 +3792,12 @@ diff --git a/WeaselIPCServer/WeaselServerImpl.cpp b/WeaselIPCServer/WeaselServer
 +    return true;
 +  };
 +  return m_pRequestHandler->QueryMetadata(lParam, eat) ? lParam : 0;
- }
- 
++}
++
  DWORD ServerImpl::OnStartSession(WEASEL_IPC_COMMAND uMsg,
-@@ -214,7 +301,8 @@
+                                  DWORD wParam,
+                                  DWORD lParam) {
+@@ -214,7 +301,8 @@ DWORD ServerImpl::OnEndSession(WEASEL_IPC_COMMAND uMsg,
  
  DWORD ServerImpl::OnKeyEvent(WEASEL_IPC_COMMAND uMsg,
                               DWORD wParam,
@@ -3649,7 +3807,7 @@ diff --git a/WeaselIPCServer/WeaselServerImpl.cpp b/WeaselIPCServer/WeaselServer
    if (!m_pRequestHandler /* || !m_pSharedMemory*/)
      return 0;
  
-@@ -222,7 +310,11 @@
+@@ -222,7 +310,11 @@ DWORD ServerImpl::OnKeyEvent(WEASEL_IPC_COMMAND uMsg,
      *channel << msg;
      return true;
    };
@@ -3662,7 +3820,7 @@ diff --git a/WeaselIPCServer/WeaselServerImpl.cpp b/WeaselIPCServer/WeaselServer
  }
  
  DWORD ServerImpl::OnShutdownServer(WEASEL_IPC_COMMAND uMsg,
-@@ -237,8 +329,9 @@
+@@ -237,8 +329,9 @@ DWORD ServerImpl::OnFocusIn(WEASEL_IPC_COMMAND uMsg,
                              DWORD lParam) {
    if (!m_pRequestHandler)
      return 0;
@@ -3674,7 +3832,7 @@ diff --git a/WeaselIPCServer/WeaselServerImpl.cpp b/WeaselIPCServer/WeaselServer
  }
  
  DWORD ServerImpl::OnFocusOut(WEASEL_IPC_COMMAND uMsg,
-@@ -255,6 +348,11 @@
+@@ -255,6 +348,11 @@ DWORD ServerImpl::OnUpdateInputPosition(WEASEL_IPC_COMMAND uMsg,
                                          DWORD lParam) {
    if (!m_pRequestHandler)
      return 0;
@@ -3686,7 +3844,18 @@ diff --git a/WeaselIPCServer/WeaselServerImpl.cpp b/WeaselIPCServer/WeaselServer
    /*
     * 移位标志 = 1bit == 0
     * height: 0~127 = 7bit
-@@ -375,14 +473,21 @@
+@@ -308,6 +406,10 @@ DWORD ServerImpl::OnEndMaintenance(WEASEL_IPC_COMMAND uMsg,
+   return 0;
+ }
+ 
++DWORD ServerImpl::OnReloadAppearance(WEASEL_IPC_COMMAND, DWORD, DWORD) {
++  return m_pRequestHandler && m_pRequestHandler->ReloadAppearance(m_darkMode);
++}
++
+ DWORD ServerImpl::OnCommitComposition(WEASEL_IPC_COMMAND uMsg,
+                                       DWORD wParam,
+                                       DWORD lParam) {
+@@ -375,20 +477,28 @@ DWORD ServerImpl::OnChangePage(WEASEL_IPC_COMMAND uMsg,
    }
  
  template <typename _Resp>
@@ -3710,15 +3879,21 @@ diff --git a/WeaselIPCServer/WeaselServerImpl.cpp b/WeaselIPCServer/WeaselServer
    PIPE_MSG_HANDLE(WEASEL_IPC_SHUTDOWN_SERVER, OnShutdownServer)
    PIPE_MSG_HANDLE(WEASEL_IPC_FOCUS_IN, OnFocusIn)
    PIPE_MSG_HANDLE(WEASEL_IPC_FOCUS_OUT, OnFocusOut)
-@@ -403,38 +508,228 @@
+   PIPE_MSG_HANDLE(WEASEL_IPC_UPDATE_INPUT_POS, OnUpdateInputPosition)
+   PIPE_MSG_HANDLE(WEASEL_IPC_START_MAINTENANCE, OnStartMaintenance)
+   PIPE_MSG_HANDLE(WEASEL_IPC_END_MAINTENANCE, OnEndMaintenance)
++  PIPE_MSG_HANDLE(WEASEL_IPC_RELOAD_APPEARANCE, OnReloadAppearance)
+   PIPE_MSG_HANDLE(WEASEL_IPC_COMMIT_COMPOSITION, OnCommitComposition)
+   PIPE_MSG_HANDLE(WEASEL_IPC_CLEAR_COMPOSITION, OnClearComposition);
+   PIPE_MSG_HANDLE(WEASEL_IPC_SELECT_CANDIDATE_ON_CURRENT_PAGE,
+@@ -403,38 +513,228 @@ void ServerImpl::HandlePipeMessage(PipeMessage pipe_msg, _Resp resp) {
  }
  
  PipeServer::PipeServer(std::wstring&& pn_cmd, SECURITY_ATTRIBUTES* s)
 -    : PipeChannel(std::move(pn_cmd), s) {}
--
--void PipeServer::Listen(ServerHandler const& handler) {
 +    : PipeChannel(std::move(pn_cmd), s), security_attributes(s) {}
-+
+ 
+-void PipeServer::Listen(ServerHandler const& handler) {
 +void PipeServer::Listen(ServerHandler handler) {
    for (;;) {
      HANDLE pipe = INVALID_HANDLE_VALUE;
@@ -3744,12 +3919,7 @@ diff --git a/WeaselIPCServer/WeaselServerImpl.cpp b/WeaselIPCServer/WeaselServer
 +                                "CreateNamedPipe");
 +    }
 +    DWORD error;
-     try {
--      boost::this_thread::interruption_point();
--      pipe = _ConnectServerPipe(pname);
--      boost::thread th(
--          [&handler, pipe, this] { _ProcessPipeThread(pipe, handler); });
--    } catch (DWORD ex) {
++    try {
 +      if (!::ResetEvent(accept_event.handle))
 +        throw ::GetLastError();
 +      OVERLAPPED operation{};
@@ -3764,10 +3934,7 @@ diff --git a/WeaselIPCServer/WeaselServerImpl.cpp b/WeaselIPCServer/WeaselServer
 +      error = failure;
 +    } catch (...) {
 +      std::lock_guard guard(state_mutex);
-       _FinalizePipe(pipe);
--    }
--    boost::this_thread::interruption_point();
--  }
++      _FinalizePipe(pipe);
 +      throw;
 +    }
 +    std::lock_guard guard(state_mutex);
@@ -3783,7 +3950,12 @@ diff --git a/WeaselIPCServer/WeaselServerImpl.cpp b/WeaselIPCServer/WeaselServer
 +        continue;
 +      throw std::system_error(error, std::system_category(), "ConnectNamedPipe");
 +    }
-+    try {
+     try {
+-      boost::this_thread::interruption_point();
+-      pipe = _ConnectServerPipe(pname);
+-      boost::thread th(
+-          [&handler, pipe, this] { _ProcessPipeThread(pipe, handler); });
+-    } catch (DWORD ex) {
 +      workers.push_back(std::make_unique<Worker>(pipe, buff_size));
 +      auto* record = workers.back().get();
 +      try {
@@ -3794,12 +3966,16 @@ diff --git a/WeaselIPCServer/WeaselServerImpl.cpp b/WeaselIPCServer/WeaselServer
 +        throw;
 +      }
 +    } catch (...) {
-+      _FinalizePipe(pipe);
+       _FinalizePipe(pipe);
 +      throw;
-+    }
-+  }
-+}
-+
+     }
+-    boost::this_thread::interruption_point();
+   }
+ }
+ 
+-PipeServer::ServerRunner PipeServer::GetServerRunner(
+-    ServerHandler const& handler) {
+-  return [&handler, this]() { Listen(handler); };
 +void PipeServer::Stop() {
 +  std::lock_guard guard(state_mutex);
 +  stopping = true;
@@ -3893,12 +4069,9 @@ diff --git a/WeaselIPCServer/WeaselServerImpl.cpp b/WeaselIPCServer/WeaselServer
 +  ClearBufferStream();
  }
  
- PipeServer::ServerRunner PipeServer::GetServerRunner(
-     ServerHandler const& handler) {
--  return [&handler, this]() { Listen(handler); };
--}
--
 -void PipeServer::_ProcessPipeThread(HANDLE pipe, ServerHandler const& handler) {
++PipeServer::ServerRunner PipeServer::GetServerRunner(
++    ServerHandler const& handler) {
 +  return [handler, this]() { Listen(handler); };
 +}
 +
@@ -3937,23 +4110,21 @@ diff --git a/WeaselIPCServer/WeaselServerImpl.cpp b/WeaselIPCServer/WeaselServer
        Res msg;
 -      _Receive(pipe, &msg, sizeof(msg));
 -      handler(msg, [this, pipe](Msg resp) { _Send(pipe, resp); });
--    }
 +      const char* request_body = _ReceiveRequest(worker, msg);
 +      if (stopping)
 +        break;
 +      handler(msg,
 +              [this, worker](Msg resp) { _SendResponse(worker, resp); },
 +              request_body);
-+    }
+     }
 +  } catch (DWORD) {
 +    // A disconnected peer or Stop() ends this transport connection.
    } catch (...) {
 -    _FinalizePipe(pipe);
--  }
 +    std::lock_guard guard(state_mutex);
 +    if (!worker_error)
 +      worker_error = std::current_exception();
-+  }
+   }
 +  std::lock_guard guard(state_mutex);
 +  _FinalizePipe(worker->pipe);
 +  worker->finished = true;
@@ -3961,7 +4132,7 @@ diff --git a/WeaselIPCServer/WeaselServerImpl.cpp b/WeaselIPCServer/WeaselServer
  
  // weasel::Server
 diff --git a/WeaselIPCServer/WeaselServerImpl.h b/WeaselIPCServer/WeaselServerImpl.h
-index a4d123ddb5a91fe663c94e164304dc67837cdf27..57973fbcf8c3c42fcc5bd9e0c937f0bb7384ace0 100644
+index a4d123ddb5a91fe663c94e164304dc67837cdf27..5f88b307814e39b6d98217e227d00a5d286e9c43 100644
 --- a/WeaselIPCServer/WeaselServerImpl.h
 +++ b/WeaselIPCServer/WeaselServerImpl.h
 @@ -5,6 +5,7 @@
@@ -3985,7 +4156,15 @@ index a4d123ddb5a91fe663c94e164304dc67837cdf27..57973fbcf8c3c42fcc5bd9e0c937f0bb
    DWORD OnShutdownServer(WEASEL_IPC_COMMAND uMsg, DWORD wParam, DWORD lParam);
    DWORD OnFocusIn(WEASEL_IPC_COMMAND uMsg, DWORD wParam, DWORD lParam);
    DWORD OnFocusOut(WEASEL_IPC_COMMAND uMsg, DWORD wParam, DWORD lParam);
-@@ -89,10 +92,12 @@ class ServerImpl : public CWindowImpl<ServerImpl, CWindow, ServerWinTraits>
+@@ -59,6 +62,7 @@ class ServerImpl : public CWindowImpl<ServerImpl, CWindow, ServerWinTraits>
+                               DWORD lParam);
+   DWORD OnStartMaintenance(WEASEL_IPC_COMMAND uMsg, DWORD wParam, DWORD lParam);
+   DWORD OnEndMaintenance(WEASEL_IPC_COMMAND uMsg, DWORD wParam, DWORD lParam);
++  DWORD OnReloadAppearance(WEASEL_IPC_COMMAND uMsg, DWORD wParam, DWORD lParam);
+   DWORD OnCommitComposition(WEASEL_IPC_COMMAND uMsg,
+                             DWORD wParam,
+                             DWORD lParam);
+@@ -89,10 +93,12 @@ class ServerImpl : public CWindowImpl<ServerImpl, CWindow, ServerWinTraits>
   private:
    void _Finailize();
    template <typename _Resp>
@@ -19618,6 +19797,7 @@ diff --git a/include/PipeChannel.h b/include/PipeChannel.h
 +};
 +};  // namespace weasel
 diff --git a/include/RimeWithWeasel.h b/include/RimeWithWeasel.h
+index 6fb0a4cab82cba3943a0c2ea6c2bc54caa1938a9..facae0526d645572904eefe52df2f97af109ce2c 100644
 --- a/include/RimeWithWeasel.h
 +++ b/include/RimeWithWeasel.h
 @@ -3,6 +3,9 @@
@@ -19630,7 +19810,7 @@ diff --git a/include/RimeWithWeasel.h b/include/RimeWithWeasel.h
  
  #include <rime_api.h>
  
-@@ -27,8 +30,18 @@
+@@ -27,8 +30,18 @@ struct SessionStatus {
    }
    weasel::UIStyle style;
    RimeStatus status;
@@ -19649,7 +19829,7 @@ diff --git a/include/RimeWithWeasel.h b/include/RimeWithWeasel.h
  };
  typedef std::map<DWORD, SessionStatus> SessionStatusMap;
  typedef DWORD WeaselSessionId;
-@@ -52,6 +65,7 @@
+@@ -52,6 +65,7 @@ class RimeWithWeaselHandler : public weasel::RequestHandler {
                                                 WeaselSessionId ipc_id,
                                                 EatLine eat);
    virtual bool ChangePage(bool backward, WeaselSessionId ipc_id, EatLine eat);
@@ -19657,13 +19837,20 @@ diff --git a/include/RimeWithWeasel.h b/include/RimeWithWeasel.h
    virtual void FocusIn(DWORD param, WeaselSessionId ipc_id);
    virtual void FocusOut(DWORD param, WeaselSessionId ipc_id);
    virtual void UpdateInputPosition(RECT const& rc, WeaselSessionId ipc_id);
-@@ -67,12 +81,23 @@
+@@ -61,18 +75,30 @@ class RimeWithWeaselHandler : public weasel::RequestHandler {
+                          const std::string& opt,
+                          bool val);
+   virtual void UpdateColorTheme(BOOL darkMode);
++  bool ReloadAppearance(BOOL darkMode) override;
+ 
+   void OnUpdateUI(std::function<void()> const& cb);
+ 
   private:
    void _Setup();
    bool _IsDeployerRunning();
 -  void _UpdateUI(WeaselSessionId ipc_id);
 +  void _UpdateUI(WeaselSessionId ipc_id, bool show_notifications = true);
-+  void _RefreshModeStyle(WeaselSessionId ipc_id);
++  void _RefreshModeStyle(WeaselSessionId ipc_id, bool repaint = true);
    void _LoadSchemaSpecificSettings(WeaselSessionId ipc_id,
                                     const std::string& schema_id);
    void _LoadAppInlinePreeditSet(WeaselSessionId ipc_id,
@@ -19683,7 +19870,7 @@ diff --git a/include/RimeWithWeasel.h b/include/RimeWithWeasel.h
    bool _Respond(WeaselSessionId ipc_id, EatLine eat);
    void _ReadClientInfo(WeaselSessionId ipc_id, LPWSTR buffer);
    void _GetCandidateInfo(weasel::CandidateInfo& cinfo, RimeContext& ctx);
-@@ -110,10 +135,10 @@
+@@ -110,10 +136,10 @@ class RimeWithWeaselHandler : public weasel::RequestHandler {
                         uintptr_t session_id,
                         const char* message_type,
                         const char* message_value);
@@ -19875,6 +20062,7 @@ index 09625e4d34705a27354b4de81debfc6dfecd7f43..961f37377e770c46d49e1252a93a3608
  #define STRINGIZE(x) #x
  #define VERSION_STR(x) STRINGIZE(x)
 diff --git a/include/WeaselIPC.h b/include/WeaselIPC.h
+index 3065cb57d49095eefbc04eddbe5ec2801216f8b4..1a174463d1f933ba5dbfd72ef293542ee47f1831 100644
 --- a/include/WeaselIPC.h
 +++ b/include/WeaselIPC.h
 @@ -1,13 +1,14 @@
@@ -19895,11 +20083,12 @@ diff --git a/include/WeaselIPC.h b/include/WeaselIPC.h
  
  #define WEASEL_IPC_METADATA_SIZE 1024
  #define WEASEL_IPC_BUFFER_SIZE (4 * 1024)
-@@ -32,10 +33,32 @@
+@@ -32,10 +33,33 @@ enum WEASEL_IPC_COMMAND {
    WEASEL_IPC_SELECT_CANDIDATE_ON_CURRENT_PAGE,
    WEASEL_IPC_HIGHLIGHT_CANDIDATE_ON_CURRENT_PAGE,
    WEASEL_IPC_CHANGE_PAGE,
 +  WEASEL_IPC_QUERY_METADATA,
++  WEASEL_IPC_RELOAD_APPEARANCE,
    WEASEL_IPC_LAST_COMMAND
  };
  
@@ -19928,7 +20117,7 @@ diff --git a/include/WeaselIPC.h b/include/WeaselIPC.h
  struct PipeMessage {
    WEASEL_IPC_COMMAND Msg;
    DWORD wParam;
-@@ -74,6 +97,7 @@
+@@ -74,6 +98,7 @@ struct RequestHandler {
    virtual bool ChangePage(bool backward, DWORD session_id, EatLine eat) {
      return false;
    }
@@ -19936,7 +20125,15 @@ diff --git a/include/WeaselIPC.h b/include/WeaselIPC.h
    virtual void FocusIn(DWORD param, DWORD session_id) {}
    virtual void FocusOut(DWORD param, DWORD session_id) {}
    virtual void UpdateInputPosition(RECT const& rc, DWORD session_id) {}
-@@ -111,7 +135,7 @@
+@@ -81,6 +106,7 @@ struct RequestHandler {
+   virtual void EndMaintenance() {}
+   virtual void SetOption(DWORD session_id, const std::string& opt, bool val) {}
+   virtual void UpdateColorTheme(BOOL darkMode) {}
++  virtual bool ReloadAppearance(BOOL darkMode) { return false; }
+ };
+ 
+ // 處理server端回應之物件
+@@ -111,17 +137,20 @@ class Client {
    // 终止服务
    void ShutdownServer();
    // 發起會話
@@ -19945,8 +20142,10 @@ diff --git a/include/WeaselIPC.h b/include/WeaselIPC.h
    // 結束會話
    void EndSession();
    // 進入維護模式
-@@ -120,8 +144,10 @@
+   void StartMaintenance();
+   // 退出維護模式
    void EndMaintenance();
++  bool ReloadAppearance();
    // 测试连接
    bool Echo();
 +  bool QueryMetadata(SessionMetadata& metadata, bool focus = false);
@@ -19956,7 +20155,7 @@ diff --git a/include/WeaselIPC.h b/include/WeaselIPC.h
    // 上屏正在編輯的文字
    bool CommitComposition();
    // 清除正在編輯的文字
-@@ -142,6 +168,8 @@
+@@ -142,6 +171,8 @@ class Client {
    void TrayCommand(UINT menuId);
    // 读取server返回的数据
    bool GetResponseData(ResponseHandler handler);
@@ -22824,3 +23023,208 @@ index 3a61b7fe17c3b19ded625fec32b75426055e67a3..1fbc0b2f9489e37776127867765abdb8
 +    })
 +    end
 +  end)
+diff --git a/WeaselDeployer/Configurator.h b/WeaselDeployer/Configurator.h
+index ac14091d600f8662d45df5f1f09d5e03babfb45e..73bac69c566724bbef269301c880137adb3abb41 100644
+--- a/WeaselDeployer/Configurator.h
++++ b/WeaselDeployer/Configurator.h
+@@ -4,11 +4,12 @@ class UIStyleSettings;
+ 
+ class Configurator {
+  public:
+-  explicit Configurator();
++  explicit Configurator(bool create_custom_files = true);
+ 
+   void Initialize();
+   int Run(bool installing);
+   int UpdateWorkspace(bool report_errors = false);
++  int UpdateAppearance();
+   int DictManagement();
+   int SyncUserData();
+ };
+diff --git a/WeaselDeployer/UIStyleSettings.cpp b/WeaselDeployer/UIStyleSettings.cpp
+index 22e7380a70240b15fbf0406243d8daa5fc5b0064..1e05404ce1c401c5d1f985600344cb8cdcf41784 100644
+--- a/WeaselDeployer/UIStyleSettings.cpp
++++ b/WeaselDeployer/UIStyleSettings.cpp
+@@ -1,7 +1,38 @@
+ #include "stdafx.h"
+ #include <WeaselUtility.h>
++#include <dwrite.h>
++#include <wrl/client.h>
+ #include "UIStyleSettings.h"
+ 
++#pragma comment(lib, "dwrite.lib")
++
++namespace {
++
++constexpr const char* kCandidateFontFamilies[] = {
++    "Noto Sans CJK TC", "Noto Sans CJK HK", "Noto Sans CJK SC"};
++constexpr const char* kCandidateFont = "style/font_face";
++
++std::string FontSetting(RimeConfig* config, const char* key) {
++  const char* value = rime_get_api()->config_get_cstring(config, key);
++  return value ? value : "";
++}
++
++std::string PrimaryFontFamily(const std::string& stack) {
++  auto name = stack.substr(0, stack.find_first_of(",:"));
++  auto begin = name.find_first_not_of(" \t");
++  return begin == std::string::npos
++             ? std::string()
++             : name.substr(begin, name.find_last_not_of(" \t") - begin + 1);
++}
++
++std::string ReplacePrimaryFont(const std::string& stack,
++                               const std::string& family) {
++  auto suffix = stack.find_first_of(",:");
++  return suffix == std::string::npos ? family : family + stack.substr(suffix);
++}
++
++}  // namespace
++
+ UIStyleSettings::UIStyleSettings() {
+   api_ = (RimeLeversApi*)rime_get_api()->find_module("levers")->get_api();
+   settings_ = api_->custom_settings_init("weasel", "Weasel::UIStyleSettings");
+@@ -73,3 +104,57 @@ bool UIStyleSettings::SelectColorScheme(const std::string& color_scheme_id) {
+                          color_scheme_id.c_str());
+   return true;
+ }
++
++std::vector<std::string> UIStyleSettings::GetInstalledCandidateFonts() const {
++  std::vector<std::string> fonts;
++  Microsoft::WRL::ComPtr<IDWriteFactory> factory;
++  if (FAILED(DWriteCreateFactory(
++          DWRITE_FACTORY_TYPE_SHARED, __uuidof(IDWriteFactory),
++          reinterpret_cast<IUnknown**>(factory.GetAddressOf()))))
++    return fonts;
++
++  Microsoft::WRL::ComPtr<IDWriteFontCollection> collection;
++  if (FAILED(factory->GetSystemFontCollection(collection.GetAddressOf(), TRUE)))
++    return fonts;
++
++  for (const char* family : kCandidateFontFamilies) {
++    UINT32 index = 0;
++    BOOL exists = FALSE;
++    if (SUCCEEDED(collection->FindFamilyName(
++            u8tow(family).c_str(), &index, &exists)) &&
++        exists) {
++      fonts.emplace_back(family);
++    }
++  }
++  return fonts;
++}
++
++std::string UIStyleSettings::GetActiveCandidateFont() {
++  RimeConfig config = {0};
++  api_->settings_get_config(settings_, &config);
++  return PrimaryFontFamily(FontSetting(&config, kCandidateFont));
++}
++
++bool UIStyleSettings::SelectCandidateFont(const std::string& family) {
++  RimeConfig config = {0};
++  api_->settings_get_config(settings_, &config);
++  const auto active_stack = FontSetting(&config, kCandidateFont);
++  const auto active_family = PrimaryFontFamily(active_stack);
++  if (family.empty() || family == active_family)
++    return true;
++
++  const auto replacement = ReplacePrimaryFont(active_stack, family);
++  if (!api_->customize_string(settings_, kCandidateFont, replacement.c_str()))
++    return false;
++
++  // Inherited labels follow the main face. Preserve distinct custom fonts.
++  for (const char* key : {"style/label_font_face", "style/comment_font_face"}) {
++    const auto stack = FontSetting(&config, key);
++    if (!stack.empty() && PrimaryFontFamily(stack) == active_family) {
++      const auto adjusted = ReplacePrimaryFont(stack, family);
++      if (!api_->customize_string(settings_, key, adjusted.c_str()))
++        return false;
++    }
++  }
++  return true;
++}
+diff --git a/WeaselDeployer/UIStyleSettings.h b/WeaselDeployer/UIStyleSettings.h
+index f229eecb3e03de91bca682f82aa4c7ac25d8258a..e512226cfb1bc5a2457f61df3022abc3399da2f1 100644
+--- a/WeaselDeployer/UIStyleSettings.h
++++ b/WeaselDeployer/UIStyleSettings.h
+@@ -18,6 +18,9 @@ class UIStyleSettings {
+   std::string GetColorSchemePreview(const std::string& color_scheme_id);
+   std::string GetActiveColorScheme();
+   bool SelectColorScheme(const std::string& color_scheme_id);
++  std::vector<std::string> GetInstalledCandidateFonts() const;
++  std::string GetActiveCandidateFont();
++  bool SelectCandidateFont(const std::string& family);
+ 
+   RimeCustomSettings* settings() { return settings_; }
+ 
+diff --git a/WeaselDeployer/UIStyleSettingsDialog.cpp b/WeaselDeployer/UIStyleSettingsDialog.cpp
+index b00e82de96f97cabeecd35e9f2c7e03a84c46503..9bab42f6ba031a27560f38b54752f9b99b4554b7 100644
+--- a/WeaselDeployer/UIStyleSettingsDialog.cpp
++++ b/WeaselDeployer/UIStyleSettingsDialog.cpp
+@@ -2,7 +2,9 @@
+ #include "UIStyleSettingsDialog.h"
+ #include "UIStyleSettings.h"
+ #include "Configurator.h"
++#include "WeaselDeployer.h"
+ #include <WeaselUtility.h>
++#include <algorithm>
+ 
+ UIStyleSettingsDialog::UIStyleSettingsDialog(UIStyleSettings* settings)
+     : settings_(settings), loaded_(false) {}
+@@ -28,6 +30,20 @@ void UIStyleSettingsDialog::Populate() {
+     color_schemes_.SetCurSel(active_index);
+     Preview(active_index);
+   }
++  auto active_font = settings_->GetActiveCandidateFont();
++  fonts_ = settings_->GetInstalledCandidateFonts();
++  if (!active_font.empty() &&
++      std::find(fonts_.begin(), fonts_.end(), active_font) == fonts_.end())
++    fonts_.insert(fonts_.begin(), active_font);
++  int active_font_index = -1;
++  for (size_t i = 0; i < fonts_.size(); ++i) {
++    select_font_.AddString(u8tow(fonts_[i]).c_str());
++    if (fonts_[i] == active_font)
++      active_font_index = static_cast<int>(i);
++  }
++  select_font_.SetCurSel(active_font_index);
++  select_font_.EnableWindow(fonts_.size() > 1 ||
++                            (!fonts_.empty() && active_font.empty()));
+   loaded_ = true;
+ }
+ 
+@@ -35,7 +51,6 @@ LRESULT UIStyleSettingsDialog::OnInitDialog(UINT, WPARAM, LPARAM, BOOL&) {
+   color_schemes_.Attach(GetDlgItem(IDC_COLOR_SCHEME));
+   preview_.Attach(GetDlgItem(IDC_PREVIEW));
+   select_font_.Attach(GetDlgItem(IDC_SELECT_FONT));
+-  select_font_.EnableWindow(FALSE);
+ 
+   Populate();
+ 
+@@ -50,6 +65,12 @@ LRESULT UIStyleSettingsDialog::OnClose(UINT, WPARAM, LPARAM, BOOL&) {
+ }
+ 
+ LRESULT UIStyleSettingsDialog::OnOK(WORD, WORD code, HWND, BOOL&) {
++  int index = select_font_.GetCurSel();
++  if (index >= 0 && index < static_cast<int>(fonts_.size()) &&
++      !settings_->SelectCandidateFont(fonts_[index])) {
++    MSG_BY_IDS(IDS_STR_ERR_UNKNOWN, IDS_STR_WEASEL, MB_OK | MB_ICONEXCLAMATION);
++    return 0;
++  }
+   EndDialog(code);
+   return 0;
+ }
+diff --git a/WeaselDeployer/UIStyleSettingsDialog.h b/WeaselDeployer/UIStyleSettingsDialog.h
+index e81aad77b5e2fdd662a7281e9bcf4a8677a0b9c8..644364ffa7fb85221693ea93127ca2e71fc33fab 100644
+--- a/WeaselDeployer/UIStyleSettingsDialog.h
++++ b/WeaselDeployer/UIStyleSettingsDialog.h
+@@ -29,9 +29,10 @@ class UIStyleSettingsDialog : public CDialogImpl<UIStyleSettingsDialog> {
+   UIStyleSettings* settings_;
+   bool loaded_;
+   std::vector<ColorSchemeInfo> preset_;
++  std::vector<std::string> fonts_;
+ 
+   CListBox color_schemes_;
+   CStatic preview_;
+   CImage image_;
+-  CButton select_font_;
++  CComboBox select_font_;
+ };

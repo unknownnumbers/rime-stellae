@@ -1,6 +1,6 @@
 {
   "schema": "stellae-native-sources/1",
-  "date": "2026-11-20",
+  "date": "2026-11-24",
   "status": "source-inputs-pinned; validation is recorded in docs/BUILD.md",
   "productComposition": {
     "frontend": "0.17.4.61052; TSF/legacy IME/Server/Deployer/Setup; x64 and Win32",
@@ -53,7 +53,7 @@
     {
       "id": "stellae61052",
       "path": "native/weasel/stellae-61052.patch",
-      "sha256": "d626b73321bbddd72019f237e682e6c2c6abb9b3673a2c19617c0610fc5fbbdf",
+      "sha256": "92b298b8182a0422e9ebd416c82d0e0f4a485379c6ba56c754a4ee370dae61e3",
       "source": "weasel"
     },
     {
@@ -319,7 +319,7 @@
     "Engine third-party dependency archives are official prebuilt inputs with pinned hashes.",
     "Source assembly, compilation, controlled tests and real application input acceptance are different checks.",
     "The complete frontend patch preserves the adopted product source. The final no-scheme installer recipe and profile policy are separate public sources applied during packaging.",
-    "No personal configuration, learning database or historical private build artifact is needed.",
+    "Build inputs are identified by the fixed source and asset inventories.",
     "Only x64 and Win32 products are built; retained ARM source entry points are not a support claim."
   ],
   "frontendSourceFiles": "native/frontend-source-files.json",

@@ -5,6 +5,8 @@ import hashlib
 import json
 from pathlib import Path
 
+from prepare_bundle import DEFAULT_FONT_NAME
+
 p=argparse.ArgumentParser(description=__doc__)
 p.add_argument('--stage', type=Path, required=True)
 p.add_argument('--ref', required=True)
@@ -20,6 +22,19 @@ active_scheme_ids={key for row in scheme['files'] for key in row['license'].get(
 provenance=load(root/'bundle-provenance.json')
 origins={row['installed_path']:row for row in provenance['files']}
 scheme_archive_paths={row['archive_member']:row['installed_path'] for row in provenance['files'] if row['source']=='schemes'}
+font_manifest=root/'font-payload/font-manifest.json'
+font_records={row['file']:row for row in load(font_manifest)['files'] if row['file']==DEFAULT_FONT_NAME} if font_manifest.is_file() else {}
+font_sources={
+    'candidate-font:regular':{
+        'name':'Noto Sans CJK Regular Collection',
+        'families':entry['families'],
+        'version':entry['version'],
+        'license':entry['license'],
+        'url':entry['source'],
+        'notices':['font-notices/OFL.txt','font-notices/NOTICE.txt'],
+        'evidence':['font-notices/font-manifest.json'],
+    } for entry in font_records.values()
+}
 records=[]
 excluded={'install.nsi','bundle.nsi','InstallProfilePolicy.ps1','NativeProfileSnapshot.ps1','stellae_identity.nsh'}
 
@@ -93,6 +108,17 @@ for path in sorted(root.rglob('*')):
             'references': [math+'LICENSE-CC-BY-SA-4.0.txt', math+'NOTICE.txt', math+'SOURCE.json'],
             'source_archive': source['url'], 'source_archive_sha256': source['sha256'],
         }
+    elif relative.startswith('font-payload/') and path.name in font_records:
+        entry=font_records[path.name]
+        if digest != entry['sha256'] or row['bytes'] != entry['size']:
+            raise SystemExit('The staged default font is inconsistent with the reviewed manifest.')
+        row['license_record']={'terms':entry['license'],'references':['font-notices/OFL.txt','font-notices/NOTICE.txt']}
+        row['source_ids']=['candidate-font:regular']
+        row['installation_scope']='Current Windows user'
+    elif relative in {'font-payload/OFL.txt','font-notices/OFL.txt'}:
+        row['license_record']={'terms':'Original upstream OFL-1.1 notice','references':['font-notices/OFL.txt']}
+    elif relative in {'font-payload/NOTICE.txt','font-notices/NOTICE.txt'}:
+        row['license_record']={'terms':'Font attribution and exact source notice','references':['font-notices/OFL.txt']}
     else:
         docs=relative in {'README.txt','SOURCES.md','THIRD_PARTY_NOTICES.md','LICENSE-DOCS'}
         row['license_record']={'terms':'CC-BY-SA-4.0' if docs else 'GPL-3.0-only','references':['licenses/CC-BY-SA-4.0.txt' if docs else 'LICENSE.txt']}
@@ -101,7 +127,7 @@ report={'format':'stellae-rymcp-payload-license-index-v1','bundleVersion':proven
         'frontendVersion':provenance['frontendVersion'],'sourceRef':a.ref,'baseSources':base['sources'],
         'schemeSources':{key:scheme['sources'][key] for key in sorted(active_scheme_ids)},
         'schemeArchivePaths':scheme_archive_paths,
-        'sources':dict(base['sources'],**{'scheme:'+key:scheme['sources'][key] for key in sorted(active_scheme_ids)}),
+        'sources':{**base['sources'],**{'scheme:'+key:scheme['sources'][key] for key in sorted(active_scheme_ids)},**font_sources},
         'files':records,'installerRuntimeSources':['project-code','nsis'],
         'scope':'Exact package input bytes and installed paths. Nested license records retain their source-index meaning and identify the installed reference root.'}
 (root/'package-license-index.json').write_text(json.dumps(report,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')

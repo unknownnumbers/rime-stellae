@@ -72,8 +72,7 @@ class RuntimeEngineTests(unittest.TestCase):
         paths = {name: arch for arch, names in overlay.PRODUCTS.items() for name in names}
         paths.update({name: arch for arch, (_, name) in overlay.ENGINES.items()})
         paths.update({name: 'x86' for name in (
-            '7z.dll', '7z.exe', 'curl.exe', 'StellaeDeployer.exe', 'StellaeSetup.exe',
-            'Win32/StellaeDeployer.exe',
+            '7z.dll', '7z.exe', 'curl.exe', 'StellaeSetup.exe',
         )})
         base, origins = [], []
         for name, arch in paths.items():
@@ -155,8 +154,8 @@ class RuntimeEngineTests(unittest.TestCase):
 
     def test_pins_sources_preserves_notices_and_verifies_both_extracted_engines(self):
         proof = self.apply()
-        self.assertEqual((len(proof['rebuiltImages']), len(proof['rebuiltRuntimeEngines'])), (6, 2))
-        self.assertEqual(proof['unchangedNativeImages'], 6)
+        self.assertEqual((len(proof['rebuiltImages']), len(proof['rebuiltRuntimeEngines'])), (8, 2))
+        self.assertEqual(proof['unchangedNativeImages'], 4)
         self.assertFalse(proof['runtimeEnginesPreserved'])
         for row in proof['rebuiltRuntimeEngines']:
             with ZipFile(self.sources / row['corresponding_source']) as source:

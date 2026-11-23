@@ -8,6 +8,7 @@ import re
 from zipfile import ZipFile
 
 from apply_frontend_overlays import ENGINES, MACHINES, PRODUCTS, image_machine
+from prepare_bundle import DEFAULT_FONT_NAME, FONT_INSTALLER_HELPERS
 
 
 def digest(path):
@@ -57,6 +58,22 @@ for entry in manifest['files']:
 for name in ['package-manifest.json', 'package-license-index.json']:
     if digest(a.stage / name) not in hashes:
         raise SystemExit('Missing installed metadata: ' + name)
+font_collection = None
+if (a.stage/'font-payload/font-manifest.json').is_file():
+    font_path = f'font-payload/{DEFAULT_FONT_NAME}'
+    font_extensions = {'.otf', '.ttf', '.ttc', '.otc'}
+    staged_fonts = [row['path'] for row in manifest['files'] if Path(row['path']).suffix.lower() in font_extensions]
+    extracted_fonts = [path.name for path in files if path.suffix.lower() in font_extensions]
+    if staged_fonts != [font_path] or extracted_fonts != [DEFAULT_FONT_NAME]:
+        raise SystemExit('The installer must contain exactly one static Regular font collection.')
+    required_font_files = {*FONT_INSTALLER_HELPERS, 'font-notices/font-manifest.json',
+                           'font-notices/OFL.txt', 'font-notices/NOTICE.txt'}
+    if not required_font_files.issubset(installed):
+        raise SystemExit('The font collection installation helper or notices are missing.')
+    legacy = {'fontprofile.ps1', 'fontprofilenative.cs', 'stellaefontprofile.exe'}
+    if any(path.name.lower() in legacy for path in files):
+        raise SystemExit('The installer contains a legacy standalone font tool.')
+    font_collection = {'path': font_path, 'sha256': installed[font_path]['sha256']}
 for path in files:
     if path.suffix.lower() in {'.pdb', '.dmp', '.log'} or '.userdb' in path.name:
         raise SystemExit('Unexpected runtime or diagnostic file')
@@ -68,6 +85,13 @@ licenses = {row['installed_path']: row for row in load(a.stage / 'package-licens
 full_frontend = 'nativeFrontend' in inputs
 overlay = load(a.stage / 'server-overlay-verification.json')
 source_ref = manifest['sourceRef']
+if font_collection:
+    license_row = licenses[font_collection['path']]
+    if (license_row['sha256'] != font_collection['sha256']
+            or license_row['source_ids'] != ['candidate-font:regular']
+            or license_row['license_record'] != {
+                'terms': 'OFL-1.1', 'references': ['font-notices/OFL.txt', 'font-notices/NOTICE.txt']}):
+        raise SystemExit('The Regular font collection license record differs.')
 if (not re.fullmatch('[a-f0-9]{40}', source_ref)
         or not overlay['passed'] or overlay['sourceRef'] != source_ref
         or (not full_frontend and (not isinstance(overlay['runId'], int) or overlay['runId'] < 1))
@@ -196,6 +220,8 @@ if not full_frontend:
     report['sourceRunId'] = overlay['runId']
 if rebuilt_engines:
     report['rebuiltRuntimeEngines'] = rebuilt_engines
+if font_collection:
+    report['candidateFontCollection'] = font_collection
 a.report.write_text(json.dumps(report, indent=2) + '\n', encoding='utf-8')
 print(json.dumps({'passed': True, 'verifiedInputFiles': len(manifest['files']),
                   'reusedImages': len(retained), 'rebuiltImages': len(rebuilt),

@@ -1,9 +1,9 @@
 {
   "format": "stellae-source-release-v1",
-  "date": "2026-11-20",
+  "date": "2026-11-24",
   "kind": "frontend-source-and-bundle-packaging",
   "frontendVersion": "0.17.4.61052",
-  "bundleVersion": "2026.11.20.1",
+  "bundleVersion": "2026.11.24",
   "nativeBinariesIncluded": false,
   "personalLearningIncluded": false,
   "productionInputSchemesIncluded": false,
@@ -17,8 +17,8 @@
     },
     {
       "path": ".github/workflows/bundle.yml",
-      "bytes": 12070,
-      "sha256": "8dc48b443e7ab04b10e39902f54d0ffb7cc7f2c052ef2c6a11a21c4c5cdf3f27"
+      "bytes": 19551,
+      "sha256": "f95063f15fcfa05157e54ef3bab0201372d6b9b560e68a4c8300773a299f1301"
     },
     {
       "path": ".github/workflows/native.yml",
@@ -27,8 +27,8 @@
     },
     {
       "path": ".github/workflows/verify.yml",
-      "bytes": 525,
-      "sha256": "fba60147beb29b89e8d48068e7395202fc3f9b60e25dabfcf7ee2cd4f7b6b19a"
+      "bytes": 657,
+      "sha256": "8d03986bc198892823093d15f600a3279348ce13f88df2c488744524d3f18f0c"
     },
     {
       "path": ".gitignore",
@@ -47,23 +47,23 @@
     },
     {
       "path": "README.en.md",
-      "bytes": 2046,
-      "sha256": "dc5d91daba8c91cb73856bdd47da818f9cbae43bbd73dd9b4be7c20157e7985b"
+      "bytes": 2345,
+      "sha256": "a557424908e8bfe7e41d3d89aa96e0f35e5e2342604c0890c16127e34e1229ae"
     },
     {
       "path": "README.md",
-      "bytes": 1694,
-      "sha256": "41cb3b0b2634edeb6616bb9338c38e1135660e8a56e3033335839a851820765f"
+      "bytes": 1947,
+      "sha256": "e4c4a40ed61df6bb22c6f043cc77e4f241d109f13a5f376e8602b5a958d5e009"
     },
     {
       "path": "README.zh-SC.md",
-      "bytes": 1706,
-      "sha256": "41e7edcf629ca5ba16f077ccea2655b4fd6e7b228a47decb324a2bfabb8030e7"
+      "bytes": 1959,
+      "sha256": "03341fa7178951c16a1abd8c2435d07e5c9772fcef6b21873bc8548be6c64249"
     },
     {
       "path": "THIRD_PARTY_NOTICES.md",
-      "bytes": 1004,
-      "sha256": "c857c31fdc4ced1c27ce1df68490812fae32d57dc9c7e985fb35ae016818006c"
+      "bytes": 1276,
+      "sha256": "a4e9f47c0bc60117abef256beebc46580c7b494b3676092c505be99de6757bff"
     },
     {
       "path": "TODO.md",
@@ -107,13 +107,13 @@
     },
     {
       "path": "docs/BUILD.md",
-      "bytes": 1730,
-      "sha256": "81881fb19a2547567d2d082a03649d38bb53a33b1f7dc3c9b3e4d00720f57bfa"
+      "bytes": 2838,
+      "sha256": "07a6dde1dd15a1474fbcbdb73dc3414ee0f9b8ed4947c8f665bb141daccf81a1"
     },
     {
       "path": "docs/PC.md",
-      "bytes": 857,
-      "sha256": "76546d4a942b8147536c9386b9e6200caa18a60f360cd8f181bf4260217702a7"
+      "bytes": 1264,
+      "sha256": "2cf53516083440331564ad6ec2602320ce781c3547d98a3fcb61a31a226102bb"
     },
     {
       "path": "docs/SOURCES.md",
@@ -137,13 +137,28 @@
     },
     {
       "path": "installer/bundle-inputs.json",
-      "bytes": 4165,
-      "sha256": "13c1704003e10ecdd29a9b9e2edcb4ee7ca7e997b5ce3c81ac4309701eb42ef4"
+      "bytes": 5262,
+      "sha256": "eb425b42bb2f718521b80bf439f5be872782eb7f0a4330a87df75f2fd1c77426"
     },
     {
       "path": "installer/bundle.nsi",
-      "bytes": 87,
-      "sha256": "bd70c5aac3fd5c299e34f28d6d9fd4072e8572640dbaf024c4f7947ba87caa2b"
+      "bytes": 172,
+      "sha256": "f4ac40e769e9f9ff8690db7b6fed932e54ae5a5728f9b429f22a2d7fe6d03ae5"
+    },
+    {
+      "path": "installer/default-fonts/NOTICE.txt",
+      "bytes": 180,
+      "sha256": "726b50f3d32d6773afa7b1add61761fb202eed93f6583acbc76f18def5435f0b"
+    },
+    {
+      "path": "installer/default-fonts/OFL.txt",
+      "bytes": 4301,
+      "sha256": "6a73f9541c2de74158c0e7cf6b0a58ef774f5a780bf191f2d7ec9cc53efe2bf2"
+    },
+    {
+      "path": "installer/default-fonts/font-manifest.json",
+      "bytes": 1107,
+      "sha256": "c01cb72bd34cd555a3a4711aefa29b6a8f62deaa4a189a556d3204cd14d9bbca"
     },
     {
       "path": "installer/default.yaml",
@@ -152,8 +167,8 @@
     },
     {
       "path": "installer/install.nsi",
-      "bytes": 24079,
-      "sha256": "4af90ae8c967e1b964440b11705b05a859a023c3411c748e10972d67591dd53a"
+      "bytes": 27737,
+      "sha256": "156ed88c1eb16cbb3d45638cbedbcddd063346341b1ac803e12758d16230c4cf"
     },
     {
       "path": "installer/migrations/upgrade.json",
@@ -182,13 +197,13 @@
     },
     {
       "path": "licenses/build_index.py",
-      "bytes": 3560,
-      "sha256": "3b1e0ac4bb52fdb466017c046bc147f33d44a91922b9a5c89843998ac34031b3"
+      "bytes": 3680,
+      "sha256": "7fc6d3fa3e8d9b9905284364c05d4e63df432c6d28fcb779c6d2194519ede44a"
     },
     {
       "path": "licenses/file-licenses.json",
-      "bytes": 41890,
-      "sha256": "38a79cb7c3ce72fe32acecfc6b1a50e8cd69aa8e8a8199172b5d655461aa4892"
+      "bytes": 44477,
+      "sha256": "4eec0d88bfeedf5a4d58ff1a99f09d0d791573f054f1eb14b87d9cd50ea8faec"
     },
     {
       "path": "licenses/native-dependencies/boost/LICENSE_1_0.txt",
@@ -312,8 +327,8 @@
     },
     {
       "path": "licenses/package-sources.json",
-      "bytes": 14322,
-      "sha256": "eaa6d57ae307893d773673e1b8e6f70bbf0b9795448b669a2aeda94e1ac4cc2c"
+      "bytes": 14868,
+      "sha256": "e98cd6c31333c8d12293f70b9c32500fdb86fc20f091e586ecf0c96f32c364b7"
     },
     {
       "path": "licenses/package/7zip-LICENSE.txt",
@@ -452,8 +467,8 @@
     },
     {
       "path": "licenses/third-party-source-manifest.json",
-      "bytes": 39173,
-      "sha256": "03f47c357e109b4bd8e85d97c81200bd3faa4f99c870fee9cbe4ca5a9434d9bc"
+      "bytes": 39865,
+      "sha256": "1a2adec2af5531ca2578cda6e38be890977f83750173ad1d77c769c7618ac77e"
     },
     {
       "path": "native/engine/librime-lua-n01.patch",
@@ -477,8 +492,8 @@
     },
     {
       "path": "native/frontend-source-files.json",
-      "bytes": 20999,
-      "sha256": "feb6f7797e7be2968ad1c9279ee57b725fadef2cdbac164bd4a26d69bec99795"
+      "bytes": 22020,
+      "sha256": "b1239e1a97cd331c58ee4d7b30bef1237c27e559bd95bdf11a4a0757195ac7a9"
     },
     {
       "path": "native/notification-inputs.json",
@@ -487,8 +502,28 @@
     },
     {
       "path": "native/source-manifest.json",
-      "bytes": 12566,
-      "sha256": "f122146568ad2868edb0e18b8efb0593e50e1cec70e67ec1d98200211ef86e1a"
+      "bytes": 12544,
+      "sha256": "f49338799d79b74e9bc481cd91cf1a3d38f929af33729c60214092519c75c118"
+    },
+    {
+      "path": "native/tests/appearance/Add-PaintTrace.ps1",
+      "bytes": 2289,
+      "sha256": "3697cc0c256745920b388de824ca9be7fe9d6e68560648114c168dea2776cd79"
+    },
+    {
+      "path": "native/tests/appearance/PaintTrace.inc",
+      "bytes": 6100,
+      "sha256": "4ae704407e1e4307180440ca86d438ae57928cddeb402cb4dd51f8d8d620a298"
+    },
+    {
+      "path": "native/tests/appearance/Probe-LiveFont.py",
+      "bytes": 15952,
+      "sha256": "e1d0b33b27dd45bf342e18283c55d1792ca2c70dd7cce3b3cd1af55c33260ebc"
+    },
+    {
+      "path": "native/tests/appearance/Test-LiveFont.ps1",
+      "bytes": 7161,
+      "sha256": "a1f09b7649f42615ae7c01c5d54998692e94e8539705c1e83f5172233be03daa"
     },
     {
       "path": "native/tests/installer/Export-SyntheticLearning.py",
@@ -524,6 +559,16 @@
       "path": "native/tests/installer/Test-BundleShared.ps1",
       "bytes": 1846,
       "sha256": "f056757f7d6852cd66df9cd0d67a35a8669ce0d23e21823a38437760c20ac8f2"
+    },
+    {
+      "path": "native/tests/installer/Test-FontInstallerE2E.ps1",
+      "bytes": 9714,
+      "sha256": "062faca8d337c74108280939e104378f47ee2619fa8cdb44b493544d6ddc07d2"
+    },
+    {
+      "path": "native/tests/installer/Test-FontPresetPriority.ps1",
+      "bytes": 5396,
+      "sha256": "590f9f2cbaba3949cfb529eaa11695c769d4782769271f6e84ceb0a689bc3809"
     },
     {
       "path": "native/tests/installer/Test-InstalledBundleReady.ps1",
@@ -627,8 +672,8 @@
     },
     {
       "path": "native/tests/package/test_runtime_engines.py",
-      "bytes": 9973,
-      "sha256": "416d2984ef86a8096725f8da723ce9d4df3e95937230f891c8df3573f850d8eb"
+      "bytes": 9909,
+      "sha256": "01aab92fff410d9090b9c184066e4cb60564a5935fad657b9a35cd5abf6cd108"
     },
     {
       "path": "native/tests/package/test_server_overlays.py",
@@ -662,8 +707,18 @@
     },
     {
       "path": "native/weasel/stellae-61052.patch",
-      "bytes": 940720,
-      "sha256": "d626b73321bbddd72019f237e682e6c2c6abb9b3673a2c19617c0610fc5fbbdf"
+      "bytes": 958448,
+      "sha256": "92b298b8182a0422e9ebd416c82d0e0f4a485379c6ba56c754a4ee370dae61e3"
+    },
+    {
+      "path": "scripts/fonts/CandidateFontNative.cs",
+      "bytes": 2960,
+      "sha256": "c3561249c318ab397386d700fb5d17b654ab87b33a90e233c955b52af4d3dcd6"
+    },
+    {
+      "path": "scripts/fonts/Install-CandidateFont.ps1",
+      "bytes": 10774,
+      "sha256": "87958199f20980d0ef3cddc8ea2959e8c6f4b2f12842cac330967e82b1e93b06"
     },
     {
       "path": "scripts/native/Apply-Patches.ps1",
@@ -677,8 +732,8 @@
     },
     {
       "path": "scripts/native/Build-FrontendOverlay.ps1",
-      "bytes": 6831,
-      "sha256": "433ef8f57cb9cb8d121dee6c301a0d11bcbfa52d9f04f2908035c0e67544c05f"
+      "bytes": 6898,
+      "sha256": "fac28befba63d060a3827e92efd7d88fd64e20f21d0017d7edc8d55e7903a9cf"
     },
     {
       "path": "scripts/native/Build-ServerNotification.ps1",
@@ -707,8 +762,8 @@
     },
     {
       "path": "scripts/package/Build-Bundle.ps1",
-      "bytes": 7449,
-      "sha256": "77b328c3e170f933fc313e5b881cc87abb9b73fbbcd87778422ae1ad237dd014"
+      "bytes": 8741,
+      "sha256": "72903853004f349bc59585a0c7f1c689ef35e7041222321820e88d0410c8d4d2"
     },
     {
       "path": "scripts/package/Prepare-Package.ps1",
@@ -717,8 +772,8 @@
     },
     {
       "path": "scripts/package/apply_frontend_overlays.py",
-      "bytes": 14301,
-      "sha256": "1f442d82be07e4a96d25ba523ba3bfbba430b82ff12479e42b69a59035b57341"
+      "bytes": 14963,
+      "sha256": "f48d8b95af3b2912b274db8470b1a94affe06b411cb23fa5496ad90e4a51fc98"
     },
     {
       "path": "scripts/package/apply_server_overlays.py",
@@ -727,8 +782,8 @@
     },
     {
       "path": "scripts/package/index_bundle.py",
-      "bytes": 7813,
-      "sha256": "d9a058d5cae79db4ac951a6be90929ea755b7b04753b73ab865e02fd6daa44d3"
+      "bytes": 9369,
+      "sha256": "25e81ec88cd5d36608fa291d47843b37125e348f1d67f549ba3a4a38dc7f8cea"
     },
     {
       "path": "scripts/package/index_payload.py",
@@ -737,8 +792,8 @@
     },
     {
       "path": "scripts/package/prepare_bundle.py",
-      "bytes": 13480,
-      "sha256": "c3246453a436513eae8d5fc85c9ea2f02abd0318ba873fa02ce2d5034604c657"
+      "bytes": 16394,
+      "sha256": "22e358bcb5073bd4f8e2030cc0415acc0e12677eeadf7a5e6cc6f5fa5c334b55"
     },
     {
       "path": "scripts/package/render_installed_docs.py",
@@ -747,8 +802,8 @@
     },
     {
       "path": "scripts/package/verify_bundle.py",
-      "bytes": 11352,
-      "sha256": "5fc38510b6605c61f4db8929a76815435c87bb7e7b196b1f34309f64e30db15a"
+      "bytes": 13127,
+      "sha256": "2a7e14779cde933fe6273c72c8437f617e4cc8b0132bf6e4f5cc4ab236dc1e57"
     },
     {
       "path": "scripts/package/verify_pe.py",
@@ -757,8 +812,8 @@
     },
     {
       "path": "scripts/verify_release.py",
-      "bytes": 8032,
-      "sha256": "7be59b766e9b6ed688b28f7c76ed5b6ceff602d51241b09cc209ad63e3cdb0e0"
+      "bytes": 8246,
+      "sha256": "774ada9f5a9528e70557639c6f0ebe43eee3e4972f2eab430b3e8ddad40c8c86"
     }
   ]
 }

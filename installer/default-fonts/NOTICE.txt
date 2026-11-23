@@ -1,0 +1,4 @@
+Noto Sans CJK 2.004
+Copyright 2014-2021 Adobe (http://www.adobe.com/).
+SIL Open Font License Version 1.1. See OFL.txt.
+https://github.com/notofonts/noto-cjk/releases/tag/Sans2.004

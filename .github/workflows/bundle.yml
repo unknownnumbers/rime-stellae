@@ -2,7 +2,7 @@ name: Build and validate RymCp bundle
 
 on:
   push:
-    branches: ['release/stellae-2026.11.20', 'release/stellae-2026.11.20.1']
+    branches: ['release/stellae-*']
   workflow_dispatch:
 
 permissions:
@@ -58,50 +58,75 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - architecture: x64
-            compiler: x64
-          - architecture: x86
-            compiler: x86
-    name: Frontend images ${{ matrix.architecture }}
+        architecture: [x64, x86]
+    name: Build appearance frontend (${{ matrix.architecture }})
     steps:
       - uses: actions/checkout@v4
         with:
           path: frontend
           persist-credentials: false
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.12'
-      - name: Verify source and finite packaging tests
-        run: |
-          python -m pip install PyYAML==6.0.2
-          python scripts/verify_release.py --require-yaml
-          if ($LASTEXITCODE) { throw 'Source verification failed.' }
-          python -m unittest discover -s native/tests/package -p 'test_*.py'
-          if ($LASTEXITCODE) { throw 'Server overlay policy tests failed.' }
-          ./scripts/native/Test-Inventory.ps1
       - uses: microsoft/setup-msbuild@v2
         with:
           vs-version: '[17.0,18.0)'
       - uses: ilammy/msvc-dev-cmd@v1
         with:
-          arch: ${{ matrix.compiler }}
-      - name: Assemble fixed frontend source
-        run: ./scripts/native/Prepare-Sources.ps1 -Variant stellae-61052 -Destination "$env:RUNNER_TEMP/server-source"
-      - name: Build TSF, IME and the server
-        run: ./scripts/native/Build-FrontendOverlay.ps1 -Architecture ${{ matrix.architecture }} -SourcePath "$env:RUNNER_TEMP/server-source" -CacheDirectory "$env:RUNNER_TEMP/server-cache" -OutputDirectory "$env:RUNNER_TEMP/server-output"
+          arch: ${{ matrix.architecture }}
+      - name: Assemble pinned frontend source
+        run: ./scripts/native/Prepare-Sources.ps1 -Variant stellae-61052 -Destination "$env:RUNNER_TEMP/frontend-source"
+      - name: Compile the server, deployer and frontend images
+        env:
+          APPEARANCE_ARCHITECTURE: ${{ matrix.architecture }}
+        run: |
+          $source = Join-Path $env:RUNNER_TEMP 'frontend-source'
+          $out = Join-Path $env:RUNNER_TEMP 'frontend-output'
+          ./scripts/native/Build-FrontendOverlay.ps1 -Architecture $env:APPEARANCE_ARCHITECTURE -SourcePath $source -CacheDirectory "$env:RUNNER_TEMP/frontend-cache" -OutputDirectory $out
+          if ($env:APPEARANCE_ARCHITECTURE -cne 'x64') { return }
+
+          # The clean release directory was copied by Build-FrontendOverlay.
+          # This second link is used only by the isolated Windows test.
+          $cleanServer = Join-Path $out 'release/StellaeServer.exe'
+          $cleanRecord = Get-Content -LiteralPath (Join-Path $out 'release/build-result.json') -Raw | ConvertFrom-Json
+          $cleanHash = (Get-FileHash -LiteralPath $cleanServer).Hash.ToLowerInvariant()
+          ./native/tests/appearance/Add-PaintTrace.ps1 -SourceRoot $source
+          $log = Join-Path $out 'logs/appearance-trace-build.log'
+          Push-Location -LiteralPath $source
+          try {
+            & msbuild.exe weasel.sln /m /t:WeaselServer:Rebuild /p:Configuration=Release /p:Platform=x64 /v:minimal 2>&1 | Tee-Object -FilePath $log
+            if ($LASTEXITCODE) { throw 'The isolated appearance instrumentation failed to compile.' }
+          } finally { Pop-Location }
+          $testOutput = Join-Path $out 'appearance-test-server'
+          $null=New-Item -ItemType Directory -Path $testOutput
+          $testServer = Join-Path $testOutput 'StellaeServer.AppearanceTrace.exe'
+          Copy-Item -LiteralPath (Join-Path $source 'output/StellaeServer.exe') -Destination $testServer
+          $traceHash = (Get-FileHash -LiteralPath $testServer).Hash.ToLowerInvariant()
+          if ($traceHash -ceq $cleanHash -or (Get-FileHash -LiteralPath $cleanServer).Hash.ToLowerInvariant() -cne $cleanHash) {
+            throw 'The clean installer server and the instrumented server are required as distinct images.'
+          }
+          [ordered]@{
+            sourceRef=$env:GITHUB_SHA; cleanServerSha256=$cleanHash; traceServerSha256=$traceHash
+            nativeSourceArchiveSha256=$cleanRecord.candidateSourceArchiveSha256
+          } | ConvertTo-Json | Set-Content -LiteralPath (Join-Path $testOutput 'appearance-test-server-proof.json') -Encoding utf8NoBOM
       - uses: actions/upload-artifact@v4
         with:
           name: frontend-images-${{ matrix.architecture }}
-          path: ${{ runner.temp }}/server-output/release
+          path: ${{ runner.temp }}/frontend-output/release
           if-no-files-found: error
-      - name: Preserve finite build diagnostics
-        if: always()
+          retention-days: 7
+      - uses: actions/upload-artifact@v4
+        if: matrix.architecture == 'x64'
+        with:
+          name: appearance-test-server
+          path: ${{ runner.temp }}/frontend-output/appearance-test-server
+          if-no-files-found: error
+          retention-days: 7
+      - name: Preserve intermediate diagnostics for compilation failures
+        if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: frontend-image-build-${{ matrix.architecture }}
-          path: ${{ runner.temp }}/server-output/logs
+          name: appearance-build-failure-${{ matrix.architecture }}
+          path: ${{ runner.temp }}/frontend-output/logs/*.log
           if-no-files-found: warn
+          retention-days: 7
 
   bundle:
     needs: [frontend-images, runtime-engines]
@@ -139,14 +164,7 @@ jobs:
           if($LASTEXITCODE){throw 'Source inventory failed'}
           $spec=Get-Content -LiteralPath installer/bundle-inputs.json -Raw|ConvertFrom-Json
           if(-not $spec.schemes -or $spec.schemes.commit -notmatch '^[0-9a-f]{40}$'){throw 'The source must pin the scheme commit'}
-          $public='unknownnumbers/RymCp-IME'
-          $pinned=Invoke-WebRequest -Uri "$env:GITHUB_API_URL/repos/$public/commits/$($spec.schemes.commit)" -SkipHttpErrorCheck -TimeoutSec 25
-          $schemeRepository=switch ([int]$pinned.StatusCode) {
-            200 { $public }
-            404 { $env:GITHUB_REPOSITORY }
-            422 { $env:GITHUB_REPOSITORY }
-            default { throw 'Could not check the pinned scheme revision.' }
-          }
+          $schemeRepository='unknownnumbers/RymCp-IME'
           "bundle_version=$($spec.bundleVersion)" >> $env:GITHUB_OUTPUT
           "scheme_commit=$($spec.schemes.commit)" >> $env:GITHUB_OUTPUT
           "scheme_repository=$schemeRepository" >> $env:GITHUB_OUTPUT
@@ -188,6 +206,54 @@ jobs:
           $spec=Get-Content -LiteralPath installer/bundle-inputs.json -Raw|ConvertFrom-Json
           $schemeArchive=Join-Path $env:RUNNER_TEMP "scheme-input/rymcp-$($spec.schemes.version ?? $spec.bundleVersion)-stellae-schemes.zip"
           ./scripts/package/Build-Bundle.ps1 -OutputDirectory (Join-Path $env:RUNNER_TEMP 'bundle') -NativeProductDirectory $overlays -NativeSourceDirectory $overlays -NativeEngineDirectory (Join-Path $env:RUNNER_TEMP 'runtime-engines') -SchemeArchive $schemeArchive
+      - uses: actions/download-artifact@v4
+        with:
+          name: appearance-test-server
+          path: ${{ runner.temp }}/appearance-test-server
+      - name: Stage the reviewed test inputs
+        run: |
+          $bundle=Join-Path $env:RUNNER_TEMP 'bundle'
+          $out=Join-Path $env:RUNNER_TEMP 'appearance-test-input'
+          $null=New-Item -ItemType Directory -Path $out
+          $spec=Get-Content -LiteralPath installer/bundle-inputs.json -Raw | ConvertFrom-Json
+          $release=Join-Path $bundle 'release'
+          $proof=Get-Content -LiteralPath (Join-Path $release 'payload-verification.json') -Raw | ConvertFrom-Json
+          if (-not $proof.passed -or $proof.sourceRef -cne $env:GITHUB_SHA -or $proof.rebuiltRuntimeEngines.Count -ne 2 -or
+              $proof.candidateFontCollection.path -cne 'font-payload/NotoSansCJK-Regular.ttc' -or
+              $proof.candidateFontCollection.sha256 -cne 'b76b0433203017ca80401b2ee0dd69350349871c4b19d504c34dbdd80541690a') {
+            throw 'The package proof does not match this source snapshot'
+          }
+          $required=@('StellaeDeployer.exe','StellaeServer.exe','Win32/StellaeDeployer.exe','Win32/StellaeServer.exe')
+          foreach ($name in $required) {
+            if (@($proof.rebuiltImages | Where-Object { $_.path -ceq $name -and $_.sourceRef -ceq $env:GITHUB_SHA }).Count -ne 1) {
+              throw "The installer did not verify a rebuilt appearance binary: $name"
+            }
+          }
+          $testRoot=Join-Path $env:RUNNER_TEMP 'appearance-test-server'
+          $testServer=Join-Path $testRoot 'StellaeServer.AppearanceTrace.exe'
+          $testProof=Get-Content -LiteralPath (Join-Path $testRoot 'appearance-test-server-proof.json') -Raw | ConvertFrom-Json
+          $cleanProof=@($proof.rebuiltImages | Where-Object { $_.path -ceq 'StellaeServer.exe' })[0]
+          $sourceArchive=Join-Path $env:RUNNER_TEMP 'frontend-overlays/x64/candidate-source.zip'
+          if ($testProof.sourceRef -cne $env:GITHUB_SHA -or $testProof.cleanServerSha256 -cne $cleanProof.sha256 -or
+              (Get-FileHash -LiteralPath $testServer).Hash -ine $testProof.traceServerSha256 -or
+              (Get-FileHash -LiteralPath $sourceArchive).Hash -ine $testProof.nativeSourceArchiveSha256) {
+            throw 'The isolated tracer must match the source used by the verified installer.'
+          }
+          Copy-Item -LiteralPath (Join-Path $release "stellae-rymcp-$($spec.bundleVersion)-installer.exe") -Destination (Join-Path $out 'stellae-installer.exe')
+          Copy-Item -LiteralPath (Join-Path $release 'payload-verification.json') -Destination $out
+          Copy-Item -LiteralPath $testServer,(Join-Path $testRoot 'appearance-test-server-proof.json') -Destination $out
+          $files=@(Get-ChildItem -LiteralPath $out -Recurse -File | Sort-Object FullName | ForEach-Object {
+            @{path=[IO.Path]::GetRelativePath($out,$_.FullName).Replace('\','/'); sha256=(Get-FileHash -LiteralPath $_.FullName).Hash.ToLowerInvariant()}
+          })
+          [ordered]@{sourceRef=$env:GITHUB_SHA;files=$files} | ConvertTo-Json -Depth 4 | Set-Content -LiteralPath (Join-Path $out 'input-proof.json') -Encoding utf8NoBOM
+      - uses: actions/upload-artifact@v4
+        with:
+          name: appearance-test-input
+          path: ${{ runner.temp }}/appearance-test-input
+          if-no-files-found: error
+          retention-days: 7
+          compression-level: 0
+
       - name: Test actual installation, shared-only input, upgrades and uninstall
         run: ./native/tests/installer/Test-BundleInstaller.ps1 -PackageDirectory (Join-Path $env:RUNNER_TEMP 'bundle') -SchemeSource (Join-Path $env:GITHUB_WORKSPACE 'scheme-validation') -OutputDirectory (Join-Path $env:RUNNER_TEMP 'installer-validation')
       - name: Record finite release validation
@@ -223,3 +289,56 @@ jobs:
             ${{ runner.temp }}/profile-policy/*.json
           if-no-files-found: warn
           retention-days: 14
+
+  appearance-runtime:
+    needs: bundle
+    runs-on: windows-2022
+    timeout-minutes: 40
+    strategy:
+      fail-fast: false
+      matrix:
+        profile: [SC, TC]
+    name: Installed candidate window changes font during composition (${{ matrix.profile }})
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: frontend
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/download-artifact@v4
+        with:
+          name: appearance-test-input
+          path: ${{ runner.temp }}/appearance-test-input
+      - name: Check the test artifact
+        run: |
+          $inputRoot=Join-Path $env:RUNNER_TEMP 'appearance-test-input'
+          $index=Get-Content -LiteralPath (Join-Path $inputRoot 'input-proof.json') -Raw | ConvertFrom-Json
+          if ($index.sourceRef -cne $env:GITHUB_SHA) { throw 'The artifact belongs to another source snapshot' }
+          $names=@(Get-ChildItem -LiteralPath $inputRoot -Recurse -File | ForEach-Object {
+            [IO.Path]::GetRelativePath($inputRoot,$_.FullName).Replace('\','/')
+          } | Where-Object { $_ -cne 'input-proof.json' })
+          if (Compare-Object -ReferenceObject @($index.files.path) -DifferenceObject $names) { throw 'Unexpected test input files' }
+          foreach ($file in $index.files) {
+            if ((Get-FileHash -LiteralPath (Join-Path $inputRoot $file.path)).Hash -ine $file.sha256) {
+              throw ('Test input hash differs: ' + $file.path)
+            }
+          }
+      - name: Verify active composition and rendered appearance through the installed frontend
+        env:
+          STELLAE_TEST_PROFILE: ${{ matrix.profile }}
+        run: |
+          $inputRoot=Join-Path $env:RUNNER_TEMP 'appearance-test-input'
+          ./native/tests/appearance/Test-LiveFont.ps1 -Installer (Join-Path $inputRoot 'stellae-installer.exe') -Profile $env:STELLAE_TEST_PROFILE -InstrumentedServer (Join-Path $inputRoot 'StellaeServer.AppearanceTrace.exe') -OutputDirectory (Join-Path $env:RUNNER_TEMP 'appearance-evidence')
+      - name: Upload bounded synthetic evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: appearance-live-evidence-${{ matrix.profile }}
+          path: |
+            ${{ runner.temp }}/appearance-evidence/*.json
+            ${{ runner.temp }}/appearance-evidence/*.log
+            ${{ runner.temp }}/appearance-evidence/*.png
+          if-no-files-found: warn
+          retention-days: 7

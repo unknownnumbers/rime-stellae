@@ -11,8 +11,8 @@ from zipfile import ZIP_DEFLATED, ZipFile
 
 
 PRODUCTS = {
-    'x64': ('stellaex64.dll', 'stellaex64.ime', 'StellaeServer.exe'),
-    'x86': ('stellae.dll', 'stellae.ime', 'Win32/StellaeServer.exe'),
+    'x64': ('stellaex64.dll', 'stellaex64.ime', 'StellaeServer.exe', 'StellaeDeployer.exe'),
+    'x86': ('stellae.dll', 'stellae.ime', 'Win32/StellaeServer.exe', 'Win32/StellaeDeployer.exe'),
 }
 MACHINES = {'x64': 0x8664, 'x86': 0x014c}
 ENGINES = {'x64': ('engine-n01', 'rime.dll'), 'x86': ('engine-r5', 'Win32/rime.dll')}
@@ -79,14 +79,19 @@ def checked_products(product_root, source_root, arch, version, source_files):
     return checked
 
 
-def check_notices(artifact, repository):
+def check_notices(artifact, repository, previous_license_index=None):
     notices = repository / 'licenses'
     files = [path for path in notices.rglob('*') if path.is_file()]
     if not files:
         raise ValueError('The pinned engine build notices are missing')
     for notice in (*files, repository / 'LICENSE'):
-        original = artifact / notice.relative_to(repository)
-        if not original.is_file() or digest(original) != digest(notice):
+        relative = notice.relative_to(repository).as_posix()
+        original = artifact / relative
+        accepted = {digest(notice)}
+        if relative == 'licenses/file-licenses.json' and previous_license_index is not None:
+            # Runtime builds use their own date's project-generated source index.
+            accepted.add(previous_license_index)
+        if not original.is_file() or digest(original) not in accepted:
             raise ValueError(f'The engine build omitted or changed a notice: {notice.name}')
 
 
@@ -131,7 +136,7 @@ def check_source_archive(artifact, record, manifest, variant, destination):
                 raise ValueError(f'Engine source archive member differs: {name}')
             archive_members[name] = raw
         # Upstream source files and notices stay byte-for-byte. Only the generated
-        # index is rewritten so private runner identifiers never leave CI.
+        # index is rewritten so runner-specific identifiers are omitted from the package.
         safe_index = {key: archived[key] for key in (
             'schema', 'variant', 'capturedBeforeCompilation', 'sources', 'files',
             'excludedPrebuiltFiles', 'gitMetadataIncluded'
@@ -160,7 +165,8 @@ def checked_engine(artifact, arch, variant, native_manifest, engine_sources, pre
             or record['preeditHelperChecks'] != 34 or digest(image) != record['sha256']
             or image_machine(image) != MACHINES[arch]):
         raise ValueError(f'Engine build or architecture proof differs: {arch}')
-    check_notices(artifact, native_manifest.resolve().parents[1])
+    previous_license_index = previous_build.get('licenseIndexSha256') if reviewed_build else None
+    check_notices(artifact, native_manifest.resolve().parents[1], previous_license_index)
     source = engine_sources / f'{variant}-{arch}-source.zip'
     check_source_archive(artifact, record, manifest, variant, source)
     return image, {
@@ -178,7 +184,9 @@ def apply(stage, products, sources, source_ref, engines=None, native_manifest=No
     if previous_build is not None and (
             engine_spec is None or set(previous_build['runtimeSha256']) != set(ENGINES)
             or any(not re.fullmatch('[a-f0-9]{64}', sha) for sha in
-                   (previous_build['manifestSha256'], *previous_build['runtimeSha256'].values()))):
+                   (previous_build['manifestSha256'], *previous_build['runtimeSha256'].values()))
+            or ('licenseIndexSha256' in previous_build and
+                not re.fullmatch('[a-f0-9]{64}', previous_build['licenseIndexSha256']))):
         raise ValueError('Previously built runtime hashes must be pinned for both architectures')
     expected_engine_spec = {arch: variant for arch, (variant, _) in ENGINES.items()}
     if (('nativeEngines' in inputs and engine_spec != expected_engine_spec)

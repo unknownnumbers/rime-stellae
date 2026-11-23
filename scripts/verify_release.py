@@ -6,6 +6,7 @@ from __future__ import annotations
 
 import argparse
 import ast
+from datetime import date
 import hashlib
 import json
 from pathlib import Path
@@ -74,6 +75,8 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--write-manifest', action='store_true', help='Record a new reviewed source snapshot before committing')
     parser.add_argument('--require-yaml', action='store_true', help='Require PyYAML for YAML syntax checks')
+    parser.add_argument('--date', type=date.fromisoformat, default=date.today(),
+                        help='Source snapshot date in YYYY-MM-DD form when writing the manifest')
     args = parser.parse_args()
     payload = files()
     forbidden_extensions = {'.dll', '.exe', '.pdb', '.dmp', '.log', '.userdb'}
@@ -135,7 +138,7 @@ def main():
     if args.write_manifest:
         manifest = {
             'format': 'stellae-source-release-v1',
-            'date': '2026-11-20',
+            'date': args.date.isoformat(),
             'kind': 'frontend-source-and-bundle-packaging',
             'frontendVersion': '0.17.4.61052',
             'bundleVersion': json.loads((ROOT / 'installer/bundle-inputs.json').read_text('utf-8'))['bundleVersion'],

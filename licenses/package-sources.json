@@ -253,6 +253,21 @@
       "version": "3.11",
       "source_archive": "https://github.com/NSIS-Dev/nsis/archive/refs/tags/v311.tar.gz",
       "url": "https://github.com/NSIS-Dev/nsis/tree/v311"
+    },
+    "candidate-font": {
+      "origin": "Noto Sans CJK Regular collection 2.004, Adobe and original contributors",
+      "retained_terms": [
+        "OFL-1.1"
+      ],
+      "notices": [
+        "installer/default-fonts/OFL.txt",
+        "installer/default-fonts/NOTICE.txt"
+      ],
+      "evidence": [
+        "installer/default-fonts/font-manifest.json"
+      ],
+      "upstream_commit": "523d033d6cb47f4a80c58a35753646f5c3608a78",
+      "url": "https://github.com/notofonts/noto-cjk/tree/523d033d6cb47f4a80c58a35753646f5c3608a78/Sans"
     }
   },
   "rules": [

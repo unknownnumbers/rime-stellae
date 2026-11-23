@@ -20,6 +20,8 @@ jobs:
         with:
           python-version: '3.12'
       - run: python -m pip install PyYAML==6.0.2
+      - run: python licenses/build_index.py --check
       - run: python scripts/verify_release.py --require-yaml
+      - run: python -m unittest discover -s native/tests/package -p 'test_*.py'
       - shell: pwsh
         run: ./scripts/native/Test-Inventory.ps1

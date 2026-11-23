@@ -15,9 +15,9 @@ $version = (Get-NativeManifest).variants['stellae-61052'].sourceVersion
 $machine = [int]$configuration.machine
 $platform = $configuration.platform
 $paths = if ($Architecture -ceq 'x64') {
-    @('stellaex64.dll','stellaex64.ime','StellaeServer.exe')
+    @('stellaex64.dll','stellaex64.ime','StellaeServer.exe','StellaeDeployer.exe')
 } else {
-    @('stellae.dll','stellae.ime','Win32/StellaeServer.exe')
+    @('stellae.dll','stellae.ime','Win32/StellaeServer.exe','Win32/StellaeDeployer.exe')
 }
 foreach ($path in $paths) {
     if (Test-Path -LiteralPath (Join-Path $source "output/$path")) { throw 'Use a clean frontend source assembly.' }
@@ -92,7 +92,7 @@ Run $boostTool @('-j2','--with-filesystem','--with-json','--with-locale','--with
 Run 'cscript.exe' @('//nologo','render.js','weasel.props','BOOST_ROOT','PLATFORM_TOOLSET','VERSION_MAJOR','VERSION_MINOR','VERSION_PATCH','WEASEL_BUILD','PRODUCT_VERSION','FILE_VERSION') $source 'properties.log'
 $archive = Join-Path $release 'candidate-source.zip'
 $null = Export-NativeAssemblySource $source 'stellae-61052' $archive
-foreach ($target in @('WeaselTSF','WeaselIME','WeaselServer')) {
+foreach ($target in @('WeaselTSF','WeaselIME','WeaselServer','WeaselDeployer')) {
     Run 'msbuild.exe' @('weasel.sln','/m',('/t:'+$target+':Rebuild'),'/p:Configuration=Release',('/p:Platform='+$platform),'/v:minimal') $source ($target+'.log')
 }
 $records = foreach ($relative in $paths) {

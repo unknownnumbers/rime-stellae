@@ -9,6 +9,14 @@ from pathlib import Path, PurePosixPath
 import shutil
 import zipfile
 
+DEFAULT_FONT_NAME = 'NotoSansCJK-Regular.ttc'
+DEFAULT_FONT_FAMILIES = {
+    f'{prefix} {style}'
+    for prefix in ('Noto Sans CJK', 'Noto Sans Mono CJK')
+    for style in ('JP', 'KR', 'SC', 'TC', 'HK')
+}
+FONT_INSTALLER_HELPERS = ('Install-CandidateFont.ps1', 'CandidateFontNative.cs')
+
 def digest(path):
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
@@ -52,12 +60,48 @@ def stage_math_upgrade(repo, stage, archive_path, inputs):
             target.write_bytes(archive.read(f'rymcp_dlc/math/{name}'))
 
 
+def stage_default_fonts(repo, stage, source):
+    manifest_path = source/'font-manifest.json'
+    if digest(manifest_path) != digest(repo/'installer/default-fonts/font-manifest.json'):
+        raise SystemExit('The default font manifest differs from the reviewed source.')
+    manifest = json.loads(manifest_path.read_text('utf-8-sig'))
+    if manifest.get('schemaVersion') != 2:
+        raise SystemExit('Unsupported default font manifest.')
+    files = {row['file']: row for row in manifest['files']}
+    notices = {row['file']: row for row in manifest['notices']}
+    allowed_notices = {'OFL.txt', 'NOTICE.txt'}
+    if (set(files) != {DEFAULT_FONT_NAME} or len(manifest['files']) != 1
+            or set(notices) != allowed_notices or len(manifest['notices']) != len(allowed_notices)):
+        raise SystemExit('The default font payload must contain one Regular collection and the OFL notice.')
+    font = files[DEFAULT_FONT_NAME]
+    if (set(font['families']) != DEFAULT_FONT_FAMILIES or len(font['families']) != len(DEFAULT_FONT_FAMILIES)
+            or font['role'] != 'primary' or font['version'] != '2.004' or font['license'] != 'OFL-1.1'):
+        raise SystemExit('The default font collection identity differs.')
+    for name, entry in (files | notices).items():
+        path = source/name
+        if entry['size'] != path.stat().st_size or entry['sha256'] != digest(path):
+            raise SystemExit('Default font input bytes differ from the reviewed manifest: '+name)
+    payload = stage/'font-payload'
+    payload.mkdir()
+    for name in sorted(set(files) | allowed_notices):
+        shutil.copyfile(source/name, payload/name)
+    shutil.copyfile(manifest_path, payload/'font-manifest.json')
+    notice_directory = stage/'font-notices'
+    notice_directory.mkdir()
+    for name in sorted(allowed_notices):
+        shutil.copyfile(source/name, notice_directory/name)
+    shutil.copyfile(manifest_path, notice_directory/'font-manifest.json')
+    for name in FONT_INSTALLER_HELPERS:
+        shutil.copyfile(repo/'scripts/fonts'/name, stage/name)
+
+
 def main():
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument('--base', type=Path, required=True)
     p.add_argument('--official', type=Path, required=True)
     p.add_argument('--schemes', type=Path, required=True)
     p.add_argument('--indexed-math', type=Path)
+    p.add_argument('--default-font-directory', type=Path, help='Directory containing the reviewed offline font collection.')
     p.add_argument('--stage', type=Path, required=True)
     p.add_argument('--repository', type=Path, required=True)
     p.add_argument('--inputs', type=Path, help='Use an explicit review manifest; the release build uses the repository manifest.')
@@ -74,6 +118,8 @@ def main():
         if a.indexed_math is None:
             raise SystemExit('The bundle requires the pinned indexed math archive.')
         stage_math_upgrade(repo, stage, a.indexed_math, inputs)
+    if a.default_font_directory is not None:
+        stage_default_fonts(repo, stage, a.default_font_directory.resolve())
     by_hash = {}
     for file in a.base.rglob('*'):
         if file.is_file():
@@ -147,14 +193,17 @@ def main():
         text = raw.decode('utf-8-sig')
         if any(line.startswith('__patch:') or line.strip() == '...' for line in text.splitlines()):
             raise SystemExit('The fixed shared base needs a reviewed patch layout.')
+        font_layer = ('  - rymcp_candidate_font:/patch?\n'
+                      if config == 'weasel' and a.default_font_directory is not None else '')
         extension = ('\n# RymCp defaults followed by optional user overrides.\n__patch:\n'
-                     f'  - {alias}:/patch\n  - {config}.custom:/patch?\n').encode('utf-8')
+                     f'  - {alias}:/patch\n{font_layer}  - {config}.custom:/patch?\n').encode('utf-8')
         base_file.write_bytes(raw+extension)
         origin = next(row for row in reversed(provenance) if row['installed_path'] == 'data/'+config+'.yaml')
         origin['original_sha256'] = origin['sha256']
         origin['sha256'] = digest(base_file)
         origin['generated_sha256'] = origin['sha256']
-        origin['transformation'] = 'append an explicit bundle preset followed by the optional user custom patch'
+        origin['transformation'] = ('append an explicit bundle preset, optional candidate-font preset, and optional user custom patch'
+                                    if font_layer else 'append an explicit bundle preset followed by the optional user custom patch')
         origin['generated_source_ids'] = ['project-code']
     profile_file = payload/'config-source-manifest.json'
     profile_raw = profile_file.read_bytes()

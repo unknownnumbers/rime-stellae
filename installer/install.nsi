@@ -11,6 +11,10 @@ Var ProfilePolicyPowerShell
 !ifdef STELLAE_BUNDLE
 Var BundleTraceFile
 !endif
+!ifdef STELLAE_FONT_DLC
+Var FreshFontProfile
+Var ResumeInitialFont
+!endif
 !macro BundleTrace TEXT
 !ifdef STELLAE_BUNDLE
   Push $R8
@@ -174,6 +178,20 @@ Function .onInit
   !insertmacro BundleTrace "init"
 !endif
   SetRegView 32
+!ifdef STELLAE_FONT_DLC
+  ; Capture existing profile state before Setup can create or replace it.
+  StrCpy $FreshFontProfile "1"
+  ReadRegDWORD $ResumeInitialFont HKCU "${STELLAE_REG_KEY}" "InitialFontPending"
+  ClearErrors
+  ReadRegDWORD $R9 HKCU "${STELLAE_REG_KEY}" "Hant"
+  ${IfNot} ${Errors}
+    StrCpy $FreshFontProfile "0"
+  ${EndIf}
+  ReadRegStr $R9 HKCU "${STELLAE_REG_KEY}" "RimeUserDir"
+  ${If} $R9 != ""
+    StrCpy $FreshFontProfile "0"
+  ${EndIf}
+!endif
   ${If} ${IsNativeARM64}
     Abort "This build supports x64 and x86 Windows."
   ${EndIf}
@@ -186,6 +204,11 @@ toquit:
   ${EndIf}
 
   ReadRegStr $R0 HKLM "${STELLAE_REG_KEY}" "InstallDir"
+!ifdef STELLAE_FONT_DLC
+  ${If} $R0 != ""
+    StrCpy $FreshFontProfile "0"
+  ${EndIf}
+!endif
   StrCmp $R0 "" choose_directory
   StrCpy $INSTDIR $R0
   Goto skip
@@ -230,6 +253,9 @@ profile_capture_ready:
   "Software\Microsoft\Windows\CurrentVersion\Uninstall\${STELLAE_NAMESPACE}" \
   "UninstallString"
   StrCmp $R0 "" done
+!ifdef STELLAE_FONT_DLC
+  StrCpy $FreshFontProfile "0"
+!endif
 
   StrCpy $0 "Upgrade"
   IfSilent uninst 0
@@ -273,12 +299,19 @@ call_uninstaller:
   Delete  "$R1\data\*.*"
 !endif
   RMDir /r "$R1\licenses"
+  Delete "$R1\font-notices\OFL.txt"
+  Delete "$R1\font-notices\NOTICE.txt"
+  Delete "$R1\font-notices\font-manifest.json"
+  RMDir "$R1\font-notices"
   Delete  "$R1\*.*"
   RMDir   "$R1\data\opencc"
   RMDir   "$R1\data\preview"
   RMDir   "$R1\data"
   RMDir   "$R1"
   SetShellVarContext all
+  Delete "$SMPROGRAMS\${STELLAE_PRODUCT_NAME}\Candidate Font.lnk"
+  Delete "$SMPROGRAMS\${STELLAE_DISPLAY_ZH}輸入法\候選窗字體.lnk"
+  Delete "$SMPROGRAMS\${STELLAE_DISPLAY_ZH}输入法\候选窗字体.lnk"
   Delete  "$SMPROGRAMS\$(DISPLAYNAME)\*.*"
   RMDir  "$SMPROGRAMS\$(DISPLAYNAME)"
   ; Prompt reboot
@@ -286,6 +319,11 @@ call_uninstaller:
   Sleep 800
 
 done:
+!ifdef STELLAE_FONT_DLC
+  ${If} $ResumeInitialFont == "1"
+    StrCpy $FreshFontProfile "1"
+  ${EndIf}
+!endif
   !insertmacro BundleTrace "init-ready"
 FunctionEnd
 
@@ -415,6 +453,17 @@ program_files:
   File "base-package-license-index.json"
   SetOutPath "$PLUGINSDIR\shared-payload"
   File /r "shared-payload\*"
+!ifdef STELLAE_FONT_DLC
+  SetOutPath "$INSTDIR"
+  File "Install-CandidateFont.ps1"
+  File "CandidateFontNative.cs"
+  SetOutPath "$INSTDIR\font-notices"
+  File /r "font-notices\*"
+  ${If} ${AtLeastBuild} 14393
+  ${AndIf} $FreshFontProfile == "1"
+    WriteRegDWORD HKCU "${STELLAE_REG_KEY}" "InitialFontPending" "1"
+  ${EndIf}
+!endif
 !endif
 
   SetOutPath $INSTDIR
@@ -435,6 +484,14 @@ program_files:
   ${If} $R3 == 1
     StrCpy $R2 "/t"
   ${EndIf}
+!ifdef STELLAE_FONT_DLC
+  ; Allow unattended first installs to choose the SC profile explicitly.
+  ClearErrors
+  ${GetOptions} $R0 "/ProfileSC" $R1
+  IfErrors +2 0
+  StrCpy $R2 "/s"
+!endif
+  ClearErrors
   ${GetOptions} $R0 "/T" $R1
   IfErrors +2 0
   StrCpy $R2 "/t"
@@ -484,6 +541,50 @@ bundle_install_failed:
   Abort "Bundled scheme installation failed. Existing user data was preserved."
 bundle_install_ready:
   !insertmacro BundleTrace "shared-helper-ready"
+!endif
+!ifdef STELLAE_FONT_DLC
+  ${If} ${AtLeastBuild} 14393
+    StrCpy $R8 ""
+    StrCpy $R4 "selection"
+    ${If} $FreshFontProfile == "1"
+      ClearErrors
+      ReadRegDWORD $R3 HKCU "${STELLAE_REG_KEY}" "Hant"
+      ${If} ${Errors}
+        Goto default_font_failed
+      ${EndIf}
+      ${If} $R3 == "0"
+        StrCpy $R8 "-InitialPreset SC"
+      ${ElseIf} $R3 == "1"
+        StrCpy $R8 "-InitialPreset TC"
+      ${Else}
+        Goto default_font_failed
+      ${EndIf}
+    ${EndIf}
+    SetOutPath "$PLUGINSDIR\font-payload"
+    File "font-payload\font-manifest.json"
+    File "font-payload\OFL.txt"
+    File "font-payload\NOTICE.txt"
+    File "font-payload\NotoSansCJK-Regular.ttc"
+    SetOutPath "$INSTDIR"
+    ReadRegStr $R7 HKCU "${STELLAE_REG_KEY}" "RimeUserDir"
+    ${If} $R7 == ""
+      SetShellVarContext current
+      StrCpy $R7 "$APPDATA\${STELLAE_USER_DIRECTORY}"
+    ${EndIf}
+    nsExec::Exec '"$ProfilePolicyPowerShell" -NoProfile -NonInteractive -ExecutionPolicy Bypass -File "$INSTDIR\Install-CandidateFont.ps1" -SourceDirectory "$PLUGINSDIR\font-payload" -UserDirectory "$R7" $R8'
+    Pop $R4
+    StrCmp $R4 "0" default_font_ready
+default_font_failed:
+    !insertmacro BundleTrace "default-font-failed exit=$R4"
+    Abort "The candidate font collection could not be installed. Existing user configuration was preserved."
+default_font_ready:
+    DeleteRegValue HKCU "${STELLAE_REG_KEY}" "InitialFontPending"
+    !insertmacro BundleTrace "default-font-ready selection=$R8"
+  ${Else}
+    ; Noto's static OpenType collection requires Windows 10 build 14393.
+    DeleteRegValue HKCU "${STELLAE_REG_KEY}" "InitialFontPending"
+    !insertmacro BundleTrace "default-font-skipped-unsupported-build"
+  ${EndIf}
 !endif
   ; Deploy the installed shared configuration without a selection dialog.
 !ifdef STELLAE_BUNDLE
@@ -553,6 +654,7 @@ uninstall_own_directory:
   ExecWait '"$INSTDIR\${STELLAE_SERVER_EXE}" /quit'
 
   ExecWait '"$INSTDIR\${STELLAE_SETUP_EXE}" /u'
+  DeleteRegValue HKCU "${STELLAE_REG_KEY}" "InitialFontPending"
 
   ; Remove registry keys
   DeleteRegKey HKLM "${STELLAE_REG_KEY}"
@@ -583,6 +685,10 @@ bundle_uninstall_ready:
   Delete  "$INSTDIR\data\*.*"
 !endif
   RMDir /r "$INSTDIR\licenses"
+  Delete "$INSTDIR\font-notices\OFL.txt"
+  Delete "$INSTDIR\font-notices\NOTICE.txt"
+  Delete "$INSTDIR\font-notices\font-manifest.json"
+  RMDir "$INSTDIR\font-notices"
   Delete  "$INSTDIR\*.*"
   RMDir  "$INSTDIR\data\opencc"
   RMDir  "$INSTDIR\data\preview"

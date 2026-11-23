@@ -6,4 +6,6 @@ The complete [file index](licenses/file-licenses.json) records applicable compon
 
 The frontend uses Weasel, librime, librime-lua and the documented engine modules, with the original component and dependency notices. Shared configuration and OpenCC data retain their own licenses. Installer components, archive tools and helper dependencies retain the notices recorded in `licenses/` and the package license index.
 
+The integrated installer includes the Noto Sans CJK Regular collection 2.004 under OFL 1.1. The [pinned font inventory](installer/default-fonts/font-manifest.json) identifies the original collection, its font families, and its [license](installer/default-fonts/OFL.txt).
+
 The scheme source archive carries its own original data notices and file index. See [corresponding sources](docs/SOURCES.md). Original frontend binaries and their retained 61052 source release remain pinned independently of the scheme package version.

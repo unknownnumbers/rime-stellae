@@ -29,7 +29,9 @@ def main():
             record = {'path': name, 'source_ids': [], 'references': [],
                       'notice_record': name}
         else:
-            if path.suffix == '.md' or name in {'LICENSE-DOCS'}:
+            if name == 'installer/default-fonts/NOTICE.txt':
+                ids = ['project-docs', 'candidate-font']
+            elif path.suffix == '.md' or name in {'LICENSE-DOCS'}:
                 ids = ['project-docs']
             elif name.startswith('native/weasel/') and name.endswith('.patch'):
                 ids = ['project-code', 'weasel', 'native-dependencies']

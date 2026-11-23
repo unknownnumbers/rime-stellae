@@ -12,8 +12,9 @@ Stellae is a Windows Rime frontend providing TSF input, a candidate interface, s
 - x64 and Win32 are supported, including 32-bit applications on x64 Windows.
 - The frontend version is `0.17.4.61052`. Schemes and integrated packages have separate versions.
 - A fresh profile defaults to SC output, five horizontal Chinese candidates and six vertical English candidates, with TC/SC switching.
+- The installer includes the Noto Sans CJK Regular collection. The SC or TC selection sets the initial candidate font. Use Stellae's appearance settings to switch among TC, HK and SC. Upgrades retain your font choice. [Candidate font guide](docs/PC.md#候選窗字體)
 - The bundled scheme uses a blue En status icon for English mode.
-- `Ctrl+Space` switches between red A and the preceding Chinese or English mode. The integrated installer can add the English spelling correction index to an existing older math DLC.
+- `Ctrl+Space` cancels the pending draft and switches between red A and the preceding Chinese or English mode. The integrated installer can add the English spelling correction index to an existing older math DLC.
 - Upgrades preserve user customization and learning. Check and merge conflicting custom files using the [user guide](docs/PC.md).
 
 [Scheme sources and official Weasel profile](https://github.com/unknownnumbers/RymCp-IME) | [Build](docs/BUILD.md) | [Sources](docs/SOURCES.md) | [TODO](TODO.md)

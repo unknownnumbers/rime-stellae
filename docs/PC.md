@@ -2,10 +2,16 @@
 
 下載整合安裝器後依精靈安裝. 前端版本為 `0.17.4.61052`, x64 安裝同時提供 32-bit 應用所需支援, Win32 安裝使用對應引擎.
 
-整合包附通用 RymCp 方案. 新裝預設 SC 輸出, 中文橫排 5 項、英文直排 6 項, 保留 TC/SC 切換. 方案功能與 DLC 安裝詳見 [RymCp 使用說明](https://github.com/unknownnumbers/RymCp-IME/blob/v2026.11.19/docs/PC.md).
+整合包附通用 RymCp 方案. 新裝預設 SC 輸出, 中文橫排 5 項、英文直排 6 項, 保留 TC/SC 切換. 方案功能與 DLC 安裝詳見 [RymCp 使用說明](https://github.com/unknownnumbers/RymCp-IME/blob/v2026.11.24/docs/PC.md).
 
 升級保留用戶自訂和學習資料. 自訂檔案可能覆蓋新版共享預設, 請按衝突報告對照合併. 共享資源依安裝清單更新及卸載, 未知或已修改檔案保留.
 
 如需另加方案, 開啟用戶資料夾並依方案說明放入檔案, 再執行重新部署. 可選詞彙模組使用用戶資料夾中的 `rymcp_dlc/`.
+
+## 候選窗字體
+
+Windows 10 1607 或更新版本會隨墨芯離線安裝 Noto Sans CJK Regular 字體合集. 首裝時選 SC 或 TC, 候選窗會預設使用相應字體. 可另外將 Jigmo2/3 罕字後備字體安裝到 Windows.
+
+在開始功能表開啟 **墨芯設定**, 於外觀設定選取 TC、HK 或 SC. 單獨修改字體會重新載入候選窗外觀並保留草稿. 升級保留字體選擇.
 
 [構建](BUILD.md) | [來源](SOURCES.md) | [授權](../THIRD_PARTY_NOTICES.md)

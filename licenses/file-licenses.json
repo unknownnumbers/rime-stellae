@@ -255,6 +255,21 @@
       "version": "3.11",
       "source_archive": "https://github.com/NSIS-Dev/nsis/archive/refs/tags/v311.tar.gz",
       "url": "https://github.com/NSIS-Dev/nsis/tree/v311"
+    },
+    "candidate-font": {
+      "origin": "Noto Sans CJK Regular collection 2.004, Adobe and original contributors",
+      "retained_terms": [
+        "OFL-1.1"
+      ],
+      "notices": [
+        "installer/default-fonts/OFL.txt",
+        "installer/default-fonts/NOTICE.txt"
+      ],
+      "evidence": [
+        "installer/default-fonts/font-manifest.json"
+      ],
+      "upstream_commit": "523d033d6cb47f4a80c58a35753646f5c3608a78",
+      "url": "https://github.com/notofonts/noto-cjk/tree/523d033d6cb47f4a80c58a35753646f5c3608a78/Sans"
     }
   },
   "files": [
@@ -403,15 +418,6 @@
       ]
     },
     {
-      "path": "installer/migrations/upgrade.json",
-      "source_ids": [
-        "project-code"
-      ],
-      "references": [
-        "LICENSE"
-      ]
-    },
-    {
       "path": "installer/bundle.nsi",
       "source_ids": [
         "project-code"
@@ -428,6 +434,33 @@
       "references": [
         "LICENSE"
       ]
+    },
+    {
+      "path": "installer/default-fonts/font-manifest.json",
+      "source_ids": [
+        "project-code"
+      ],
+      "references": [
+        "LICENSE"
+      ]
+    },
+    {
+      "path": "installer/default-fonts/NOTICE.txt",
+      "source_ids": [
+        "project-docs",
+        "candidate-font"
+      ],
+      "references": [
+        "installer/default-fonts/NOTICE.txt",
+        "installer/default-fonts/OFL.txt",
+        "licenses/CC-BY-SA-4.0.txt"
+      ]
+    },
+    {
+      "path": "installer/default-fonts/OFL.txt",
+      "source_ids": [],
+      "references": [],
+      "notice_record": "installer/default-fonts/OFL.txt"
     },
     {
       "path": "installer/default.yaml",
@@ -449,6 +482,15 @@
     },
     {
       "path": "installer/InstallProfilePolicy.ps1",
+      "source_ids": [
+        "project-code"
+      ],
+      "references": [
+        "LICENSE"
+      ]
+    },
+    {
+      "path": "installer/migrations/upgrade.json",
       "source_ids": [
         "project-code"
       ],
@@ -931,6 +973,42 @@
       ]
     },
     {
+      "path": "native/tests/appearance/Add-PaintTrace.ps1",
+      "source_ids": [
+        "project-code"
+      ],
+      "references": [
+        "LICENSE"
+      ]
+    },
+    {
+      "path": "native/tests/appearance/PaintTrace.inc",
+      "source_ids": [
+        "project-code"
+      ],
+      "references": [
+        "LICENSE"
+      ]
+    },
+    {
+      "path": "native/tests/appearance/Probe-LiveFont.py",
+      "source_ids": [
+        "project-code"
+      ],
+      "references": [
+        "LICENSE"
+      ]
+    },
+    {
+      "path": "native/tests/appearance/Test-LiveFont.ps1",
+      "source_ids": [
+        "project-code"
+      ],
+      "references": [
+        "LICENSE"
+      ]
+    },
+    {
       "path": "native/tests/installer/Export-SyntheticLearning.py",
       "source_ids": [
         "project-code"
@@ -986,6 +1064,24 @@
     },
     {
       "path": "native/tests/installer/Test-BundleShared.ps1",
+      "source_ids": [
+        "project-code"
+      ],
+      "references": [
+        "LICENSE"
+      ]
+    },
+    {
+      "path": "native/tests/installer/Test-FontInstallerE2E.ps1",
+      "source_ids": [
+        "project-code"
+      ],
+      "references": [
+        "LICENSE"
+      ]
+    },
+    {
+      "path": "native/tests/installer/Test-FontPresetPriority.ps1",
       "source_ids": [
         "project-code"
       ],
@@ -1360,6 +1456,24 @@
       ]
     },
     {
+      "path": "scripts/fonts/CandidateFontNative.cs",
+      "source_ids": [
+        "project-code"
+      ],
+      "references": [
+        "LICENSE"
+      ]
+    },
+    {
+      "path": "scripts/fonts/Install-CandidateFont.ps1",
+      "source_ids": [
+        "project-code"
+      ],
+      "references": [
+        "LICENSE"
+      ]
+    },
+    {
       "path": "scripts/native/Apply-Patches.ps1",
       "source_ids": [
         "project-code"
@@ -1378,7 +1492,7 @@
       ]
     },
     {
-      "path": "scripts/native/Build-ServerNotification.ps1",
+      "path": "scripts/native/Build-FrontendOverlay.ps1",
       "source_ids": [
         "project-code"
       ],
@@ -1387,7 +1501,7 @@
       ]
     },
     {
-      "path": "scripts/native/Build-FrontendOverlay.ps1",
+      "path": "scripts/native/Build-ServerNotification.ps1",
       "source_ids": [
         "project-code"
       ],
@@ -1432,7 +1546,7 @@
       ]
     },
     {
-      "path": "scripts/package/apply_server_overlays.py",
+      "path": "scripts/package/apply_frontend_overlays.py",
       "source_ids": [
         "project-code"
       ],
@@ -1441,7 +1555,7 @@
       ]
     },
     {
-      "path": "scripts/package/apply_frontend_overlays.py",
+      "path": "scripts/package/apply_server_overlays.py",
       "source_ids": [
         "project-code"
       ],

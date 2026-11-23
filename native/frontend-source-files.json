@@ -1,12 +1,12 @@
 {
   "schema": "stellae-frontend-source-files/1",
   "upstreamCommit": "9cc96e20dc71b80876b12f689bb5863c76c2a7ed",
-  "patchSha256": "d626b73321bbddd72019f237e682e6c2c6abb9b3673a2c19617c0610fc5fbbdf",
+  "patchSha256": "92b298b8182a0422e9ebd416c82d0e0f4a485379c6ba56c754a4ee370dae61e3",
   "files": [
     {
       "path": "RimeWithWeasel/RimeWithWeasel.cpp",
-      "sha256": "367cc89a873b1f8222f5275c9aa5e68a8d7656170522e898a513a31da5b8b672",
-      "bytes": 72491,
+      "sha256": "e254f6c792dac9d486340e3c82ca3e8842cffc81147d6789583161b76d7eece9",
+      "bytes": 72807,
       "replayMatchesFrozen": true
     },
     {
@@ -17,8 +17,14 @@
     },
     {
       "path": "WeaselDeployer/Configurator.cpp",
-      "sha256": "7b296293c41b1c5f397e4d18e7b5f7a57d0895e5b0d96c4d96a851119a4b4080",
-      "bytes": 7698,
+      "sha256": "3609bac39e0634c49b3510b216ec2a79c7b458794c932e12580e2c0bbf912178",
+      "bytes": 8623,
+      "replayMatchesFrozen": true
+    },
+    {
+      "path": "WeaselDeployer/Configurator.h",
+      "sha256": "9ba9f1fb5e2b9adb3aa32ab6f347c3bb4f30c2a34e01abf11aaacbdf2d290d5b",
+      "bytes": 317,
       "replayMatchesFrozen": true
     },
     {
@@ -28,15 +34,39 @@
       "replayMatchesFrozen": true
     },
     {
+      "path": "WeaselDeployer/UIStyleSettings.cpp",
+      "sha256": "e6958efbdb7cfe83c80275c0e7483e9c8d6c08a742a7d2e2dc6faec2820f7347",
+      "bytes": 5587,
+      "replayMatchesFrozen": true
+    },
+    {
+      "path": "WeaselDeployer/UIStyleSettings.h",
+      "sha256": "a7e1d72627afecd844f0ed991906b039da33d7b0eb9b013993f5df9ffc3ca3bb",
+      "bytes": 792,
+      "replayMatchesFrozen": true
+    },
+    {
+      "path": "WeaselDeployer/UIStyleSettingsDialog.cpp",
+      "sha256": "3d6c447b4d552ce66de4c2bec61699016ea4a8bc460da4010bf5dc3910955fe4",
+      "bytes": 3127,
+      "replayMatchesFrozen": true
+    },
+    {
+      "path": "WeaselDeployer/UIStyleSettingsDialog.h",
+      "sha256": "d886244653d91351574d1287ab452019831de0f4a2cbe498a70767bf1ed022c5",
+      "bytes": 1034,
+      "replayMatchesFrozen": true
+    },
+    {
       "path": "WeaselDeployer/WeaselDeployer.cpp",
-      "sha256": "4da21f80f8228aff8ca0cb86020594b43998639a33bad651442e7a4d7c107c7c",
-      "bytes": 3052,
+      "sha256": "09bcffb1d43e0798e69dd991c00a9b9e81b31cd3380761656c25bb00c73368f3",
+      "bytes": 3214,
       "replayMatchesFrozen": true
     },
     {
       "path": "WeaselDeployer/WeaselDeployer.rc",
-      "sha256": "8792155f7116fd95246e9541eaef9758e058827e1ca005a5283ba72de6e85f4f",
-      "bytes": 41868,
+      "sha256": "e395cfd405798f5f7526a58e8073820546b296b393da613c92af52f0b8fba0a8",
+      "bytes": 42400,
       "replayMatchesFrozen": true
     },
     {
@@ -113,26 +143,26 @@
     },
     {
       "path": "WeaselIPC/WeaselClientImpl.cpp",
-      "sha256": "cbcee2bd46fc2fac4a6d8d94f0a34df21476e4c7f127e6698b49cd2326fdd21a",
-      "bytes": 10731,
+      "sha256": "4a1e156b954449870e95d7d4f59da8cc846763863a0c770bb4e1b0c8370036cf",
+      "bytes": 10919,
       "replayMatchesFrozen": true
     },
     {
       "path": "WeaselIPC/WeaselClientImpl.h",
-      "sha256": "3d5c95afd3d0fbdafbbf4d1231e3882d07a72c7b80bfc36a755ea8ee270c6777",
-      "bytes": 1520,
+      "sha256": "4c9657f380d5016e8189706f2d7657eb4ced41eeb86eb15a51d861239fedd0ac",
+      "bytes": 1548,
       "replayMatchesFrozen": true
     },
     {
       "path": "WeaselIPCServer/WeaselServerImpl.cpp",
-      "sha256": "688127f9c4252444d83535f1d098c98f29bf2511b9c1df22673d0a334dae6bc2",
-      "bytes": 25815,
+      "sha256": "517ffa04a508673c76ba57d13321d1f2e363365b1f02b43b318fb2283fd2806d",
+      "bytes": 26043,
       "replayMatchesFrozen": true
     },
     {
       "path": "WeaselIPCServer/WeaselServerImpl.h",
-      "sha256": "05d6a3ac95affa3c145a011d3f52ef0b18d6e54312059fd0d5156dc0685f65e2",
-      "bytes": 4331,
+      "sha256": "1c6a3f395ceb9a379ff5fdd89886422da39fca39975b58e49468fc984a096196",
+      "bytes": 4413,
       "replayMatchesFrozen": true
     },
     {
@@ -497,8 +527,8 @@
     },
     {
       "path": "include/RimeWithWeasel.h",
-      "sha256": "7e098a2101ea0515aa27ac221fe473513f4dd4d2243e55d6f67ea8872c96954c",
-      "bytes": 5850,
+      "sha256": "0eaa787719f51ec64f98a0de6d85d148cf229e247b30458080be87834d356158",
+      "bytes": 5921,
       "replayMatchesFrozen": true
     },
     {
@@ -527,8 +557,8 @@
     },
     {
       "path": "include/WeaselIPC.h",
-      "sha256": "45622e826cdfbbbb802477c2b2572fd7325eb20ba8241fd83f7ee96f8fb0f7dc",
-      "bytes": 6170,
+      "sha256": "ff81fbbcc0a8c52e6ad0df99a8a9e39b92d88a7760dd5cdf8beaa36bb0278e16",
+      "bytes": 6297,
       "replayMatchesFrozen": true
     },
     {

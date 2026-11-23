@@ -1,11 +1,23 @@
 # Build
 
-The original frontend build uses fixed public upstream sources, patches and SDK/runtime inputs recorded in `native/source-manifest.json`. See the native source preparation scripts in `scripts/native/`.
+All frontend and engine builds use the fixed public upstream sources, patches and SDK inputs in `native/source-manifest.json`. This repository contains the installer, tests and build entry points. Run the following source checks from its root with Python 3.12 and PowerShell 7.2 or newer:
+
+```powershell
+python -m pip install PyYAML==6.0.2
+python licenses/build_index.py --check
+python scripts/verify_release.py --require-yaml
+python -m unittest discover -s native/tests/package -p 'test_*.py'
+./scripts/native/Test-Inventory.ps1
+```
 
 The integrated package recipe is `scripts/package/Build-Bundle.ps1`. It runs on a disposable Windows CI runner, verifies `installer/bundle-inputs.json`, extracts the pinned frontend and shared resources, assembles the fixed RymCp profile, indexes the actual payload and builds the NSIS installer.
 
-The bundle input manifest pins the scheme version, commit and archive, the indexed math DLC, and the rebuild inputs. The workflow rebuilds TSF, legacy IME and the server for x64 and Win32 from the complete frontend patch. It uses pinned librime C API headers and published engine export tables. The workflow also compiles the N01 x64 and R5 Win32 runtimes and verifies their hashes and architectures in the finished installer. The 2026.11.20.1 installer can reuse the verified N01 and R5 runtime artifacts from 2026.11.20, with both runtime hashes and the original build manifest pinned. It includes the unchanged 2026.11.20 scheme archive. Both runtimes use full garbage collection when a Lua translation is released. The corresponding source archive includes the frontend patch, original frontend sources, assembled engine sources and exact scheme input.
+The bundle input manifest pins the scheme version, commit and archive, the indexed math DLC, and the rebuild inputs. Run `.github/workflows/bundle.yml` through its `workflow_dispatch` entry to build the integrated installer. The workflow rebuilds TSF, legacy IME, the server and the deployer for x64 and Win32 from the complete frontend patch. It uses pinned librime C API headers and published engine export tables. It also builds the N01 x64 and R5 Win32 runtimes in the same run and verifies their hashes and architectures in the finished installer. Both runtimes use full garbage collection when a Lua translation is released. The corresponding source archive includes the frontend patch, original frontend sources, assembled engine sources and exact scheme input.
 
-Validation checks both frontend architectures, source and image hashes, the extracted installer, fresh installation, installed-profile readiness and upgrades. The installed-profile tests exercise the bundled N01 and R5 runtimes. Upgrade checks cover preservation of synthetic learning and custom configuration.
+Validation checks both frontend architectures, source and image hashes, the extracted installer, fresh installation, installed-profile readiness and upgrades. The installed-profile tests exercise the bundled N01 and R5 runtimes. Upgrade checks cover preservation of synthetic learning and custom configuration. The appearance test checks that the rendered font changes while the same draft and session remain active. `native/tests/installer/Test-FontInstallerE2E.ps1` additionally accepts a previous font installer for migration testing.
+
+`scripts/native/Prepare-Sources.ps1` creates a fresh upstream checkout and applies the selected frontend or engine patches. `Build-FrontendOverlay.ps1`, `Build-Engine.ps1` and `scripts/package/Build-Bundle.ps1` are the matching build entry points used by the workflow. Their inputs and outputs belong in fresh build directories.
+
+After a reviewed source change, update the file license index with `python licenses/build_index.py`, then record the source snapshot with `python scripts/verify_release.py --write-manifest --date YYYY-MM-DD`. Scheme archives are built from the exact scheme commit pinned in `installer/bundle-inputs.json`.
 
 [Source inputs](SOURCES.md) | [User guide](PC.md)

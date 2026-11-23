@@ -12,8 +12,9 @@
 - 支持 x64 与 Win32, 包括 x64 Windows 的 32-bit 应用.
 - 前端版本为 `0.17.4.61052`. 方案与整合包另记版本.
 - 整合方案新装默认 SC 输出, 中文横排 5 项、英文直排 6 项, 保留 TC/SC 切换.
+- 安装器附 Noto Sans CJK Regular 字体合集. 首装选 SC 或 TC 会设定相应的候选窗字体. 可在墨芯外观设置切换 TC、HK、SC, 升级保留已选字体. [候选窗字体说明](docs/PC.md#候選窗字體)
 - 配套方案的英文模式使用蓝色 En 状态图标.
-- `Ctrl+Space` 切换红色 A 与原有中文或英文模式. 已安装的旧版数学 DLC 可由整合安装器补齐英文拼写纠错索引.
+- `Ctrl+Space` 取消未上屏草稿并切换红色 A 与原有中文或英文模式. 已安装的旧版数学 DLC 可由整合安装器补齐英文拼写纠错索引.
 - 升级保留用户自定义与学习资料. 同名自定义遮蔽方案默认时, 依 [使用说明](docs/PC.md) 核对与合并.
 
 [方案源码及官方 Weasel 方案](https://github.com/unknownnumbers/RymCp-IME) | [构建](docs/BUILD.md) | [来源](docs/SOURCES.md) | [待办](TODO.md)
