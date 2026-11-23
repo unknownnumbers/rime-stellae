@@ -1,0 +1,21 @@
+# Helper schema: caller supplies query:lower(), while raw editing stays intact.
+# Each code is a sourced word; native sentences may combine those words.
+schema:
+  schema_id: jp_q_lookup
+  name: Japanese romaji sourced form lookup
+  version: '2026.10.21'
+translator:
+  dictionary: jp_q_lookup
+  prism: jp_q_lookup
+  enable_user_dict: false
+  enable_sentence: true
+  enable_completion: false
+  contextual_suggestions: false
+  enable_encoder: false
+  encode_commit_history: false
+  spelling_hints: 0
+speller:
+  alphabet: "abcdefghijklmnopqrstuvwxyz'"
+  initials: abcdefghijklmnopqrstuvwxyz
+  delimiter: ' '
+  algebra: []

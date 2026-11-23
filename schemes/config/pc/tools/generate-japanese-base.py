@@ -1,0 +1,207 @@
+#!/usr/bin/env python3
+"""Generate the RymCp Japanese base from an explicit phonetic coding spec.
+
+GPL-3.0-only. Copyright 2026 RymCp contributors.
+No third-party input table, dictionary, learning database or network is read.
+The schema/dictionary IDs are RymCp's current module interfaces.
+"""
+from __future__ import annotations
+
+import argparse
+import json
+from pathlib import Path
+
+VOWELS = 'aiueo'
+
+
+def build_inventory():
+    """Return kana -> canonical ASCII code from matrices and named rules."""
+    result = {}
+
+    def add(kana, code):
+        if kana in result and result[kana] != code:
+            raise ValueError(f'Conflicting canonical code for {kana}')
+        result[kana] = code
+
+    # The five-vowel rows use one shared axis. Hepburn irregularities and
+    # the explicit di/dsu RymCp coding choices are named individually.
+    rows = (
+        ('あいうえお', tuple(VOWELS)),
+        ('かきくけこ', tuple('k' + v for v in VOWELS)),
+        ('がぎぐげご', tuple('g' + v for v in VOWELS)),
+        ('さしすせそ', ('sa', 'shi', 'su', 'se', 'so')),
+        ('ざじずぜぞ', ('za', 'ji', 'zu', 'ze', 'zo')),
+        ('たちつてと', ('ta', 'chi', 'tsu', 'te', 'to')),
+        ('だぢづでど', ('da', 'di', 'dsu', 'de', 'do')),
+        ('なにぬねの', tuple('n' + v for v in VOWELS)),
+        ('はひふへほ', ('ha', 'hi', 'fu', 'he', 'ho')),
+        ('ばびぶべぼ', tuple('b' + v for v in VOWELS)),
+        ('ぱぴぷぺぽ', tuple('p' + v for v in VOWELS)),
+        ('まみむめも', tuple('m' + v for v in VOWELS)),
+        ('らりるれろ', tuple('r' + v for v in VOWELS)),
+    )
+    for kana_row, codes in rows:
+        for kana, code in zip(kana_row, codes, strict=True):
+            add(kana, code)
+    for kana, code in (
+        ('や', 'ya'), ('ゆ', 'yu'), ('よ', 'yo'), ('わ', 'wa'),
+        ('ゐ', 'wi'), ('ゑ', 'we'), ('を', 'wo'),
+    ):
+        add(kana, code)
+
+    # Small kana have an x prefix; xX drafts have a separate native helper.
+    for kana, vowel in zip('ぁぃぅぇぉ', VOWELS, strict=True):
+        add(kana, 'x' + vowel)
+    for kana, suffix in (
+        ('ゕ', 'ka'), ('ゖ', 'ke'), ('っ', 'tsu'),
+        ('ゃ', 'ya'), ('ゅ', 'yu'), ('ょ', 'yo'), ('ゎ', 'wa'),
+    ):
+        add(kana, 'x' + suffix)
+
+    # Yoon: the small ya/yu/yo axis is shared by all admitted consonants.
+    yoon_stems = (
+        ('き', 'ky'), ('ぎ', 'gy'), ('し', 'sh'), ('じ', 'j'),
+        ('ち', 'ch'), ('ぢ', 'dy'), ('に', 'ny'), ('ひ', 'hy'),
+        ('び', 'by'), ('ぴ', 'py'), ('み', 'my'), ('り', 'ry'),
+    )
+    for kana, stem in yoon_stems:
+        for small, vowel in (('ゃ', 'a'), ('ゅ', 'u'), ('ょ', 'o')):
+            add(kana + small, stem + vowel)
+    for kana, stem in yoon_stems:
+        if kana != 'ぢ':
+            add(kana + 'ぇ', stem + 'e')
+
+    # Extended foreign sounds. These are input-code choices, not a claim
+    # that every combination is a common Japanese syllable.
+    for kana, code in (
+        ('いぃ', 'yi'), ('いぇ', 'ye'), ('うぁ', 'wa'), ('うー', 'wu'),
+        ('うぉ', 'wo'), ('うゅ', 'wyu'), ('すぃ', 'si'), ('ずぃ', 'zi'),
+        ('つゅ', 'tsyu'), ('てぃ', 'ti'), ('とぅ', 'tu'), ('てゅ', 'tyu'),
+        ('でぃ', 'di'), ('どぅ', 'du'), ('でゅ', 'dyu'), ('ほぅ', 'hu'),
+        ('ー', 'l'),
+    ):
+        add(kana, code)
+    for kana, stem in (('く', 'kw'), ('ぐ', 'gw')):
+        for small, vowel in (
+            ('ぁ', 'a'), ('ぃ', 'i'), ('ぇ', 'e'), ('ぉ', 'o'), ('ゎ', 'a')
+        ):
+            add(kana + small, stem + vowel)
+    for small, vowel in (('ぁ', 'a'), ('ぃ', 'i'), ('ぇ', 'e'), ('ぉ', 'o')):
+        add('つ' + small, 'ts' + vowel)
+    for kana, stem in (('ゔ', 'v'), ('ふ', 'f')):
+        add(kana, stem + 'u')
+        for small, vowel in (
+            ('ぁ', 'a'), ('ぃ', 'i'), ('ぇ', 'e'), ('ぉ', 'o'),
+            ('ゃ', 'ya'), ('ゅ', 'yu'), ('ぃぇ', 'ye'), ('ょ', 'yo'),
+        ):
+            add(kana + small, stem + vowel)
+
+    # Sokuon doubles the first code letter for this RymCp rule set.
+    # n, v and x are deliberately excluded; n has its own boundary rules.
+    base = tuple(result.items())
+    for kana, code in base:
+        if code[0] in 'bcdfghjkmprstwyz':
+            add('っ' + kana, code[0] + code)
+    return result
+
+
+def katakana(text):
+    return ''.join(chr(ord(c) + 0x60) if '\u3041' <= c <= '\u3096' else c for c in text)
+
+
+def dictionary_rows():
+    rows = []
+    for kana, code in build_inventory().items():
+        rows.extend(((kana, code), (katakana(kana), code.upper())))
+    # Nasal terminals and n-row bridges are separate from q romanization.
+    for kana, code in (('ん', 'n'), ('ん', 'nn')):
+        rows.extend(((kana, code), (katakana(kana), code.upper())))
+    for kana, suffix in (
+        ('な', 'na'), ('に', 'ni'), ('ぬ', 'nu'), ('ね', 'ne'), ('の', 'no'),
+        ('にゃ', 'nya'), ('にゅ', 'nyu'), ('にょ', 'nyo'), ('にぇ', 'nye'),
+    ):
+        rows.extend((('ん' + kana, 'n' + suffix), (katakana('ん' + kana), 'N' + suffix.upper())))
+    rows.append(('ー', '-'))
+    for mark in '々ゝゞヽヾ〃':
+        rows.append((mark, 'onaji'))
+    return list(dict.fromkeys(rows))
+
+
+def render_outputs():
+    header = '''# Generated by tools/generate-japanese-base.py; GPL-3.0-only.
+# Independent RymCp kana coding specification; no borrowed Kanji table.
+# The dictionary ID is retained only for existing Lua/learning interfaces.
+---
+name: jp_sela_custom
+version: "2026.10.26.rymcp.1"
+sort: original
+use_preset_vocabulary: false
+...
+'''
+    dictionary = header + ''.join(kana + '\t' + code + '\n' for kana, code in dictionary_rows())
+    schema = '''# RymCp Japanese base; newly written from the RymCp mode specification.
+# GPL-3.0-only. Copyright 2026 RymCp contributors.
+# jp_sela is RymCp's current module interface ID.
+schema:
+  schema_id: jp_sela
+  name: "日 / 墨芯"
+  version: "2026.10.26.rymcp.1"
+  author:
+    - RymCp contributors
+  description: |
+    Independent hiragana/katakana input with x small-kana and sourced q/v lookup.
+    Kanji candidates come from the separately attributed JMdict/KANJIDIC/Unihan data.
+switches:
+  - { name: ascii_mode, reset: 0 }
+  - { name: ascii_punct, reset: 0 }
+engine:
+  processors: [ascii_composer, recognizer, key_binder, speller, punctuator, selector, navigator, express_editor]
+  segmentors: [ascii_segmentor, matcher, abc_segmentor, punct_segmentor, fallback_segmentor]
+  translators: [punct_translator, script_translator]
+  filters: [uniquifier]
+speller:
+  alphabet: "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-_"
+  delimiter: " '"
+ascii_composer:
+  good_old_caps_lock: true
+  switch_key:
+    Shift_L: noop
+    Shift_R: inline_ascii
+    Control_L: noop
+    Control_R: noop
+    Caps_Lock: noop
+    Eisu_toggle: clear
+translator:
+  dictionary: jp_sela_custom
+  strict_spelling: true
+punctuator:
+  import_preset: default
+key_binder:
+  import_preset: default
+recognizer:
+  import_preset: default
+__patch:
+  - jp_sela.custom:/patch?
+'''
+    canonical = json.dumps(build_inventory(), ensure_ascii=False, indent=2, sort_keys=True) + '\n'
+    return {
+        'jp_sela.schema.yaml': schema,
+        'jp_sela_custom.dict.yaml': dictionary,
+        'japanese-q-canonical.json': canonical,
+    }
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--output', type=Path, required=True, help='New, absent directory; never overwrites existing files.')
+    args = parser.parse_args()
+    if args.output.exists():
+        parser.error('Output directory already exists; choose a new directory.')
+    args.output.mkdir(parents=True)
+    for name, content in render_outputs().items():
+        (args.output / name).write_bytes(content.encode('utf-8'))
+    print(json.dumps({'canonical_segments': len(build_inventory()), 'dictionary_rows': len(dictionary_rows()), 'files': 3}))
+
+
+if __name__ == '__main__':
+    main()

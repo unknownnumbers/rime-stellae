@@ -17,7 +17,7 @@ if($env:GITHUB_ACTIONS -ne 'true' -or -not $IsWindows){throw 'Use a disposable h
 if($SourceRef -cnotmatch '^[0-9a-f]{40}$'){throw 'Pin the frontend source revision before building'}
 $repo=(Resolve-Path -LiteralPath (Join-Path $PSScriptRoot '../..')).Path
 $inputs=Get-Content -LiteralPath (Join-Path $repo 'installer/bundle-inputs.json') -Raw|ConvertFrom-Json
-if(-not $inputs.schemes -or $inputs.schemes.commit -notmatch '^[0-9a-f]{40}$' -or $inputs.schemes.sha256 -notmatch '^[0-9a-f]{64}$'){throw 'Pin the scheme source and archive before building'}
+if(-not $inputs.schemes -or $inputs.schemes.sourceDirectory -cne 'schemes' -or $inputs.schemes.profile -cne 'stellae'){throw 'Build the base scheme from this source repository'}
 if(Test-Path -LiteralPath $OutputDirectory){throw 'Use a new package output directory'}
 $null=New-Item -ItemType Directory -Path $OutputDirectory
 $output=(Resolve-Path -LiteralPath $OutputDirectory).Path
@@ -63,8 +63,16 @@ function Fetch($Spec,[string]$Name,[string]$ReviewedArchive=''){
 $base=Fetch $inputs.frontendInstaller 'frontend-61052.exe'
 $baseSources=Fetch $inputs.frontendSources 'frontend-61052-source.zip'
 $seven=Fetch $inputs.sevenZipSources '7z2405-src.tar.xz'
-$schemeName=([uri]$inputs.schemes.url).Segments[-1]
-$scheme=Fetch $inputs.schemes $schemeName $SchemeArchive
+$schemeVersion=$inputs.schemes.version
+$schemeName='stellae-'+$schemeVersion+'-schemes.zip'
+if(-not $SchemeArchive){
+  $schemeOutput=Join-Path $output 'scheme-input'
+  & python (Join-Path $repo 'schemes/scripts/build_scheme_packages.py') --profile stellae --version $schemeVersion --output-dir $schemeOutput --source-ref $SourceRef
+  if($LASTEXITCODE){throw 'The base scheme archive could not be built from this source commit'}
+  $SchemeArchive=Join-Path $schemeOutput $schemeName
+}
+$scheme=Join-Path $cache $schemeName
+Copy-Item -LiteralPath $SchemeArchive -Destination $scheme
 $math=Fetch $inputs.indexedMath ('rymcp-dlc-math-'+$inputs.bundleVersion+'.zip') $IndexedMathArchive
 $native=Get-Content -LiteralPath (Join-Path $repo 'native/source-manifest.json') -Raw|ConvertFrom-Json
 $officialSpec=@($native.assets|Where-Object {$_.id -eq 'shared-data'})[0]
@@ -74,7 +82,7 @@ if($LASTEXITCODE){throw 'Original installer extraction failed'}
 & 7z.exe x $official ('-o'+(Join-Path $output 'official')) 'data/*' -y|Out-File (Join-Path $output 'extract-official.log')
 if($LASTEXITCODE){throw 'Official shared extraction failed'}
 $stage=Join-Path $output 'stage/output'
-& python (Join-Path $PSScriptRoot 'prepare_bundle.py') --repository $repo --base (Join-Path $output 'base') --official (Join-Path $output 'official') --schemes $scheme --indexed-math $math --stage $stage --default-font-directory $DefaultFontDirectory
+& python (Join-Path $PSScriptRoot 'prepare_bundle.py') --repository $repo --base (Join-Path $output 'base') --official (Join-Path $output 'official') --schemes $scheme --source-ref $SourceRef --indexed-math $math --stage $stage --default-font-directory $DefaultFontDirectory
 if($LASTEXITCODE){throw 'Bundle source assembly failed'}
 & python (Join-Path $PSScriptRoot 'apply_frontend_overlays.py') --stage $stage --products $nativeProducts --sources $nativeSources --source-ref $SourceRef @engineArguments
 if($LASTEXITCODE){throw 'Native frontend verification failed'}
@@ -95,7 +103,7 @@ try{
   & $makensis /INPUTCHARSET UTF8 /DWEASEL_VERSION=0.17.4 /DWEASEL_BUILD=61052 /DPRODUCT_VERSION=0.17.4.61052 ('/DBUNDLE_VERSION='+$inputs.bundleVersion) bundle.nsi 2>&1|Tee-Object (Join-Path $output 'nsis-build.log')
   if($LASTEXITCODE){throw 'Bundle NSIS compilation failed'}
 }finally{Pop-Location}
-$installer=Join-Path $stage ('archives/stellae-rymcp-'+$inputs.bundleVersion+'-installer.exe')
+$installer=Join-Path $stage ('archives/stellae-'+$inputs.bundleVersion+'-installer.exe')
 $release=Join-Path $output 'release'
 $null=New-Item -ItemType Directory -Path $release
 Copy-Item -LiteralPath $installer,(Join-Path $stage 'package-manifest.json'),(Join-Path $stage 'package-license-index.json'),(Join-Path $stage 'bundle-provenance.json'),(Join-Path $output 'pe-verification.json'),$seven -Destination $release
@@ -120,5 +128,5 @@ if($ProjectSourceArchive){
 & python -c 'from zipfile import ZipFile; import sys; assert ZipFile(sys.argv[1]).comment.decode("ascii") == sys.argv[2]' $project $SourceRef
 if($LASTEXITCODE){throw 'Bundle project archive revision differs'}
 Copy-Item -LiteralPath (Join-Path $stage 'bundle-inputs.json'),(Join-Path $stage 'SOURCES.md') -Destination $parts
-Compress-Archive -Path (Join-Path $parts '*') -DestinationPath (Join-Path $release ('stellae-rymcp-'+$inputs.bundleVersion+'-source.zip')) -CompressionLevel Optimal
+Compress-Archive -Path (Join-Path $parts '*') -DestinationPath (Join-Path $release ('stellae-'+$inputs.bundleVersion+'-source.zip')) -CompressionLevel Optimal
 Write-Output ('BUNDLE_OUTPUT '+$output)

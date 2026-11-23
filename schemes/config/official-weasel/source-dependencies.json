@@ -1,0 +1,86 @@
+{
+  "format": "rymcp-maintained-source-dependencies-v1",
+  "origin": "Fixed Weasel 0.17.4 packaged resources and retained notices. Source bytes are pinned independently of the notice commit.",
+  "upstream_resource_commit": null,
+  "files": [
+    {
+      "path": "key_bindings.yaml",
+      "bytes": 3021,
+      "sha256": "19c52d80a4bf043c16c49fdfeb58cfa4d7a9f2b94bd18c79ff2485bd7627db5f",
+      "source": "rime-prelude packaged source",
+      "license": "LGPL-3.0",
+      "notices": [
+        "licenses/shared-config/prelude-LICENSE.txt",
+        "licenses/shared-config/prelude-AUTHORS.txt"
+      ]
+    },
+    {
+      "path": "punctuation.yaml",
+      "bytes": 2212,
+      "sha256": "c9e5147fda24d1a13085075df5a2e73deecb643069be3751c6d4d793ceb2de5b",
+      "source": "rime-prelude packaged source",
+      "license": "LGPL-3.0",
+      "notices": [
+        "licenses/shared-config/prelude-LICENSE.txt",
+        "licenses/shared-config/prelude-AUTHORS.txt"
+      ]
+    },
+    {
+      "path": "symbols.yaml",
+      "bytes": 28729,
+      "sha256": "d3c1823f0e3bae5fb2dac338f4863a0d7164436d1ee132727ff5c4687f53601a",
+      "source": "rime-prelude packaged source",
+      "license": "LGPL-3.0",
+      "notices": [
+        "licenses/shared-config/prelude-LICENSE.txt",
+        "licenses/shared-config/prelude-AUTHORS.txt"
+      ]
+    },
+    {
+      "path": "opencc/s2t.json",
+      "bytes": 428,
+      "sha256": "919c0a6fde65555879b249588ab8c785c5e4b85704be8863361776bd48094a25",
+      "source": "OpenCC packaged data",
+      "license": "Apache-2.0",
+      "notices": [
+        "licenses/OpenCC-LICENSE.txt"
+      ]
+    },
+    {
+      "path": "opencc/STCharacters.ocd2",
+      "bytes": 45310,
+      "sha256": "4c7398b4ceedf9b58b5ea77cdd911bc7807c50c7491111dc9b4073c68ad5a2bb",
+      "source": "OpenCC packaged data",
+      "license": "Apache-2.0",
+      "notices": [
+        "licenses/OpenCC-LICENSE.txt"
+      ]
+    },
+    {
+      "path": "opencc/STPhrases.ocd2",
+      "bytes": 925143,
+      "sha256": "5e8d8289beacc7d4ab7baa7193ebb589f3d5a956449ed9c81ccff431ae503f6e",
+      "source": "OpenCC packaged data",
+      "license": "Apache-2.0",
+      "notices": [
+        "licenses/OpenCC-LICENSE.txt"
+      ]
+    },
+    {
+      "path": "licenses/shared-config/prelude-LICENSE.txt",
+      "bytes": 7651,
+      "sha256": "da7eabb7bafdf7d3ae5e9f223aa5bdc1eece45ac569dc21b3b037520b4464768",
+      "source": "retained rime-prelude notice",
+      "license": "LGPL-3.0",
+      "notice_commit": "95542a274915ba5496ff3260a2c71946238d4cce"
+    },
+    {
+      "path": "licenses/shared-config/prelude-AUTHORS.txt",
+      "bytes": 142,
+      "sha256": "9296a3509f1bcaee9e316ff70fccf76bf3a1f19c089b795710808ea5b6a0e6e7",
+      "source": "retained rime-prelude notice",
+      "license": "LGPL-3.0",
+      "notice_commit": "95542a274915ba5496ff3260a2c71946238d4cce"
+    }
+  ]
+}

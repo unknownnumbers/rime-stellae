@@ -1,0 +1,23 @@
+# Isolated component dictionary compiler and lookup schema.
+schema:
+  schema_id: project_radical
+  name: Project component pinyin data
+  version: "2026.10.15"
+engine:
+  processors: [speller, selector, navigator, express_editor]
+  segmentors: [abc_segmentor]
+  translators: [table_translator]
+  filters: [uniquifier]
+speller:
+  alphabet: abcdefghijklmnopqrstuvwxyz
+  delimiter: " "
+  algebra:
+    - xform/([ei])ng(?='|$)/$1n/
+    - xform/'//
+translator:
+  dictionary: project_radical
+  prism: project_radical
+  delimiter: " "
+  enable_completion: true
+  enable_sentence: false
+  enable_user_dict: false

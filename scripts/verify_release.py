@@ -11,6 +11,8 @@ import hashlib
 import json
 from pathlib import Path
 import re
+import subprocess
+import sys
 
 ROOT = Path(__file__).resolve().parents[1]
 IGNORED = {'.git', '__pycache__', 'out', 'work', '.venv', '.pytest_cache'}
@@ -50,6 +52,11 @@ def verify_licenses(payload):
             require_file(name)
     manifest = json.loads((ROOT / 'licenses/third-party-source-manifest.json').read_text(encoding='utf-8'))
     originals = {record['path']: record for record in manifest['files']}
+    nested_notices = ROOT / 'schemes/licenses/third-party-source-manifest.json'
+    if nested_notices.is_file():
+        for record in json.loads(nested_notices.read_text(encoding='utf-8'))['files']:
+            name = 'schemes/' + record['path']
+            originals[name] = {**record, 'path': name}
     for name, record in originals.items():
         path = require_file(name)
         raw = path.read_bytes()
@@ -78,6 +85,12 @@ def main():
     parser.add_argument('--date', type=date.fromisoformat, default=date.today(),
                         help='Source snapshot date in YYYY-MM-DD form when writing the manifest')
     args = parser.parse_args()
+    scheme_verifier = ROOT / 'schemes/scripts/verify_release.py'
+    if scheme_verifier.is_file():
+        command = [sys.executable, str(scheme_verifier)]
+        if args.require_yaml:
+            command.append('--require-yaml')
+        subprocess.run(command, cwd=ROOT / 'schemes', check=True)
     payload = files()
     forbidden_extensions = {'.dll', '.exe', '.pdb', '.dmp', '.log', '.userdb'}
     for path in payload:
@@ -98,6 +111,10 @@ def main():
         if args.require_yaml:
             raise SystemExit('Install PyYAML to perform required YAML syntax checks')
     for path in payload:
+        # The scheme verifier checks its declared binary resources, original
+        # notices, syntax and private markers using its own source inventory.
+        if path.relative_to(ROOT).parts[0] == 'schemes':
+            continue
         if path.suffix.lower() in {'.ico', '.png'}:
             continue
         try:
@@ -139,12 +156,12 @@ def main():
         manifest = {
             'format': 'stellae-source-release-v1',
             'date': args.date.isoformat(),
-            'kind': 'frontend-source-and-bundle-packaging',
+            'kind': 'frontend-and-input-scheme-source',
             'frontendVersion': '0.17.4.61052',
             'bundleVersion': json.loads((ROOT / 'installer/bundle-inputs.json').read_text('utf-8'))['bundleVersion'],
             'nativeBinariesIncluded': False,
             'personalLearningIncluded': False,
-            'productionInputSchemesIncluded': False,
+            'productionInputSchemesIncluded': scheme_verifier.is_file(),
             'syntheticTestFixturesIncluded': True,
             'sourceDescription': 'See docs/SOURCES.md for pinned upstreams, modifications and shared resources.',
             'files': records,

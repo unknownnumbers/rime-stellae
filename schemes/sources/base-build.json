@@ -1,0 +1,24 @@
+{
+  "format": "rymcp-base-build-v1",
+  "source_core_rows": 82834,
+  "core_words": 82833,
+  "source_extension_rows": 2606,
+  "extension_rows_outside_english_format": 0,
+  "chinese_code_repairs": 8,
+  "profiles": [
+    {
+      "profile": "pc",
+      "core_words": 82833,
+      "extension_rows": 3078,
+      "core_keys": 676079,
+      "extension_keys": 41593
+    },
+    {
+      "profile": "official-weasel",
+      "core_words": 82833,
+      "extension_rows": 3078,
+      "core_keys": 676079,
+      "extension_keys": 41593
+    }
+  ]
+}

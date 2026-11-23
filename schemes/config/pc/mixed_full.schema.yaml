@@ -1,0 +1,10 @@
+schema:
+  schema_id: mixed_full
+  name: Curated mixed phrase dictionary compiler
+  version: "1"
+translator:
+  dictionary: mixed_full
+speller:
+  alphabet: "abcdefghijklmnopqrstuvwxyz"
+  delimiter: " "
+  algebra: []

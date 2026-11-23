@@ -123,7 +123,7 @@ for path in sorted(root.rglob('*')):
         docs=relative in {'README.txt','SOURCES.md','THIRD_PARTY_NOTICES.md','LICENSE-DOCS'}
         row['license_record']={'terms':'CC-BY-SA-4.0' if docs else 'GPL-3.0-only','references':['licenses/CC-BY-SA-4.0.txt' if docs else 'LICENSE.txt']}
     records.append(row)
-report={'format':'stellae-rymcp-payload-license-index-v1','bundleVersion':provenance['bundleVersion'],
+report={'format':'stellae-payload-license-index-v2','bundleVersion':provenance['bundleVersion'],
         'frontendVersion':provenance['frontendVersion'],'sourceRef':a.ref,'baseSources':base['sources'],
         'schemeSources':{key:scheme['sources'][key] for key in sorted(active_scheme_ids)},
         'schemeArchivePaths':scheme_archive_paths,
@@ -131,7 +131,7 @@ report={'format':'stellae-rymcp-payload-license-index-v1','bundleVersion':proven
         'files':records,'installerRuntimeSources':['project-code','nsis'],
         'scope':'Exact package input bytes and installed paths. Nested license records retain their source-index meaning and identify the installed reference root.'}
 (root/'package-license-index.json').write_text(json.dumps(report,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
-(root/'package-manifest.json').write_text(json.dumps({'format':'stellae-rymcp-package-v1',
+(root/'package-manifest.json').write_text(json.dumps({'format':'stellae-package-v2',
     'bundleVersion':provenance['bundleVersion'],'frontendVersion':provenance['frontendVersion'],
     'sourceRef':a.ref,'inputSchemesBundled':True,'files':[{k:r[k] for k in ['path','installed_path','bytes','sha256']} for r in records]},ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
 print(json.dumps({'indexedFiles':len(records),'inheritedSourceNotices':True}))

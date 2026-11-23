@@ -1,12 +1,23 @@
 # 墨芯使用說明
 
-下載整合安裝器後依精靈安裝. 前端版本為 `0.17.4.61052`, x64 安裝同時提供 32-bit 應用所需支援, Win32 安裝使用對應引擎.
+## 安裝
 
-整合包附通用 RymCp 方案. 新裝預設 SC 輸出, 中文橫排 5 項、英文直排 6 項, 保留 TC/SC 切換. 方案功能與 DLC 安裝詳見 [RymCp 使用說明](https://github.com/unknownnumbers/RymCp-IME/blob/v2026.11.24/docs/PC.md).
+從[墨芯發布頁](https://github.com/unknownnumbers/rime-stellae/releases/tag/v2026.11.24)選擇所需檔案:
+
+- `stellae-2026.11.24-installer.exe`: 墨芯前端與完整方案整合安裝器.
+- `stellae-2026.11.24-schemes.zip`: 完整方案, 用於已有的墨芯安裝.
+- `stellae-2026.11.24-official-weasel-schemes.zip`: 官方 Weasel 用的墨芯方案, 依[手動安裝與合併說明](../schemes/docs/official-weasel.md)使用.
+- `stellae-2026.11.24-source.zip`: 對應的前端、引擎與方案來源.
+
+前端版本為 `0.17.4.61052`, x64 安裝同時提供 32-bit 應用所需支援, Win32 安裝使用對應引擎. 官方 Weasel 方案 ZIP 使用官方前端與引擎, 不需要替換 DLL.
+
+整合包附完整墨芯方案. 新裝預設 SC 輸出, 中文橫排 5 項、英文直排 6 項, 保留 TC/SC 切換. 中文、英文、日語、固定音節、查字與工具見[完整方案說明](../schemes/docs/PC.md); 官方 Weasel 的設定與能力見[官方適配版說明](../schemes/docs/official-weasel.md).
+
+## 更新與詞彙模組
 
 升級保留用戶自訂和學習資料. 自訂檔案可能覆蓋新版共享預設, 請按衝突報告對照合併. 共享資源依安裝清單更新及卸載, 未知或已修改檔案保留.
 
-如需另加方案, 開啟用戶資料夾並依方案說明放入檔案, 再執行重新部署. 可選詞彙模組使用用戶資料夾中的 `rymcp_dlc/`.
+如需另加方案, 開啟用戶資料夾並依方案說明放入檔案, 再執行重新部署. 數學、物理、電腦及詩詞詞彙以可選 DLC 添加. 將完整模組放入用戶資料夾中的 `rymcp_dlc/<id>/` 後重新部署; 卸載時刪除對應模組目錄並重新部署. 已有個人學習保留. 詳見[DLC 安裝與來源](../schemes/docs/dlc-sources.md).
 
 ## 候選窗字體
 

@@ -1,0 +1,9 @@
+name: luna_pinyin.extended  # 词库名要和文件名一致 参考知乎: https://zhuanlan.zhihu.com/p/474994157
+version: "2026.11.14.base"
+sort: by_weight                 # by_weight（按词频高低排序）或 original（保持原码表中的顺序）
+use_preset_vocabulary: true     # true 或 false，选择是否导入预设词汇表【八股文】
+
+import_tables:
+  - luna_pinyin
+  # Greek now belongs to the integrated scheme; legacy entry is Chinese-only.
+#  - luna_pinyin.sogou

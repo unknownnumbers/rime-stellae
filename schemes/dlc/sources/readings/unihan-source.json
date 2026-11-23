@@ -1,0 +1,10 @@
+{
+  "Version": "17.0.0",
+  "File": "Unihan-17.0.0.zip",
+  "Sha256": "f7a48b2b545acfaa77b2d607ae28747404ce02baefee16396c5d2d7a8ef34b5e",
+  "Bytes": 8518517,
+  "Url": "https://www.unicode.org/Public/17.0.0/ucd/Unihan.zip",
+  "License": "Unicode-3.0",
+  "NoticeFile": "UNICODE-LICENSE-V3.txt",
+  "NoticeSha256": "e7a93b009565cfce55919a381437ac4db883e9da2126fa28b91d12732bc53d96"
+}

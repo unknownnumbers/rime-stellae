@@ -1,0 +1,17 @@
+Science vocabulary source metadata
+
+Article title and subject-classification snapshot: English Wikipedia contributors.
+Sources: https://en.wikipedia.org/wiki/Category:Mathematics_articles_by_quality
+         https://en.wikipedia.org/wiki/Category:Physics_articles_by_quality
+Classification metadata attribution is retained under CC BY-SA 4.0.
+Per-article titles, page IDs, revision IDs, category membership and source request
+links are preserved in the supplied snapshot and original API response archives.
+No article body text is included.
+
+Labels, aliases and item revision metadata: Wikidata contributors, CC0 1.0.
+Source policy: https://www.wikidata.org/wiki/Wikidata:Copyright
+The original CC0 legal text accompanies the source snapshot.
+
+Changes: complete subject-project article classification selection; canonical
+main-article resolution; bounded-language label and alias extraction; deterministic
+compression and source hashing. Original component licenses remain applicable.

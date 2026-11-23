@@ -1,0 +1,57 @@
+name: Build Stellae vocabulary modules
+
+on:
+  push:
+    branches: ['release/stellae-*']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    working-directory: schemes
+
+jobs:
+  modules:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install PyYAML==6.0.2
+      - name: Check public data transformations
+        run: python -m unittest discover -s tests/data -p 'test_*.py'
+      - name: Rebuild fixed public base data
+        run: |
+          python scripts/data/rebuild_base.py
+          git diff --exit-code -- config sources/base-build.json
+      - name: Verify scheme sources and generated profiles
+        run: |
+          python scripts/verify_release.py --require-yaml
+          python scripts/rebuild_profiles.py --check
+          python config/pc/tools/validate-japanese-base.py --directory config/pc
+          python scripts/data/rebuild_japanese_family_q.py --check
+      - name: Read the release version
+        id: version
+        run: |
+          python -c "import json,os; from pathlib import Path; v=json.loads(Path('../installer/bundle-inputs.json').read_text())['bundleVersion']; print('version='+v, file=open(os.environ['GITHUB_OUTPUT'],'a'))"
+      - name: Build fixed-source vocabulary archives
+        run: python scripts/build_dlc.py --version '${{ steps.version.outputs.version }}'
+      - name: Record archive hashes
+        run: |
+          cd out/dlc
+          sha256sum *.zip > SHA256SUMS.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: stellae-vocabulary-${{ steps.version.outputs.version }}
+          if-no-files-found: error
+          path: |
+            schemes/out/dlc/*.zip
+            schemes/out/dlc/SHA256SUMS.txt
+            schemes/out/dlc/modules/build-report.json
+          retention-days: 14

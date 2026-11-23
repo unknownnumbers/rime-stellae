@@ -51,7 +51,7 @@ Name "${STELLAE_DISPLAY_ZH} ${WEASEL_VERSION}"
 
 ; The file to write
 !ifdef STELLAE_BUNDLE
-OutFile "archives\stellae-rymcp-${BUNDLE_VERSION}-installer.exe"
+OutFile "archives\stellae-${BUNDLE_VERSION}-installer.exe"
 !else
 OutFile "archives\${STELLAE_BINARY_BASE}-${PRODUCT_VERSION}-installer.exe"
 !endif
@@ -102,7 +102,7 @@ RequestExecutionLevel admin
 !insertmacro MUI_LANGUAGE "TradChinese"
 LangString NO_SCHEMAS ${LANG_TRADCHINESE} "本安裝包未附輸入方案. 請添加自己的方案後重新部署. 安裝不會自動下載方案或搬入其他輸入法資料."
 !ifdef STELLAE_BUNDLE
-LangString BUNDLE_READY ${LANG_TRADCHINESE} "已安裝 RymCp 方案. 既有使用者配置優先並保持原樣. 若新功能未出現, 請查看程式資料夾的 scheme-status.json 及使用說明."
+LangString BUNDLE_READY ${LANG_TRADCHINESE} "已安裝墨芯方案. 既有使用者配置優先並保持原樣. 若新功能未出現, 請查看程式資料夾的 scheme-status.json 及使用說明."
 !endif
 LangString OPEN_USER_FOLDER ${LANG_TRADCHINESE} "打開使用者資料夾"
 LangString DISPLAYNAME ${LANG_TRADCHINESE} "${STELLAE_DISPLAY_ZH}輸入法"
@@ -124,7 +124,7 @@ LangString AUTOCHKUPDATE ${LANG_TRADCHINESE} "自動檢查版本更新？"
 !insertmacro MUI_LANGUAGE "SimpChinese"
 LangString NO_SCHEMAS ${LANG_SIMPCHINESE} "本安装包未附输入方案. 请添加自己的方案后重新部署. 安装不会自动下载方案或搬入其他输入法资料."
 !ifdef STELLAE_BUNDLE
-LangString BUNDLE_READY ${LANG_SIMPCHINESE} "已安装 RymCp 方案. 已有用户配置优先并保持原样. 若新功能未出现, 请查看程序文件夹的 scheme-status.json 及使用说明."
+LangString BUNDLE_READY ${LANG_SIMPCHINESE} "已安装墨芯方案. 已有用户配置优先并保持原样. 若新功能未出现, 请查看程序文件夹的 scheme-status.json 及使用说明."
 !endif
 LangString OPEN_USER_FOLDER ${LANG_SIMPCHINESE} "打开用户文件夹"
 LangString DISPLAYNAME ${LANG_SIMPCHINESE} "${STELLAE_DISPLAY_ZH}输入法"
@@ -146,7 +146,7 @@ LangString AUTOCHKUPDATE ${LANG_SIMPCHINESE} "自动检查版本更新？"
 !insertmacro MUI_LANGUAGE "English"
 LangString NO_SCHEMAS ${LANG_ENGLISH} "No input schemes are bundled. Add your own scheme, then deploy. Installation does not download schemes or copy data from other input methods."
 !ifdef STELLAE_BUNDLE
-LangString BUNDLE_READY ${LANG_ENGLISH} "RymCp schemes are installed. Existing user configuration takes precedence and is preserved. If new features do not appear, see scheme-status.json in the program folder and the user guide."
+LangString BUNDLE_READY ${LANG_ENGLISH} "Stellae schemes are installed. Existing user configuration takes precedence and is preserved. If new features do not appear, see scheme-status.json in the program folder and the user guide."
 !endif
 LangString OPEN_USER_FOLDER ${LANG_ENGLISH} "Open the user folder"
 LangString DISPLAYNAME ${LANG_ENGLISH} "${STELLAE_PRODUCT_NAME}"

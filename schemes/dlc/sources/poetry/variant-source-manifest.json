@@ -1,0 +1,76 @@
+{
+  "format": 1,
+  "repository": "chinese-poetry/chinese-poetry",
+  "commit": "b8594f81a89752241442f2ce267d6f66f96704ee",
+  "source_archive": {
+    "path": "companion-anthologies.zip",
+    "sha256": "32a425d50d9856a259a580a424f044a1b512b8d415ba48fdee9b14bc78db7330",
+    "bytes": 236204,
+    "members": [
+      "全唐诗/唐诗三百首.json",
+      "宋词/宋词三百首.json",
+      "水墨唐诗/README.md",
+      "水墨唐诗/shuimotangshi.json",
+      "蒙学/README.md",
+      "蒙学/qianjiashi.json",
+      "蒙学/tangshisanbaishou.json"
+    ]
+  },
+  "files": [
+    {
+      "path": "全唐诗/唐诗三百首.json",
+      "bytes": 190787,
+      "sha256": "d77a145f7470da2ed2f79515944563c062ffc43fceda07f195a36ead66b7e5c7",
+      "git_blob_sha1": "c9522d59b11bf3cd600fffba694fd3d3b4714982",
+      "url": "https://raw.githubusercontent.com/chinese-poetry/chinese-poetry/b8594f81a89752241442f2ce267d6f66f96704ee/%E5%85%A8%E5%94%90%E8%AF%97/%E5%94%90%E8%AF%97%E4%B8%89%E7%99%BE%E9%A6%96.json"
+    },
+    {
+      "path": "宋词/宋词三百首.json",
+      "bytes": 151283,
+      "sha256": "ca5d74f7fdb9d5a6acc22a7c8b4395228cad4bb8be53df44c19ba83ab6983b20",
+      "git_blob_sha1": "7f5bfd0efbb601655b3475468c01ebe91d45c344",
+      "url": "https://raw.githubusercontent.com/chinese-poetry/chinese-poetry/b8594f81a89752241442f2ce267d6f66f96704ee/%E5%AE%8B%E8%AF%8D/%E5%AE%8B%E8%AF%8D%E4%B8%89%E7%99%BE%E9%A6%96.json"
+    },
+    {
+      "path": "水墨唐诗/README.md",
+      "bytes": 777,
+      "sha256": "409136554fc7c6f4c5b932374edfd27a0afc4ee51ceb37d0452fdb003a8d2fa7",
+      "git_blob_sha1": "382f4a445bd03c7845c39abf05b1232c3beee376",
+      "url": "https://raw.githubusercontent.com/chinese-poetry/chinese-poetry/b8594f81a89752241442f2ce267d6f66f96704ee/%E6%B0%B4%E5%A2%A8%E5%94%90%E8%AF%97/README.md"
+    },
+    {
+      "path": "水墨唐诗/shuimotangshi.json",
+      "bytes": 95878,
+      "sha256": "e175adf044f015cd7283d96a793eedde89a2847f567ecd58cd8d605a7ce69f8a",
+      "git_blob_sha1": "cc224cee0b27ad2a4145f74e8f762ecb4fee5193",
+      "url": "https://raw.githubusercontent.com/chinese-poetry/chinese-poetry/b8594f81a89752241442f2ce267d6f66f96704ee/%E6%B0%B4%E5%A2%A8%E5%94%90%E8%AF%97/shuimotangshi.json"
+    },
+    {
+      "path": "蒙学/README.md",
+      "bytes": 17369,
+      "sha256": "1cc137f75f57193ca20b470872d6901ee49253a3e9d14ca46318627883007f40",
+      "git_blob_sha1": "59dafb02f4472800df6b3f3483549027b3edb321",
+      "url": "https://raw.githubusercontent.com/chinese-poetry/chinese-poetry/b8594f81a89752241442f2ce267d6f66f96704ee/%E8%92%99%E5%AD%A6/README.md"
+    },
+    {
+      "path": "蒙学/qianjiashi.json",
+      "bytes": 69087,
+      "sha256": "cf34d01ed29528052da5d96543e725ab67814a6cb093183808c889400ff62417",
+      "git_blob_sha1": "2e03d7afe8ccc40d13c8c983e1a1b84447edc0e0",
+      "url": "https://raw.githubusercontent.com/chinese-poetry/chinese-poetry/b8594f81a89752241442f2ce267d6f66f96704ee/%E8%92%99%E5%AD%A6/qianjiashi.json"
+    },
+    {
+      "path": "蒙学/tangshisanbaishou.json",
+      "bytes": 148829,
+      "sha256": "8423b65d938d0327e369972e790549b42609fa7ac4a2a72df59f4cb5a49c08f8",
+      "git_blob_sha1": "d2f2e5b01722669b7280b4e016691b083dc94468",
+      "url": "https://raw.githubusercontent.com/chinese-poetry/chinese-poetry/b8594f81a89752241442f2ce267d6f66f96704ee/%E8%92%99%E5%AD%A6/tangshisanbaishou.json"
+    }
+  ],
+  "license": {
+    "path": "LICENSE",
+    "sha256": "c195319aeaa3ffcbe16aa5d26eec19eae5a42f84337dd2b3dc3c9d5ccbbd6507",
+    "declared_terms": "MIT"
+  },
+  "extraction_scope": "All paragraphs of every work in the complete companion anthology source files; prose fields excluded."
+}

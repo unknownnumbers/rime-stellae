@@ -14,7 +14,7 @@ $out=(Resolve-Path -LiteralPath $OutputDirectory).Path
 $env:STELLAE_BUNDLE_TEST_TRACE=Join-Path $out 'bundle-runtime.log'
 $package=(Resolve-Path -LiteralPath $PackageDirectory).Path
 $inputs=Get-Content -LiteralPath (Join-Path $package 'stage/output/bundle-inputs.json') -Raw|ConvertFrom-Json
-$installer=Join-Path $package ('release/stellae-rymcp-'+$inputs.bundleVersion+'-installer.exe')
+$installer=Join-Path $package ('release/stellae-'+$inputs.bundleVersion+'-installer.exe')
 $checks=@()
 function Check([string]$Name,[bool]$Passed){$script:checks+=@([ordered]@{name=$Name;passed=$Passed});if(-not $Passed){throw $Name};Write-Output ('PASS '+$Name)}
 function Run([string]$File,[string]$Arguments){

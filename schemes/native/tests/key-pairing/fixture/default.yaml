@@ -1,0 +1,5 @@
+config_version: "1"
+schema_list:
+  - {schema: gui_test}
+switcher:
+  save_options: []

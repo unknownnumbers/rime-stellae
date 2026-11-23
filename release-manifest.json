@@ -1,12 +1,12 @@
 {
   "format": "stellae-source-release-v1",
   "date": "2026-11-24",
-  "kind": "frontend-source-and-bundle-packaging",
+  "kind": "frontend-and-input-scheme-source",
   "frontendVersion": "0.17.4.61052",
   "bundleVersion": "2026.11.24",
   "nativeBinariesIncluded": false,
   "personalLearningIncluded": false,
-  "productionInputSchemesIncluded": false,
+  "productionInputSchemesIncluded": true,
   "syntheticTestFixturesIncluded": true,
   "sourceDescription": "See docs/SOURCES.md for pinned upstreams, modifications and shared resources.",
   "files": [
@@ -17,13 +17,18 @@
     },
     {
       "path": ".github/workflows/bundle.yml",
-      "bytes": 19551,
-      "sha256": "f95063f15fcfa05157e54ef3bab0201372d6b9b560e68a4c8300773a299f1301"
+      "bytes": 22664,
+      "sha256": "26daea5ef19813fa2acbbd938c678c988c4cca7705f2d6f24ea7f5a0a7de9b06"
     },
     {
       "path": ".github/workflows/native.yml",
       "bytes": 7762,
       "sha256": "d30a024591d2c1ccc38f5ddcfdf8a7ab512f8ab67e2779e16dd83c49fc3dd15b"
+    },
+    {
+      "path": ".github/workflows/schemes.yml",
+      "bytes": 1994,
+      "sha256": "9bf65f52c9fa421f749b116ce92793d7ad780acb9a4f39e59fd85235a1783684"
     },
     {
       "path": ".github/workflows/verify.yml",
@@ -47,18 +52,18 @@
     },
     {
       "path": "README.en.md",
-      "bytes": 2345,
-      "sha256": "a557424908e8bfe7e41d3d89aa96e0f35e5e2342604c0890c16127e34e1229ae"
+      "bytes": 3013,
+      "sha256": "3fc8bc8aa9d5c8ecc18669540d92ee32534a2b4c1a234057498df16b61ac6969"
     },
     {
       "path": "README.md",
-      "bytes": 1947,
-      "sha256": "e4c4a40ed61df6bb22c6f043cc77e4f241d109f13a5f376e8602b5a958d5e009"
+      "bytes": 2607,
+      "sha256": "7b9cc04f032bdf3522134f1c3e15a5a68c4d11fc56fcc328ad1a37d4895f523c"
     },
     {
       "path": "README.zh-SC.md",
-      "bytes": 1959,
-      "sha256": "03341fa7178951c16a1abd8c2435d07e5c9772fcef6b21873bc8548be6c64249"
+      "bytes": 2619,
+      "sha256": "82fd922abff72e74c4fe67a5ab1f4f8610d9481add3ec44d2fa408c33044d719"
     },
     {
       "path": "THIRD_PARTY_NOTICES.md",
@@ -67,8 +72,8 @@
     },
     {
       "path": "TODO.md",
-      "bytes": 255,
-      "sha256": "4df17d261de30036b6d67cf4996a629cbb1f8db05c6f17980b7464285e8b3afe"
+      "bytes": 281,
+      "sha256": "9e1e916192fc92924aa747455b4d1f743892006e64c139275c95f32ca133f4e1"
     },
     {
       "path": "assets/icon/README.md",
@@ -107,18 +112,18 @@
     },
     {
       "path": "docs/BUILD.md",
-      "bytes": 2838,
-      "sha256": "07a6dde1dd15a1474fbcbdb73dc3414ee0f9b8ed4947c8f665bb141daccf81a1"
+      "bytes": 3225,
+      "sha256": "78bf29d71609e752495e2210611e7740a2d8f8a1c67a6def8382fc8bcb3478d1"
     },
     {
       "path": "docs/PC.md",
-      "bytes": 1264,
-      "sha256": "2cf53516083440331564ad6ec2602320ce781c3547d98a3fcb61a31a226102bb"
+      "bytes": 2137,
+      "sha256": "e2bc1c057e3b995d0644d5689b77edcebf364d6514cc0e97006388db5247d073"
     },
     {
       "path": "docs/SOURCES.md",
-      "bytes": 1180,
-      "sha256": "b88ae778313a4e56cc080c1340a33aaa344bc503730a914c0dd3303456729ab1"
+      "bytes": 1484,
+      "sha256": "94da3ed328b47d58b873be479b17381d0a3576f9b0d7382ceef66f6a51ad407f"
     },
     {
       "path": "installer/BundleData.ps1",
@@ -137,8 +142,8 @@
     },
     {
       "path": "installer/bundle-inputs.json",
-      "bytes": 5262,
-      "sha256": "eb425b42bb2f718521b80bf439f5be872782eb7f0a4330a87df75f2fd1c77426"
+      "bytes": 5051,
+      "sha256": "beedf88c8c2fb7c5a9731632b74a99b17b9b342923f075bbe246b8a5c24dcde3"
     },
     {
       "path": "installer/bundle.nsi",
@@ -167,8 +172,8 @@
     },
     {
       "path": "installer/install.nsi",
-      "bytes": 27737,
-      "sha256": "156ed88c1eb16cbb3d45638cbedbcddd063346341b1ac803e12758d16230c4cf"
+      "bytes": 27731,
+      "sha256": "b70ee0688786411ad8b31bb8ef1b2d99053ac6cd99979961a1d31fc300927f9d"
     },
     {
       "path": "installer/migrations/upgrade.json",
@@ -197,13 +202,13 @@
     },
     {
       "path": "licenses/build_index.py",
-      "bytes": 3680,
-      "sha256": "7fc6d3fa3e8d9b9905284364c05d4e63df432c6d28fcb779c6d2194519ede44a"
+      "bytes": 5184,
+      "sha256": "620477e8d373d17efeee9ce00ca5bdf1008d252384e84031cb632ef1686fbdc5"
     },
     {
       "path": "licenses/file-licenses.json",
-      "bytes": 44477,
-      "sha256": "4eec0d88bfeedf5a4d58ff1a99f09d0d791573f054f1eb14b87d9cd50ea8faec"
+      "bytes": 298622,
+      "sha256": "c342be44cb5a68fc1318cc94b468c6063443f33304859fd08b0baf0e519e642c"
     },
     {
       "path": "licenses/native-dependencies/boost/LICENSE_1_0.txt",
@@ -547,8 +552,8 @@
     },
     {
       "path": "native/tests/installer/Test-BundleInstaller.ps1",
-      "bytes": 17484,
-      "sha256": "3b3dccb4c8e0d483e4f4d29de13e984d27da9ec890f7f83bf2ea79d194462659"
+      "bytes": 17478,
+      "sha256": "515dd341913168e580a2f08f9ea59d02dd7a50bd97b268dacbd3809635454144"
     },
     {
       "path": "native/tests/installer/Test-BundlePresetPriority.ps1",
@@ -676,6 +681,11 @@
       "sha256": "01aab92fff410d9090b9c184066e4cb60564a5935fad657b9a35cd5abf6cd108"
     },
     {
+      "path": "native/tests/package/test_scheme_source.py",
+      "bytes": 2848,
+      "sha256": "1805e021b137d32d1fa5e2a1192eeabe8cff42406b9c2e5f279ef86b0e13b5e6"
+    },
+    {
       "path": "native/tests/package/test_server_overlays.py",
       "bytes": 19385,
       "sha256": "714f3e49393781dac45bf9347ffefbe73ec38da64f0bc4952acefc45eaa96ad4"
@@ -709,6 +719,2936 @@
       "path": "native/weasel/stellae-61052.patch",
       "bytes": 958448,
       "sha256": "92b298b8182a0422e9ebd416c82d0e0f4a485379c6ba56c754a4ee370dae61e3"
+    },
+    {
+      "path": "schemes/.gitattributes",
+      "bytes": 49,
+      "sha256": "a0c320e90056523e0b42105f99bf5d203886ca5dc3aa23ac2544e24fb3c6be25"
+    },
+    {
+      "path": "schemes/.gitignore",
+      "bytes": 104,
+      "sha256": "04891a53d502fe4bf9913136031263736a3da40ea70c16cec238e8e402119113"
+    },
+    {
+      "path": "schemes/LICENSE",
+      "bytes": 35147,
+      "sha256": "8ceb4b9ee5adedde47b31e975c1d90c73ad27b6b165a1dcd80c7c545eb65b903"
+    },
+    {
+      "path": "schemes/README.en.md",
+      "bytes": 3534,
+      "sha256": "5b162fcac27ea13c61b730db7d1c39072918e030d3c58d1c915c3f33885a1bdd"
+    },
+    {
+      "path": "schemes/README.md",
+      "bytes": 2947,
+      "sha256": "54ef75fdb53b06c7101694ae7be2d4dfc1e7b309a5a3a88a6c835085511c9853"
+    },
+    {
+      "path": "schemes/README.zh-SC.md",
+      "bytes": 2959,
+      "sha256": "04f60f61c8f4db8a49250c9dd719d304c7a39ea06f883ff48b9b4496f75e0590"
+    },
+    {
+      "path": "schemes/THIRD_PARTY_NOTICES.md",
+      "bytes": 2811,
+      "sha256": "5892125606905bc190b28096cc49b4e19ba8736261e5d65b8010fb91253c9dc7"
+    },
+    {
+      "path": "schemes/TODO.md",
+      "bytes": 208,
+      "sha256": "e50ca2eaff4ff331f59c426f4d9d2bc9b2865f08d18a8906b9eaeb819ae73f09"
+    },
+    {
+      "path": "schemes/config/official-weasel/JAPANESE.md",
+      "bytes": 791,
+      "sha256": "8bcc43e7514495036dbc1bc07afbe1fc0b576e607be7debd6eaa4c0ab6c055c6"
+    },
+    {
+      "path": "schemes/config/official-weasel/OPENCC.md",
+      "bytes": 921,
+      "sha256": "47279a7505a3e4cd71d79116816776ad2c2b346a275628dbd63a04660e76956a"
+    },
+    {
+      "path": "schemes/config/official-weasel/assets/status/generate.py",
+      "bytes": 8774,
+      "sha256": "a054798dfe1ddefc3061bd2277666e52421adaa10acdd4a32b908cedaee40ff1"
+    },
+    {
+      "path": "schemes/config/official-weasel/assets/status/smart-english.ico",
+      "bytes": 374262,
+      "sha256": "2dba231189760c6a8e58f1bc51f8275a73f402b61f600a075cc95be6695cb446"
+    },
+    {
+      "path": "schemes/config/official-weasel/assets/status/smart-english.svg",
+      "bytes": 549,
+      "sha256": "e0a059469ce1dcb2c050063a21fe2e6a668b716da778743a97f58115391b5563"
+    },
+    {
+      "path": "schemes/config/official-weasel/default.yaml",
+      "bytes": 1431,
+      "sha256": "5a438c92aa7ddd749644c7c799967074634d41ace924859be2a371f29565c892"
+    },
+    {
+      "path": "schemes/config/official-weasel/english_extensions.dict.yaml",
+      "bytes": 42497,
+      "sha256": "46f5b1f58a71fbf4408d6bfeb1d2a292c88b60aae30792f415ef411cea96b4b7"
+    },
+    {
+      "path": "schemes/config/official-weasel/english_extensions/build-report.json",
+      "bytes": 339,
+      "sha256": "68fe2237fbb2b17966e36ce163120e72a6796f63c80a7c0185991f6ad47f3a93"
+    },
+    {
+      "path": "schemes/config/official-weasel/english_extensions/case_forms.tsv",
+      "bytes": 2271,
+      "sha256": "dc0170847cc07b9c78355d8a2c45144f279342ea58e637b22f55d7cabc6859a2"
+    },
+    {
+      "path": "schemes/config/official-weasel/english_extensions/entries.tsv",
+      "bytes": 168113,
+      "sha256": "0de39221f2d57e33b75e61bc23efc28484f4d09aba83eb63917b97b0faaa24eb"
+    },
+    {
+      "path": "schemes/config/official-weasel/english_extensions/keys.bin",
+      "bytes": 665488,
+      "sha256": "61ddd01c582218f2bbf61dc7dbd5e31318b0db261adb7977927980e3d89518cf"
+    },
+    {
+      "path": "schemes/config/official-weasel/english_extensions/postings.bin",
+      "bytes": 242476,
+      "sha256": "e4139cd2639704cd4834bc75774e99d815589178bffa4de6595010dae94f72e7"
+    },
+    {
+      "path": "schemes/config/official-weasel/english_extensions/words.txt",
+      "bytes": 27162,
+      "sha256": "4a4d5469dee4317bae130ef1b8739bdc68d4bf267aa4a9d7ac7f5be3aeaa561d"
+    },
+    {
+      "path": "schemes/config/official-weasel/english_full.dict.yaml",
+      "bytes": 2086340,
+      "sha256": "722b9dda5152877bd6372ab1f2ae24a56146e192ce66c740ef031d37b8df774b"
+    },
+    {
+      "path": "schemes/config/official-weasel/english_full.schema.yaml",
+      "bytes": 226,
+      "sha256": "14ebc72115f968697ccbe67ed8e446eb7a0ea42dfead668475ece7548daa8af4"
+    },
+    {
+      "path": "schemes/config/official-weasel/english_index/build-report.json",
+      "bytes": 348,
+      "sha256": "838cf8056ac04b04bb9d358d78b5705e1cb68e54b20540a80690ae53189c9bf5"
+    },
+    {
+      "path": "schemes/config/official-weasel/english_index/keys.bin",
+      "bytes": 10817264,
+      "sha256": "91a28c2f2059f2217455cc7814d445680ed8740501694b84afa1d2f218b138e9"
+    },
+    {
+      "path": "schemes/config/official-weasel/english_index/postings.bin",
+      "bytes": 8121656,
+      "sha256": "309ecadcbf07126d46e9365cf4b38acd75908b47890c55ffb361eba498b62bef"
+    },
+    {
+      "path": "schemes/config/official-weasel/english_index/vocabulary.tsv",
+      "bytes": 1332866,
+      "sha256": "c25e3ca31b102b12ced4afb56976669feea73fbe417735ef3532d4a1c6e8ed95"
+    },
+    {
+      "path": "schemes/config/official-weasel/english_index/words.txt",
+      "bytes": 753189,
+      "sha256": "8bf705417eba57cd5bddeab4ca37a02be471132ac3911e8a862929cb9b4a5d4a"
+    },
+    {
+      "path": "schemes/config/official-weasel/essay.txt",
+      "bytes": 6330573,
+      "sha256": "ae37983a4216145a6854375f21016358470c5dcf5ae9f6a54c29801e70b4d824"
+    },
+    {
+      "path": "schemes/config/official-weasel/japanese-q-canonical.json",
+      "bytes": 6078,
+      "sha256": "2164b1a91a8b1d48e91af5e14d491a46528f26e9386d14fbd4a424957188fcb6"
+    },
+    {
+      "path": "schemes/config/official-weasel/jp-v-compatibility.json",
+      "bytes": 7241,
+      "sha256": "5ed36001793a6da45209799f5f06d66f092332869b16d09289f6211367d8a2f9"
+    },
+    {
+      "path": "schemes/config/official-weasel/jp_q_lookup.dict.yaml",
+      "bytes": 13902443,
+      "sha256": "a88dbdca92805084447df214ce135402b58b1842844fcc7ffbfa8f4af1be7e05"
+    },
+    {
+      "path": "schemes/config/official-weasel/jp_q_lookup.schema.yaml",
+      "bytes": 618,
+      "sha256": "27006ea326d599ac5eb550dc0a86bdacd00f2009465b34bdc16f091876e8c233"
+    },
+    {
+      "path": "schemes/config/official-weasel/jp_sela.custom.yaml",
+      "bytes": 3840,
+      "sha256": "657084d0f0290e091056cb6ecadd120ea4261584daea6289d31dcacfd24624d9"
+    },
+    {
+      "path": "schemes/config/official-weasel/jp_sela.schema.yaml",
+      "bytes": 1341,
+      "sha256": "d594e133a08d23d81fc798106684c085ed2d301d9399fde350e921592fec8471"
+    },
+    {
+      "path": "schemes/config/official-weasel/jp_sela_custom.dict.yaml",
+      "bytes": 7632,
+      "sha256": "941578997bc9c43bd31e2f4d1f890cf8fe3737051dfe432f3928440bf1146ec1"
+    },
+    {
+      "path": "schemes/config/official-weasel/jp_small_lookup.dict.yaml",
+      "bytes": 738,
+      "sha256": "7e664bdef52e48e30a83a3ca83037fa72b1e92312c023c59bfbbcbf75fcc8871"
+    },
+    {
+      "path": "schemes/config/official-weasel/jp_small_lookup.schema.yaml",
+      "bytes": 436,
+      "sha256": "354ac0bc82543164eadb2c1b73e305009e5aa3fbfa61f73f36caf0fa7a0275bf"
+    },
+    {
+      "path": "schemes/config/official-weasel/jp_v.dict.yaml",
+      "bytes": 16581397,
+      "sha256": "7ed64f8bbef89b6f1f0faa0dbbb24edd74204927e980fd37e0d3ab2eaa7a7902"
+    },
+    {
+      "path": "schemes/config/official-weasel/jp_v_lookup.schema.yaml",
+      "bytes": 221521,
+      "sha256": "150596b849e530b22996258abdc5eb23e942b8dd32765d6a653817e114a853f1"
+    },
+    {
+      "path": "schemes/config/official-weasel/jp_v_pc_lookup.schema.yaml",
+      "bytes": 275102,
+      "sha256": "8a047af8bcecd8042aa0e222b3a530608c6da5f4e1914dfa0ae7a6b2f5611aa9"
+    },
+    {
+      "path": "schemes/config/official-weasel/jp_v_words.tsv",
+      "bytes": 3938968,
+      "sha256": "b49f13ff98a5ff30e9719b9bac66c8ce65e80c044d6c9d4efaf4f7b8480245c5"
+    },
+    {
+      "path": "schemes/config/official-weasel/key_bindings.yaml",
+      "bytes": 3021,
+      "sha256": "19c52d80a4bf043c16c49fdfeb58cfa4d7a9f2b94bd18c79ff2485bd7627db5f"
+    },
+    {
+      "path": "schemes/config/official-weasel/licenses/CC-BY-SA-4.0.txt",
+      "bytes": 20138,
+      "sha256": "28a9529c7d0bb4dc51f4bf5c116a3d16ef247a052f7591466768ddf563fd1cf5"
+    },
+    {
+      "path": "schemes/config/official-weasel/licenses/EDRDG-licence.html",
+      "bytes": 13587,
+      "sha256": "52f60ea9ca68170a2f0663d7dba381ebf1bd57c17a3347dfe21153865c156692"
+    },
+    {
+      "path": "schemes/config/official-weasel/licenses/JMdict-EDICT_Dictionary_Project.html",
+      "bytes": 44987,
+      "sha256": "873d4730db9b07f5f2554628f30969147e5054ad1f3bc1d528418d1b4961b791"
+    },
+    {
+      "path": "schemes/config/official-weasel/licenses/KANJIDIC_Project.html",
+      "bytes": 58521,
+      "sha256": "d58b6d859772c5c2031911eb7604f2d55d50c4ac6abc8bfece17550899baaf7d"
+    },
+    {
+      "path": "schemes/config/official-weasel/licenses/OpenCC-LICENSE.txt",
+      "bytes": 9165,
+      "sha256": "b534e465949558eec2597b04f5092b5e161236a68dfbfd04d547592ac3964308"
+    },
+    {
+      "path": "schemes/config/official-weasel/licenses/SCOWL-case-forms-Copyright.txt",
+      "bytes": 11758,
+      "sha256": "283326a422e29c510e2ba6805518c418ce3c35ed1fadc3eec83d2da4f6c5a055"
+    },
+    {
+      "path": "schemes/config/official-weasel/licenses/Unicode-3.0.txt",
+      "bytes": 1995,
+      "sha256": "e7a93b009565cfce55919a381437ac4db883e9da2126fa28b91d12732bc53d96"
+    },
+    {
+      "path": "schemes/config/official-weasel/licenses/english-case-forms-sources.md",
+      "bytes": 193,
+      "sha256": "2925000856dfee9e1f69b7162ac759644392f03801f0f67dba8b30b9933c69a4"
+    },
+    {
+      "path": "schemes/config/official-weasel/licenses/english-extensions-Ice-GPL-3.0.txt",
+      "bytes": 35149,
+      "sha256": "3972dc9744f6499f0f9b2dbf76696f2ae7ad8af9b23dde66d6af86c9dfb36986"
+    },
+    {
+      "path": "schemes/config/official-weasel/licenses/english-extensions-sources.md",
+      "bytes": 193,
+      "sha256": "eff67ff64c4db7f20ef5d2153b643c00b70462e822c5bb8e9cc69dec863afc0b"
+    },
+    {
+      "path": "schemes/config/official-weasel/licenses/essay-LGPL-3.0.txt",
+      "bytes": 7652,
+      "sha256": "97628afebc60f026f5c2b25d7491c46a5c4ee61f693e7cfa07fbd2c03605979b"
+    },
+    {
+      "path": "schemes/config/official-weasel/licenses/jp-q-sources.md",
+      "bytes": 179,
+      "sha256": "64f3b6733bbaec658d70e2b182d9c212c8da60f0a77b78144da6c9999307ce83"
+    },
+    {
+      "path": "schemes/config/official-weasel/licenses/jp-v-sources.md",
+      "bytes": 179,
+      "sha256": "8a5c5f2299efb65db6a94633bb7de601f26d61480c7c427db287a0c37a68efbf"
+    },
+    {
+      "path": "schemes/config/official-weasel/licenses/luna-compact-model-LGPL-3.0.txt",
+      "bytes": 7651,
+      "sha256": "da7eabb7bafdf7d3ae5e9f223aa5bdc1eece45ac569dc21b3b037520b4464768"
+    },
+    {
+      "path": "schemes/config/official-weasel/licenses/luna-compact-model-sources.md",
+      "bytes": 193,
+      "sha256": "1cf00fb9bcfebd4133696da4d6fd71e80cdbc129ad998024fc4514646a4c5428"
+    },
+    {
+      "path": "schemes/config/official-weasel/licenses/luna-pinyin-LGPL-3.0.txt",
+      "bytes": 7652,
+      "sha256": "97628afebc60f026f5c2b25d7491c46a5c4ee61f693e7cfa07fbd2c03605979b"
+    },
+    {
+      "path": "schemes/config/official-weasel/licenses/mdx-orthography-sources.md",
+      "bytes": 190,
+      "sha256": "0e428a06f5ae5f6891c83a4afde7f30a78f0e820f08bf910e08bf472664da07a"
+    },
+    {
+      "path": "schemes/config/official-weasel/licenses/mixed-phrases-sources.md",
+      "bytes": 188,
+      "sha256": "504b6ab3ac397b57031fa32c29f4d846ef20eaf6afa0353a251ea183a51ff26c"
+    },
+    {
+      "path": "schemes/config/official-weasel/licenses/query-strokes-source.json",
+      "bytes": 837,
+      "sha256": "a7609756347045c36bf384aa948e4d406df4b2e0d9a293a8e7d91587cf70135b"
+    },
+    {
+      "path": "schemes/config/official-weasel/licenses/shared-config/prelude-AUTHORS.txt",
+      "bytes": 142,
+      "sha256": "9296a3509f1bcaee9e316ff70fccf76bf3a1f19c089b795710808ea5b6a0e6e7"
+    },
+    {
+      "path": "schemes/config/official-weasel/licenses/shared-config/prelude-LICENSE.txt",
+      "bytes": 7651,
+      "sha256": "da7eabb7bafdf7d3ae5e9f223aa5bdc1eece45ac569dc21b3b037520b4464768"
+    },
+    {
+      "path": "schemes/config/official-weasel/licenses/tools-Ice-GPL-3.0.txt",
+      "bytes": 35149,
+      "sha256": "3972dc9744f6499f0f9b2dbf76696f2ae7ad8af9b23dde66d6af86c9dfb36986"
+    },
+    {
+      "path": "schemes/config/official-weasel/licenses/tools-sources.md",
+      "bytes": 180,
+      "sha256": "db43ff03b70807411a8bc2c5b6b50ba1dd213f1dad4328280963955504d18012"
+    },
+    {
+      "path": "schemes/config/official-weasel/licenses/u-readings-sources.md",
+      "bytes": 185,
+      "sha256": "4a71d77530df2c4dff9dd7abed3a124ec2296dad458238089e4cc510d64158d2"
+    },
+    {
+      "path": "schemes/config/official-weasel/lua/candidate_keys.lua",
+      "bytes": 3720,
+      "sha256": "5a5a2efd9391c4649d00b4898374c52f01f1a681329a7f1059a796a2753af2bb"
+    },
+    {
+      "path": "schemes/config/official-weasel/lua/cn_boundaries.lua",
+      "bytes": 967,
+      "sha256": "20689e1a71bfe13ac67e5ccc505a35e1af41563424e0cab4ba55c300d23a876f"
+    },
+    {
+      "path": "schemes/config/official-weasel/lua/cn_dlc.lua",
+      "bytes": 1044,
+      "sha256": "541b829dc5234d9d5d27f0be426cdaa9bc84b051afa62d115c3ebcd05166f37a"
+    },
+    {
+      "path": "schemes/config/official-weasel/lua/cn_exact_processor.lua",
+      "bytes": 3001,
+      "sha256": "79c37331c7acb6cf8a5b0e062a72dc2a89c314a288a50e502db41e01c0c87a81"
+    },
+    {
+      "path": "schemes/config/official-weasel/lua/cn_exact_spelling.lua",
+      "bytes": 3739,
+      "sha256": "20477aa5589a958c260d2924ae8a4fd47b2488e1936ca1d6c1c0d4655de3961d"
+    },
+    {
+      "path": "schemes/config/official-weasel/lua/cn_extra_forms.lua",
+      "bytes": 108874,
+      "sha256": "b0b08c1b47740a8b9d9a4b24e4d7410b89355d2e0d4936c2afe09edfc9414a65"
+    },
+    {
+      "path": "schemes/config/official-weasel/lua/cn_forms.lua",
+      "bytes": 1122446,
+      "sha256": "cf766b14dfa7a688dacc2e548f2b41520c12b2a81ea90477fd1f1190566607f5"
+    },
+    {
+      "path": "schemes/config/official-weasel/lua/cn_match.lua",
+      "bytes": 8305,
+      "sha256": "f5da316d250420d5b83f7eac0faacf4ecf5ccacb03701ade6a256286253a690d"
+    },
+    {
+      "path": "schemes/config/official-weasel/lua/cn_native_boundary.lua",
+      "bytes": 687,
+      "sha256": "4dd3c3247958fdfebd98501362d09cc9e88777f6a1c099c6cff7b0dc1483c6a4"
+    },
+    {
+      "path": "schemes/config/official-weasel/lua/cn_neighbor_keys.lua",
+      "bytes": 438,
+      "sha256": "42fb46041478aeb5de92614dd040bc8ebad45fe02b4e4bf7810496a9bfa9b1cd"
+    },
+    {
+      "path": "schemes/config/official-weasel/lua/cn_normal_codec.lua",
+      "bytes": 760,
+      "sha256": "87ef9a43b71bbe2131e89ef581c4211ae893370c757fc98f01e031edf73147c0"
+    },
+    {
+      "path": "schemes/config/official-weasel/lua/cn_orthography.lua",
+      "bytes": 2436,
+      "sha256": "0547348bf2042b07d802a7ef0961d16ecb3a3e430af2c9e48ea5008099792a9c"
+    },
+    {
+      "path": "schemes/config/official-weasel/lua/cn_preedit_spacing.lua",
+      "bytes": 6285,
+      "sha256": "61f27ff248e9b9930e2a289d87f35d096ec774e1d9c73c4fff17860e73bc105d"
+    },
+    {
+      "path": "schemes/config/official-weasel/lua/cn_tolerance.lua",
+      "bytes": 1268,
+      "sha256": "13ce3e50251f6ff624b0d0e7184cd2897e4a988018ce5cbc1abd7d738e6d37d5"
+    },
+    {
+      "path": "schemes/config/official-weasel/lua/cn_translator.lua",
+      "bytes": 35894,
+      "sha256": "f5c7109532da50973a00faa59c89ddd9bad22d5da47ff76a88a22058f1e660e6"
+    },
+    {
+      "path": "schemes/config/official-weasel/lua/draft_limit.lua",
+      "bytes": 4368,
+      "sha256": "3edce65dd5d9fa6f3e32fb49abf6ad94d3fc5a284dcba7f60d1145d4e283736b"
+    },
+    {
+      "path": "schemes/config/official-weasel/lua/en_dlc.lua",
+      "bytes": 4509,
+      "sha256": "a6f03eaa79e595705da56b1dceaa8bf6313f24c4f9cbb58c150430e9ca17b6c8"
+    },
+    {
+      "path": "schemes/config/official-weasel/lua/en_dlc_format.lua",
+      "bytes": 2249,
+      "sha256": "7e7730697d85fe5386d71581f3216458fccc12d91291365f066781961a64f4e8"
+    },
+    {
+      "path": "schemes/config/official-weasel/lua/en_index.lua",
+      "bytes": 4270,
+      "sha256": "82fe0a1e5d02e6c56077b8dc3d8121859edbfd245d722d7acc2b2f55d9c630de"
+    },
+    {
+      "path": "schemes/config/official-weasel/lua/en_indexed_translator.lua",
+      "bytes": 11647,
+      "sha256": "4d0085a9ff4283c5db90fc30892564b6eefa4da2bb8e57aecacb8426c3d5dd80"
+    },
+    {
+      "path": "schemes/config/official-weasel/lua/en_processor.lua",
+      "bytes": 2402,
+      "sha256": "4bd73c1162523fc857f30b52227aa5f940ca245ed38f7cc7f5819d181fa7793b"
+    },
+    {
+      "path": "schemes/config/official-weasel/lua/en_segmentor.lua",
+      "bytes": 891,
+      "sha256": "9c6d82a414f8a6819260d8efd18d6cae6d7a7fed9f7066c1f500c986814f9415"
+    },
+    {
+      "path": "schemes/config/official-weasel/lua/jp_family.lua",
+      "bytes": 2199,
+      "sha256": "9187336313ed6cfdeb25baea4b7de560dbafb8ab2fe5fc82be8306812d97f304"
+    },
+    {
+      "path": "schemes/config/official-weasel/lua/jp_family_data.lua",
+      "bytes": 570526,
+      "sha256": "17ee0d663c8025c2aee8d4768057df9f3cba0fe8b0423eb712a66629bf0fee48"
+    },
+    {
+      "path": "schemes/config/official-weasel/lua/jp_learning_match.lua",
+      "bytes": 2884,
+      "sha256": "19dd2711c8cb2b1dabdfc61922b757dc67dd3d4902f75c13eed70de4f5190444"
+    },
+    {
+      "path": "schemes/config/official-weasel/lua/jp_memory.lua",
+      "bytes": 7010,
+      "sha256": "77d4245df40ebb1e29fdec836537a2a7a5a427b765a9c326b5435ac7ea2768ad"
+    },
+    {
+      "path": "schemes/config/official-weasel/lua/jp_named_symbols.lua",
+      "bytes": 858,
+      "sha256": "4a1821ea2e4cc900341871cc21e1f508992d70d2508997b95dd9f1f1317dd58a"
+    },
+    {
+      "path": "schemes/config/official-weasel/lua/jp_query.lua",
+      "bytes": 11508,
+      "sha256": "25ac8ccebb80dbe334721337a87357785b50775e51fac911b2a14af4eae6bddb"
+    },
+    {
+      "path": "schemes/config/official-weasel/lua/jp_reading_metadata.lua",
+      "bytes": 4613,
+      "sha256": "df34e790ee674d63ecd2ac8a7210954df9fa50305483869b8084b9a7e2ed07d8"
+    },
+    {
+      "path": "schemes/config/official-weasel/lua/jp_sequence.lua",
+      "bytes": 2327,
+      "sha256": "aadafae772b689beaa578c55acbf87f8bb71c58daf0b26b8feb57811b49ce18d"
+    },
+    {
+      "path": "schemes/config/official-weasel/lua/jp_small_kana.lua",
+      "bytes": 1325,
+      "sha256": "71305fc843fccfcefd712838b90f1ad149f22ddb0bba12c6cd8f46647c64738a"
+    },
+    {
+      "path": "schemes/config/official-weasel/lua/jp_v.lua",
+      "bytes": 31668,
+      "sha256": "3b09785481c85a1749191617089401b86a6f6e3376433e42ed79d44b36348174"
+    },
+    {
+      "path": "schemes/config/official-weasel/lua/jp_v_chars.lua",
+      "bytes": 1833730,
+      "sha256": "f7fee696edf402839e511ebdc68e9fab04d3f0b71782be93bd8571a6fc204a22"
+    },
+    {
+      "path": "schemes/config/official-weasel/lua/jp_v_data.lua",
+      "bytes": 1957,
+      "sha256": "f952661298fd89089865c0557eb7a9d5b1e8551a32f002fd492ee587373a1c1b"
+    },
+    {
+      "path": "schemes/config/official-weasel/lua/jp_v_words_index.lua",
+      "bytes": 23903,
+      "sha256": "a08f35e07c34815135c41a96b17d0758af962aa595a13f804d9d4ce22f791f00"
+    },
+    {
+      "path": "schemes/config/official-weasel/lua/mixed_data.lua",
+      "bytes": 475,
+      "sha256": "198cbd6676a00bc5e6b96dfe7b65d0210ec4ca8386dd8ad5e0bcacedddca0d51"
+    },
+    {
+      "path": "schemes/config/official-weasel/lua/mixed_translator.lua",
+      "bytes": 3511,
+      "sha256": "f878f62589653baf0d9a37b45114a7307ba9304fe7754f97b8890726426bafed"
+    },
+    {
+      "path": "schemes/config/official-weasel/lua/official_translator.lua",
+      "bytes": 1058,
+      "sha256": "1ce06c18cd2121ca1ee0b81c10dccc4f10b2531de4b34fc1414ed1ed40c11da9"
+    },
+    {
+      "path": "schemes/config/official-weasel/lua/pc_probe_global_mode.lua",
+      "bytes": 6764,
+      "sha256": "edd2b3530c1bddf7f611d9d381e8efd9157230a57b34fac0a560864b4c2d8670"
+    },
+    {
+      "path": "schemes/config/official-weasel/lua/pc_probe_greek_proxy.lua",
+      "bytes": 7869,
+      "sha256": "39939292d6b2f00f44e6431741490c682aeb8c0d5256573efa225382dcb1a15d"
+    },
+    {
+      "path": "schemes/config/official-weasel/lua/query_info_submit.lua",
+      "bytes": 5845,
+      "sha256": "2cf8cbf3e6a15cce9475685a41d4aadf01c60f16d7eb381f380ae746b0a5ecfb"
+    },
+    {
+      "path": "schemes/config/official-weasel/lua/rymcp_dlc.lua",
+      "bytes": 16511,
+      "sha256": "71592167ae7731c2a64fdc527599d7418396b744d129c90659da606d33832d3f"
+    },
+    {
+      "path": "schemes/config/official-weasel/lua/scheme_data.lua",
+      "bytes": 750,
+      "sha256": "181b37a95ff605818b6db79c1fc94747a9d9cb04c0ca9eb82b120c35d0628426"
+    },
+    {
+      "path": "schemes/config/official-weasel/lua/select_hanzi.lua",
+      "bytes": 4481,
+      "sha256": "ea01f3c98142b281167ff4f898d5b3a9b82f0c1e8fc58123036c5474e2e86a11"
+    },
+    {
+      "path": "schemes/config/official-weasel/lua/tool_calculator.lua",
+      "bytes": 12655,
+      "sha256": "6e4fada9bd31a636d67a31ddc67c3bec7fab02116d060b79e2457e308ada884a"
+    },
+    {
+      "path": "schemes/config/official-weasel/lua/tool_processor.lua",
+      "bytes": 2626,
+      "sha256": "9fc7ac2b782c4c6f6950d6583a95ea5a199711c94de442eb0183e543ff374a7d"
+    },
+    {
+      "path": "schemes/config/official-weasel/lua/tool_segmentor.lua",
+      "bytes": 1013,
+      "sha256": "8678374c63de5e412e0f39aebecf0076bdb75b22ae58d7210d959b6fb337aac4"
+    },
+    {
+      "path": "schemes/config/official-weasel/lua/tool_translator.lua",
+      "bytes": 2378,
+      "sha256": "c620b182fdf6483337cb56b214dcf8d728e4c1257c1b66f6743a8ee2d6869b94"
+    },
+    {
+      "path": "schemes/config/official-weasel/lua/tool_unicode.lua",
+      "bytes": 1815,
+      "sha256": "b6375b1114b92bb9b420baa3aea1bdedcca2366f6fc3fc499d87d7464ef47c63"
+    },
+    {
+      "path": "schemes/config/official-weasel/lua/tool_unicode_data.lua",
+      "bytes": 5970,
+      "sha256": "84ced4a71016ee930f04c7d70f8982e61231cf5fe113cc19cbaa0f69bec7526d"
+    },
+    {
+      "path": "schemes/config/official-weasel/lua/u_translator.lua",
+      "bytes": 5394,
+      "sha256": "70bd4596d6cb2cb5bb84718bfeb5bb7679cb73bdc9bb3134aa3d93687804075f"
+    },
+    {
+      "path": "schemes/config/official-weasel/luna_pinyin.dict.yaml",
+      "bytes": 891284,
+      "sha256": "15cc2481fffb3682173fca712b2ee6a2b154ebd0c6be61252f3fa175f7dc996f"
+    },
+    {
+      "path": "schemes/config/official-weasel/luna_pinyin.extended.dict.yaml",
+      "bytes": 490,
+      "sha256": "6b41615b48852b51144be1c5d4a0c97494ca79f9b8250fd90b13ed3c36695569"
+    },
+    {
+      "path": "schemes/config/official-weasel/luna_pinyin.research.dict.yaml",
+      "bytes": 176,
+      "sha256": "79467679c0eac919afc7d18b84dd7d375522ab4c11133b01c9cb29bdb7ff2c53"
+    },
+    {
+      "path": "schemes/config/official-weasel/mixed_full.dict.yaml",
+      "bytes": 349,
+      "sha256": "e5af1476aae799206e9fe20920b121e617021d079f001d94720f4a7c4da80f9a"
+    },
+    {
+      "path": "schemes/config/official-weasel/mixed_full.schema.yaml",
+      "bytes": 224,
+      "sha256": "e74e7ed78acd17bfcd5b528f90930dbf3414ecc6e794d0fe85fb1a25abf534ef"
+    },
+    {
+      "path": "schemes/config/official-weasel/opencc/STCharacters.ocd2",
+      "bytes": 45310,
+      "sha256": "4c7398b4ceedf9b58b5ea77cdd911bc7807c50c7491111dc9b4073c68ad5a2bb"
+    },
+    {
+      "path": "schemes/config/official-weasel/opencc/STPhrases.ocd2",
+      "bytes": 925143,
+      "sha256": "5e8d8289beacc7d4ab7baa7193ebb589f3d5a956449ed9c81ccff431ae503f6e"
+    },
+    {
+      "path": "schemes/config/official-weasel/opencc/TSCharacters.ocd2",
+      "bytes": 46126,
+      "sha256": "85291e0173e972bbca58c848fb90b3bb41c79674cb61a75645e01bd884ad5927"
+    },
+    {
+      "path": "schemes/config/official-weasel/opencc/TSPhrases.ocd2",
+      "bytes": 9776,
+      "sha256": "edafc46f5c3eca61a754c78e47117e7c73995cacd6c99aadcb8a219d7ae3e53d"
+    },
+    {
+      "path": "schemes/config/official-weasel/opencc/mdx_t2s.json",
+      "bytes": 720,
+      "sha256": "fc5a5727f65eb56652e44af8d4c01d63f4062f9b6437e9024018d0dd4ad69c87"
+    },
+    {
+      "path": "schemes/config/official-weasel/opencc/mdx_words.txt",
+      "bytes": 74,
+      "sha256": "e8a7da2487f1c15053f2251ae06441be7d9bf5a8982bf87f4f74b5e025c26ae4"
+    },
+    {
+      "path": "schemes/config/official-weasel/opencc/s2t.json",
+      "bytes": 428,
+      "sha256": "919c0a6fde65555879b249588ab8c785c5e4b85704be8863361776bd48094a25"
+    },
+    {
+      "path": "schemes/config/official-weasel/pc_research.custom.yaml",
+      "bytes": 295462,
+      "sha256": "c3c40088ab8646611327eb0305165b952233c9405ea1ba699d45d6c5c07a2654"
+    },
+    {
+      "path": "schemes/config/official-weasel/pc_research.schema.yaml",
+      "bytes": 2388,
+      "sha256": "a64f83793e94c3d52b021d84fc847406749e30cfe76e4c20ca414dd83de61548"
+    },
+    {
+      "path": "schemes/config/official-weasel/pinyin.yaml",
+      "bytes": 4965,
+      "sha256": "f2d291166946a848fd88e541844567415f1ed3d9c5a7477757b88aeb3a69c0ca"
+    },
+    {
+      "path": "schemes/config/official-weasel/profile-manifest.json",
+      "bytes": 29338,
+      "sha256": "17d4919ed6443e3a78fe61086fa90c2d49244b75c0df229a57bc4e06534a88fb"
+    },
+    {
+      "path": "schemes/config/official-weasel/project_radical.dict.yaml",
+      "bytes": 2167597,
+      "sha256": "ac2ce6698fc4982fd2d5580a903fb7f7517ab4d8cd1e09403645b4dea08e5f7e"
+    },
+    {
+      "path": "schemes/config/official-weasel/project_radical.schema.yaml",
+      "bytes": 602,
+      "sha256": "8e97d1b19e7f4a7a54bcaa5066410e9dc96c0d815bdd463080a3ad7192b599b1"
+    },
+    {
+      "path": "schemes/config/official-weasel/project_radical_parts.dict.yaml",
+      "bytes": 2300077,
+      "sha256": "dcdbeaa0e9e711e3f6e7f0d0d492db6fa1f67424299d36fde1ef2b59dbe66287"
+    },
+    {
+      "path": "schemes/config/official-weasel/project_radical_parts.schema.yaml",
+      "bytes": 1033,
+      "sha256": "5d3bc1bccc3a948385c5242d37385f6ab623a80c63ced2c4b46b6cfcee8219a2"
+    },
+    {
+      "path": "schemes/config/official-weasel/project_symbols.dict.yaml",
+      "bytes": 1386,
+      "sha256": "0bf9bf46468ce399b586ed038394a5da60225098456140840b6cee9ebc79213f"
+    },
+    {
+      "path": "schemes/config/official-weasel/punctuation.yaml",
+      "bytes": 2212,
+      "sha256": "c9e5147fda24d1a13085075df5a2e73deecb643069be3751c6d4d793ceb2de5b"
+    },
+    {
+      "path": "schemes/config/official-weasel/query_strokes.tsv",
+      "bytes": 1559049,
+      "sha256": "79f3578cded6d4f42adca0a3b37548bdfdcb5062f6aee11103671cfc9d4cc401"
+    },
+    {
+      "path": "schemes/config/official-weasel/research_greek.dict.yaml",
+      "bytes": 1881,
+      "sha256": "2654b1d6d8195feab5eb85fdf8bb9d26dd58712b143293f0cdb601f2eb7d3fe9"
+    },
+    {
+      "path": "schemes/config/official-weasel/rymcp_dlc_computer.dict.yaml",
+      "bytes": 175,
+      "sha256": "7f7fe7ed21298462b7266a933640d24acd24f0803271bb69ded1c30ff8e4dcbc"
+    },
+    {
+      "path": "schemes/config/official-weasel/rymcp_dlc_math.dict.yaml",
+      "bytes": 167,
+      "sha256": "8699bcdb8052c78cbab46b2e655b7af91f83b40df93bdc93eaa9ebfb382b2307"
+    },
+    {
+      "path": "schemes/config/official-weasel/rymcp_dlc_physics.dict.yaml",
+      "bytes": 173,
+      "sha256": "144de58f53f4b8f9fcee9ff1c80484903ba23eb65d1a8372ceaf8b21b3bd590e"
+    },
+    {
+      "path": "schemes/config/official-weasel/rymcp_dlc_poetry.dict.yaml",
+      "bytes": 171,
+      "sha256": "bc7ff6628072ee38945a3a957f399f968aab276211b26f7a4c3c1e5d4828cec9"
+    },
+    {
+      "path": "schemes/config/official-weasel/rymcp_dlc_poetry_00.dict.yaml",
+      "bytes": 177,
+      "sha256": "954fa5f7031d7a9bd590bce188ff30f6911a69dcf32243bf40783673e33e0044"
+    },
+    {
+      "path": "schemes/config/official-weasel/rymcp_dlc_poetry_01.dict.yaml",
+      "bytes": 177,
+      "sha256": "4da1a5620f57f239a388c0866e411f6cec553b2709d54dbf83f3970ea1c8e32d"
+    },
+    {
+      "path": "schemes/config/official-weasel/rymcp_dlc_poetry_02.dict.yaml",
+      "bytes": 177,
+      "sha256": "7a5ea296425bb52ee58629871df4a79e8da7f432b2ff507e6afa45d4e467610e"
+    },
+    {
+      "path": "schemes/config/official-weasel/rymcp_dlc_poetry_03.dict.yaml",
+      "bytes": 177,
+      "sha256": "c69a834140df01384a0bc24cecb1243ef48e7d5fcf79dce715f4a558c5532abd"
+    },
+    {
+      "path": "schemes/config/official-weasel/rymcp_dlc_poetry_04.dict.yaml",
+      "bytes": 177,
+      "sha256": "075a625ed333233578e529248787aa5b10700f1f1392d8f2476fd6cf08deb83f"
+    },
+    {
+      "path": "schemes/config/official-weasel/rymcp_dlc_poetry_05.dict.yaml",
+      "bytes": 177,
+      "sha256": "da0ff8824e115a176e690d389400ea39f779d1d8f0c7778aaef1e3fd49ed055c"
+    },
+    {
+      "path": "schemes/config/official-weasel/rymcp_dlc_poetry_06.dict.yaml",
+      "bytes": 177,
+      "sha256": "064037b299870818892956794414cc91f4c5f7bdb3f58074ccf6263b1bb75404"
+    },
+    {
+      "path": "schemes/config/official-weasel/rymcp_dlc_poetry_07.dict.yaml",
+      "bytes": 177,
+      "sha256": "0b0ff96221615557af08b645be16d0b08ae159f426147deee3fc63ec24dc5020"
+    },
+    {
+      "path": "schemes/config/official-weasel/rymcp_dlc_poetry_08.dict.yaml",
+      "bytes": 177,
+      "sha256": "f9c5a1e44603799897da76eb69a86a49ffb55dc17d023e11ffe0571c1194f2ea"
+    },
+    {
+      "path": "schemes/config/official-weasel/rymcp_dlc_poetry_09.dict.yaml",
+      "bytes": 177,
+      "sha256": "0906920319aea28a6cee6f98ba12d59b3e7d396f4f4cfa090aca091facadda97"
+    },
+    {
+      "path": "schemes/config/official-weasel/rymcp_dlc_poetry_10.dict.yaml",
+      "bytes": 177,
+      "sha256": "0c520b0ab5edd2107fbb75380819ff87ac1dae69cd5a1d5685531742edeb5d9a"
+    },
+    {
+      "path": "schemes/config/official-weasel/rymcp_dlc_poetry_11.dict.yaml",
+      "bytes": 177,
+      "sha256": "42fa5f46f93af3e3d98b99c5154a6abb9b7374019ea7cd6fdf071998f6a5fb7b"
+    },
+    {
+      "path": "schemes/config/official-weasel/rymcp_dlc_poetry_12.dict.yaml",
+      "bytes": 177,
+      "sha256": "df0c55fd1ece10ad276663ed95c3af6e93dfb8a7e522a8f24c5274463fe9a217"
+    },
+    {
+      "path": "schemes/config/official-weasel/rymcp_dlc_poetry_13.dict.yaml",
+      "bytes": 177,
+      "sha256": "8f9c8710f9fb087d7728f87cd17416cb2c352296153ea6b380d716edac953dc3"
+    },
+    {
+      "path": "schemes/config/official-weasel/rymcp_dlc_poetry_14.dict.yaml",
+      "bytes": 177,
+      "sha256": "808fe14d3b50cf31322725bb006604984e7853149f31820d63bcbbb1d1fefdc3"
+    },
+    {
+      "path": "schemes/config/official-weasel/rymcp_dlc_poetry_15.dict.yaml",
+      "bytes": 177,
+      "sha256": "29aa4406717990a53449ee675156e084b7b1bcb678d1bbf5db3156dcd0b916c1"
+    },
+    {
+      "path": "schemes/config/official-weasel/rymcp_dlc_poetry_16.dict.yaml",
+      "bytes": 177,
+      "sha256": "0853079000011a046e655a40fa198414b3e7e4ec459bbd904e166720e87ec74d"
+    },
+    {
+      "path": "schemes/config/official-weasel/rymcp_dlc_poetry_17.dict.yaml",
+      "bytes": 177,
+      "sha256": "662881cb418d23298cc0138099a83ec3115b4eee8fa94583f5d70ea978b30073"
+    },
+    {
+      "path": "schemes/config/official-weasel/rymcp_dlc_poetry_18.dict.yaml",
+      "bytes": 177,
+      "sha256": "db980bf851d8a9ceaf5da7df02534f50dfde0361dee6ed2154ef49fe10854c0b"
+    },
+    {
+      "path": "schemes/config/official-weasel/rymcp_dlc_poetry_19.dict.yaml",
+      "bytes": 177,
+      "sha256": "ad3911d9d425727d291afbf734a29dd4451eb7ee02a9ac27ff23c6633d79c719"
+    },
+    {
+      "path": "schemes/config/official-weasel/rymcp_dlc_poetry_20.dict.yaml",
+      "bytes": 177,
+      "sha256": "76687eca08dc15b6969cb98f612f2b610e976751790172c458f33f0c3c1dbc0d"
+    },
+    {
+      "path": "schemes/config/official-weasel/rymcp_dlc_poetry_21.dict.yaml",
+      "bytes": 177,
+      "sha256": "3035d7cfce757001a71ec39a37ece29bf0b5ea491d349a71ceef01150b885cb4"
+    },
+    {
+      "path": "schemes/config/official-weasel/rymcp_dlc_poetry_22.dict.yaml",
+      "bytes": 177,
+      "sha256": "16622a09ed60e6fb9445d572c5022fefc657ecc9c02048b08ebc760e613dabee"
+    },
+    {
+      "path": "schemes/config/official-weasel/rymcp_dlc_poetry_23.dict.yaml",
+      "bytes": 177,
+      "sha256": "59980eb2db00bd83b492d2546b103e8ed45c4817316b86afaebd680965440709"
+    },
+    {
+      "path": "schemes/config/official-weasel/rymcp_dlc_poetry_24.dict.yaml",
+      "bytes": 177,
+      "sha256": "ff62b7bcf8716b550e03b38300e360b61b14ae5c19c6029cd8e51a75574cfec9"
+    },
+    {
+      "path": "schemes/config/official-weasel/rymcp_dlc_poetry_25.dict.yaml",
+      "bytes": 177,
+      "sha256": "b0b4bccccebc52e12bae5b6d1a30f33f136c6fc4f50f72b53d89d06a78c168cc"
+    },
+    {
+      "path": "schemes/config/official-weasel/rymcp_dlc_poetry_26.dict.yaml",
+      "bytes": 177,
+      "sha256": "642bd080a2a075a599873d3645de6f994984cdb723979c607b29eeb9916a7cf1"
+    },
+    {
+      "path": "schemes/config/official-weasel/rymcp_dlc_poetry_27.dict.yaml",
+      "bytes": 177,
+      "sha256": "4f89db57f19f69853cab894b84ee7cd2f35c9c09e2cdf343fe096e413d2d4a12"
+    },
+    {
+      "path": "schemes/config/official-weasel/rymcp_dlc_poetry_28.dict.yaml",
+      "bytes": 177,
+      "sha256": "037133541ee8e80284b4a8785a61416567d74693c9fc74e85c5026df689c083b"
+    },
+    {
+      "path": "schemes/config/official-weasel/rymcp_dlc_poetry_29.dict.yaml",
+      "bytes": 177,
+      "sha256": "4f729b190416df080c4d5715d4ad998795836dc4e26a74eeeff6c7e5d293a6cb"
+    },
+    {
+      "path": "schemes/config/official-weasel/rymcp_dlc_poetry_30.dict.yaml",
+      "bytes": 177,
+      "sha256": "5e362e8aa4ecab11596e056d3dcb51dd7c0d7a59f29523fa88b93b2fad7dd990"
+    },
+    {
+      "path": "schemes/config/official-weasel/rymcp_dlc_poetry_31.dict.yaml",
+      "bytes": 177,
+      "sha256": "bab3940ba3d96465a0dcf92816a57528bec3740f14fa661559642d046b576e34"
+    },
+    {
+      "path": "schemes/config/official-weasel/samples/default.custom.yaml",
+      "bytes": 1315,
+      "sha256": "f4ba1a5277aba13966231fad4821a0e3ab6ef92b7297c7af279c6b8e362285a0"
+    },
+    {
+      "path": "schemes/config/official-weasel/samples/rime.lua",
+      "bytes": 3368,
+      "sha256": "99649c8db94fdf34453f66af2e73610baa7f9c3846f98718886bac20ddb66d7f"
+    },
+    {
+      "path": "schemes/config/official-weasel/samples/weasel.custom.yaml",
+      "bytes": 2372,
+      "sha256": "abe796e1edb78ae11cfdb75c6d96315b2820baacb3f9f20715461e276a229593"
+    },
+    {
+      "path": "schemes/config/official-weasel/source-dependencies.json",
+      "bytes": 2939,
+      "sha256": "e99450d6f10c4b19ebfde720e2c251526a4292e70be8b865e92a80de100bcbdb"
+    },
+    {
+      "path": "schemes/config/official-weasel/stroke.dict.yaml",
+      "bytes": 2330785,
+      "sha256": "0fe1c1c0673f3564f16deb1f659a75f3ad6a43e5308165dccfb63fd94864f631"
+    },
+    {
+      "path": "schemes/config/official-weasel/stroke.schema.yaml",
+      "bytes": 3156,
+      "sha256": "f541d4c7450370b2652ae5e4190396803504edc987f74f16718458811312f303"
+    },
+    {
+      "path": "schemes/config/official-weasel/symbols.yaml",
+      "bytes": 28729,
+      "sha256": "d3c1823f0e3bae5fb2dac338f4863a0d7164436d1ee132727ff5c4687f53601a"
+    },
+    {
+      "path": "schemes/config/official-weasel/tools/build-config-release.py",
+      "bytes": 2490,
+      "sha256": "5dd4a5f8a7f233e485f105b15763ee9dd25ae4743d3170f3374b890f369347a6"
+    },
+    {
+      "path": "schemes/config/official-weasel/tools/generate-japanese-base.py",
+      "bytes": 7985,
+      "sha256": "1cb285b074d5a0c125ae4fea3f02289c29b799c6090300dcd470f316564ef992"
+    },
+    {
+      "path": "schemes/config/official-weasel/tools/make-opencc-config.py",
+      "bytes": 2486,
+      "sha256": "9c6a4582599f46fffc6e757df6ab925bb02c0af40b70d8b1723adc4a4162b035"
+    },
+    {
+      "path": "schemes/config/official-weasel/tools/validate-japanese-base.py",
+      "bytes": 5103,
+      "sha256": "9fa77f50e7596c4fcb15e716540e176c27278bd50d6d2ed6dc9689c24629e7f4"
+    },
+    {
+      "path": "schemes/config/official-weasel/u_readings.tsv",
+      "bytes": 556891,
+      "sha256": "67f8f2b4ecfbdddc3b4e6d238f093ad68a6aab944767832e38d0dc5ad36a0d8d"
+    },
+    {
+      "path": "schemes/config/official-weasel/zh-hant-t-essay-bgw-compact.gram",
+      "bytes": 41415724,
+      "sha256": "0488ebd6688f900a39200f2b794f2f99bcbf1e8fc27280ae4a2324b08b1559c1"
+    },
+    {
+      "path": "schemes/config/pc/JAPANESE.md",
+      "bytes": 791,
+      "sha256": "8bcc43e7514495036dbc1bc07afbe1fc0b576e607be7debd6eaa4c0ab6c055c6"
+    },
+    {
+      "path": "schemes/config/pc/OPENCC.md",
+      "bytes": 921,
+      "sha256": "47279a7505a3e4cd71d79116816776ad2c2b346a275628dbd63a04660e76956a"
+    },
+    {
+      "path": "schemes/config/pc/assets/status/generate.py",
+      "bytes": 8774,
+      "sha256": "a054798dfe1ddefc3061bd2277666e52421adaa10acdd4a32b908cedaee40ff1"
+    },
+    {
+      "path": "schemes/config/pc/assets/status/smart-english.ico",
+      "bytes": 374262,
+      "sha256": "2dba231189760c6a8e58f1bc51f8275a73f402b61f600a075cc95be6695cb446"
+    },
+    {
+      "path": "schemes/config/pc/assets/status/smart-english.svg",
+      "bytes": 549,
+      "sha256": "e0a059469ce1dcb2c050063a21fe2e6a668b716da778743a97f58115391b5563"
+    },
+    {
+      "path": "schemes/config/pc/config-source-manifest.json",
+      "bytes": 29400,
+      "sha256": "32371b01acdfa4536de37db3449deee15e6d7b6e38f5524be4f1698d133d4575"
+    },
+    {
+      "path": "schemes/config/pc/default.custom.yaml",
+      "bytes": 1379,
+      "sha256": "7965aa0a546f5771fc53d3a35f4d9670d4fb5f6a1fbd2af994726143ec62027c"
+    },
+    {
+      "path": "schemes/config/pc/default.yaml",
+      "bytes": 1431,
+      "sha256": "5a438c92aa7ddd749644c7c799967074634d41ace924859be2a371f29565c892"
+    },
+    {
+      "path": "schemes/config/pc/english_extensions.dict.yaml",
+      "bytes": 42497,
+      "sha256": "46f5b1f58a71fbf4408d6bfeb1d2a292c88b60aae30792f415ef411cea96b4b7"
+    },
+    {
+      "path": "schemes/config/pc/english_extensions/build-report.json",
+      "bytes": 339,
+      "sha256": "68fe2237fbb2b17966e36ce163120e72a6796f63c80a7c0185991f6ad47f3a93"
+    },
+    {
+      "path": "schemes/config/pc/english_extensions/case_forms.tsv",
+      "bytes": 2271,
+      "sha256": "dc0170847cc07b9c78355d8a2c45144f279342ea58e637b22f55d7cabc6859a2"
+    },
+    {
+      "path": "schemes/config/pc/english_extensions/entries.tsv",
+      "bytes": 168113,
+      "sha256": "0de39221f2d57e33b75e61bc23efc28484f4d09aba83eb63917b97b0faaa24eb"
+    },
+    {
+      "path": "schemes/config/pc/english_extensions/keys.bin",
+      "bytes": 665488,
+      "sha256": "61ddd01c582218f2bbf61dc7dbd5e31318b0db261adb7977927980e3d89518cf"
+    },
+    {
+      "path": "schemes/config/pc/english_extensions/postings.bin",
+      "bytes": 242476,
+      "sha256": "e4139cd2639704cd4834bc75774e99d815589178bffa4de6595010dae94f72e7"
+    },
+    {
+      "path": "schemes/config/pc/english_extensions/words.txt",
+      "bytes": 27162,
+      "sha256": "4a4d5469dee4317bae130ef1b8739bdc68d4bf267aa4a9d7ac7f5be3aeaa561d"
+    },
+    {
+      "path": "schemes/config/pc/english_full.dict.yaml",
+      "bytes": 2086340,
+      "sha256": "722b9dda5152877bd6372ab1f2ae24a56146e192ce66c740ef031d37b8df774b"
+    },
+    {
+      "path": "schemes/config/pc/english_full.schema.yaml",
+      "bytes": 226,
+      "sha256": "14ebc72115f968697ccbe67ed8e446eb7a0ea42dfead668475ece7548daa8af4"
+    },
+    {
+      "path": "schemes/config/pc/english_index/build-report.json",
+      "bytes": 348,
+      "sha256": "838cf8056ac04b04bb9d358d78b5705e1cb68e54b20540a80690ae53189c9bf5"
+    },
+    {
+      "path": "schemes/config/pc/english_index/keys.bin",
+      "bytes": 10817264,
+      "sha256": "91a28c2f2059f2217455cc7814d445680ed8740501694b84afa1d2f218b138e9"
+    },
+    {
+      "path": "schemes/config/pc/english_index/postings.bin",
+      "bytes": 8121656,
+      "sha256": "309ecadcbf07126d46e9365cf4b38acd75908b47890c55ffb361eba498b62bef"
+    },
+    {
+      "path": "schemes/config/pc/english_index/vocabulary.tsv",
+      "bytes": 1332866,
+      "sha256": "c25e3ca31b102b12ced4afb56976669feea73fbe417735ef3532d4a1c6e8ed95"
+    },
+    {
+      "path": "schemes/config/pc/english_index/words.txt",
+      "bytes": 753189,
+      "sha256": "8bf705417eba57cd5bddeab4ca37a02be471132ac3911e8a862929cb9b4a5d4a"
+    },
+    {
+      "path": "schemes/config/pc/essay.txt",
+      "bytes": 6330573,
+      "sha256": "ae37983a4216145a6854375f21016358470c5dcf5ae9f6a54c29801e70b4d824"
+    },
+    {
+      "path": "schemes/config/pc/japanese-q-canonical.json",
+      "bytes": 6078,
+      "sha256": "2164b1a91a8b1d48e91af5e14d491a46528f26e9386d14fbd4a424957188fcb6"
+    },
+    {
+      "path": "schemes/config/pc/jp-v-compatibility.json",
+      "bytes": 7241,
+      "sha256": "5ed36001793a6da45209799f5f06d66f092332869b16d09289f6211367d8a2f9"
+    },
+    {
+      "path": "schemes/config/pc/jp_q_lookup.dict.yaml",
+      "bytes": 13902443,
+      "sha256": "a88dbdca92805084447df214ce135402b58b1842844fcc7ffbfa8f4af1be7e05"
+    },
+    {
+      "path": "schemes/config/pc/jp_q_lookup.schema.yaml",
+      "bytes": 618,
+      "sha256": "27006ea326d599ac5eb550dc0a86bdacd00f2009465b34bdc16f091876e8c233"
+    },
+    {
+      "path": "schemes/config/pc/jp_sela.custom.yaml",
+      "bytes": 3840,
+      "sha256": "657084d0f0290e091056cb6ecadd120ea4261584daea6289d31dcacfd24624d9"
+    },
+    {
+      "path": "schemes/config/pc/jp_sela.schema.yaml",
+      "bytes": 1341,
+      "sha256": "d594e133a08d23d81fc798106684c085ed2d301d9399fde350e921592fec8471"
+    },
+    {
+      "path": "schemes/config/pc/jp_sela_custom.dict.yaml",
+      "bytes": 7632,
+      "sha256": "941578997bc9c43bd31e2f4d1f890cf8fe3737051dfe432f3928440bf1146ec1"
+    },
+    {
+      "path": "schemes/config/pc/jp_small_lookup.dict.yaml",
+      "bytes": 738,
+      "sha256": "7e664bdef52e48e30a83a3ca83037fa72b1e92312c023c59bfbbcbf75fcc8871"
+    },
+    {
+      "path": "schemes/config/pc/jp_small_lookup.schema.yaml",
+      "bytes": 436,
+      "sha256": "354ac0bc82543164eadb2c1b73e305009e5aa3fbfa61f73f36caf0fa7a0275bf"
+    },
+    {
+      "path": "schemes/config/pc/jp_v.dict.yaml",
+      "bytes": 16581397,
+      "sha256": "7ed64f8bbef89b6f1f0faa0dbbb24edd74204927e980fd37e0d3ab2eaa7a7902"
+    },
+    {
+      "path": "schemes/config/pc/jp_v_lookup.schema.yaml",
+      "bytes": 221521,
+      "sha256": "150596b849e530b22996258abdc5eb23e942b8dd32765d6a653817e114a853f1"
+    },
+    {
+      "path": "schemes/config/pc/jp_v_pc_lookup.schema.yaml",
+      "bytes": 275102,
+      "sha256": "8a047af8bcecd8042aa0e222b3a530608c6da5f4e1914dfa0ae7a6b2f5611aa9"
+    },
+    {
+      "path": "schemes/config/pc/jp_v_words.tsv",
+      "bytes": 3938968,
+      "sha256": "b49f13ff98a5ff30e9719b9bac66c8ce65e80c044d6c9d4efaf4f7b8480245c5"
+    },
+    {
+      "path": "schemes/config/pc/key_bindings.yaml",
+      "bytes": 3021,
+      "sha256": "19c52d80a4bf043c16c49fdfeb58cfa4d7a9f2b94bd18c79ff2485bd7627db5f"
+    },
+    {
+      "path": "schemes/config/pc/licenses/CC-BY-SA-4.0.txt",
+      "bytes": 20138,
+      "sha256": "28a9529c7d0bb4dc51f4bf5c116a3d16ef247a052f7591466768ddf563fd1cf5"
+    },
+    {
+      "path": "schemes/config/pc/licenses/EDRDG-licence.html",
+      "bytes": 13587,
+      "sha256": "52f60ea9ca68170a2f0663d7dba381ebf1bd57c17a3347dfe21153865c156692"
+    },
+    {
+      "path": "schemes/config/pc/licenses/JMdict-EDICT_Dictionary_Project.html",
+      "bytes": 44987,
+      "sha256": "873d4730db9b07f5f2554628f30969147e5054ad1f3bc1d528418d1b4961b791"
+    },
+    {
+      "path": "schemes/config/pc/licenses/KANJIDIC_Project.html",
+      "bytes": 58521,
+      "sha256": "d58b6d859772c5c2031911eb7604f2d55d50c4ac6abc8bfece17550899baaf7d"
+    },
+    {
+      "path": "schemes/config/pc/licenses/OpenCC-LICENSE.txt",
+      "bytes": 9165,
+      "sha256": "b534e465949558eec2597b04f5092b5e161236a68dfbfd04d547592ac3964308"
+    },
+    {
+      "path": "schemes/config/pc/licenses/SCOWL-case-forms-Copyright.txt",
+      "bytes": 11758,
+      "sha256": "283326a422e29c510e2ba6805518c418ce3c35ed1fadc3eec83d2da4f6c5a055"
+    },
+    {
+      "path": "schemes/config/pc/licenses/Unicode-3.0.txt",
+      "bytes": 1995,
+      "sha256": "e7a93b009565cfce55919a381437ac4db883e9da2126fa28b91d12732bc53d96"
+    },
+    {
+      "path": "schemes/config/pc/licenses/english-case-forms-sources.md",
+      "bytes": 193,
+      "sha256": "2925000856dfee9e1f69b7162ac759644392f03801f0f67dba8b30b9933c69a4"
+    },
+    {
+      "path": "schemes/config/pc/licenses/english-extensions-Ice-GPL-3.0.txt",
+      "bytes": 35149,
+      "sha256": "3972dc9744f6499f0f9b2dbf76696f2ae7ad8af9b23dde66d6af86c9dfb36986"
+    },
+    {
+      "path": "schemes/config/pc/licenses/english-extensions-sources.md",
+      "bytes": 193,
+      "sha256": "eff67ff64c4db7f20ef5d2153b643c00b70462e822c5bb8e9cc69dec863afc0b"
+    },
+    {
+      "path": "schemes/config/pc/licenses/essay-LGPL-3.0.txt",
+      "bytes": 7652,
+      "sha256": "97628afebc60f026f5c2b25d7491c46a5c4ee61f693e7cfa07fbd2c03605979b"
+    },
+    {
+      "path": "schemes/config/pc/licenses/jp-q-sources.md",
+      "bytes": 179,
+      "sha256": "64f3b6733bbaec658d70e2b182d9c212c8da60f0a77b78144da6c9999307ce83"
+    },
+    {
+      "path": "schemes/config/pc/licenses/jp-v-sources.md",
+      "bytes": 179,
+      "sha256": "8a5c5f2299efb65db6a94633bb7de601f26d61480c7c427db287a0c37a68efbf"
+    },
+    {
+      "path": "schemes/config/pc/licenses/luna-compact-model-LGPL-3.0.txt",
+      "bytes": 7651,
+      "sha256": "da7eabb7bafdf7d3ae5e9f223aa5bdc1eece45ac569dc21b3b037520b4464768"
+    },
+    {
+      "path": "schemes/config/pc/licenses/luna-compact-model-sources.md",
+      "bytes": 193,
+      "sha256": "1cf00fb9bcfebd4133696da4d6fd71e80cdbc129ad998024fc4514646a4c5428"
+    },
+    {
+      "path": "schemes/config/pc/licenses/luna-pinyin-LGPL-3.0.txt",
+      "bytes": 7652,
+      "sha256": "97628afebc60f026f5c2b25d7491c46a5c4ee61f693e7cfa07fbd2c03605979b"
+    },
+    {
+      "path": "schemes/config/pc/licenses/mdx-orthography-sources.md",
+      "bytes": 190,
+      "sha256": "0e428a06f5ae5f6891c83a4afde7f30a78f0e820f08bf910e08bf472664da07a"
+    },
+    {
+      "path": "schemes/config/pc/licenses/mixed-phrases-sources.md",
+      "bytes": 188,
+      "sha256": "504b6ab3ac397b57031fa32c29f4d846ef20eaf6afa0353a251ea183a51ff26c"
+    },
+    {
+      "path": "schemes/config/pc/licenses/query-strokes-source.json",
+      "bytes": 837,
+      "sha256": "a7609756347045c36bf384aa948e4d406df4b2e0d9a293a8e7d91587cf70135b"
+    },
+    {
+      "path": "schemes/config/pc/licenses/shared-config/prelude-AUTHORS.txt",
+      "bytes": 142,
+      "sha256": "9296a3509f1bcaee9e316ff70fccf76bf3a1f19c089b795710808ea5b6a0e6e7"
+    },
+    {
+      "path": "schemes/config/pc/licenses/shared-config/prelude-LICENSE.txt",
+      "bytes": 7651,
+      "sha256": "da7eabb7bafdf7d3ae5e9f223aa5bdc1eece45ac569dc21b3b037520b4464768"
+    },
+    {
+      "path": "schemes/config/pc/licenses/tools-Ice-GPL-3.0.txt",
+      "bytes": 35149,
+      "sha256": "3972dc9744f6499f0f9b2dbf76696f2ae7ad8af9b23dde66d6af86c9dfb36986"
+    },
+    {
+      "path": "schemes/config/pc/licenses/tools-sources.md",
+      "bytes": 180,
+      "sha256": "db43ff03b70807411a8bc2c5b6b50ba1dd213f1dad4328280963955504d18012"
+    },
+    {
+      "path": "schemes/config/pc/licenses/u-readings-sources.md",
+      "bytes": 185,
+      "sha256": "4a71d77530df2c4dff9dd7abed3a124ec2296dad458238089e4cc510d64158d2"
+    },
+    {
+      "path": "schemes/config/pc/lua/candidate_keys.lua",
+      "bytes": 3720,
+      "sha256": "5a5a2efd9391c4649d00b4898374c52f01f1a681329a7f1059a796a2753af2bb"
+    },
+    {
+      "path": "schemes/config/pc/lua/cn_boundaries.lua",
+      "bytes": 967,
+      "sha256": "20689e1a71bfe13ac67e5ccc505a35e1af41563424e0cab4ba55c300d23a876f"
+    },
+    {
+      "path": "schemes/config/pc/lua/cn_dlc.lua",
+      "bytes": 1044,
+      "sha256": "541b829dc5234d9d5d27f0be426cdaa9bc84b051afa62d115c3ebcd05166f37a"
+    },
+    {
+      "path": "schemes/config/pc/lua/cn_exact_processor.lua",
+      "bytes": 3001,
+      "sha256": "79c37331c7acb6cf8a5b0e062a72dc2a89c314a288a50e502db41e01c0c87a81"
+    },
+    {
+      "path": "schemes/config/pc/lua/cn_exact_spelling.lua",
+      "bytes": 3739,
+      "sha256": "20477aa5589a958c260d2924ae8a4fd47b2488e1936ca1d6c1c0d4655de3961d"
+    },
+    {
+      "path": "schemes/config/pc/lua/cn_extra_forms.lua",
+      "bytes": 108874,
+      "sha256": "b0b08c1b47740a8b9d9a4b24e4d7410b89355d2e0d4936c2afe09edfc9414a65"
+    },
+    {
+      "path": "schemes/config/pc/lua/cn_forms.lua",
+      "bytes": 1122446,
+      "sha256": "cf766b14dfa7a688dacc2e548f2b41520c12b2a81ea90477fd1f1190566607f5"
+    },
+    {
+      "path": "schemes/config/pc/lua/cn_match.lua",
+      "bytes": 8305,
+      "sha256": "f5da316d250420d5b83f7eac0faacf4ecf5ccacb03701ade6a256286253a690d"
+    },
+    {
+      "path": "schemes/config/pc/lua/cn_native_boundary.lua",
+      "bytes": 687,
+      "sha256": "4dd3c3247958fdfebd98501362d09cc9e88777f6a1c099c6cff7b0dc1483c6a4"
+    },
+    {
+      "path": "schemes/config/pc/lua/cn_neighbor_keys.lua",
+      "bytes": 438,
+      "sha256": "42fb46041478aeb5de92614dd040bc8ebad45fe02b4e4bf7810496a9bfa9b1cd"
+    },
+    {
+      "path": "schemes/config/pc/lua/cn_normal_codec.lua",
+      "bytes": 760,
+      "sha256": "87ef9a43b71bbe2131e89ef581c4211ae893370c757fc98f01e031edf73147c0"
+    },
+    {
+      "path": "schemes/config/pc/lua/cn_orthography.lua",
+      "bytes": 2436,
+      "sha256": "0547348bf2042b07d802a7ef0961d16ecb3a3e430af2c9e48ea5008099792a9c"
+    },
+    {
+      "path": "schemes/config/pc/lua/cn_preedit_spacing.lua",
+      "bytes": 6285,
+      "sha256": "61f27ff248e9b9930e2a289d87f35d096ec774e1d9c73c4fff17860e73bc105d"
+    },
+    {
+      "path": "schemes/config/pc/lua/cn_tolerance.lua",
+      "bytes": 1268,
+      "sha256": "13ce3e50251f6ff624b0d0e7184cd2897e4a988018ce5cbc1abd7d738e6d37d5"
+    },
+    {
+      "path": "schemes/config/pc/lua/cn_translator.lua",
+      "bytes": 35894,
+      "sha256": "f5c7109532da50973a00faa59c89ddd9bad22d5da47ff76a88a22058f1e660e6"
+    },
+    {
+      "path": "schemes/config/pc/lua/draft_limit.lua",
+      "bytes": 4368,
+      "sha256": "3edce65dd5d9fa6f3e32fb49abf6ad94d3fc5a284dcba7f60d1145d4e283736b"
+    },
+    {
+      "path": "schemes/config/pc/lua/en_dlc.lua",
+      "bytes": 4509,
+      "sha256": "a6f03eaa79e595705da56b1dceaa8bf6313f24c4f9cbb58c150430e9ca17b6c8"
+    },
+    {
+      "path": "schemes/config/pc/lua/en_dlc_format.lua",
+      "bytes": 2249,
+      "sha256": "7e7730697d85fe5386d71581f3216458fccc12d91291365f066781961a64f4e8"
+    },
+    {
+      "path": "schemes/config/pc/lua/en_index.lua",
+      "bytes": 4270,
+      "sha256": "82fe0a1e5d02e6c56077b8dc3d8121859edbfd245d722d7acc2b2f55d9c630de"
+    },
+    {
+      "path": "schemes/config/pc/lua/en_indexed_translator.lua",
+      "bytes": 11647,
+      "sha256": "4d0085a9ff4283c5db90fc30892564b6eefa4da2bb8e57aecacb8426c3d5dd80"
+    },
+    {
+      "path": "schemes/config/pc/lua/en_processor.lua",
+      "bytes": 2402,
+      "sha256": "4bd73c1162523fc857f30b52227aa5f940ca245ed38f7cc7f5819d181fa7793b"
+    },
+    {
+      "path": "schemes/config/pc/lua/en_segmentor.lua",
+      "bytes": 891,
+      "sha256": "9c6d82a414f8a6819260d8efd18d6cae6d7a7fed9f7066c1f500c986814f9415"
+    },
+    {
+      "path": "schemes/config/pc/lua/jp_family.lua",
+      "bytes": 2199,
+      "sha256": "9187336313ed6cfdeb25baea4b7de560dbafb8ab2fe5fc82be8306812d97f304"
+    },
+    {
+      "path": "schemes/config/pc/lua/jp_family_data.lua",
+      "bytes": 570526,
+      "sha256": "17ee0d663c8025c2aee8d4768057df9f3cba0fe8b0423eb712a66629bf0fee48"
+    },
+    {
+      "path": "schemes/config/pc/lua/jp_learning_match.lua",
+      "bytes": 2884,
+      "sha256": "19dd2711c8cb2b1dabdfc61922b757dc67dd3d4902f75c13eed70de4f5190444"
+    },
+    {
+      "path": "schemes/config/pc/lua/jp_memory.lua",
+      "bytes": 7010,
+      "sha256": "77d4245df40ebb1e29fdec836537a2a7a5a427b765a9c326b5435ac7ea2768ad"
+    },
+    {
+      "path": "schemes/config/pc/lua/jp_named_symbols.lua",
+      "bytes": 858,
+      "sha256": "4a1821ea2e4cc900341871cc21e1f508992d70d2508997b95dd9f1f1317dd58a"
+    },
+    {
+      "path": "schemes/config/pc/lua/jp_query.lua",
+      "bytes": 11508,
+      "sha256": "25ac8ccebb80dbe334721337a87357785b50775e51fac911b2a14af4eae6bddb"
+    },
+    {
+      "path": "schemes/config/pc/lua/jp_reading_metadata.lua",
+      "bytes": 4613,
+      "sha256": "df34e790ee674d63ecd2ac8a7210954df9fa50305483869b8084b9a7e2ed07d8"
+    },
+    {
+      "path": "schemes/config/pc/lua/jp_sequence.lua",
+      "bytes": 2327,
+      "sha256": "aadafae772b689beaa578c55acbf87f8bb71c58daf0b26b8feb57811b49ce18d"
+    },
+    {
+      "path": "schemes/config/pc/lua/jp_small_kana.lua",
+      "bytes": 1325,
+      "sha256": "71305fc843fccfcefd712838b90f1ad149f22ddb0bba12c6cd8f46647c64738a"
+    },
+    {
+      "path": "schemes/config/pc/lua/jp_v.lua",
+      "bytes": 31668,
+      "sha256": "3b09785481c85a1749191617089401b86a6f6e3376433e42ed79d44b36348174"
+    },
+    {
+      "path": "schemes/config/pc/lua/jp_v_chars.lua",
+      "bytes": 1833730,
+      "sha256": "f7fee696edf402839e511ebdc68e9fab04d3f0b71782be93bd8571a6fc204a22"
+    },
+    {
+      "path": "schemes/config/pc/lua/jp_v_data.lua",
+      "bytes": 1957,
+      "sha256": "f952661298fd89089865c0557eb7a9d5b1e8551a32f002fd492ee587373a1c1b"
+    },
+    {
+      "path": "schemes/config/pc/lua/jp_v_words_index.lua",
+      "bytes": 23903,
+      "sha256": "a08f35e07c34815135c41a96b17d0758af962aa595a13f804d9d4ce22f791f00"
+    },
+    {
+      "path": "schemes/config/pc/lua/mixed_data.lua",
+      "bytes": 475,
+      "sha256": "198cbd6676a00bc5e6b96dfe7b65d0210ec4ca8386dd8ad5e0bcacedddca0d51"
+    },
+    {
+      "path": "schemes/config/pc/lua/mixed_translator.lua",
+      "bytes": 3511,
+      "sha256": "f878f62589653baf0d9a37b45114a7307ba9304fe7754f97b8890726426bafed"
+    },
+    {
+      "path": "schemes/config/pc/lua/official_translator.lua",
+      "bytes": 1058,
+      "sha256": "1ce06c18cd2121ca1ee0b81c10dccc4f10b2531de4b34fc1414ed1ed40c11da9"
+    },
+    {
+      "path": "schemes/config/pc/lua/pc_probe_global_mode.lua",
+      "bytes": 6764,
+      "sha256": "edd2b3530c1bddf7f611d9d381e8efd9157230a57b34fac0a560864b4c2d8670"
+    },
+    {
+      "path": "schemes/config/pc/lua/pc_probe_greek_proxy.lua",
+      "bytes": 7869,
+      "sha256": "39939292d6b2f00f44e6431741490c682aeb8c0d5256573efa225382dcb1a15d"
+    },
+    {
+      "path": "schemes/config/pc/lua/query_info_submit.lua",
+      "bytes": 5845,
+      "sha256": "2cf8cbf3e6a15cce9475685a41d4aadf01c60f16d7eb381f380ae746b0a5ecfb"
+    },
+    {
+      "path": "schemes/config/pc/lua/rymcp_dlc.lua",
+      "bytes": 16511,
+      "sha256": "71592167ae7731c2a64fdc527599d7418396b744d129c90659da606d33832d3f"
+    },
+    {
+      "path": "schemes/config/pc/lua/scheme_data.lua",
+      "bytes": 750,
+      "sha256": "181b37a95ff605818b6db79c1fc94747a9d9cb04c0ca9eb82b120c35d0628426"
+    },
+    {
+      "path": "schemes/config/pc/lua/select_hanzi.lua",
+      "bytes": 4481,
+      "sha256": "ea01f3c98142b281167ff4f898d5b3a9b82f0c1e8fc58123036c5474e2e86a11"
+    },
+    {
+      "path": "schemes/config/pc/lua/tool_calculator.lua",
+      "bytes": 12655,
+      "sha256": "6e4fada9bd31a636d67a31ddc67c3bec7fab02116d060b79e2457e308ada884a"
+    },
+    {
+      "path": "schemes/config/pc/lua/tool_processor.lua",
+      "bytes": 2626,
+      "sha256": "9fc7ac2b782c4c6f6950d6583a95ea5a199711c94de442eb0183e543ff374a7d"
+    },
+    {
+      "path": "schemes/config/pc/lua/tool_segmentor.lua",
+      "bytes": 1013,
+      "sha256": "8678374c63de5e412e0f39aebecf0076bdb75b22ae58d7210d959b6fb337aac4"
+    },
+    {
+      "path": "schemes/config/pc/lua/tool_translator.lua",
+      "bytes": 2378,
+      "sha256": "c620b182fdf6483337cb56b214dcf8d728e4c1257c1b66f6743a8ee2d6869b94"
+    },
+    {
+      "path": "schemes/config/pc/lua/tool_unicode.lua",
+      "bytes": 1815,
+      "sha256": "b6375b1114b92bb9b420baa3aea1bdedcca2366f6fc3fc499d87d7464ef47c63"
+    },
+    {
+      "path": "schemes/config/pc/lua/tool_unicode_data.lua",
+      "bytes": 5970,
+      "sha256": "84ced4a71016ee930f04c7d70f8982e61231cf5fe113cc19cbaa0f69bec7526d"
+    },
+    {
+      "path": "schemes/config/pc/lua/u_translator.lua",
+      "bytes": 5394,
+      "sha256": "70bd4596d6cb2cb5bb84718bfeb5bb7679cb73bdc9bb3134aa3d93687804075f"
+    },
+    {
+      "path": "schemes/config/pc/luna_pinyin.dict.yaml",
+      "bytes": 891284,
+      "sha256": "15cc2481fffb3682173fca712b2ee6a2b154ebd0c6be61252f3fa175f7dc996f"
+    },
+    {
+      "path": "schemes/config/pc/luna_pinyin.extended.dict.yaml",
+      "bytes": 490,
+      "sha256": "6b41615b48852b51144be1c5d4a0c97494ca79f9b8250fd90b13ed3c36695569"
+    },
+    {
+      "path": "schemes/config/pc/luna_pinyin.research.dict.yaml",
+      "bytes": 176,
+      "sha256": "79467679c0eac919afc7d18b84dd7d375522ab4c11133b01c9cb29bdb7ff2c53"
+    },
+    {
+      "path": "schemes/config/pc/mixed_full.dict.yaml",
+      "bytes": 349,
+      "sha256": "e5af1476aae799206e9fe20920b121e617021d079f001d94720f4a7c4da80f9a"
+    },
+    {
+      "path": "schemes/config/pc/mixed_full.schema.yaml",
+      "bytes": 224,
+      "sha256": "e74e7ed78acd17bfcd5b528f90930dbf3414ecc6e794d0fe85fb1a25abf534ef"
+    },
+    {
+      "path": "schemes/config/pc/opencc/STCharacters.ocd2",
+      "bytes": 45310,
+      "sha256": "4c7398b4ceedf9b58b5ea77cdd911bc7807c50c7491111dc9b4073c68ad5a2bb"
+    },
+    {
+      "path": "schemes/config/pc/opencc/STPhrases.ocd2",
+      "bytes": 925143,
+      "sha256": "5e8d8289beacc7d4ab7baa7193ebb589f3d5a956449ed9c81ccff431ae503f6e"
+    },
+    {
+      "path": "schemes/config/pc/opencc/TSCharacters.ocd2",
+      "bytes": 46126,
+      "sha256": "85291e0173e972bbca58c848fb90b3bb41c79674cb61a75645e01bd884ad5927"
+    },
+    {
+      "path": "schemes/config/pc/opencc/TSPhrases.ocd2",
+      "bytes": 9776,
+      "sha256": "edafc46f5c3eca61a754c78e47117e7c73995cacd6c99aadcb8a219d7ae3e53d"
+    },
+    {
+      "path": "schemes/config/pc/opencc/mdx_t2s.json",
+      "bytes": 720,
+      "sha256": "fc5a5727f65eb56652e44af8d4c01d63f4062f9b6437e9024018d0dd4ad69c87"
+    },
+    {
+      "path": "schemes/config/pc/opencc/mdx_words.txt",
+      "bytes": 74,
+      "sha256": "e8a7da2487f1c15053f2251ae06441be7d9bf5a8982bf87f4f74b5e025c26ae4"
+    },
+    {
+      "path": "schemes/config/pc/opencc/s2t.json",
+      "bytes": 428,
+      "sha256": "919c0a6fde65555879b249588ab8c785c5e4b85704be8863361776bd48094a25"
+    },
+    {
+      "path": "schemes/config/pc/pc_research.custom.yaml",
+      "bytes": 295810,
+      "sha256": "6230c7d728b386a64b4999e15910db8d31e486c4d3ce26316b8177777d98057a"
+    },
+    {
+      "path": "schemes/config/pc/pc_research.schema.yaml",
+      "bytes": 2388,
+      "sha256": "a64f83793e94c3d52b021d84fc847406749e30cfe76e4c20ca414dd83de61548"
+    },
+    {
+      "path": "schemes/config/pc/pinyin.yaml",
+      "bytes": 4965,
+      "sha256": "f2d291166946a848fd88e541844567415f1ed3d9c5a7477757b88aeb3a69c0ca"
+    },
+    {
+      "path": "schemes/config/pc/project_radical.dict.yaml",
+      "bytes": 2167597,
+      "sha256": "ac2ce6698fc4982fd2d5580a903fb7f7517ab4d8cd1e09403645b4dea08e5f7e"
+    },
+    {
+      "path": "schemes/config/pc/project_radical.schema.yaml",
+      "bytes": 602,
+      "sha256": "8e97d1b19e7f4a7a54bcaa5066410e9dc96c0d815bdd463080a3ad7192b599b1"
+    },
+    {
+      "path": "schemes/config/pc/project_radical_parts.dict.yaml",
+      "bytes": 2300077,
+      "sha256": "dcdbeaa0e9e711e3f6e7f0d0d492db6fa1f67424299d36fde1ef2b59dbe66287"
+    },
+    {
+      "path": "schemes/config/pc/project_radical_parts.schema.yaml",
+      "bytes": 1033,
+      "sha256": "5d3bc1bccc3a948385c5242d37385f6ab623a80c63ced2c4b46b6cfcee8219a2"
+    },
+    {
+      "path": "schemes/config/pc/project_symbols.dict.yaml",
+      "bytes": 1386,
+      "sha256": "0bf9bf46468ce399b586ed038394a5da60225098456140840b6cee9ebc79213f"
+    },
+    {
+      "path": "schemes/config/pc/punctuation.yaml",
+      "bytes": 2212,
+      "sha256": "c9e5147fda24d1a13085075df5a2e73deecb643069be3751c6d4d793ceb2de5b"
+    },
+    {
+      "path": "schemes/config/pc/query_strokes.tsv",
+      "bytes": 1559049,
+      "sha256": "79f3578cded6d4f42adca0a3b37548bdfdcb5062f6aee11103671cfc9d4cc401"
+    },
+    {
+      "path": "schemes/config/pc/research_greek.dict.yaml",
+      "bytes": 1881,
+      "sha256": "2654b1d6d8195feab5eb85fdf8bb9d26dd58712b143293f0cdb601f2eb7d3fe9"
+    },
+    {
+      "path": "schemes/config/pc/rime.lua",
+      "bytes": 3368,
+      "sha256": "99649c8db94fdf34453f66af2e73610baa7f9c3846f98718886bac20ddb66d7f"
+    },
+    {
+      "path": "schemes/config/pc/rymcp_dlc_computer.dict.yaml",
+      "bytes": 175,
+      "sha256": "7f7fe7ed21298462b7266a933640d24acd24f0803271bb69ded1c30ff8e4dcbc"
+    },
+    {
+      "path": "schemes/config/pc/rymcp_dlc_math.dict.yaml",
+      "bytes": 167,
+      "sha256": "8699bcdb8052c78cbab46b2e655b7af91f83b40df93bdc93eaa9ebfb382b2307"
+    },
+    {
+      "path": "schemes/config/pc/rymcp_dlc_physics.dict.yaml",
+      "bytes": 173,
+      "sha256": "144de58f53f4b8f9fcee9ff1c80484903ba23eb65d1a8372ceaf8b21b3bd590e"
+    },
+    {
+      "path": "schemes/config/pc/rymcp_dlc_poetry.dict.yaml",
+      "bytes": 171,
+      "sha256": "bc7ff6628072ee38945a3a957f399f968aab276211b26f7a4c3c1e5d4828cec9"
+    },
+    {
+      "path": "schemes/config/pc/rymcp_dlc_poetry_00.dict.yaml",
+      "bytes": 177,
+      "sha256": "954fa5f7031d7a9bd590bce188ff30f6911a69dcf32243bf40783673e33e0044"
+    },
+    {
+      "path": "schemes/config/pc/rymcp_dlc_poetry_01.dict.yaml",
+      "bytes": 177,
+      "sha256": "4da1a5620f57f239a388c0866e411f6cec553b2709d54dbf83f3970ea1c8e32d"
+    },
+    {
+      "path": "schemes/config/pc/rymcp_dlc_poetry_02.dict.yaml",
+      "bytes": 177,
+      "sha256": "7a5ea296425bb52ee58629871df4a79e8da7f432b2ff507e6afa45d4e467610e"
+    },
+    {
+      "path": "schemes/config/pc/rymcp_dlc_poetry_03.dict.yaml",
+      "bytes": 177,
+      "sha256": "c69a834140df01384a0bc24cecb1243ef48e7d5fcf79dce715f4a558c5532abd"
+    },
+    {
+      "path": "schemes/config/pc/rymcp_dlc_poetry_04.dict.yaml",
+      "bytes": 177,
+      "sha256": "075a625ed333233578e529248787aa5b10700f1f1392d8f2476fd6cf08deb83f"
+    },
+    {
+      "path": "schemes/config/pc/rymcp_dlc_poetry_05.dict.yaml",
+      "bytes": 177,
+      "sha256": "da0ff8824e115a176e690d389400ea39f779d1d8f0c7778aaef1e3fd49ed055c"
+    },
+    {
+      "path": "schemes/config/pc/rymcp_dlc_poetry_06.dict.yaml",
+      "bytes": 177,
+      "sha256": "064037b299870818892956794414cc91f4c5f7bdb3f58074ccf6263b1bb75404"
+    },
+    {
+      "path": "schemes/config/pc/rymcp_dlc_poetry_07.dict.yaml",
+      "bytes": 177,
+      "sha256": "0b0ff96221615557af08b645be16d0b08ae159f426147deee3fc63ec24dc5020"
+    },
+    {
+      "path": "schemes/config/pc/rymcp_dlc_poetry_08.dict.yaml",
+      "bytes": 177,
+      "sha256": "f9c5a1e44603799897da76eb69a86a49ffb55dc17d023e11ffe0571c1194f2ea"
+    },
+    {
+      "path": "schemes/config/pc/rymcp_dlc_poetry_09.dict.yaml",
+      "bytes": 177,
+      "sha256": "0906920319aea28a6cee6f98ba12d59b3e7d396f4f4cfa090aca091facadda97"
+    },
+    {
+      "path": "schemes/config/pc/rymcp_dlc_poetry_10.dict.yaml",
+      "bytes": 177,
+      "sha256": "0c520b0ab5edd2107fbb75380819ff87ac1dae69cd5a1d5685531742edeb5d9a"
+    },
+    {
+      "path": "schemes/config/pc/rymcp_dlc_poetry_11.dict.yaml",
+      "bytes": 177,
+      "sha256": "42fa5f46f93af3e3d98b99c5154a6abb9b7374019ea7cd6fdf071998f6a5fb7b"
+    },
+    {
+      "path": "schemes/config/pc/rymcp_dlc_poetry_12.dict.yaml",
+      "bytes": 177,
+      "sha256": "df0c55fd1ece10ad276663ed95c3af6e93dfb8a7e522a8f24c5274463fe9a217"
+    },
+    {
+      "path": "schemes/config/pc/rymcp_dlc_poetry_13.dict.yaml",
+      "bytes": 177,
+      "sha256": "8f9c8710f9fb087d7728f87cd17416cb2c352296153ea6b380d716edac953dc3"
+    },
+    {
+      "path": "schemes/config/pc/rymcp_dlc_poetry_14.dict.yaml",
+      "bytes": 177,
+      "sha256": "808fe14d3b50cf31322725bb006604984e7853149f31820d63bcbbb1d1fefdc3"
+    },
+    {
+      "path": "schemes/config/pc/rymcp_dlc_poetry_15.dict.yaml",
+      "bytes": 177,
+      "sha256": "29aa4406717990a53449ee675156e084b7b1bcb678d1bbf5db3156dcd0b916c1"
+    },
+    {
+      "path": "schemes/config/pc/rymcp_dlc_poetry_16.dict.yaml",
+      "bytes": 177,
+      "sha256": "0853079000011a046e655a40fa198414b3e7e4ec459bbd904e166720e87ec74d"
+    },
+    {
+      "path": "schemes/config/pc/rymcp_dlc_poetry_17.dict.yaml",
+      "bytes": 177,
+      "sha256": "662881cb418d23298cc0138099a83ec3115b4eee8fa94583f5d70ea978b30073"
+    },
+    {
+      "path": "schemes/config/pc/rymcp_dlc_poetry_18.dict.yaml",
+      "bytes": 177,
+      "sha256": "db980bf851d8a9ceaf5da7df02534f50dfde0361dee6ed2154ef49fe10854c0b"
+    },
+    {
+      "path": "schemes/config/pc/rymcp_dlc_poetry_19.dict.yaml",
+      "bytes": 177,
+      "sha256": "ad3911d9d425727d291afbf734a29dd4451eb7ee02a9ac27ff23c6633d79c719"
+    },
+    {
+      "path": "schemes/config/pc/rymcp_dlc_poetry_20.dict.yaml",
+      "bytes": 177,
+      "sha256": "76687eca08dc15b6969cb98f612f2b610e976751790172c458f33f0c3c1dbc0d"
+    },
+    {
+      "path": "schemes/config/pc/rymcp_dlc_poetry_21.dict.yaml",
+      "bytes": 177,
+      "sha256": "3035d7cfce757001a71ec39a37ece29bf0b5ea491d349a71ceef01150b885cb4"
+    },
+    {
+      "path": "schemes/config/pc/rymcp_dlc_poetry_22.dict.yaml",
+      "bytes": 177,
+      "sha256": "16622a09ed60e6fb9445d572c5022fefc657ecc9c02048b08ebc760e613dabee"
+    },
+    {
+      "path": "schemes/config/pc/rymcp_dlc_poetry_23.dict.yaml",
+      "bytes": 177,
+      "sha256": "59980eb2db00bd83b492d2546b103e8ed45c4817316b86afaebd680965440709"
+    },
+    {
+      "path": "schemes/config/pc/rymcp_dlc_poetry_24.dict.yaml",
+      "bytes": 177,
+      "sha256": "ff62b7bcf8716b550e03b38300e360b61b14ae5c19c6029cd8e51a75574cfec9"
+    },
+    {
+      "path": "schemes/config/pc/rymcp_dlc_poetry_25.dict.yaml",
+      "bytes": 177,
+      "sha256": "b0b4bccccebc52e12bae5b6d1a30f33f136c6fc4f50f72b53d89d06a78c168cc"
+    },
+    {
+      "path": "schemes/config/pc/rymcp_dlc_poetry_26.dict.yaml",
+      "bytes": 177,
+      "sha256": "642bd080a2a075a599873d3645de6f994984cdb723979c607b29eeb9916a7cf1"
+    },
+    {
+      "path": "schemes/config/pc/rymcp_dlc_poetry_27.dict.yaml",
+      "bytes": 177,
+      "sha256": "4f89db57f19f69853cab894b84ee7cd2f35c9c09e2cdf343fe096e413d2d4a12"
+    },
+    {
+      "path": "schemes/config/pc/rymcp_dlc_poetry_28.dict.yaml",
+      "bytes": 177,
+      "sha256": "037133541ee8e80284b4a8785a61416567d74693c9fc74e85c5026df689c083b"
+    },
+    {
+      "path": "schemes/config/pc/rymcp_dlc_poetry_29.dict.yaml",
+      "bytes": 177,
+      "sha256": "4f729b190416df080c4d5715d4ad998795836dc4e26a74eeeff6c7e5d293a6cb"
+    },
+    {
+      "path": "schemes/config/pc/rymcp_dlc_poetry_30.dict.yaml",
+      "bytes": 177,
+      "sha256": "5e362e8aa4ecab11596e056d3dcb51dd7c0d7a59f29523fa88b93b2fad7dd990"
+    },
+    {
+      "path": "schemes/config/pc/rymcp_dlc_poetry_31.dict.yaml",
+      "bytes": 177,
+      "sha256": "bab3940ba3d96465a0dcf92816a57528bec3740f14fa661559642d046b576e34"
+    },
+    {
+      "path": "schemes/config/pc/source-dependencies.json",
+      "bytes": 2939,
+      "sha256": "e99450d6f10c4b19ebfde720e2c251526a4292e70be8b865e92a80de100bcbdb"
+    },
+    {
+      "path": "schemes/config/pc/stroke.dict.yaml",
+      "bytes": 2330785,
+      "sha256": "0fe1c1c0673f3564f16deb1f659a75f3ad6a43e5308165dccfb63fd94864f631"
+    },
+    {
+      "path": "schemes/config/pc/stroke.schema.yaml",
+      "bytes": 3156,
+      "sha256": "f541d4c7450370b2652ae5e4190396803504edc987f74f16718458811312f303"
+    },
+    {
+      "path": "schemes/config/pc/symbols.yaml",
+      "bytes": 28729,
+      "sha256": "d3c1823f0e3bae5fb2dac338f4863a0d7164436d1ee132727ff5c4687f53601a"
+    },
+    {
+      "path": "schemes/config/pc/tools/build-config-release.py",
+      "bytes": 2490,
+      "sha256": "5dd4a5f8a7f233e485f105b15763ee9dd25ae4743d3170f3374b890f369347a6"
+    },
+    {
+      "path": "schemes/config/pc/tools/generate-japanese-base.py",
+      "bytes": 7985,
+      "sha256": "1cb285b074d5a0c125ae4fea3f02289c29b799c6090300dcd470f316564ef992"
+    },
+    {
+      "path": "schemes/config/pc/tools/make-opencc-config.py",
+      "bytes": 2486,
+      "sha256": "9c6a4582599f46fffc6e757df6ab925bb02c0af40b70d8b1723adc4a4162b035"
+    },
+    {
+      "path": "schemes/config/pc/tools/validate-japanese-base.py",
+      "bytes": 5103,
+      "sha256": "9fa77f50e7596c4fcb15e716540e176c27278bd50d6d2ed6dc9689c24629e7f4"
+    },
+    {
+      "path": "schemes/config/pc/u_readings.tsv",
+      "bytes": 556891,
+      "sha256": "67f8f2b4ecfbdddc3b4e6d238f093ad68a6aab944767832e38d0dc5ad36a0d8d"
+    },
+    {
+      "path": "schemes/config/pc/weasel.custom.yaml",
+      "bytes": 2372,
+      "sha256": "abe796e1edb78ae11cfdb75c6d96315b2820baacb3f9f20715461e276a229593"
+    },
+    {
+      "path": "schemes/config/pc/zh-hant-t-essay-bgw-compact.gram",
+      "bytes": 41415724,
+      "sha256": "0488ebd6688f900a39200f2b794f2f99bcbf1e8fc27280ae4a2324b08b1559c1"
+    },
+    {
+      "path": "schemes/config/profiles.json",
+      "bytes": 930,
+      "sha256": "edeee437daefc9c66045ec9332d4721ed18e2e428f59acbd24e42b486231d8d5"
+    },
+    {
+      "path": "schemes/dlc/sources/CC-BY-SA-4.0.txt",
+      "bytes": 20138,
+      "sha256": "28a9529c7d0bb4dc51f4bf5c116a3d16ef247a052f7591466768ddf563fd1cf5"
+    },
+    {
+      "path": "schemes/dlc/sources/allowed-syllables.txt",
+      "bytes": 1797,
+      "sha256": "ddd9b253b4f3412d17ed1c119d9d3b36f1153e7c3ff7f62e20e59cdfd1856689"
+    },
+    {
+      "path": "schemes/dlc/sources/catalog-source-lock.json",
+      "bytes": 4775,
+      "sha256": "43b7eb82e039601f13cde5d65cfae6e4931e0ebc99cdce8f6f72a81e4adb60f9"
+    },
+    {
+      "path": "schemes/dlc/sources/cedict_1_0_ts_utf-8_mdbg.txt.gz",
+      "bytes": 3984967,
+      "sha256": "3199822e3cb14dfd13b4c80374cefb6d02e579e92f39e5ac7e6a7fa702fae739"
+    },
+    {
+      "path": "schemes/dlc/sources/chinese-poetry-MIT-LICENSE.txt",
+      "bytes": 1076,
+      "sha256": "c195319aeaa3ffcbe16aa5d26eec19eae5a42f84337dd2b3dc3c9d5ccbbd6507"
+    },
+    {
+      "path": "schemes/dlc/sources/poetry/LICENSE",
+      "bytes": 1076,
+      "sha256": "c195319aeaa3ffcbe16aa5d26eec19eae5a42f84337dd2b3dc3c9d5ccbbd6507"
+    },
+    {
+      "path": "schemes/dlc/sources/poetry/companion-anthologies.zip",
+      "bytes": 236204,
+      "sha256": "32a425d50d9856a259a580a424f044a1b512b8d415ba48fdee9b14bc78db7330"
+    },
+    {
+      "path": "schemes/dlc/sources/poetry/song-ci.zip",
+      "bytes": 3062345,
+      "sha256": "34fa9da8f6f2e207c14a07b9bfc1ea1633ab39053206f54121a753c60a0e5ea0"
+    },
+    {
+      "path": "schemes/dlc/sources/poetry/song-poems.zip",
+      "bytes": 39831128,
+      "sha256": "408da1c7afe2a851dfa10f2ed2eed2facbae1b49b27fc386f03b2d0bf0306735"
+    },
+    {
+      "path": "schemes/dlc/sources/poetry/source-manifest.json",
+      "bytes": 153569,
+      "sha256": "3613abf5c4935474ec6ba608ee60c91dfeafa1067a57c877a6e84882d82138e7"
+    },
+    {
+      "path": "schemes/dlc/sources/poetry/tang-poems.zip",
+      "bytes": 9211174,
+      "sha256": "6a25a1a4f2d41e8ada5dbe9a10bdf4029c85b404fef631e252fe9f002c47d542"
+    },
+    {
+      "path": "schemes/dlc/sources/poetry/variant-source-manifest.json",
+      "bytes": 3740,
+      "sha256": "91669634c2fa21bba03b411ce9080f4eae30642a6a970347bedde85ab201050d"
+    },
+    {
+      "path": "schemes/dlc/sources/readings/UNICODE-LICENSE-V3.txt",
+      "bytes": 1995,
+      "sha256": "e7a93b009565cfce55919a381437ac4db883e9da2126fa28b91d12732bc53d96"
+    },
+    {
+      "path": "schemes/dlc/sources/readings/Unihan-17.0.0.zip",
+      "bytes": 8518517,
+      "sha256": "f7a48b2b545acfaa77b2d607ae28747404ce02baefee16396c5d2d7a8ef34b5e"
+    },
+    {
+      "path": "schemes/dlc/sources/readings/opencc/AUTHORS",
+      "bytes": 277,
+      "sha256": "cb34e252fa994679bcbfc8355581e821ceda44bd857875e2cfe15b7ec4eec006"
+    },
+    {
+      "path": "schemes/dlc/sources/readings/opencc/LICENSE",
+      "bytes": 9165,
+      "sha256": "b534e465949558eec2597b04f5092b5e161236a68dfbfd04d547592ac3964308"
+    },
+    {
+      "path": "schemes/dlc/sources/readings/opencc/STCharacters.txt",
+      "bytes": 34353,
+      "sha256": "ed1d268e0ad028511dcf5b0089faed0a980ad332449ec11d481ceefde6879f41"
+    },
+    {
+      "path": "schemes/dlc/sources/readings/opencc/STPhrases.txt",
+      "bytes": 1004897,
+      "sha256": "17fece21a28f3db2dc32397abd73d21ae73261c3f295fa6a3fe64b5e8d8b554b"
+    },
+    {
+      "path": "schemes/dlc/sources/readings/opencc/TSCharacters.txt",
+      "bytes": 34627,
+      "sha256": "6b5a0a799bea2bb22c001f635eaa3fc2904310f0c08addbff275477a80ecf09a"
+    },
+    {
+      "path": "schemes/dlc/sources/readings/opencc/TSPhrases.txt",
+      "bytes": 5181,
+      "sha256": "504169029c43f7f234b8e2ae470720af3657675c5574ff8aa0feb257e1dc5ce2"
+    },
+    {
+      "path": "schemes/dlc/sources/readings/opencc/s2t.json",
+      "bytes": 406,
+      "sha256": "710bb970e406d9c0a3dd33c609248686cf1c5578d064b7b7fc89e70fbb9ea75d"
+    },
+    {
+      "path": "schemes/dlc/sources/readings/opencc/source.json",
+      "bytes": 2706,
+      "sha256": "dd7376366cb704a9703a6a5e19645fd7e350276b183136dfc0b8008f427c8470"
+    },
+    {
+      "path": "schemes/dlc/sources/readings/opencc/t2s.json",
+      "bytes": 406,
+      "sha256": "b818534194f27c2d95f01001edb0a5ec49b9050119892cb30a0504bb202cc07c"
+    },
+    {
+      "path": "schemes/dlc/sources/readings/pypinyin-0.55.0-py2.py3-none-any.whl",
+      "bytes": 840203,
+      "sha256": "d53b1e8ad2cdb815fb2cb604ed3123372f5a28c6f447571244aca36fc62a286f"
+    },
+    {
+      "path": "schemes/dlc/sources/readings/pypinyin-LICENSE.txt",
+      "bytes": 1105,
+      "sha256": "1e6c90014b4912815c296ee64bb6f6280af47e6d4c5d80e86232dfc5defe764c"
+    },
+    {
+      "path": "schemes/dlc/sources/readings/pypinyin-source.json",
+      "bytes": 380,
+      "sha256": "1c59282cdcb813aee1355169d72c79cfa023365d376e1eac8839ae7d22bab046"
+    },
+    {
+      "path": "schemes/dlc/sources/readings/unihan-source.json",
+      "bytes": 386,
+      "sha256": "6dabf76d88746c7da87bf7dc4d0cb8c8972b074deee166844a612b88b5826e0c"
+    },
+    {
+      "path": "schemes/dlc/sources/science/CC-BY-SA-4.0.txt",
+      "bytes": 20138,
+      "sha256": "28a9529c7d0bb4dc51f4bf5c116a3d16ef247a052f7591466768ddf563fd1cf5"
+    },
+    {
+      "path": "schemes/dlc/sources/science/CC0-1.0-legalcode.txt",
+      "bytes": 7048,
+      "sha256": "a2010f343487d3f7618affe54f789f5487602331c0a8d03f49e9a7c547cf0499"
+    },
+    {
+      "path": "schemes/dlc/sources/science/SCIENCE-NOTICE.txt",
+      "bytes": 985,
+      "sha256": "cd11abb0a3a799495fe1cf8f8aeb19a02d61cd36bf328c0c6eb2a254ae428f2f"
+    },
+    {
+      "path": "schemes/dlc/sources/science/science-api-responses-001.zip",
+      "bytes": 10879310,
+      "sha256": "ee7f214ed37213475b1cd5d4a2fbd9389bee218c8956bee856c7b7063f112065"
+    },
+    {
+      "path": "schemes/dlc/sources/science/science-labels-snapshot.json.gz",
+      "bytes": 6925753,
+      "sha256": "a8aa2a8af72ae40cac00905ddd116e255a442d11047447a67b5bfbf584c989fa"
+    },
+    {
+      "path": "schemes/dlc/sources/science/science-source-manifest.json",
+      "bytes": 2042,
+      "sha256": "e1e48e4eeded5c0c7e36b9aecaf08ce83f6baefd8aff30889bcc91b59a2e75bc"
+    },
+    {
+      "path": "schemes/dlc/sources/song-300.json",
+      "bytes": 151283,
+      "sha256": "ca5d74f7fdb9d5a6acc22a7c8b4395228cad4bb8be53df44c19ba83ab6983b20"
+    },
+    {
+      "path": "schemes/dlc/sources/tang-300.json",
+      "bytes": 190787,
+      "sha256": "d77a145f7470da2ed2f79515944563c062ffc43fceda07f195a36ead66b7e5c7"
+    },
+    {
+      "path": "schemes/docs/BUILD.md",
+      "bytes": 5319,
+      "sha256": "5845b4d965220df8e904832b3ac8f12e32ec0e4a1e8b945989fa765298785ddc"
+    },
+    {
+      "path": "schemes/docs/PC.md",
+      "bytes": 2549,
+      "sha256": "9b2f7ae988222bc1b825b0972e99f95e4e06ad9a365f74214764b7aa51d74940"
+    },
+    {
+      "path": "schemes/docs/dlc-sources.md",
+      "bytes": 7732,
+      "sha256": "e917d524e5940e96d72346c4b7e6d71ab5952596ed7821d4a9f731b64eff9351"
+    },
+    {
+      "path": "schemes/docs/official-weasel.md",
+      "bytes": 2523,
+      "sha256": "b73417b129f454bd74a08dd65021d9182c27e5398b17c423f1a57e1f5ea952d0"
+    },
+    {
+      "path": "schemes/docs/sources/README.md",
+      "bytes": 1334,
+      "sha256": "ed6c5b304edcc45bb1f8af11769775b4e21e6fe28f28f372b9ee35784fcebcf8"
+    },
+    {
+      "path": "schemes/docs/sources/base-dictionaries.md",
+      "bytes": 2304,
+      "sha256": "53cddf7cdb49981df364e1608e7512718616471a70b0e3af9e94b86e0214390d"
+    },
+    {
+      "path": "schemes/docs/sources/english-case-forms-sources.md",
+      "bytes": 829,
+      "sha256": "dbf9a0a3a04bd7b2efb2b87a46f947d1b8ce0415486c1f59008796fb487b18a0"
+    },
+    {
+      "path": "schemes/docs/sources/english-core-sources.md",
+      "bytes": 1337,
+      "sha256": "e3385bce859234825e715e1283dea961741e9c7de5d777ad3f220440c4bd4e55"
+    },
+    {
+      "path": "schemes/docs/sources/english-extensions-sources.md",
+      "bytes": 983,
+      "sha256": "f9bb18bc35cd531db6cfbf1ab33e80635203567ab89c563382c34243d53cb9cb"
+    },
+    {
+      "path": "schemes/docs/sources/jp-q-sources.md",
+      "bytes": 4425,
+      "sha256": "ffb432378e7ff5623a50e7f25bcabfc76ab521fed26ea9f4c6dd5366edf07c7d"
+    },
+    {
+      "path": "schemes/docs/sources/jp-v-sources.md",
+      "bytes": 3309,
+      "sha256": "047c22b66b617efeef372ee4eec0a7b820fa7b13bc88eba0176eebab038368a5"
+    },
+    {
+      "path": "schemes/docs/sources/luna-compact-model-sources.md",
+      "bytes": 1247,
+      "sha256": "77e64e4810fc09f7b8fc10fc4918fe7add725aa23a7ad1b9efca4689862ddba0"
+    },
+    {
+      "path": "schemes/docs/sources/mdx-orthography-sources.md",
+      "bytes": 1218,
+      "sha256": "5e4ea8352635fa743bb2d247b1bdfe09d1d375877687f0d627311bcf6f8326f7"
+    },
+    {
+      "path": "schemes/docs/sources/mixed-phrases-sources.md",
+      "bytes": 851,
+      "sha256": "85f0fa74306ba5502a548f3060d12fa22066b5fd11eae99f768daaa8a795c8d3"
+    },
+    {
+      "path": "schemes/docs/sources/native-components.md",
+      "bytes": 3268,
+      "sha256": "2b50517384f6a6ca753d0ef965749e7c2a09bf09f86a45cf4ce3b0f1f16ae854"
+    },
+    {
+      "path": "schemes/docs/sources/official-weasel-sources.md",
+      "bytes": 1432,
+      "sha256": "b26b382ff760729595e65cb15223810d560163e03eaebdfd641b3a2bbdd1aa58"
+    },
+    {
+      "path": "schemes/docs/sources/query-strokes-source.json",
+      "bytes": 655,
+      "sha256": "ea1ba1ea0930e9ed8dc62837df901e8902dc95cecd9d8ba5914bbc784ffad54f"
+    },
+    {
+      "path": "schemes/docs/sources/radical-stroke-sources.md",
+      "bytes": 2307,
+      "sha256": "3eb0832a6e710ee18bba1ce6d7a10132a2e9d43f299ee4a95ff695ed28281193"
+    },
+    {
+      "path": "schemes/docs/sources/shared-config-sources.md",
+      "bytes": 3327,
+      "sha256": "dff4a589b94fa50cccb7da2ab53079d55a5b2f81cc12d2d72a675aa3e67d304e"
+    },
+    {
+      "path": "schemes/docs/sources/tools-sources.md",
+      "bytes": 1105,
+      "sha256": "35bcbc34671318debade837cbc21129657b12637ea89379ee5d91a244910a014"
+    },
+    {
+      "path": "schemes/docs/sources/u-readings-sources.md",
+      "bytes": 1150,
+      "sha256": "18c58619ad969b4352344f7d5910a3fbac979238ee176d32a7900df808637347"
+    },
+    {
+      "path": "schemes/licenses/CC-BY-SA-4.0.txt",
+      "bytes": 20138,
+      "sha256": "28a9529c7d0bb4dc51f4bf5c116a3d16ef247a052f7591466768ddf563fd1cf5"
+    },
+    {
+      "path": "schemes/licenses/EDRDG-licence.html",
+      "bytes": 13587,
+      "sha256": "52f60ea9ca68170a2f0663d7dba381ebf1bd57c17a3347dfe21153865c156692"
+    },
+    {
+      "path": "schemes/licenses/JMdict-EDICT_Dictionary_Project.html",
+      "bytes": 44987,
+      "sha256": "873d4730db9b07f5f2554628f30969147e5054ad1f3bc1d528418d1b4961b791"
+    },
+    {
+      "path": "schemes/licenses/KANJIDIC_Project.html",
+      "bytes": 58521,
+      "sha256": "d58b6d859772c5c2031911eb7604f2d55d50c4ac6abc8bfece17550899baaf7d"
+    },
+    {
+      "path": "schemes/licenses/OpenCC-LICENSE.txt",
+      "bytes": 9165,
+      "sha256": "b534e465949558eec2597b04f5092b5e161236a68dfbfd04d547592ac3964308"
+    },
+    {
+      "path": "schemes/licenses/README.md",
+      "bytes": 480,
+      "sha256": "6ff531a3f104e987c830f4528c4bf0260d19d236c4d7b2d5f0c6c3a66c1cfcf7"
+    },
+    {
+      "path": "schemes/licenses/SCOWL-case-forms-Copyright.txt",
+      "bytes": 11758,
+      "sha256": "283326a422e29c510e2ba6805518c418ce3c35ed1fadc3eec83d2da4f6c5a055"
+    },
+    {
+      "path": "schemes/licenses/Unicode-3.0.txt",
+      "bytes": 1995,
+      "sha256": "e7a93b009565cfce55919a381437ac4db883e9da2126fa28b91d12732bc53d96"
+    },
+    {
+      "path": "schemes/licenses/build_index.py",
+      "bytes": 10341,
+      "sha256": "c7a8268a1d348927ad8cb5cf607897d12cdf2fabf44c0b54a216646fec5305e5"
+    },
+    {
+      "path": "schemes/licenses/english-core/CC-BY-3.0-legalcode.txt",
+      "bytes": 19467,
+      "sha256": "e6bc9e9c474700b708f568bac9e5a8a9bcb2b1dad53442f5ba449fcb848b8e76"
+    },
+    {
+      "path": "schemes/licenses/english-core/Google-Books-CC-BY-3.0-NOTICE.txt",
+      "bytes": 520,
+      "sha256": "1217936ef3aa54dd32dec74d12d9dad60217ba44c93aa37e83b55798ca9006a6"
+    },
+    {
+      "path": "schemes/licenses/english-core/Google-Books-Ngram-official.html",
+      "bytes": 5220205,
+      "sha256": "b2f66a50d5713f91e181c8b5f685e03c9ceda80c2ce9ab7d69083d69a0f4bf50"
+    },
+    {
+      "path": "schemes/licenses/english-core/SCOWL-COPYRIGHT-SOURCES-CREDITS.txt",
+      "bytes": 12311,
+      "sha256": "c26200b51aaae11bde2b84561750037be8e7808f2dcbb11545ba279f48a62bc1"
+    },
+    {
+      "path": "schemes/licenses/english-core/SCOWL-full-README.txt",
+      "bytes": 31348,
+      "sha256": "423b719107fdb8d33623ffd8cdcc50e918b103befb8bf79e0f54677c10c18fe7"
+    },
+    {
+      "path": "schemes/licenses/english-core/SCOWL-official-readme.html",
+      "bytes": 34210,
+      "sha256": "9c1c0f5f535575176cea2c6cef6438850b1732b97a43c994f69a35a4cb8506e7"
+    },
+    {
+      "path": "schemes/licenses/english-core/SymSpell-MIT.txt",
+      "bytes": 1066,
+      "sha256": "858e5c7e7a38824f33cf466719509884f2ee5e35992dbfce377fec0656545814"
+    },
+    {
+      "path": "schemes/licenses/english-core/SymSpell-upstream-README.md",
+      "bytes": 35304,
+      "sha256": "e190b785c1b391921127bdfa51dde44d09da568968a379a96b50b2bc4ea589e5"
+    },
+    {
+      "path": "schemes/licenses/english-extensions-Ice-GPL-3.0.txt",
+      "bytes": 35149,
+      "sha256": "3972dc9744f6499f0f9b2dbf76696f2ae7ad8af9b23dde66d6af86c9dfb36986"
+    },
+    {
+      "path": "schemes/licenses/essay-LGPL-3.0.txt",
+      "bytes": 7652,
+      "sha256": "97628afebc60f026f5c2b25d7491c46a5c4ee61f693e7cfa07fbd2c03605979b"
+    },
+    {
+      "path": "schemes/licenses/file-licenses.json",
+      "bytes": 227291,
+      "sha256": "887f07163fbbd4e631793675c108781119e81f1351ebfd14c8d1a79344a6ef3c"
+    },
+    {
+      "path": "schemes/licenses/luna-compact-model-LGPL-3.0.txt",
+      "bytes": 7651,
+      "sha256": "da7eabb7bafdf7d3ae5e9f223aa5bdc1eece45ac569dc21b3b037520b4464768"
+    },
+    {
+      "path": "schemes/licenses/luna-pinyin-LGPL-3.0.txt",
+      "bytes": 7652,
+      "sha256": "97628afebc60f026f5c2b25d7491c46a5c4ee61f693e7cfa07fbd2c03605979b"
+    },
+    {
+      "path": "schemes/licenses/native-dependencies/boost/LICENSE_1_0.txt",
+      "bytes": 1361,
+      "sha256": "beb8e42e9d6b4284e03304d05a81a0755200a965fc8d0a5e0aea1e84cf805d6e"
+    },
+    {
+      "path": "schemes/licenses/native-dependencies/darts-clone/COPYING.darts-clone",
+      "bytes": 1491,
+      "sha256": "521de7c11cd32d5542b67876bb973572af2f5400dc47bed01be3fa37102fdd29"
+    },
+    {
+      "path": "schemes/licenses/native-dependencies/glog/AUTHORS",
+      "bytes": 1085,
+      "sha256": "e97c0e63f6ec7f4334de7a07c62e7af05b6da4406d20eb511afd24f1c61c41dc"
+    },
+    {
+      "path": "schemes/licenses/native-dependencies/glog/COPYING",
+      "bytes": 1479,
+      "sha256": "136d48dea7a681413691f3db3098f6cf5ffaa3119d96d97bb83b8cff3ce38c4a"
+    },
+    {
+      "path": "schemes/licenses/native-dependencies/googletest/LICENSE",
+      "bytes": 1475,
+      "sha256": "9702de7e4117a8e2b20dafab11ffda58c198aede066406496bef670d40a22138"
+    },
+    {
+      "path": "schemes/licenses/native-dependencies/leveldb/AUTHORS",
+      "bytes": 293,
+      "sha256": "75cccce858c06397a2736b5018b304a6fe50fce7148c7ea7fd532dd255d264b9"
+    },
+    {
+      "path": "schemes/licenses/native-dependencies/leveldb/LICENSE",
+      "bytes": 1484,
+      "sha256": "ccc19f1da0798ed666609b65a5b44dd8b3abe6fc08b9c0592eb76e82e174db19"
+    },
+    {
+      "path": "schemes/licenses/native-dependencies/marisa-trie/AUTHORS",
+      "bytes": 36,
+      "sha256": "e6e63af57574b0c74b11e2bb8e52679e6eb68427420529fe50224b2bc3820041"
+    },
+    {
+      "path": "schemes/licenses/native-dependencies/marisa-trie/COPYING.md",
+      "bytes": 2284,
+      "sha256": "c0e214362b4dcf118371b02c87321f64a4d8317112d732b6d768167a635f383a"
+    },
+    {
+      "path": "schemes/licenses/native-dependencies/opencc/AUTHORS",
+      "bytes": 277,
+      "sha256": "cb34e252fa994679bcbfc8355581e821ceda44bd857875e2cfe15b7ec4eec006"
+    },
+    {
+      "path": "schemes/licenses/native-dependencies/opencc/LICENSE",
+      "bytes": 9165,
+      "sha256": "b534e465949558eec2597b04f5092b5e161236a68dfbfd04d547592ac3964308"
+    },
+    {
+      "path": "schemes/licenses/native-dependencies/utf8cpp/checked.h-NOTICE.txt",
+      "bytes": 1329,
+      "sha256": "ebd758544425cf8d60e3c3735807fddcd2bb82996df198547b034affbfb0d1fd"
+    },
+    {
+      "path": "schemes/licenses/native-dependencies/utf8cpp/core.h-NOTICE.txt",
+      "bytes": 1324,
+      "sha256": "1b45829b2934a146274162752708e2f3355aae05e13d78a2cf3a656540a553c1"
+    },
+    {
+      "path": "schemes/licenses/native-dependencies/utf8cpp/cpp17.h-NOTICE.txt",
+      "bytes": 1324,
+      "sha256": "23887e4a3ef24d8d7fd54f06bad675d730cd135ccbc12fa1f3dfb559844ac387"
+    },
+    {
+      "path": "schemes/licenses/native-dependencies/weasel/LICENSE.txt",
+      "bytes": 35821,
+      "sha256": "0b383d5a63da644f628d99c33976ea6487ed89aaa59f0b3257992deac1171e6b"
+    },
+    {
+      "path": "schemes/licenses/native-dependencies/winsparkle-0.8.1/AUTHORS",
+      "bytes": 263,
+      "sha256": "371d84677734c6478821943877de502539acfb97ae4dcce1b20216d4f82e1843"
+    },
+    {
+      "path": "schemes/licenses/native-dependencies/winsparkle-0.8.1/COPYING",
+      "bytes": 1213,
+      "sha256": "d236b139330d1456b8f392f8d10453e86c9a9375ec939566b234b9363a56535e"
+    },
+    {
+      "path": "schemes/licenses/native-dependencies/winsparkle-0.8.1/COPYING.expat",
+      "bytes": 1144,
+      "sha256": "46336ab2fec900803e2f1a4253e325ac01d998efb09bc6906651f7259e636f76"
+    },
+    {
+      "path": "schemes/licenses/native-dependencies/winsparkle-0.8.1/WEASEL-API-HEADER-NOTICE.txt",
+      "bytes": 1206,
+      "sha256": "cf9915fee9cf6512c7c755849cf78fbb44e283961a6519c4d763fd37c78fc649"
+    },
+    {
+      "path": "schemes/licenses/native-dependencies/wtl/MS-PL.txt",
+      "bytes": 2641,
+      "sha256": "9e2f669454f9bc20c8b33540cac66cfada1ed5130929807a9b63f08279749f9b"
+    },
+    {
+      "path": "schemes/licenses/native-dependencies/wtl/WTL-COPYRIGHT-NOTICE.txt",
+      "bytes": 386,
+      "sha256": "e275a97c31c900bb5ac33e98c8fff741c91133106d17d4724cc16cab79922b00"
+    },
+    {
+      "path": "schemes/licenses/native-dependencies/x11/keysym.h-NOTICE.txt",
+      "bytes": 2281,
+      "sha256": "4beeb94f9530a4e30dcd37d6277a5d3824c140d090323c82c9ccd5e5d9e72a7c"
+    },
+    {
+      "path": "schemes/licenses/native-dependencies/x11/keysymdef.h-NOTICE.txt",
+      "bytes": 2279,
+      "sha256": "6bbf351a5d24daecee82f85e7cd6db377e43d6f309b259e1feb6cb8aeee3c529"
+    },
+    {
+      "path": "schemes/licenses/native-dependencies/yaml-cpp/LICENSE",
+      "bytes": 1061,
+      "sha256": "aa6fcc27be034e41e21dd832f9175bfe694a48491d9e14ff0fa278e19ad14f1b"
+    },
+    {
+      "path": "schemes/licenses/radical-stroke/radical-GPL-3.0.txt",
+      "bytes": 35149,
+      "sha256": "3972dc9744f6499f0f9b2dbf76696f2ae7ad8af9b23dde66d6af86c9dfb36986"
+    },
+    {
+      "path": "schemes/licenses/radical-stroke/radical-source-credits.md",
+      "bytes": 1666,
+      "sha256": "a9116ac2233f134e2713148e84a785781c21de57d9c7461b81b9c76b5be9caa8"
+    },
+    {
+      "path": "schemes/licenses/radical-stroke/stroke-AUTHORS",
+      "bytes": 273,
+      "sha256": "f0cbba217e049471ccb40751b7d2e1c98144bb2ad4ec15b9f5af057121ec99d6"
+    },
+    {
+      "path": "schemes/licenses/radical-stroke/stroke-LGPL-3.0.txt",
+      "bytes": 7651,
+      "sha256": "da7eabb7bafdf7d3ae5e9f223aa5bdc1eece45ac569dc21b3b037520b4464768"
+    },
+    {
+      "path": "schemes/licenses/shared-config/prelude-AUTHORS.txt",
+      "bytes": 142,
+      "sha256": "9296a3509f1bcaee9e316ff70fccf76bf3a1f19c089b795710808ea5b6a0e6e7"
+    },
+    {
+      "path": "schemes/licenses/shared-config/prelude-LICENSE.txt",
+      "bytes": 7651,
+      "sha256": "da7eabb7bafdf7d3ae5e9f223aa5bdc1eece45ac569dc21b3b037520b4464768"
+    },
+    {
+      "path": "schemes/licenses/supplement/CC-BY-3.0-legalcode.txt",
+      "bytes": 19467,
+      "sha256": "e6bc9e9c474700b708f568bac9e5a8a9bcb2b1dad53442f5ba449fcb848b8e76"
+    },
+    {
+      "path": "schemes/licenses/supplement/CHISE-ids-README.md",
+      "bytes": 10218,
+      "sha256": "1a77ce743b5bd2814e748599587b7792992ec7413bcc824336bab14f07c9f741"
+    },
+    {
+      "path": "schemes/licenses/supplement/CHISE-ids.el-NOTICE.txt",
+      "bytes": 1014,
+      "sha256": "5282692f7b4c101dc4512e93c04dd8b5f126abdeb9b8cb2353623944107c054f"
+    },
+    {
+      "path": "schemes/licenses/supplement/GPL-2.0.txt",
+      "bytes": 18063,
+      "sha256": "a3d34486366e8499239ce6ea86e38f46b6cce84891476032f59fee9becb398ee"
+    },
+    {
+      "path": "schemes/licenses/supplement/Lua-5.3-MIT-NOTICE.txt",
+      "bytes": 1263,
+      "sha256": "062940535f605b12291d6e1df9c92bbdc121165bea3d4ac92c697f23f83e2aff"
+    },
+    {
+      "path": "schemes/licenses/supplement/Lua-5.4-MIT-NOTICE.txt",
+      "bytes": 1263,
+      "sha256": "b66c57df1c7de7a62eec9af87d7cde02a2a6ce791758ccc7a79c6781c360526d"
+    },
+    {
+      "path": "schemes/licenses/supplement/Mirtle-GPL-3.0.txt",
+      "bytes": 35149,
+      "sha256": "3972dc9744f6499f0f9b2dbf76696f2ae7ad8af9b23dde66d6af86c9dfb36986"
+    },
+    {
+      "path": "schemes/licenses/supplement/README.md",
+      "bytes": 235,
+      "sha256": "e6b3e682f613563ec7d80b6d0a501ff8321265ea83d15ee04d594862ae51f32c"
+    },
+    {
+      "path": "schemes/licenses/supplement/henrysting-chaizi-LICENSE.txt",
+      "bytes": 836,
+      "sha256": "243ce65e3a5a24669b08b5b6d25e82e961dfc747f841f04f199126a218968100"
+    },
+    {
+      "path": "schemes/licenses/supplement/henrysting-chaizi-README.md",
+      "bytes": 2191,
+      "sha256": "e02fd4ebf8c5527f867afd0a873c660bbfd66e691e4f417fa2e35926f6e042c3"
+    },
+    {
+      "path": "schemes/licenses/supplement/kfcd-chaizi-LICENSE.txt",
+      "bytes": 836,
+      "sha256": "243ce65e3a5a24669b08b5b6d25e82e961dfc747f841f04f199126a218968100"
+    },
+    {
+      "path": "schemes/licenses/supplement/kfcd-chaizi-README.md",
+      "bytes": 2249,
+      "sha256": "9b52172aaf8f6170e475288706ce095ab7b5f8d5b1815e75ebf72ffa0b8fcfee"
+    },
+    {
+      "path": "schemes/licenses/supplement/librime-LICENSE.txt",
+      "bytes": 1513,
+      "sha256": "f67d27a6d2d586fcfed4b4c886a83747095396a39b6641e18e855086be2ec400"
+    },
+    {
+      "path": "schemes/licenses/supplement/librime-lua-LICENSE.txt",
+      "bytes": 1520,
+      "sha256": "c6bd4f58b13ae9d45c5e53adddeea5049114a25862797c6c6f64920431eea249"
+    },
+    {
+      "path": "schemes/licenses/supplement/librime-octagram-LICENSE.txt",
+      "bytes": 35147,
+      "sha256": "8ceb4b9ee5adedde47b31e975c1d90c73ad27b6b165a1dcd80c7c545eb65b903"
+    },
+    {
+      "path": "schemes/licenses/supplement/librime-predict-LICENSE.txt",
+      "bytes": 1502,
+      "sha256": "9b1bbdf15a381884b47dfd9422e68f6382170b2841c476afc076f2d448c7a59f"
+    },
+    {
+      "path": "schemes/licenses/supplement/mirtle-src-README.md",
+      "bytes": 1725,
+      "sha256": "20c8f02136554444af8929a846853bb37f7c6a42d06f7a20bbab504ae9fd6b4f"
+    },
+    {
+      "path": "schemes/licenses/supplement/yi-bai-ids-LICENSE.txt",
+      "bytes": 1063,
+      "sha256": "f1d89fe379529df4166f75142ff82c7cc302795ec992e2a64c189aa8733da419"
+    },
+    {
+      "path": "schemes/licenses/supplement/yi-bai-ids-README.md",
+      "bytes": 781,
+      "sha256": "6ce6a9b2b28d0b59327324d3f7c7b874c574674041074f6f115c9d0107437138"
+    },
+    {
+      "path": "schemes/licenses/table-decoder/AUTHORS.rst",
+      "bytes": 286,
+      "sha256": "66a190a07fb804e823db973f5dceb299b6604e90ec99dabefc7e00e527a5bf5e"
+    },
+    {
+      "path": "schemes/licenses/table-decoder/LICENSE",
+      "bytes": 1104,
+      "sha256": "7db48dbc62cc4fb19c68088949c74ebf82b3fc6d263ed300a32ad66b9af85f94"
+    },
+    {
+      "path": "schemes/licenses/table-decoder/marisa-trie/AUTHORS",
+      "bytes": 37,
+      "sha256": "a49e32e647e3a74e11abd3633f9bdbcddfd7749426dae2154c5ffe5bce75463f"
+    },
+    {
+      "path": "schemes/licenses/table-decoder/marisa-trie/COPYING.md",
+      "bytes": 2309,
+      "sha256": "ef0df74dc85a890202ea9edf6c4c218855f421a8718fb8c3bd1c6d12529894b7"
+    },
+    {
+      "path": "schemes/licenses/third-party-source-manifest.json",
+      "bytes": 56222,
+      "sha256": "178ccd2b69f7dcfff19805438e36ff7a3e786f0a37f63991828f4137a06c9f87"
+    },
+    {
+      "path": "schemes/licenses/tools-Ice-GPL-3.0.txt",
+      "bytes": 35149,
+      "sha256": "3972dc9744f6499f0f9b2dbf76696f2ae7ad8af9b23dde66d6af86c9dfb36986"
+    },
+    {
+      "path": "schemes/native/BUILD.md",
+      "bytes": 8505,
+      "sha256": "51271d89c4acced657cb8a55653e05a39a69ac07f87c5b20615ee1e3bfa75697"
+    },
+    {
+      "path": "schemes/native/VALIDATION.md",
+      "bytes": 2489,
+      "sha256": "b505f0b25f38ee915204632968c4122fbcdd74ff42aa47de00a03cabf6cb5900"
+    },
+    {
+      "path": "schemes/native/engine/librime-lua-n01.patch",
+      "bytes": 3707,
+      "sha256": "e218a7bedc28231132dbe7029f86c44cd2a0d639c8747c5a138f7503f6bc32d6"
+    },
+    {
+      "path": "schemes/native/engine/librime-lua-r5-sdk.patch",
+      "bytes": 3681,
+      "sha256": "69a76f624a2b1359090ee95360a80f7a79a90a5e2a8888537721a96a5faebaa6"
+    },
+    {
+      "path": "schemes/native/engine/librime-n01.patch",
+      "bytes": 14063,
+      "sha256": "3eaf5dcd371c497cfac298d11acf29a5e1327792057bca5aa4ffb53894f714b1"
+    },
+    {
+      "path": "schemes/native/engine/librime-r5-sdk.patch",
+      "bytes": 13357,
+      "sha256": "86656d2577009b0cef9e7d3335cd1e8ca8655821f97bcf060a56411c1b2eb293"
+    },
+    {
+      "path": "schemes/native/source-manifest.json",
+      "bytes": 13693,
+      "sha256": "ccc889ddbc56441c8f8fe39039abd074dbb04e70f1d75eeee78a536771c8faae"
+    },
+    {
+      "path": "schemes/native/tests/key-pairing/ControlledReadGrant.inc",
+      "bytes": 795,
+      "sha256": "0d95e50844a8f251677349dee7e70f97d5e043b49e8c16f532cd595e0789ff6c"
+    },
+    {
+      "path": "schemes/native/tests/key-pairing/Deploy-PublicFixture.py",
+      "bytes": 5159,
+      "sha256": "3e424aeb2b021dddd1125f98ae9a9b8a1382d2299c534e98b6f982b91a4b4323"
+    },
+    {
+      "path": "schemes/native/tests/key-pairing/Invoke-KeyPairingTests.ps1",
+      "bytes": 954,
+      "sha256": "95c18797436ce1497b6b1c09ff76f7b891fc521450f313f6b19ee879ebce54a5"
+    },
+    {
+      "path": "schemes/native/tests/key-pairing/ProductHostFixture.h",
+      "bytes": 27957,
+      "sha256": "b44f001a7c1442e429003434b839200e3bf7dd6a4695f22be6ca6f6527c0a284"
+    },
+    {
+      "path": "schemes/native/tests/key-pairing/ResponseOwnerProductTests.cpp",
+      "bytes": 117307,
+      "sha256": "530f65a8ab0c1a1391c8bcdbe5cb5a9e24088cc1e365ad166a1086a5177e4a49"
+    },
+    {
+      "path": "schemes/native/tests/key-pairing/Run-KeyPairingTests.ps1",
+      "bytes": 10656,
+      "sha256": "8626970fa939e51d94e5ede2d2611c9a900074043f3633b380edd3f41489b15f"
+    },
+    {
+      "path": "schemes/native/tests/key-pairing/SelectionControlledModes.inc",
+      "bytes": 4376,
+      "sha256": "ad079211a014049d6abf71066920016dc04ba41d3a8f0fd9fe4c9df8e874d144"
+    },
+    {
+      "path": "schemes/native/tests/key-pairing/fixture/b01_public_fixture.dict.yaml",
+      "bytes": 136,
+      "sha256": "001b3c53cd1ccfa223e518b60ce6a4a0a0e5cc2793c47a7560f69180cad0ed2f"
+    },
+    {
+      "path": "schemes/native/tests/key-pairing/fixture/default.yaml",
+      "bytes": 90,
+      "sha256": "afc5188c5129533c6dbf9309243b041a332431e598e116787534dc62f4ad4ebb"
+    },
+    {
+      "path": "schemes/native/tests/key-pairing/fixture/gui_test.schema.yaml",
+      "bytes": 731,
+      "sha256": "fa0ca63077994110547b422967b7ae50906c93632db494ae02e97acf6e16cfe4"
+    },
+    {
+      "path": "schemes/native/tests/key-pairing/fixture/weasel.yaml",
+      "bytes": 204,
+      "sha256": "9f2910f4bc2ca5072bf0717d202fa6528a0c50c363066cdaa95e5417d43949e1"
+    },
+    {
+      "path": "schemes/native/tests/preedit_spacing_tests.cc",
+      "bytes": 5398,
+      "sha256": "b00a157f0ec1789127cbd295cfad79a1a01f27d20e7f815586a685d2bb2f6f97"
+    },
+    {
+      "path": "schemes/native/tests/shift/Run-ShiftKeySnapshotTests.ps1",
+      "bytes": 3958,
+      "sha256": "4d21ac6756cb60cebe2900dcde3f67115a66fad475f189325eb3c251d180e759"
+    },
+    {
+      "path": "schemes/native/tests/shift/ShiftKeySnapshotTests.cpp",
+      "bytes": 8374,
+      "sha256": "bedb6d25c5e7fd054e3730f42e13e7902d414fd3bc96aee220b974ea9d4eef41"
+    },
+    {
+      "path": "schemes/native/weasel/weasel-61020.patch",
+      "bytes": 156298,
+      "sha256": "3c545186342577eb512a5448eb842fd30183714bfa1703649ae2caf0eacbf432"
+    },
+    {
+      "path": "schemes/native/weasel/weasel-61047.patch",
+      "bytes": 499800,
+      "sha256": "b493db56ba3af701676ecf00bd7e791ac0562d52077e22ba48273426f6099b0a"
+    },
+    {
+      "path": "schemes/native/weasel/weasel-server-61042.patch",
+      "bytes": 489866,
+      "sha256": "c86b7d10f1ee1ba87dfd716d3c4f4b20e18428fc3728c9757434a9ea33ea6523"
+    },
+    {
+      "path": "schemes/release-manifest.json",
+      "bytes": 102839,
+      "sha256": "3cb1dfb854510514968c30351e2b2f22a6abd9ddcf0fe10314d159a1233a280d"
+    },
+    {
+      "path": "schemes/scripts/build_dlc.py",
+      "bytes": 21894,
+      "sha256": "8870279e942e4c075d50535eb90c11c569b970a1c21b973cc6051afceb60d10f"
+    },
+    {
+      "path": "schemes/scripts/build_scheme_packages.py",
+      "bytes": 14079,
+      "sha256": "36ca0475f13ce399b829518de06ed0dbb380be683d48ed4384452cfaf79df99b"
+    },
+    {
+      "path": "schemes/scripts/data/build_dlc_english_index.py",
+      "bytes": 2326,
+      "sha256": "c378c9aacc4abcd39c1da83718d1c43431ee7006069eafee6e2e61a7a2e2b87d"
+    },
+    {
+      "path": "schemes/scripts/data/build_english_index.py",
+      "bytes": 3947,
+      "sha256": "69644655855e05e457833f3374c235bb39d1a8c9f31396ef1d3ae8d96cfc81ef"
+    },
+    {
+      "path": "schemes/scripts/data/build_japanese_q.py",
+      "bytes": 16588,
+      "sha256": "baba5b8e1074e7299c7385370cebe829d4b404f99c8528ee12a499f06e82444e"
+    },
+    {
+      "path": "schemes/scripts/data/dlc_poetry.py",
+      "bytes": 12803,
+      "sha256": "ae92f4567fb66888f46ceb81f0252ff0ab666c3727cef220b2e2c1259c309e45"
+    },
+    {
+      "path": "schemes/scripts/data/dlc_readings.py",
+      "bytes": 7010,
+      "sha256": "41f2c71da74e08098d1dccf53a27e1296dc08a25480f0da0afddabee8b91e931"
+    },
+    {
+      "path": "schemes/scripts/data/dlc_science.py",
+      "bytes": 9145,
+      "sha256": "2cb657622b06f8b2cc6d79e1378814510e5589e786a0157b31fb13b1eb3ed3f8"
+    },
+    {
+      "path": "schemes/scripts/data/poetry_cleaner.py",
+      "bytes": 7908,
+      "sha256": "9850b45123ac0448fa7c398becea3adcf527a9d1ce110d02c52a841958a66bbe"
+    },
+    {
+      "path": "schemes/scripts/data/rebuild_base.py",
+      "bytes": 9213,
+      "sha256": "314c4270eab7e159f811b6d7b39ae29d2533b97c5ab8396a35db976f2a5b4fa5"
+    },
+    {
+      "path": "schemes/scripts/data/rebuild_japanese_family_q.py",
+      "bytes": 6895,
+      "sha256": "e283eeb57ee1a4db4fedc6374821130a47a3899d6f0061510f534f80ce8f0e01"
+    },
+    {
+      "path": "schemes/scripts/native/Apply-Patches.ps1",
+      "bytes": 1502,
+      "sha256": "cc6909e139e7c3b14c2f0c46388da5535ca4e55df31e59c17d80172348d4f8f2"
+    },
+    {
+      "path": "schemes/scripts/native/Build-Engine.ps1",
+      "bytes": 4442,
+      "sha256": "7b94db38f145eb85e4514b100df4c32b44e85aaeb20abd48ab496c77cca7113a"
+    },
+    {
+      "path": "schemes/scripts/native/Build-Weasel.ps1",
+      "bytes": 8444,
+      "sha256": "fe583571a70a7164a944a7e0feb142aa77839771cf0f60efc664027a96ffb775"
+    },
+    {
+      "path": "schemes/scripts/native/Common.ps1",
+      "bytes": 5450,
+      "sha256": "3ea64dad1a77417890829701bafd015b967736ef2c3e00cfb551fd17f6067ef3"
+    },
+    {
+      "path": "schemes/scripts/native/Prepare-Sources.ps1",
+      "bytes": 3128,
+      "sha256": "2ecbe003edeae84abcf4e330a90d72cc9309b19582c80bd5d90919de20261ab9"
+    },
+    {
+      "path": "schemes/scripts/native/Test-Inventory.ps1",
+      "bytes": 2914,
+      "sha256": "502102fedea93971ffe2be1813e11f48c95b60eb885d2e73530375776f39cfb0"
+    },
+    {
+      "path": "schemes/scripts/rebuild_profiles.py",
+      "bytes": 14997,
+      "sha256": "73efb04dc8d6b572927dce13bf8cd7fa50bea14c8dcf4e25dbc00cc245d7b85e"
+    },
+    {
+      "path": "schemes/scripts/schemes/Prepare-ValidationEngines.ps1",
+      "bytes": 3853,
+      "sha256": "7d2d5f227c6dff4f788f53f3343b7f4e13c7120349d1831e0efccf1bd5125c7d"
+    },
+    {
+      "path": "schemes/scripts/schemes/Test-DlcRuntime.ps1",
+      "bytes": 3854,
+      "sha256": "689d71bac5cda475928cae81f0a372fee46c3478d4c87f4e3b201905003d714d"
+    },
+    {
+      "path": "schemes/scripts/schemes/Test-FullProfile.ps1",
+      "bytes": 3233,
+      "sha256": "b1f436c3f8cc0d9e49758a022a657ac880d066a4397b8a82e1b8415362d1ef69"
+    },
+    {
+      "path": "schemes/scripts/schemes/Test-OfficialProfile.ps1",
+      "bytes": 6138,
+      "sha256": "1b8451746fbff4dbe10191a6f6ba2a08337d107570777cc98d1bcb20696d803d"
+    },
+    {
+      "path": "schemes/scripts/schemes/Test-SharedProfile.ps1",
+      "bytes": 5891,
+      "sha256": "86d8e7834b23a0bb330721db61640e295def4b834eeb25c714dfc78be8ab39e8"
+    },
+    {
+      "path": "schemes/scripts/verify_release.py",
+      "bytes": 12662,
+      "sha256": "16759264d558bb8f2bd71198e8e336a8802733a36566b5c18dca14246050c9a8"
+    },
+    {
+      "path": "schemes/sources/base-build.json",
+      "bytes": 531,
+      "sha256": "26a41babb6c6dc7d0dbd1255227a67de8a71dab0246709dfd52bbf963a7b993e"
+    },
+    {
+      "path": "schemes/sources/base/english-extensions.dict.yaml",
+      "bytes": 52437,
+      "sha256": "675bd699cbdcd05409cd9c9fbc8de3f925b3d08a5175806d45d3789ea27c36eb"
+    },
+    {
+      "path": "schemes/sources/base/english-frequency.txt",
+      "bytes": 1332881,
+      "sha256": "c604e1121e398ae7c7fbf777f11e0a0f2fa66eda932cb9fba1321466cf3acd7b"
+    },
+    {
+      "path": "schemes/sources/base/essay.txt",
+      "bytes": 6330573,
+      "sha256": "ae37983a4216145a6854375f21016358470c5dcf5ae9f6a54c29801e70b4d824"
+    },
+    {
+      "path": "schemes/sources/base/luna_pinyin.dict.yaml",
+      "bytes": 962079,
+      "sha256": "dc15421f70e80b5d9dc0339db79856b671a58f8e6779c1b5b7592b83a57b0817"
+    },
+    {
+      "path": "schemes/sources/base/scowl-2020.12.07.tar.gz",
+      "bytes": 2569810,
+      "sha256": "5587667caa20c4891390c2d42dbb4d5c4c3f41bee77af1457ece3ba23fb859cc"
+    },
+    {
+      "path": "schemes/sources/base/source-manifest.json",
+      "bytes": 2028,
+      "sha256": "e09722898357e73b01698ccb6352301f40d6528e7a547268d6a548aaa052bd97"
+    },
+    {
+      "path": "schemes/sources/quality/dictionary-integrity.json",
+      "bytes": 2193,
+      "sha256": "7c2b008f85e63452c7faeb84f7477cae1d137bef17fa8a854e611acc55704902"
+    },
+    {
+      "path": "schemes/tests/Probe-Configuration.ps1",
+      "bytes": 22692,
+      "sha256": "429df1ec14cc0d8c8209b63839318cae7dbb407ba37f1b0ab4e59e6be94d4b18"
+    },
+    {
+      "path": "schemes/tests/RimeProbe.cs",
+      "bytes": 10562,
+      "sha256": "286443589e71ef6e90934077f6fb327c145fb17d7f88e42c7c531ac60a6617eb"
+    },
+    {
+      "path": "schemes/tests/data/test_dlc_readings.py",
+      "bytes": 4263,
+      "sha256": "6f7046cf7d58628cd77b2735ee1951809f6d4dad5c37a7d11c987c1b99d30817"
+    },
+    {
+      "path": "schemes/tests/data/test_poetry_cleaner.py",
+      "bytes": 3083,
+      "sha256": "187394fe03fe7de21499c37936054e59a1e79938e3459f2e4eb7e3c1e86806e1"
+    },
+    {
+      "path": "schemes/tests/rebuilt-profile/RimeProbe.cs",
+      "bytes": 10562,
+      "sha256": "286443589e71ef6e90934077f6fb327c145fb17d7f88e42c7c531ac60a6617eb"
+    },
+    {
+      "path": "schemes/tests/rebuilt-profile/Test-RebuiltProfile.ps1",
+      "bytes": 16901,
+      "sha256": "dbf6cf1ef62fdfcff3d7efe17e226de76dd21f2013ec02ad67dd6b8bcfe53ca4"
+    },
+    {
+      "path": "schemes/tests/schemes/Check-ChineseDlcTables.py",
+      "bytes": 10748,
+      "sha256": "80853747e77de7e1cc8588012f44511556751413282a694474259ed589acb30c"
+    },
+    {
+      "path": "schemes/tests/schemes/Test-BracketLearning.ps1",
+      "bytes": 9053,
+      "sha256": "c240a447adc952b50cbe0ef83201a1cf8897e7c6b3b6c9b5d235496bb554e5d9"
+    },
+    {
+      "path": "schemes/tests/schemes/Test-ChineseDlc.ps1",
+      "bytes": 13200,
+      "sha256": "ca5a1ef54a51f5f910a033832d5dfb6ce8581cd20f8b6248a34c6c84c2946946"
+    },
+    {
+      "path": "schemes/tests/schemes/Test-DlcProfile.ps1",
+      "bytes": 15329,
+      "sha256": "0de4ba3f98bfc1b2b1a07de4463bb4a57043e177e36941f8423a037e0b345e5d"
+    },
+    {
+      "path": "schemes/tests/schemes/Test-EnglishDlc.ps1",
+      "bytes": 14384,
+      "sha256": "9452d615752121a216223c5ddb5fc0673b09e339616981bfba77ed653fd4e71b"
+    },
+    {
+      "path": "schemes/tests/schemes/Test-ExactSyllable.ps1",
+      "bytes": 27140,
+      "sha256": "f31475abcaa0d670b298419f5cd0cf3bdb27e3f7524477371f9cf1e52ad8b2bb"
+    },
+    {
+      "path": "schemes/tests/schemes/Test-MixedLearning.ps1",
+      "bytes": 9236,
+      "sha256": "4ae985746785b6111bce568b45563f0c3ac1b931c25c570c2b312591c812ffed"
+    },
+    {
+      "path": "schemes/tests/schemes/Test-OfficialChinese.ps1",
+      "bytes": 10047,
+      "sha256": "574cd9a839c0892084996b26991c1d3ec34b131ae4f7e70916e63d1c1e44dc89"
+    },
+    {
+      "path": "schemes/tests/schemes/Test-OfficialEnglish.ps1",
+      "bytes": 8316,
+      "sha256": "51a27782602dc8f96c40c6c55e34c536adcd919e232b18622e66851ac86d3220"
+    },
+    {
+      "path": "schemes/tests/schemes/Test-OfficialPersistence.ps1",
+      "bytes": 3538,
+      "sha256": "cde56c8d54b1e32ef59e4fe522c69d0678903494e25e32ed05bb5d5321ec0824"
+    },
+    {
+      "path": "schemes/tests/schemes/Test-ShardedDlc.ps1",
+      "bytes": 5511,
+      "sha256": "4f181203ca4de699b760a981442e7f47e2bbd6c1c98bc0fc50eff37e87160d0f"
+    },
+    {
+      "path": "schemes/tests/schemes/exact_syllable/observer.lua",
+      "bytes": 1610,
+      "sha256": "03919f78e2d631f516f4612038fe48923addfe0d65994850b74bed8fb84de29b"
+    },
+    {
+      "path": "schemes/tests/schemes/exact_syllable/processor_unit.lua",
+      "bytes": 8414,
+      "sha256": "052e66a931c634fb9c3ca5c455535e3820e9cba44d9440b61007c3bd3d7ec7ea"
+    },
+    {
+      "path": "schemes/tests/schemes/exact_syllable/unit_runner.lua",
+      "bytes": 3421,
+      "sha256": "3b393737d023ca78b7f654da64da51304ca215bce043a11187bc98c2c1863bf5"
+    },
+    {
+      "path": "schemes/tests/schemes/fixtures/sharded_dlc_test.lua",
+      "bytes": 8556,
+      "sha256": "dc44a7433407fac94a13fd9ce7f4c82de9f1912876c984713c5c4ee4d826943e"
     },
     {
       "path": "scripts/fonts/CandidateFontNative.cs",
@@ -762,8 +3702,8 @@
     },
     {
       "path": "scripts/package/Build-Bundle.ps1",
-      "bytes": 8741,
-      "sha256": "72903853004f349bc59585a0c7f1c689ef35e7041222321820e88d0410c8d4d2"
+      "bytes": 9209,
+      "sha256": "f6c6cef08acdb0b2136e69b9f07bf5f68531c4d346259deff8c2495e2fade77e"
     },
     {
       "path": "scripts/package/Prepare-Package.ps1",
@@ -782,8 +3722,8 @@
     },
     {
       "path": "scripts/package/index_bundle.py",
-      "bytes": 9369,
-      "sha256": "25e81ec88cd5d36608fa291d47843b37125e348f1d67f549ba3a4a38dc7f8cea"
+      "bytes": 9357,
+      "sha256": "c08438a89c040672440ab051189f6981f2904be8b972036ad1298cb3781df2bd"
     },
     {
       "path": "scripts/package/index_payload.py",
@@ -792,8 +3732,8 @@
     },
     {
       "path": "scripts/package/prepare_bundle.py",
-      "bytes": 16394,
-      "sha256": "22e358bcb5073bd4f8e2030cc0415acc0e12677eeadf7a5e6cc6f5fa5c334b55"
+      "bytes": 17654,
+      "sha256": "5019817127ed8dc4ecbb40e38db2f541cbe4de2637c884de176fada63c36be36"
     },
     {
       "path": "scripts/package/render_installed_docs.py",
@@ -802,8 +3742,8 @@
     },
     {
       "path": "scripts/package/verify_bundle.py",
-      "bytes": 13127,
-      "sha256": "2a7e14779cde933fe6273c72c8437f617e4cc8b0132bf6e4f5cc4ab236dc1e57"
+      "bytes": 13841,
+      "sha256": "e0d45f04b0f338eadc28512fb19d1a395cf398606073946db1f5bad14841f4be"
     },
     {
       "path": "scripts/package/verify_pe.py",
@@ -812,8 +3752,8 @@
     },
     {
       "path": "scripts/verify_release.py",
-      "bytes": 8246,
-      "sha256": "774ada9f5a9528e70557639c6f0ebe43eee3e4972f2eab430b3e8ddad40c8c86"
+      "bytes": 9123,
+      "sha256": "5c4c007cb537ea5d35276501d91d3147fdb410474d43736f4f471b762e66c4eb"
     }
   ]
 }

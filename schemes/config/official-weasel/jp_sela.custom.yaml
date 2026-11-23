@@ -1,0 +1,124 @@
+# RymCp Japanese integration; jp_sela is the current RymCp module interface ID.
+patch:
+#  - jp_sela.custom:/patch?
+patch:
+  switches:
+    - name: ascii_mode
+      reset: 0
+    # states: [ 假名, 西文 ]
+    - name: ascii_punct
+      reset: 0 #开启默认霓虹標點而非英语標點
+      #states: ["句號", "．，"]
+      #states: ["。，", "．，"]
+  punctuator:
+    import_preset: default
+    full_shape: &symbols
+      '.': [．, 。]
+      ',': [，, 、]
+      '/': ・
+      '=': [ ゝ, ゞ ]
+      '+': [ ヽ, ヾ ]
+    half_shape: *symbols
+  translator:
+    dictionary: jp_sela_custom
+    strict_spelling: true
+    disable_user_dict_for_patterns:
+      - '^[^qQ]*(nn|NN)[^qQ]*$'
+  speller/algebra:
+    __patch:
+      - __append: # Rime configuration - pinyin# 參考資料：# 【朙月拼音】模糊音定製模板# https://gist.github.com/lotem/2320943
+        - derive/([ei])ng$/$1n/            # eng => en, ing => in
+      - __append: # 以下是一組容錯拼寫，《漢語拼音》方案以前者爲正 spelling_correction
+        - derive/^v([nl])ue$/v$1ve/          # vnue = vnve, vlue = vlve
+        - derive/^v([jqxy])v/v$1u/           # vjv = vju,
+        - derive/un$/uen/                  # gun = guen,
+        - derive/ui$/uei/                  # gui = guei,
+        - derive/iu$/iou/                  # jiu = jiou,
+      #- __append: #
+      #  - derive/^shi$/si/
+  #key_binder/bindings/__append:
+  #  - { when: composing, accept: "1", send: "commit_code" }
+  recognizer:
+   #从 import_preset: default 修改而来
+    patterns:
+      email: "^[A-Za-z][-_.0-9A-Za-z]*@.*$"
+      #uppercase: "[A-Z][-_+.'0-9A-Za-z]*$"
+      url: "^(www[.]|https?:|ftp[.:]|mailto:|file:).*$|^[a-z]+[.].+$"
+  # First batch: v lookups and exact Ctrl+Return information export.
+  schema/dependencies: [jp_v_lookup, jp_v_pc_lookup, jp_q_lookup, jp_small_lookup]
+  engine/processors:
+    - ascii_composer
+    - lua_processor@draft_limit
+    - lua_processor@query_info_submit
+    - lua_processor@jp_query_processor
+    - lua_processor@jp_v_processor
+    - recognizer
+    - key_binder
+    - speller
+    - punctuator
+    - selector
+    - navigator
+    - express_editor
+  engine/segmentors:
+    - lua_segmentor@jp_query_segmentor
+    - lua_segmentor@jp_v_segmentor
+    - ascii_segmentor
+    - matcher
+    - abc_segmentor
+    - punct_segmentor
+    - fallback_segmentor
+  engine/translators:
+    - lua_translator@jp_query_translator
+    - lua_translator@jp_named_symbols
+    - lua_translator@jp_v_translator
+    - punct_translator
+    - script_translator
+  engine/filters:
+    - lua_filter@jp_v_filter
+    - lua_filter@jp_query_filter
+    - uniquifier
+  jp_v_lookup:
+    dictionary: jp_v
+    prism: jp_v_lookup
+    enable_user_dict: false
+    enable_sentence: false
+    enable_completion: false
+    strict_spelling: true
+  style/horizontal: false
+
+  schema/name: 日
+  key_binder/bindings/__append:
+    - { when: always, accept: Control+e, select: pc_research }
+    - { when: has_menu, accept: comma, send: Up }
+    - { when: has_menu, accept: period, send: Down }
+
+  jp_family:
+    dictionary: jp_v
+    prism: jp_v_lookup
+    user_dict: jp_family
+    enable_user_dict: true
+    enable_sentence: false
+    enable_completion: false
+    contextual_suggestions: false
+    enable_encoder: false
+    encode_commit_history: false
+
+  # Pending spelling only. Mode prefixes and supported reading suffixes are separate.
+  draft_limits:
+    chinese: 48
+    english: 64
+    calculator: 256
+    radical: 64
+    unicode: 6
+    japanese: 48
+  jp_v_kana:
+    dictionary: jp_sela_custom
+    prism: jp_sela_custom
+    enable_user_dict: false
+    enable_sentence: true
+    enable_completion: false
+    enable_word_completion: false
+    contextual_suggestions: false
+    enable_encoder: false
+    encode_commit_history: false
+    strict_spelling: true

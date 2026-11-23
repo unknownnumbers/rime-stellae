@@ -1,0 +1,383 @@
+diff --git a/src/rime/composition.cc b/src/rime/composition.cc
+index ac057e8..248cb4e 100644
+--- a/src/rime/composition.cc
++++ b/src/rime/composition.cc
+@@ -47,7 +47,14 @@ Preedit Composition::GetPreedit(const string& full_input,
+     } else {  // highlighted
+       preedit.sel_start = preedit.text.length();
+       preedit.sel_end = string::npos;
+-      if (cand && !cand->preedit().empty()) {
++      if (at(i).HasTag("raw_preedit")) {
++        // Whole-input tools keep one segment across the editing caret.
++        // The raw span supplies an exact byte-to-display caret mapping.
++        end = at(i).end;
++        preedit.text += input_.substr(start, end - start);
++        if (caret_pos >= start && caret_pos <= end)
++          preedit.caret_pos = preedit.sel_start + caret_pos - start;
++      } else if (cand && !cand->preedit().empty()) {
+         end = cand->end();
+         auto caret_placeholder = cand->preedit().find('\t');
+         if (caret_placeholder != string::npos) {
+diff --git a/src/rime/context.cc b/src/rime/context.cc
+index 43f0b41..acc074d 100644
+--- a/src/rime/context.cc
++++ b/src/rime/context.cc
+@@ -9,6 +9,7 @@
+ #include <rime/candidate.h>
+ #include <rime/context.h>
+ #include <rime/menu.h>
++#include <rime/preedit_spacing.h>
+ #include <rime/segmentation.h>
+ 
+ namespace rime {
+@@ -42,7 +43,20 @@ string Context::GetSoftCursor() const {
+ }
+ 
+ Preedit Context::GetPreedit() const {
+-  return composition_.GetPreedit(input_, caret_pos_, GetSoftCursor());
++  const string cursor = GetSoftCursor();
++  Preedit preedit = composition_.GetPreedit(input_, caret_pos_, cursor);
++  const string spacing = get_property("cn_preedit_spacing");
++  if (!spacing.empty() && !composition_.empty() &&
++      !composition_.back().HasTag("raw_preedit")) {
++    auto candidate = composition_.back().GetSelectedCandidate();
++    if (candidate && !candidate->preedit().empty() &&
++        candidate->preedit().find('\t') == string::npos) {
++      preedit_spacing::Apply(&preedit, input_, candidate->start(),
++                             candidate->end(), caret_pos_,
++                             cursor + composition_.GetPrompt(), spacing);
++    }
++  }
++  return preedit;
+ }
+ 
+ bool Context::IsComposing() const {
+diff --git a/src/rime/gear/script_translator.cc b/src/rime/gear/script_translator.cc
+index d128fb0..a54071e 100644
+--- a/src/rime/gear/script_translator.cc
++++ b/src/rime/gear/script_translator.cc
+@@ -269,7 +269,7 @@ Spans ScriptSyllabifier::Syllabify(const Phrase* phrase) {
+   vector<size_t> vertices;
+   vertices.push_back(start_);
+   SyllabifyTask task{
+-      phrase->code(), syllable_graph_, phrase->end() - start_,
++      phrase->matching_code(), syllable_graph_, phrase->end() - start_,
+       [&](SyllabifyTask* task, size_t depth, size_t current_pos,
+           size_t next_pos) { vertices.push_back(start_ + next_pos); },
+       [&](SyllabifyTask* task, size_t depth) { vertices.pop_back(); }};
+diff --git a/src/rime/preedit_spacing.h b/src/rime/preedit_spacing.h
+new file mode 100644
+index 0000000..c3fbbe9
+--- /dev/null
++++ b/src/rime/preedit_spacing.h
+@@ -0,0 +1,164 @@
++// Copyright RIME Developers
++// Distributed under the BSD License
++// Display-only spacing for a native candidate's unconsumed input suffix.
++#ifndef RIME_PREEDIT_SPACING_H_
++#define RIME_PREEDIT_SPACING_H_
++
++#include <algorithm>
++#include <string>
++#include <utility>
++#include <vector>
++
++namespace rime {
++namespace preedit_spacing {
++
++struct Plan {
++  size_t start = 0;
++  size_t end = 0;
++  size_t length = 0;
++  size_t caret = 0;
++  std::vector<size_t> breaks;
++};
++
++// All values are zero-based byte boundaries in the unchanged context input:
++// start:end:input_length:caret|break,break,...
++inline bool ReadNumber(const std::string& value,
++                       size_t* offset,
++                       size_t limit,
++                       size_t* result) {
++  size_t begin = *offset, number = 0;
++  while (*offset < value.size() && value[*offset] >= '0' &&
++         value[*offset] <= '9') {
++    size_t digit = value[(*offset)++] - '0';
++    if (digit > limit || number > (limit - digit) / 10)
++      return false;
++    number = number * 10 + digit;
++  }
++  *result = number;
++  return *offset != begin;
++}
++
++inline bool Parse(const std::string& value, size_t length, Plan* plan) {
++  Plan parsed;
++  size_t offset = 0;
++  size_t* fields[] = {&parsed.start, &parsed.end, &parsed.length, &parsed.caret};
++  for (size_t i = 0; i < 4; ++i) {
++    if (!ReadNumber(value, &offset, length, fields[i]) ||
++        offset >= value.size() || value[offset++] != (i == 3 ? '|' : ':'))
++      return false;
++  }
++  while (offset < value.size()) {
++    size_t boundary;
++    if (!ReadNumber(value, &offset, length, &boundary) ||
++        (!parsed.breaks.empty() && boundary <= parsed.breaks.back()))
++      return false;
++    parsed.breaks.push_back(boundary);
++    if (offset == value.size())
++      break;
++    if (value[offset++] != ',' || offset == value.size())
++      return false;
++  }
++  *plan = parsed;
++  return true;
++}
++
++inline bool IsLetter(char c) {
++  return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z');
++}
++
++inline bool IsDelimiter(char c) {
++  return c == ' ' || c == '\'';
++}
++
++// PreeditT has the native Preedit's text/caret_pos/sel_start/sel_end members.
++// No candidate, composition, input or commit object is changed by this helper.
++template <class PreeditT>
++bool Apply(PreeditT* preedit,
++           const std::string& input,
++           size_t candidate_start,
++           size_t candidate_end,
++           size_t caret,
++           const std::string& marker,
++           const std::string& value) {
++  Plan plan;
++  if (!Parse(value, input.size(), &plan) || plan.start != candidate_start ||
++      plan.end != candidate_end || plan.length != input.size() ||
++      plan.caret != caret || plan.start >= plan.end ||
++      plan.end >= input.size() || plan.breaks.empty())
++    return false;
++
++  PreeditT result = *preedit;
++  if (result.caret_pos > result.text.size() ||
++      result.sel_start > result.sel_end || result.sel_end > result.text.size())
++    return false;
++
++  // Composition inserts soft cursor + prompt at caret_pos. Temporarily remove
++  // that known insertion, then restore it after inserting display spaces.
++  if (!marker.empty()) {
++    if (result.text.compare(result.caret_pos, marker.size(), marker) != 0)
++      return false;
++    result.text.erase(result.caret_pos, marker.size());
++    if (result.caret_pos < result.sel_start)
++      result.sel_start -= marker.size();
++    if (result.caret_pos < result.sel_end)
++      result.sel_end -= marker.size();
++  }
++
++  const std::string suffix = input.substr(candidate_end);
++  if (suffix.size() > result.text.size())
++    return false;
++  const size_t suffix_start = result.text.size() - suffix.size();
++  // Only the native appended raw suffix is formatted. Candidate-specific
++  // preedit and already selected text remain byte-for-byte unchanged.
++  if (result.sel_end != suffix_start ||
++      result.text.compare(suffix_start, suffix.size(), suffix) != 0)
++    return false;
++
++  std::vector<size_t> insertions;
++  for (size_t boundary : plan.breaks) {
++    if (boundary < candidate_end || boundary >= input.size() ||
++        !IsLetter(input[boundary]) ||
++        (boundary > candidate_end && !IsLetter(input[boundary - 1])))
++      return false;
++    const size_t at = suffix_start + boundary - candidate_end;
++    if ((at && IsDelimiter(result.text[at - 1])) ||
++        IsDelimiter(result.text[at]))
++      continue;
++    insertions.push_back(at);
++  }
++  if (insertions.empty())
++    return false;
++
++  std::string display;
++  display.reserve(result.text.size() + insertions.size() + marker.size());
++  size_t previous = 0;
++  for (size_t at : insertions) {
++    display.append(result.text, previous, at - previous);
++    display.push_back(' ');
++    previous = at;
++  }
++  display.append(result.text, previous, std::string::npos);
++  // A separator exactly at sel_end is outside the candidate's highlighted
++  // span. The caret points before its raw character, after preceding spaces.
++  result.sel_start += std::lower_bound(insertions.begin(), insertions.end(),
++                                       result.sel_start) - insertions.begin();
++  result.sel_end += std::lower_bound(insertions.begin(), insertions.end(),
++                                     result.sel_end) - insertions.begin();
++  result.caret_pos += std::upper_bound(insertions.begin(), insertions.end(),
++                                       result.caret_pos) - insertions.begin();
++  result.text = std::move(display);
++  if (!marker.empty()) {
++    result.text.insert(result.caret_pos, marker);
++    if (result.caret_pos < result.sel_start)
++      result.sel_start += marker.size();
++    if (result.caret_pos < result.sel_end)
++      result.sel_end += marker.size();
++  }
++  *preedit = std::move(result);
++  return true;
++}
++
++}  // namespace preedit_spacing
++}  // namespace rime
++
++#endif  // RIME_PREEDIT_SPACING_H_
+diff --git a/src/rime/schema.h b/src/rime/schema.h
+index bb68bcd..0e8146a 100644
+--- a/src/rime/schema.h
++++ b/src/rime/schema.h
+@@ -26,6 +26,11 @@ class Schema {
+   void set_config(Config* config) { config_.reset(config); }
+ 
+   int page_size() const { return page_size_; }
++  void set_page_size(int page_size) {
++    // Keep pagination valid without resetting the composition or schema.
++    if (page_size > 0)
++      page_size_ = page_size;
++  }
+   bool page_down_cycle() const { return page_down_cycle_; }
+   const string& select_keys() const { return select_keys_; }
+   void set_select_keys(const string& keys) { select_keys_ = keys; }
+diff --git a/src/rime/service.cc b/src/rime/service.cc
+index e40493a..99e4987 100644
+--- a/src/rime/service.cc
++++ b/src/rime/service.cc
+@@ -122,6 +122,7 @@ bool Service::DestroySession(SessionId session_id) {
+   if (it == sessions_.end())
+     return false;
+   sessions_.erase(it);
++  session_release_notifier_();
+   return true;
+ }
+ 
+@@ -139,11 +140,19 @@ void Service::CleanupStaleSessions() {
+   }
+   if (count > 0) {
+     LOG(INFO) << "Recycled " << count << " stale sessions.";
++    session_release_notifier_();
+   }
+ }
+ 
+ void Service::CleanupAllSessions() {
++  if (sessions_.empty())
++    return;
+   sessions_.clear();
++  session_release_notifier_();
++}
++
++signal<void()>& Service::session_release_notifier() {
++  return session_release_notifier_;
+ }
+ 
+ void Service::SetNotificationHandler(const NotificationHandler& handler) {
+diff --git a/src/rime/service.h b/src/rime/service.h
+index a69ae74..ee138fc 100644
+--- a/src/rime/service.h
++++ b/src/rime/service.h
+@@ -69,6 +69,9 @@ class RIME_DLL Service {
+   void CleanupStaleSessions();
+   void CleanupAllSessions();
+ 
++  // The service has released session ownership; external owners may remain.
++  signal<void()>& session_release_notifier();
++
+   void SetNotificationHandler(const NotificationHandler& handler);
+   void ClearNotificationHandler();
+   void Notify(SessionId session_id,
+@@ -95,6 +98,7 @@ class RIME_DLL Service {
+   NotificationHandler notification_handler_;
+   std::mutex mutex_;
+   bool started_ = false;
++  signal<void()> session_release_notifier_;
+ };
+ 
+ }  // namespace rime
+diff --git a/test/service_release_test.cc b/test/service_release_test.cc
+new file mode 100644
+index 0000000..cc14c87
+--- /dev/null
++++ b/test/service_release_test.cc
+@@ -0,0 +1,70 @@
++// Generic lifecycle checks for the production Service notification boundary.
++// Included in upstream test/ by the cloud workflow. No dictionary/user data.
++#include <gtest/gtest.h>
++#include <rime/service.h>
++
++class SessionReleaseTest : public ::testing::Test {
++ protected:
++  void SetUp() override {
++    service = &rime::Service::instance();
++    service->StartService();
++    service->CleanupAllSessions();
++  }
++  void TearDown() override {
++    connection.disconnect();
++    service->CleanupAllSessions();
++  }
++  rime::Service* service;
++  boost::signals2::scoped_connection connection;
++};
++
++TEST_F(SessionReleaseTest, SuccessfulDestroyNotifiesAfterServiceOwnershipRelease) {
++  const auto removed = service->CreateSession();
++  const auto active = service->CreateSession();
++  ASSERT_NE(rime::kInvalidSessionId, removed);
++  ASSERT_NE(rime::kInvalidSessionId, active);
++  std::weak_ptr<rime::Session> removed_ref = service->GetSession(removed);
++  std::weak_ptr<rime::Session> active_ref = service->GetSession(active);
++  int notifications = 0;
++  connection = service->session_release_notifier().connect([&]() {
++    ++notifications;
++    EXPECT_TRUE(removed_ref.expired());
++    EXPECT_FALSE(active_ref.expired());
++    EXPECT_NE(nullptr, service->GetSession(active));
++  });
++  EXPECT_TRUE(service->DestroySession(removed));
++  EXPECT_EQ(1, notifications);
++  EXPECT_FALSE(active_ref.expired());
++}
++
++TEST_F(SessionReleaseTest, InvalidDestroyDoesNotNotify) {
++  int notifications = 0;
++  connection = service->session_release_notifier().connect([&]() { ++notifications; });
++  EXPECT_FALSE(service->DestroySession(rime::kInvalidSessionId));
++  EXPECT_EQ(0, notifications);
++}
++
++TEST_F(SessionReleaseTest, CleanupAllNotifiesOnceAfterTheWholeBatch) {
++  const auto first = service->CreateSession();
++  const auto second = service->CreateSession();
++  ASSERT_NE(rime::kInvalidSessionId, first);
++  ASSERT_NE(rime::kInvalidSessionId, second);
++  std::weak_ptr<rime::Session> first_ref = service->GetSession(first);
++  std::weak_ptr<rime::Session> second_ref = service->GetSession(second);
++  int notifications = 0;
++  connection = service->session_release_notifier().connect([&]() {
++    ++notifications;
++    EXPECT_TRUE(first_ref.expired());
++    EXPECT_TRUE(second_ref.expired());
++  });
++  service->CleanupAllSessions();
++  EXPECT_EQ(1, notifications);
++}
++
++TEST_F(SessionReleaseTest, EmptyCleanupBatchesDoNotNotify) {
++  int notifications = 0;
++  connection = service->session_release_notifier().connect([&]() { ++notifications; });
++  service->CleanupAllSessions();
++  service->CleanupStaleSessions();
++  EXPECT_EQ(0, notifications);
++}

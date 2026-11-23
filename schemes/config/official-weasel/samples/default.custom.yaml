@@ -1,0 +1,32 @@
+# Shared RymCp preset. PC Shift behavior is owned by probe_global_mode.
+patch:
+  schema_list:
+    - schema: pc_research
+    - schema: jp_sela
+  menu/page_size: 6
+  switcher/hotkeys: [Control+grave]
+  key_binder/bindings:
+    - {when: has_menu, accept: minus, send: Page_Up}
+    - {when: has_menu, accept: equal, send: Page_Down}
+    - {when: composing, accept: ISO_Left_Tab, send: Shift+Left}
+    - {when: composing, accept: Shift+Tab, send: Shift+Left}
+    - {when: composing, accept: Tab, send: Shift+Right}
+    - {when: composing, accept: Control+g, send: BackSpace}
+    - {when: composing, accept: Control+a, send: Left}
+    - {when: composing, accept: Control+d, send: Right}
+    - {when: has_menu, accept: Control+w, send: Page_Up}
+    - {when: has_menu, accept: Control+s, send: Page_Down}
+    - {when: always, accept: Control+e, select: jp_sela}
+    - {when: always, accept: Control+r, select: pc_research}
+    - {when: always, accept: Control+Shift+f, toggle: simplification}
+    - {when: always, accept: Control+Shift+F, toggle: simplification}
+    - {when: always, accept: Control+period, toggle: ascii_punct}
+  ascii_composer:
+    good_old_caps_lock: true
+    switch_key:
+      Shift_L: noop
+      Shift_R: noop
+      Control_L: noop
+      Control_R: noop
+      Caps_Lock: noop
+      Eisu_toggle: clear

@@ -1,0 +1,22 @@
+{
+  "format": "rymcp-maintained-profiles-v1",
+  "profiles": {
+    "stellae": {
+      "output": "config/pc",
+      "stock_word_completion": false,
+      "page_layout": "dynamic-chinese-5-english-6",
+      "ctrl_space_owner": "schema-binding-forwarded-by-stellae",
+      "sample_files": []
+    },
+    "official-weasel": {
+      "output": "config/official-weasel",
+      "stock_word_completion": true,
+      "page_layout": "fixed-vertical-6-noninline",
+      "ctrl_space_owner": "official-client",
+      "sample_files": ["default.custom.yaml", "rime.lua", "weasel.custom.yaml"]
+    }
+  },
+  "pc_shift": "Left and right Shift toggle research_english through the shared coordinator; both native PC switch keys are noop.",
+  "jp_shift": "Keep the independent Japanese ascii_composer path, including right Shift inline_ascii.",
+  "optional_dlc": "Base profiles contain no activated module directory; modules are installed separately."
+}

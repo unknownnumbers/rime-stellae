@@ -1,0 +1,14 @@
+{
+  "source": "Official Weasel 0.17.4 package: data/stroke.dict.yaml",
+  "upstream_project": "https://github.com/rime/rime-stroke",
+  "version": "1.1",
+  "upstream_commit": null,
+  "license": "LGPL-3.0; original attribution retained in licenses/radical-stroke/stroke-AUTHORS",
+  "entries": 75064,
+  "supplementary_boundary_line": 75028,
+  "policy": "first CNS-main code; supplementary first occurrence only if absent from main",
+  "supplementary_only_entries": 61,
+  "maximum_code_length": 64,
+  "comparison_only_upstream_2_0_commit": "1e8fff9b9494ddec23b0cbc526bcfd8171a6fd48",
+  "comparison_commit_is_not_claimed_as_source_of_current_1_1_table": true
+}

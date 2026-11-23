@@ -1,0 +1,43 @@
+# RymCp Japanese base; newly written from the RymCp mode specification.
+# GPL-3.0-only. Copyright 2026 RymCp contributors.
+# jp_sela is RymCp's current module interface ID.
+schema:
+  schema_id: jp_sela
+  name: "日 / 墨芯"
+  version: "2026.10.26.rymcp.1"
+  author:
+    - RymCp contributors
+  description: |
+    Independent hiragana/katakana input with x small-kana and sourced q/v lookup.
+    Kanji candidates come from the separately attributed JMdict/KANJIDIC/Unihan data.
+switches:
+  - { name: ascii_mode, reset: 0 }
+  - { name: ascii_punct, reset: 0 }
+engine:
+  processors: [ascii_composer, recognizer, key_binder, speller, punctuator, selector, navigator, express_editor]
+  segmentors: [ascii_segmentor, matcher, abc_segmentor, punct_segmentor, fallback_segmentor]
+  translators: [punct_translator, script_translator]
+  filters: [uniquifier]
+speller:
+  alphabet: "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-_"
+  delimiter: " '"
+ascii_composer:
+  good_old_caps_lock: true
+  switch_key:
+    Shift_L: noop
+    Shift_R: inline_ascii
+    Control_L: noop
+    Control_R: noop
+    Caps_Lock: noop
+    Eisu_toggle: clear
+translator:
+  dictionary: jp_sela_custom
+  strict_spelling: true
+punctuator:
+  import_preset: default
+key_binder:
+  import_preset: default
+recognizer:
+  import_preset: default
+__patch:
+  - jp_sela.custom:/patch?

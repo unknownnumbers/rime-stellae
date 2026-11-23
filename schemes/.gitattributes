@@ -1,0 +1,4 @@
+* -text
+*.patch -text
+*.bin binary
+*.gram binary

@@ -1,0 +1,59 @@
+# Generated from lua/jp_small_kana.lua; no additional aliases.
+---
+name: jp_small_lookup
+version: "2026.10.22"
+sort: by_weight
+use_preset_vocabulary: false
+...
+ァ	A	100
+ェ	E	100
+ㇷ	FU	100
+ㇵ	HA	100
+ㇸ	HE	100
+ㇶ	HI	100
+ㇹ	HO	100
+ィ	I	100
+ヵ	KA	100
+ヶ	KE	100
+𛅕	KO	100
+ㇰ	KU	100
+ㇺ	MU	100
+𛅧	N	100
+𛅧	NN	100
+ㇴ	NU	100
+ォ	O	100
+ㇷ゚	PU	100
+ㇻ	RA	100
+ㇾ	RE	100
+ㇼ	RI	100
+ㇿ	RO	100
+ㇽ	RU	100
+ㇱ	SHI	100
+ㇲ	SU	100
+ㇳ	TO	100
+ッ	TSU	100
+ゥ	U	100
+ヮ	WA	100
+𛅥	WE	100
+𛅤	WI	100
+𛅦	WO	100
+ャ	YA	100
+𛅨	YE	100
+ョ	YO	100
+ュ	YU	100
+ぁ	a	100
+ぇ	e	100
+ぃ	i	100
+ゕ	ka	100
+ゖ	ke	100
+𛄲	ko	100
+ぉ	o	100
+っ	tsu	100
+ぅ	u	100
+ゎ	wa	100
+𛅑	we	100
+𛅐	wi	100
+𛅒	wo	100
+ゃ	ya	100
+ょ	yo	100
+ゅ	yu	100

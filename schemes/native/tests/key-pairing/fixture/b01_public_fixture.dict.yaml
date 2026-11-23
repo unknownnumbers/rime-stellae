@@ -1,0 +1,9 @@
+---
+name: b01_public_fixture
+version: "1"
+sort: by_weight
+use_preset_vocabulary: false
+...
+cn01	abc	100
+cn02	abcd	80
+cx01	x	50

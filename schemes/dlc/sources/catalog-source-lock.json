@@ -1,0 +1,145 @@
+{
+  "Format": 1,
+  "Files": [
+    {
+      "Path": "poetry/companion-anthologies.zip",
+      "Bytes": 236204,
+      "Sha256": "32a425d50d9856a259a580a424f044a1b512b8d415ba48fdee9b14bc78db7330"
+    },
+    {
+      "Path": "poetry/LICENSE",
+      "Bytes": 1076,
+      "Sha256": "c195319aeaa3ffcbe16aa5d26eec19eae5a42f84337dd2b3dc3c9d5ccbbd6507"
+    },
+    {
+      "Path": "poetry/song-ci.zip",
+      "Bytes": 3062345,
+      "Sha256": "34fa9da8f6f2e207c14a07b9bfc1ea1633ab39053206f54121a753c60a0e5ea0"
+    },
+    {
+      "Path": "poetry/song-poems.zip",
+      "Bytes": 39831128,
+      "Sha256": "408da1c7afe2a851dfa10f2ed2eed2facbae1b49b27fc386f03b2d0bf0306735"
+    },
+    {
+      "Path": "poetry/source-manifest.json",
+      "Bytes": 153569,
+      "Sha256": "3613abf5c4935474ec6ba608ee60c91dfeafa1067a57c877a6e84882d82138e7"
+    },
+    {
+      "Path": "poetry/tang-poems.zip",
+      "Bytes": 9211174,
+      "Sha256": "6a25a1a4f2d41e8ada5dbe9a10bdf4029c85b404fef631e252fe9f002c47d542"
+    },
+    {
+      "Path": "poetry/variant-source-manifest.json",
+      "Bytes": 3740,
+      "Sha256": "91669634c2fa21bba03b411ce9080f4eae30642a6a970347bedde85ab201050d"
+    },
+    {
+      "Path": "readings/opencc/AUTHORS",
+      "Bytes": 277,
+      "Sha256": "cb34e252fa994679bcbfc8355581e821ceda44bd857875e2cfe15b7ec4eec006"
+    },
+    {
+      "Path": "readings/opencc/LICENSE",
+      "Bytes": 9165,
+      "Sha256": "b534e465949558eec2597b04f5092b5e161236a68dfbfd04d547592ac3964308"
+    },
+    {
+      "Path": "readings/opencc/s2t.json",
+      "Bytes": 406,
+      "Sha256": "710bb970e406d9c0a3dd33c609248686cf1c5578d064b7b7fc89e70fbb9ea75d"
+    },
+    {
+      "Path": "readings/opencc/source.json",
+      "Bytes": 2706,
+      "Sha256": "dd7376366cb704a9703a6a5e19645fd7e350276b183136dfc0b8008f427c8470"
+    },
+    {
+      "Path": "readings/opencc/STCharacters.txt",
+      "Bytes": 34353,
+      "Sha256": "ed1d268e0ad028511dcf5b0089faed0a980ad332449ec11d481ceefde6879f41"
+    },
+    {
+      "Path": "readings/opencc/STPhrases.txt",
+      "Bytes": 1004897,
+      "Sha256": "17fece21a28f3db2dc32397abd73d21ae73261c3f295fa6a3fe64b5e8d8b554b"
+    },
+    {
+      "Path": "readings/opencc/t2s.json",
+      "Bytes": 406,
+      "Sha256": "b818534194f27c2d95f01001edb0a5ec49b9050119892cb30a0504bb202cc07c"
+    },
+    {
+      "Path": "readings/opencc/TSCharacters.txt",
+      "Bytes": 34627,
+      "Sha256": "6b5a0a799bea2bb22c001f635eaa3fc2904310f0c08addbff275477a80ecf09a"
+    },
+    {
+      "Path": "readings/opencc/TSPhrases.txt",
+      "Bytes": 5181,
+      "Sha256": "504169029c43f7f234b8e2ae470720af3657675c5574ff8aa0feb257e1dc5ce2"
+    },
+    {
+      "Path": "readings/pypinyin-0.55.0-py2.py3-none-any.whl",
+      "Bytes": 840203,
+      "Sha256": "d53b1e8ad2cdb815fb2cb604ed3123372f5a28c6f447571244aca36fc62a286f"
+    },
+    {
+      "Path": "readings/pypinyin-LICENSE.txt",
+      "Bytes": 1105,
+      "Sha256": "1e6c90014b4912815c296ee64bb6f6280af47e6d4c5d80e86232dfc5defe764c"
+    },
+    {
+      "Path": "readings/pypinyin-source.json",
+      "Bytes": 380,
+      "Sha256": "1c59282cdcb813aee1355169d72c79cfa023365d376e1eac8839ae7d22bab046"
+    },
+    {
+      "Path": "readings/UNICODE-LICENSE-V3.txt",
+      "Bytes": 1995,
+      "Sha256": "e7a93b009565cfce55919a381437ac4db883e9da2126fa28b91d12732bc53d96"
+    },
+    {
+      "Path": "readings/Unihan-17.0.0.zip",
+      "Bytes": 8518517,
+      "Sha256": "f7a48b2b545acfaa77b2d607ae28747404ce02baefee16396c5d2d7a8ef34b5e"
+    },
+    {
+      "Path": "readings/unihan-source.json",
+      "Bytes": 386,
+      "Sha256": "6dabf76d88746c7da87bf7dc4d0cb8c8972b074deee166844a612b88b5826e0c"
+    },
+    {
+      "Path": "science/CC-BY-SA-4.0.txt",
+      "Bytes": 20138,
+      "Sha256": "28a9529c7d0bb4dc51f4bf5c116a3d16ef247a052f7591466768ddf563fd1cf5"
+    },
+    {
+      "Path": "science/CC0-1.0-legalcode.txt",
+      "Bytes": 7048,
+      "Sha256": "a2010f343487d3f7618affe54f789f5487602331c0a8d03f49e9a7c547cf0499"
+    },
+    {
+      "Path": "science/science-api-responses-001.zip",
+      "Bytes": 10879310,
+      "Sha256": "ee7f214ed37213475b1cd5d4a2fbd9389bee218c8956bee856c7b7063f112065"
+    },
+    {
+      "Path": "science/science-labels-snapshot.json.gz",
+      "Bytes": 6925753,
+      "Sha256": "a8aa2a8af72ae40cac00905ddd116e255a442d11047447a67b5bfbf584c989fa"
+    },
+    {
+      "Path": "science/SCIENCE-NOTICE.txt",
+      "Bytes": 985,
+      "Sha256": "cd11abb0a3a799495fe1cf8f8aeb19a02d61cd36bf328c0c6eb2a254ae428f2f"
+    },
+    {
+      "Path": "science/science-source-manifest.json",
+      "Bytes": 2042,
+      "Sha256": "e1e48e4eeded5c0c7e36b9aecaf08ce83f6baefd8aff30889bcc91b59a2e75bc"
+    }
+  ]
+}

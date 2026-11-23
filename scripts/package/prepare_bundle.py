@@ -6,6 +6,7 @@ import argparse
 import hashlib
 import json
 from pathlib import Path, PurePosixPath
+import re
 import shutil
 import zipfile
 
@@ -30,6 +31,35 @@ def safe_name(name):
     if value.is_absolute() or '..' in value.parts or '\\' in name or ':' in name:
         raise ValueError('Unsafe archive path')
     return value
+
+
+def check_scheme_archive(archive, inputs, source_ref):
+    specification = inputs.get('schemes', {})
+    if (not re.fullmatch(r'[0-9a-f]{40}', source_ref)
+            or specification.get('sourceDirectory') != 'schemes'
+            or specification.get('profile') != 'stellae'):
+        raise ValueError('Build the base scheme from the exact Stellae source commit.')
+    manifest = json.loads(archive.read('package-manifest.json'))
+    if (manifest.get('format') != 'stellae-scheme-package-v1'
+            or manifest.get('source_ref') != source_ref
+            or manifest.get('source_repository') != 'https://github.com/unknownnumbers/rime-stellae'
+            or manifest.get('source_prefix') != 'schemes'
+            or manifest.get('version') != specification.get('version')
+            or manifest.get('profile') != 'stellae'
+            or manifest.get('personal_learning_included') is not False
+            or manifest.get('compiled_rime_dictionaries_included') is not False):
+        raise ValueError('The scheme archive does not belong to this Stellae source commit.')
+    names = archive.namelist()
+    declared = [entry['path'] for entry in manifest['files']]
+    if (len(names) != len(set(names)) or len(declared) != len(set(declared))
+            or set(names) != {*declared, 'package-manifest.json'}):
+        raise ValueError('The scheme archive members differ from its source manifest.')
+    for entry in manifest['files']:
+        safe_name(entry['path'])
+        raw = archive.read(entry['path'])
+        if len(raw) != entry['bytes'] or hashlib.sha256(raw).hexdigest() != entry['sha256']:
+            raise ValueError('Scheme archive member differs from its source manifest.')
+    return manifest
 
 
 def stage_math_upgrade(repo, stage, archive_path, inputs):
@@ -100,6 +130,7 @@ def main():
     p.add_argument('--base', type=Path, required=True)
     p.add_argument('--official', type=Path, required=True)
     p.add_argument('--schemes', type=Path, required=True)
+    p.add_argument('--source-ref', required=True)
     p.add_argument('--indexed-math', type=Path)
     p.add_argument('--default-font-directory', type=Path, help='Directory containing the reviewed offline font collection.')
     p.add_argument('--stage', type=Path, required=True)
@@ -108,8 +139,8 @@ def main():
     a = p.parse_args()
     repo = a.repository.resolve()
     inputs = json.loads((a.inputs or repo/'installer/bundle-inputs.json').read_text('utf-8'))
-    if not inputs.get('schemes') or digest(a.schemes) != inputs['schemes']['sha256']:
-        raise SystemExit('The scheme distribution must have a fixed public URL, commit and SHA256.')
+    with zipfile.ZipFile(a.schemes) as archive:
+        scheme_manifest = check_scheme_archive(archive, inputs, a.source_ref)
     stage = a.stage
     stage.mkdir(parents=True, exist_ok=False)
     payload = stage/'shared-payload/data'
@@ -148,15 +179,6 @@ def main():
         provenance.append({'installed_path': 'data/'+name, 'source': 'officialSharedData',
                            'archive_member': 'data/'+name, 'sha256': digest(source)})
     with zipfile.ZipFile(a.schemes) as archive:
-        scheme_manifest = json.loads(archive.read('package-manifest.json'))
-        if (scheme_manifest['source_ref'] != inputs['schemes']['commit']
-                or scheme_manifest['version'] != inputs['schemes'].get('version', inputs['bundleVersion'])
-                or scheme_manifest['profile'] != 'stellae'):
-            raise SystemExit('Scheme source provenance differs from the pinned bundle input.')
-        for entry in scheme_manifest['files']:
-            raw = archive.read(entry['path'])
-            if len(raw) != entry['bytes'] or hashlib.sha256(raw).hexdigest() != entry['sha256']:
-                raise SystemExit('Scheme archive member differs from its manifest.')
         for info in archive.infolist():
             if info.is_dir():
                 continue
@@ -195,7 +217,7 @@ def main():
             raise SystemExit('The fixed shared base needs a reviewed patch layout.')
         font_layer = ('  - rymcp_candidate_font:/patch?\n'
                       if config == 'weasel' and a.default_font_directory is not None else '')
-        extension = ('\n# RymCp defaults followed by optional user overrides.\n__patch:\n'
+        extension = ('\n# Stellae defaults followed by optional user overrides.\n__patch:\n'
                      f'  - {alias}:/patch\n{font_layer}  - {config}.custom:/patch?\n').encode('utf-8')
         base_file.write_bytes(raw+extension)
         origin = next(row for row in reversed(provenance) if row['installed_path'] == 'data/'+config+'.yaml')
@@ -227,10 +249,11 @@ def main():
                 entry['bundle_transformation'] = 'byte-exact rename to a namespaced shared preset'
             elif entry['sha256'] != original_hash:
                 entry['bundle_transformation'] = 'append the bundle preset followed by the optional user patch'
-    profile['format'] = 'stellae-rymcp-installed-profile-v1'
+    profile['format'] = 'stellae-installed-profile-v2'
     profile['note'] = 'Paths and hashes in source_files/generated_files describe installed shared profile files. The shared and package manifests index the remaining installer resources.'
     profile['archive_provenance'] = {
-        'source_repository': scheme_manifest['source_repository'], 'source_ref': inputs['schemes']['commit'],
+        'source_repository': scheme_manifest['source_repository'], 'source_ref': a.source_ref,
+        'source_prefix': scheme_manifest['source_prefix'],
         'original_manifest': 'scheme-notices/archive-profile-manifest.json',
         'original_manifest_sha256': hashlib.sha256(profile_raw).hexdigest(),
         'repository_manifest': 'scheme-notices/source-config-manifest.json',
@@ -263,7 +286,9 @@ def main():
     write_json(stage/'bundle-provenance.json', {'format': 'stellae-bundle-provenance-v1',
                'bundleVersion': inputs['bundleVersion'], 'frontendVersion': inputs['frontendVersion'],
                'scope': 'Layered public input records. Later records for an installed path supersede earlier input records; the payload license index records the final package bytes.',
-               'inputs': inputs, 'files': provenance})
+               'inputs': inputs, 'schemeArchive': {'name': a.schemes.name,
+                   'sha256': digest(a.schemes), 'source_ref': a.source_ref,
+                   'source_prefix': scheme_manifest['source_prefix']}, 'files': provenance})
     resource = stage.parent/'resource'
     resource.mkdir(exist_ok=True)
     shutil.copyfile(repo/'assets/icon/star-core.ico', resource/'weasel.ico')

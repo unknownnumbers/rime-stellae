@@ -1,0 +1,10 @@
+---
+name: luna_pinyin.research
+version: "2026.11.14.base"
+sort: by_weight
+use_preset_vocabulary: true
+import_tables:
+  - luna_pinyin
+  - research_greek
+  - project_symbols
+...

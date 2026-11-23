@@ -1,0 +1,14 @@
+# reviewed subset; codes referenced from iDvel/rime-ice da1fbe6 (GPL-3.0).
+# Attribution: licenses/mixed-phrases-sources.md.
+---
+name: mixed_full
+version: "2026.10.16.1"
+sort: by_weight
+use_preset_vocabulary: false
+columns: [text, code, weight]
+...
+U 盤	upan	1
+A4 紙	asizhi	1
+3D 打印	sanddayin	1
+Windows 版	windowsban	1
+Wi-Fi 密碼	wifimima	1

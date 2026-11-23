@@ -1,0 +1,10 @@
+Google Books Ngram data sets: official usage statement
+Source: https://storage.googleapis.com/books/ngrams/books/datasetsv3.html
+Retrieved: 2026-10-15
+
+Usage: This compilation is licensed under a Creative Commons Attribution 3.0 Unported License.
+
+License: https://creativecommons.org/licenses/by/3.0/
+Complete legal code is saved as CC-BY-3.0-legalcode.txt.
+This extracted statement is from the official current data page. It does not
+identify the exact Google Books release used by the pinned SymSpell file.

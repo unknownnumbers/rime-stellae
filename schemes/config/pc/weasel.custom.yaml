@@ -1,0 +1,64 @@
+patch:
+  "style/color_scheme": reference_gray
+  "style/color_scheme_dark": reference_gray
+  "style/font_face": "Microsoft YaHei"
+  "style/label_font_face": "Microsoft YaHei"
+  "style/comment_font_face": "Microsoft YaHei"
+  "style/font_point": 14
+  "style/label_font_point": 14
+  "style/comment_font_point": 14
+  "style/inline_preedit": false
+  "style/preedit_type": composition
+  "style/label_format": "%s."
+  "style/mark_text": ""
+  "style/horizontal": false
+  "style/vertical_text": false
+  "style/vertical_auto_reverse": false
+  "style/layout/border_width": 1
+  "style/layout/margin_x": 8
+  "style/layout/margin_y": 5
+  "style/layout/spacing": 4
+  "style/layout/candidate_spacing": 4
+  "style/layout/hilite_spacing": 0
+  "style/layout/hilite_padding": 0
+  "style/layout/round_corner": 0
+  "style/layout/corner_radius": 10
+  "style/layout/min_width": 0
+  "style/layout/max_width": 0
+  "style/layout/min_height": 0
+  "style/layout/max_height": 0
+  "style/layout/shadow_radius": 0
+  global_ascii: true # 切换为 ascii 模式时, 是否影响所有窗口: true; false
+  show_notifications: true # 是否显示状态变化的通知: true; false
+  show_notifications_time: 270  # 通知显示的时间, 单位 ms
+
+  # Reference Gray; ABGR color format.
+  preset_color_schemes/reference_gray:
+    name: "截图灰 / Reference Gray"
+    author: "RymCp contributors"
+    color_format: abgr
+    back_color: 0x85000000 # 52.16% opaque: #7A7A7A over pure white
+    border_color: 0xffa3a3a3
+    shadow_color: 0x00000000
+    text_color: 0xffffffff
+    hilited_text_color: 0xffffffff
+    hilited_back_color: 0x00000000
+    hilited_shadow_color: 0x00000000
+    candidate_text_color: 0xfffed898 # RGB #98D8FE
+    candidate_back_color: 0x00000000
+    candidate_border_color: 0x00000000
+    candidate_shadow_color: 0x00000000
+    label_color: 0xfffed898
+    comment_text_color: 0xfffed898
+    hilited_candidate_text_color: 0xff89a1fe # RGB #FEA189
+    hilited_label_color: 0xff89a1fe
+    hilited_comment_text_color: 0xff89a1fe
+    hilited_candidate_back_color: 0x00000000
+    hilited_candidate_border_color: 0x00000000
+    hilited_candidate_shadow_color: 0x00000000
+    hilited_mark_color: 0x00000000
+    prevpage_color: 0xfffed898
+    nextpage_color: 0xfffed898
+
+  # Use the global preedit style; remove the upstream Firefox exception.
+  "app_options/firefox.exe/inline_preedit": null

@@ -1,0 +1,17 @@
+schema:
+  schema_id: jp_small_lookup
+  name: Small kana native composition
+  version: '2026.10.22'
+translator:
+  dictionary: jp_small_lookup
+  prism: jp_small_lookup
+  enable_user_dict: false
+  enable_sentence: true
+  enable_completion: false
+  contextual_suggestions: false
+  enable_encoder: false
+  encode_commit_history: false
+speller:
+  alphabet: abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ
+  delimiter: "' "
+  algebra: []

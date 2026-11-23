@@ -1,0 +1,57 @@
+{
+  "format": "rymcp-dictionary-integrity-v1",
+  "chinese_code_repairs": [
+    {
+      "before": "邏輯閘\tluo ji jia",
+      "after": "邏輯閘\tluo ji zha",
+      "remove_duplicate": false,
+      "evidence_url": "https://dict.revised.moe.edu.tw/dictView.jsp?ID=66521&la=0&powerMode=0"
+    },
+    {
+      "before": "行車距離\txing che che li",
+      "after": "行車距離\txing che ju li",
+      "remove_duplicate": true,
+      "evidence_url": "https://dict.revised.moe.edu.tw/dictView.jsp?ID=110930&la=0&powerMode=0"
+    },
+    {
+      "before": "國有財產\tguo you cai can",
+      "after": "國有財產\tguo you cai chan",
+      "remove_duplicate": false,
+      "evidence_url": "https://dict.revised.moe.edu.tw/dictView.jsp?ID=72390&la=0&powerMode=0"
+    },
+    {
+      "before": "家蠶\tjia chan",
+      "after": "家蠶\tjia can",
+      "remove_duplicate": false,
+      "evidence_url": "https://dict.revised.moe.edu.tw/dictView.jsp?ID=89458&la=0&powerMode=0"
+    },
+    {
+      "before": "腸肥腦滿\tchang fei man nao",
+      "after": "腸肥腦滿\tchang fei nao man",
+      "remove_duplicate": false,
+      "evidence_url": "https://dict.revised.moe.edu.tw/dictView.jsp?ID=123933&la=0&powerMode=0"
+    },
+    {
+      "before": "跨媒體合作\tka mei ti he zuo",
+      "after": "跨媒體合作\tkua mei ti he zuo",
+      "remove_duplicate": false,
+      "evidence_url": "https://dict.revised.moe.edu.tw/dictView.jsp?ID=78006&la=0&powerMode=0"
+    },
+    {
+      "before": "中山高速公路\tzhong shan gao shu gong lu",
+      "after": "中山高速公路\tzhong shan gao su gong lu",
+      "remove_duplicate": false,
+      "evidence_url": "https://dict.revised.moe.edu.tw/dictView.jsp?ID=120037&la=0&powerMode=0"
+    },
+    {
+      "before": "禁制令\tjin zhi lin",
+      "after": "禁制令\tjin zhi ling",
+      "remove_duplicate": false,
+      "evidence_url": "https://dict.revised.moe.edu.tw/dictView.jsp?ID=94903&la=0&powerMode=0"
+    }
+  ],
+  "english_invalid_spellings": [
+    "you'v"
+  ],
+  "scope": "Existing source code and spelling integrity corrections. Corpus counts are otherwise unchanged."
+}

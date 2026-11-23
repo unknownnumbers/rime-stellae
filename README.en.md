@@ -4,21 +4,23 @@
 
 [English (en)](README.en.md) | [Traditional Chinese (zh-TC)](README.md) | [Simplified Chinese (zh-SC)](README.zh-SC.md)
 
-Stellae is a Windows Rime frontend providing TSF input, a candidate interface, scheme deployment and configuration management. The integrated installer includes the general RymCp profile, with optional math, physics, computing and poetry DLC modules.
+Stellae provides a Windows Rime frontend and input schemes. The frontend handles TSF input, the candidate interface, scheme deployment and configuration; the schemes support Chinese, English, Japanese and character lookup. Install the frontend with the complete scheme, or use the standalone scheme ZIP with official Weasel. Optional DLC modules add math, physics, computing and poetry vocabulary.
 
 ## Installation and use
 
-- Download the installer from [Releases](https://github.com/unknownnumbers/rime-stellae/releases).
+- [Stellae frontend and complete scheme installer](https://github.com/unknownnumbers/rime-stellae/releases/download/v2026.11.24/stellae-2026.11.24-installer.exe).
+- [Complete Stellae scheme ZIP](https://github.com/unknownnumbers/rime-stellae/releases/download/v2026.11.24/stellae-2026.11.24-schemes.zip), for an existing Stellae installation.
+- [Official Weasel scheme ZIP](https://github.com/unknownnumbers/rime-stellae/releases/download/v2026.11.24/stellae-2026.11.24-official-weasel-schemes.zip), with [installation and merge instructions](schemes/docs/official-weasel.md).
 - x64 and Win32 are supported, including 32-bit applications on x64 Windows.
-- The frontend version is `0.17.4.61052`. Schemes and integrated packages have separate versions.
+- The frontend version is `0.17.4.61052`. The current package and scheme version is `2026.11.24`.
 - A fresh profile defaults to SC output, five horizontal Chinese candidates and six vertical English candidates, with TC/SC switching.
 - The installer includes the Noto Sans CJK Regular collection. The SC or TC selection sets the initial candidate font. Use Stellae's appearance settings to switch among TC, HK and SC. Upgrades retain your font choice. [Candidate font guide](docs/PC.md#候選窗字體)
 - The bundled scheme uses a blue En status icon for English mode.
 - `Ctrl+Space` cancels the pending draft and switches between red A and the preceding Chinese or English mode. The integrated installer can add the English spelling correction index to an existing older math DLC.
 - Upgrades preserve user customization and learning. Check and merge conflicting custom files using the [user guide](docs/PC.md).
 
-[Scheme sources and official Weasel profile](https://github.com/unknownnumbers/RymCp-IME) | [Build](docs/BUILD.md) | [Sources](docs/SOURCES.md) | [TODO](TODO.md)
+[Complete scheme features](schemes/docs/PC.md) | [Optional vocabulary and DLC](schemes/docs/dlc-sources.md) | [Build](docs/BUILD.md) | [Sources](docs/SOURCES.md) | [TODO](TODO.md)
 
-This repository delivers the frontend and integrated installer. RymCp documents scheme features, optional vocabulary and future mother-tongue pronunciation work. ARM64, physical-keyboard acceptance and complete Windows-host coverage remain subject to the recorded validation scope.
+Frontend, complete scheme and official Weasel profile sources are maintained in this repository. The common scheme source is `schemes/config/pc`; the official profile is derived from it. ARM64, physical-keyboard acceptance and complete Windows-host coverage remain subject to the recorded validation scope.
 
 Original code, configuration, tests and assets use GPL-3.0-only. Original explanatory prose uses CC BY-SA 4.0. Third-party components retain their original licenses and notices; see [sources and licensing](THIRD_PARTY_NOTICES.md).

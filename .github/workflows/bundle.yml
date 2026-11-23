@@ -1,4 +1,4 @@
-name: Build and validate RymCp bundle
+name: Build and validate Stellae
 
 on:
   push:
@@ -128,8 +128,43 @@ jobs:
           if-no-files-found: warn
           retention-days: 7
 
+  official-scheme:
+    runs-on: windows-2022
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: frontend
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Prepare the official engine and source-derived scheme
+        run: |
+          $runtime=Join-Path $env:RUNNER_TEMP 'official-validation-engines'
+          ./schemes/scripts/schemes/Prepare-ValidationEngines.ps1 -OutputDirectory $runtime
+          $official=Join-Path $env:RUNNER_TEMP 'official-source-profile'
+          python schemes/scripts/rebuild_profiles.py --profile official-weasel --output (Join-Path $env:RUNNER_TEMP 'official-generated-profile') --prepare-official $official
+          if($LASTEXITCODE){throw 'Official profile generation failed'}
+          $hostExe=(Get-Process -Id $PID).Path
+          & $hostExe -NoProfile -ExecutionPolicy Bypass -File schemes/tests/rebuilt-profile/Test-RebuiltProfile.ps1 -Kind official-weasel -GeneratedProfile $official -EnginePath (Join-Path $runtime 'official-x64/rime.dll') -OutputPath (Join-Path $env:RUNNER_TEMP 'official-profile-tests')
+          if($LASTEXITCODE){throw 'Official engine scheme checks failed'}
+          $proof=Get-Content -LiteralPath (Join-Path $env:RUNNER_TEMP 'official-profile-tests/proof.json') -Raw|ConvertFrom-Json
+          if(-not $proof.Passed -or @($proof.Checks).Count -ne 56){throw 'Official engine evidence is incomplete'}
+      - name: Retain the official scheme checks
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: official-scheme-validation
+          path: |
+            ${{ runner.temp }}/official-profile-tests/proof.json
+            ${{ runner.temp }}/official-profile-tests/rebuilt-binaries.json
+            ${{ runner.temp }}/official-validation-engines/runtimes.json
+          if-no-files-found: warn
+          retention-days: 14
+
   bundle:
-    needs: [frontend-images, runtime-engines]
+    needs: [frontend-images, runtime-engines, official-scheme]
     runs-on: windows-2022
     timeout-minutes: 90
     steps:
@@ -163,23 +198,30 @@ jobs:
           python scripts/verify_release.py --require-yaml
           if($LASTEXITCODE){throw 'Source inventory failed'}
           $spec=Get-Content -LiteralPath installer/bundle-inputs.json -Raw|ConvertFrom-Json
-          if(-not $spec.schemes -or $spec.schemes.commit -notmatch '^[0-9a-f]{40}$'){throw 'The source must pin the scheme commit'}
-          $schemeRepository='unknownnumbers/RymCp-IME'
+          if(-not $spec.schemes -or $spec.schemes.sourceDirectory -cne 'schemes' -or $spec.schemes.profile -cne 'stellae'){throw 'The base scheme must belong to this source repository'}
           "bundle_version=$($spec.bundleVersion)" >> $env:GITHUB_OUTPUT
-          "scheme_commit=$($spec.schemes.commit)" >> $env:GITHUB_OUTPUT
-          "scheme_repository=$schemeRepository" >> $env:GITHUB_OUTPUT
-      - uses: actions/checkout@v4
-        with:
-          repository: ${{ steps.inputs.outputs.scheme_repository }}
-          ref: ${{ steps.inputs.outputs.scheme_commit }}
-          path: scheme-validation
-          persist-credentials: false
-      - name: Rebuild the pinned scheme archive
+          python -m unittest discover -s native/tests/package -p 'test_*.py'
+          if($LASTEXITCODE){throw 'Package boundary tests failed'}
+      - name: Build the base and official scheme archives from this commit
         run: |
           $spec=Get-Content -LiteralPath installer/bundle-inputs.json -Raw|ConvertFrom-Json
-          $scheme=Join-Path $env:GITHUB_WORKSPACE 'scheme-validation'
-          python (Join-Path $scheme 'scripts/build_scheme_packages.py') --profile stellae --version ($spec.schemes.version ?? $spec.bundleVersion) --output-dir (Join-Path $env:RUNNER_TEMP 'scheme-input') --source-ref $spec.schemes.commit
+          python schemes/scripts/rebuild_profiles.py --check
+          if($LASTEXITCODE){throw 'Maintained scheme derivation differs'}
+          python schemes/scripts/build_scheme_packages.py --profile all --version $spec.schemes.version --output-dir (Join-Path $env:RUNNER_TEMP 'scheme-input') --source-ref $env:GITHUB_SHA
           if ($LASTEXITCODE) { throw 'Scheme archive build failed.' }
+      - name: Verify the base scheme with the freshly built N01 engine
+        run: |
+          $generated=Join-Path $env:RUNNER_TEMP 'source-derived-profiles'
+          python schemes/scripts/rebuild_profiles.py --output $generated
+          if($LASTEXITCODE){throw 'Profile generation failed'}
+          $profile=Join-Path $generated 'config/pc'
+          $engine=Join-Path $env:RUNNER_TEMP 'runtime-engines/x64/dist/lib/rime.dll'
+          $reports=Join-Path $env:RUNNER_TEMP 'source-profile-tests'
+          $hostExe=(Get-Process -Id $PID).Path
+          & $hostExe -NoProfile -ExecutionPolicy Bypass -File schemes/tests/rebuilt-profile/Test-RebuiltProfile.ps1 -Kind pc -GeneratedProfile $profile -EnginePath $engine -OutputPath $reports
+          if($LASTEXITCODE){throw 'Fresh N01 scheme checks failed'}
+          $proof=Get-Content -LiteralPath (Join-Path $reports 'proof.json') -Raw|ConvertFrom-Json
+          if(-not $proof.Passed -or @($proof.Checks).Count -ne 56){throw 'Fresh N01 scheme evidence is incomplete'}
       - name: Test shared file preservation with synthetic sources
         run: ./native/tests/installer/Test-BundleData.ps1 -OutputDirectory (Join-Path $env:RUNNER_TEMP 'shared-policy')
       - name: Provision the pinned NSIS compiler
@@ -204,8 +246,9 @@ jobs:
         run: |
           $overlays=Join-Path $env:RUNNER_TEMP 'frontend-overlays'
           $spec=Get-Content -LiteralPath installer/bundle-inputs.json -Raw|ConvertFrom-Json
-          $schemeArchive=Join-Path $env:RUNNER_TEMP "scheme-input/rymcp-$($spec.schemes.version ?? $spec.bundleVersion)-stellae-schemes.zip"
+          $schemeArchive=Join-Path $env:RUNNER_TEMP "scheme-input/stellae-$($spec.schemes.version)-schemes.zip"
           ./scripts/package/Build-Bundle.ps1 -OutputDirectory (Join-Path $env:RUNNER_TEMP 'bundle') -NativeProductDirectory $overlays -NativeSourceDirectory $overlays -NativeEngineDirectory (Join-Path $env:RUNNER_TEMP 'runtime-engines') -SchemeArchive $schemeArchive
+          Copy-Item -Path (Join-Path $env:RUNNER_TEMP 'scheme-input/*.zip') -Destination (Join-Path $env:RUNNER_TEMP 'bundle/release')
       - uses: actions/download-artifact@v4
         with:
           name: appearance-test-server
@@ -239,7 +282,7 @@ jobs:
               (Get-FileHash -LiteralPath $sourceArchive).Hash -ine $testProof.nativeSourceArchiveSha256) {
             throw 'The isolated tracer must match the source used by the verified installer.'
           }
-          Copy-Item -LiteralPath (Join-Path $release "stellae-rymcp-$($spec.bundleVersion)-installer.exe") -Destination (Join-Path $out 'stellae-installer.exe')
+          Copy-Item -LiteralPath (Join-Path $release "stellae-$($spec.bundleVersion)-installer.exe") -Destination (Join-Path $out 'stellae-installer.exe')
           Copy-Item -LiteralPath (Join-Path $release 'payload-verification.json') -Destination $out
           Copy-Item -LiteralPath $testServer,(Join-Path $testRoot 'appearance-test-server-proof.json') -Destination $out
           $files=@(Get-ChildItem -LiteralPath $out -Recurse -File | Sort-Object FullName | ForEach-Object {
@@ -255,20 +298,20 @@ jobs:
           compression-level: 0
 
       - name: Test actual installation, shared-only input, upgrades and uninstall
-        run: ./native/tests/installer/Test-BundleInstaller.ps1 -PackageDirectory (Join-Path $env:RUNNER_TEMP 'bundle') -SchemeSource (Join-Path $env:GITHUB_WORKSPACE 'scheme-validation') -OutputDirectory (Join-Path $env:RUNNER_TEMP 'installer-validation')
+        run: ./native/tests/installer/Test-BundleInstaller.ps1 -PackageDirectory (Join-Path $env:RUNNER_TEMP 'bundle') -SchemeSource (Join-Path $env:GITHUB_WORKSPACE 'frontend/schemes') -OutputDirectory (Join-Path $env:RUNNER_TEMP 'installer-validation')
       - name: Record finite release validation
         run: |
-          $checks=@((Join-Path $env:RUNNER_TEMP 'shared-policy/result.json'),(Join-Path $env:RUNNER_TEMP 'installer-validation/result.json'),(Join-Path $env:RUNNER_TEMP 'installer-validation/installed-ready/result.json'),(Join-Path $env:RUNNER_TEMP 'profile-policy/win11-equivalent-policy-result.json'),(Join-Path $env:RUNNER_TEMP 'bundle/stage/output/server-overlay-verification.json'))
+          $checks=@((Join-Path $env:RUNNER_TEMP 'shared-policy/result.json'),(Join-Path $env:RUNNER_TEMP 'installer-validation/result.json'),(Join-Path $env:RUNNER_TEMP 'installer-validation/installed-ready/result.json'),(Join-Path $env:RUNNER_TEMP 'profile-policy/win11-equivalent-policy-result.json'),(Join-Path $env:RUNNER_TEMP 'bundle/stage/output/server-overlay-verification.json'),(Join-Path $env:RUNNER_TEMP 'source-profile-tests/proof.json'))
           foreach($path in $checks){$report=Get-Content -LiteralPath $path -Raw|ConvertFrom-Json;if(-not $report.passed){throw 'A required validation failed'}}
           $release=Join-Path $env:RUNNER_TEMP 'bundle/release'
           $overlay=Get-Content -LiteralPath (Join-Path $release 'frontend-overlay-verification.json') -Raw|ConvertFrom-Json
           if ($overlay.runtimeEnginesPreserved -ne $false -or $overlay.rebuiltRuntimeEngines.Count -ne 2) { throw 'The installer must contain both rebuilt engines.' }
           $spec=Get-Content -LiteralPath installer/bundle-inputs.json -Raw|ConvertFrom-Json
-          [ordered]@{passed=$true;bundleVersion=$spec.bundleVersion;frontendVersion=$spec.frontendVersion;sourceRef=$env:GITHUB_SHA;rebuiltImages=$overlay.rebuiltImages.Count;rebuiltRuntimeEngines=$overlay.rebuiltRuntimeEngines.Count;unchangedNativeImages=$overlay.unchangedNativeImages;sharedOnlyN01AndR5InputTested=$true;bundlePresetAndUserPriorityTested=$true;actualInstalledProfileReadyWithoutTestRedeploy=$true;bare61052UpgradeTested=$true;installedUpgradeAndUninstallTested=$true;physicalKeyboardTested=$false;actualWindows11Tested=$false}|ConvertTo-Json|Set-Content -LiteralPath (Join-Path $release 'validation.json') -Encoding UTF8
+          [ordered]@{passed=$true;bundleVersion=$spec.bundleVersion;frontendVersion=$spec.frontendVersion;sourceRef=$env:GITHUB_SHA;rebuiltImages=$overlay.rebuiltImages.Count;rebuiltRuntimeEngines=$overlay.rebuiltRuntimeEngines.Count;unchangedNativeImages=$overlay.unchangedNativeImages;sourceDerivedN01Checks=56;sharedOnlyN01AndR5InputTested=$true;bundlePresetAndUserPriorityTested=$true;actualInstalledProfileReadyWithoutTestRedeploy=$true;bare61052UpgradeTested=$true;installedUpgradeAndUninstallTested=$true;physicalKeyboardTested=$false;actualWindows11Tested=$false}|ConvertTo-Json|Set-Content -LiteralPath (Join-Path $release 'validation.json') -Encoding UTF8
           Get-ChildItem -LiteralPath $release -File|Where-Object {$_.Name -ne 'SHA256SUMS.txt'}|Sort-Object Name|ForEach-Object{(Get-FileHash -LiteralPath $_.FullName).Hash.ToLowerInvariant()+'  '+$_.Name}|Set-Content -LiteralPath (Join-Path $release 'SHA256SUMS.txt') -Encoding ASCII
       - uses: actions/upload-artifact@v4
         with:
-          name: stellae-rymcp-${{ steps.inputs.outputs.bundle_version }}-release
+          name: stellae-${{ steps.inputs.outputs.bundle_version }}-release
           path: ${{ runner.temp }}/bundle/release
           if-no-files-found: error
           retention-days: 30
@@ -276,7 +319,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: stellae-rymcp-${{ steps.inputs.outputs.bundle_version }}-validation
+          name: stellae-${{ steps.inputs.outputs.bundle_version }}-validation
           path: |
             ${{ runner.temp }}/bundle/*.json
             ${{ runner.temp }}/bundle/*.log
@@ -287,6 +330,8 @@ jobs:
             ${{ runner.temp }}/installer-validation/shared-x64/**/result*.json
             ${{ runner.temp }}/installer-validation/shared-win32/**/result*.json
             ${{ runner.temp }}/profile-policy/*.json
+            ${{ runner.temp }}/source-profile-tests/proof.json
+            ${{ runner.temp }}/source-profile-tests/rebuilt-binaries.json
           if-no-files-found: warn
           retention-days: 14
 

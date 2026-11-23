@@ -1,0 +1,53 @@
+# Project-authored entries limited to the confirmed Chinese symbol names.
+# Standard dictionary pinyin is normalized by the existing Chinese speller.
+# Punctuation name words already occur in the official essay vocabulary.
+---
+name: project_symbols
+version: '2026-10-15.4'
+sort: by_weight
+use_preset_vocabulary: false
+...
+、	dun hao	1000
+《》	shu ming hao	10000
+《	shu ming hao	1000
+》	shu ming hao	1000
+《	zuo shu ming hao	1000
+》	you shu ming hao	1000
+左書名號	zuo shu ming hao	500
+右書名號	you shu ming hao	500
+。	ju hao	10000
+！	gan tan hao	10000
+‘	dan yin hao	10000
+’	dan yin hao	10000
+‘	zuo dan yin hao	10000
+’	you dan yin hao	10000
+“	shuang yin hao	10000
+”	shuang yin hao	10000
+“	zuo shuang yin hao	10000
+”	you shuang yin hao	10000
+，	dou hao	10000
+？	wen hao	10000
+——	po zhe hao	10000
+（）	kuo hao	10000
+（	kuo hao	9000
+）	kuo hao	9000
+（	zuo kuo hao	10000
+）	you kuo hao	10000
+（）	xiao kuo hao	10000
+（	xiao kuo hao	9000
+）	xiao kuo hao	9000
+（	zuo xiao kuo hao	10000
+）	you xiao kuo hao	10000
+【】	fang kuo hao	10000
+【	fang kuo hao	9000
+】	fang kuo hao	9000
+【	zuo fang kuo hao	10000
+】	you fang kuo hao	10000
+：	mao hao	10000
+；	fen hao	10000
+……	sheng lve hao	10000
+·	jian ge hao	10000
+℃	she shi du	10000
+℉	hua shi du	10000
+°	du shu	10000
+°	du	10000

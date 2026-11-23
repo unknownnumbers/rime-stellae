@@ -1,0 +1,40 @@
+{
+  "name": "Project TC to SC with MDX word senses",
+  "segmentation": {
+    "type": "mmseg",
+    "dict": {
+      "type": "group",
+      "dicts": [
+        {
+          "type": "text",
+          "file": "mdx_words.txt"
+        },
+        {
+          "type": "ocd2",
+          "file": "TSPhrases.ocd2"
+        }
+      ]
+    }
+  },
+  "conversion_chain": [
+    {
+      "dict": {
+        "type": "group",
+        "dicts": [
+          {
+            "type": "text",
+            "file": "mdx_words.txt"
+          },
+          {
+            "type": "ocd2",
+            "file": "TSPhrases.ocd2"
+          },
+          {
+            "type": "ocd2",
+            "file": "TSCharacters.ocd2"
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,352 @@
+{
+  "schema": "rymcp-native-sources/1",
+  "date": "2026-11-24",
+  "status": "Historical native inputs retained with original hashes; current scheme profiles use explicit companion or official engine capabilities.",
+  "productComposition": {
+    "tsf": "0.17.4.61047; x64 and x86",
+    "x64Server": "0.17.4.61042",
+    "legacyIme": "0.17.4.61020; x64 and x86",
+    "runtimeEngine": "N01 with step-only GC; x64",
+    "frontendBuildSdk": "R5; x64 and x86; rebuilt in the same workflow",
+    "installerProvided": false
+  },
+  "sources": {
+    "weasel": {
+      "url": "https://github.com/rime/weasel.git",
+      "commit": "9cc96e20dc71b80876b12f689bb5863c76c2a7ed",
+      "submodules": true,
+      "license": "GPL-3.0"
+    },
+    "librime": {
+      "url": "https://github.com/rime/librime.git",
+      "commit": "1c23358157934bd6e6d6981f0c0164f05393b497",
+      "submodules": false,
+      "license": "BSD-3-Clause"
+    },
+    "librimeLua": {
+      "url": "https://github.com/hchunhui/librime-lua.git",
+      "commit": "e3912a4b3ac2c202d89face3fef3d41eb1d7fcd6",
+      "submodules": false,
+      "license": "BSD-3-Clause"
+    },
+    "luaThirdparty": {
+      "url": "https://github.com/hchunhui/librime-lua.git",
+      "commit": "115e000c878d1170337f7ca934d7a84f68986e39",
+      "submodules": false,
+      "license": "Preserve bundled Lua and other third-party notices"
+    },
+    "octagram": {
+      "url": "https://github.com/lotem/librime-octagram.git",
+      "commit": "dfcc15115788c828d9dd7b4bff68067d3ce2ffb8",
+      "submodules": false,
+      "license": "See fixed upstream LICENSE"
+    },
+    "predict": {
+      "url": "https://github.com/rime/librime-predict.git",
+      "commit": "920bd41ebf6f9bf6855d14fbe80212e54e749791",
+      "submodules": false,
+      "license": "See fixed upstream LICENSE"
+    }
+  },
+  "patches": [
+    {
+      "id": "weasel61047",
+      "path": "native/weasel/weasel-61047.patch",
+      "sha256": "b493db56ba3af701676ecf00bd7e791ac0562d52077e22ba48273426f6099b0a",
+      "source": "weasel"
+    },
+    {
+      "id": "weaselServer61042",
+      "path": "native/weasel/weasel-server-61042.patch",
+      "sha256": "c86b7d10f1ee1ba87dfd716d3c4f4b20e18428fc3728c9757434a9ea33ea6523",
+      "source": "weasel"
+    },
+    {
+      "id": "weasel61020",
+      "path": "native/weasel/weasel-61020.patch",
+      "sha256": "3c545186342577eb512a5448eb842fd30183714bfa1703649ae2caf0eacbf432",
+      "source": "weasel"
+    },
+    {
+      "id": "coreN01",
+      "path": "native/engine/librime-n01.patch",
+      "sha256": "3eaf5dcd371c497cfac298d11acf29a5e1327792057bca5aa4ffb53894f714b1",
+      "source": "librime"
+    },
+    {
+      "id": "luaN01",
+      "path": "native/engine/librime-lua-n01.patch",
+      "sha256": "e218a7bedc28231132dbe7029f86c44cd2a0d639c8747c5a138f7503f6bc32d6",
+      "source": "librimeLua"
+    },
+    {
+      "id": "coreR5",
+      "path": "native/engine/librime-r5-sdk.patch",
+      "sha256": "86656d2577009b0cef9e7d3335cd1e8ca8655821f97bcf060a56411c1b2eb293",
+      "source": "librime"
+    },
+    {
+      "id": "luaR5",
+      "path": "native/engine/librime-lua-r5-sdk.patch",
+      "sha256": "69a76f624a2b1359090ee95360a80f7a79a90a5e2a8888537721a96a5faebaa6",
+      "source": "librimeLua"
+    }
+  ],
+  "variants": {
+    "weasel-61047": {
+      "rootSource": "weasel",
+      "components": [
+        {
+          "path": ".",
+          "source": "weasel",
+          "patch": "weasel61047"
+        }
+      ],
+      "sourceVersion": "0.17.4.61047",
+      "buildNumber": "61047",
+      "msbuildTarget": "WeaselTSF",
+      "platforms": [
+        "x64",
+        "Win32"
+      ],
+      "products": [
+        "weasel.dll",
+        "weaselx64.dll"
+      ]
+    },
+    "weasel-server-61042": {
+      "rootSource": "weasel",
+      "components": [
+        {
+          "path": ".",
+          "source": "weasel",
+          "patch": "weaselServer61042"
+        }
+      ],
+      "sourceVersion": "0.17.4.61042",
+      "buildNumber": "61042",
+      "msbuildTarget": "WeaselServer",
+      "platforms": [
+        "x64"
+      ],
+      "products": [
+        "WeaselServer.exe"
+      ]
+    },
+    "weasel-61020": {
+      "rootSource": "weasel",
+      "components": [
+        {
+          "path": ".",
+          "source": "weasel",
+          "patch": "weasel61020"
+        }
+      ],
+      "sourceVersion": "0.17.4.61020",
+      "buildNumber": "61020",
+      "msbuildTarget": "WeaselIME",
+      "platforms": [
+        "x64",
+        "Win32"
+      ],
+      "products": [
+        "weasel.ime",
+        "weaselx64.ime"
+      ]
+    },
+    "engine-r5": {
+      "rootSource": "librime",
+      "components": [
+        {
+          "path": ".",
+          "source": "librime",
+          "patch": "coreR5"
+        },
+        {
+          "path": "plugins/lua",
+          "source": "librimeLua",
+          "patch": "luaR5"
+        }
+      ],
+      "architectures": [
+        "x64",
+        "x86"
+      ],
+      "role": "SDK and controlled build fixture"
+    },
+    "engine-n01": {
+      "rootSource": "librime",
+      "components": [
+        {
+          "path": ".",
+          "source": "librime",
+          "patch": "coreN01"
+        },
+        {
+          "path": "plugins/lua",
+          "source": "librimeLua",
+          "patch": "luaN01"
+        }
+      ],
+      "architectures": [
+        "x64"
+      ],
+      "role": "Current runtime engine source"
+    }
+  },
+  "enginePlugins": [
+    {
+      "path": "plugins/lua",
+      "source": "librimeLua"
+    },
+    {
+      "path": "plugins/octagram",
+      "source": "octagram"
+    },
+    {
+      "path": "plugins/predict",
+      "source": "predict"
+    },
+    {
+      "path": "plugins/lua/thirdparty",
+      "source": "luaThirdparty"
+    }
+  ],
+  "assets": [
+    {
+      "id": "boost",
+      "url": "https://archives.boost.io/release/1.84.0/source/boost_1_84_0.7z",
+      "sha256": "81a4d10075731966477276c47324ecd9cac02da49899d36c48eba66e40014f25",
+      "hashEvidence": "https://archives.boost.io/release/1.84.0/source/boost_1_84_0.7z.json",
+      "role": "Boost 1.84.0 source; compiled locally on hosted runner"
+    },
+    {
+      "id": "deps-x64",
+      "url": "https://github.com/rime/librime/releases/download/1.13.1/rime-deps-1c23358-Windows-msvc-x64.7z",
+      "bytes": 3574853,
+      "sha256": "3ede059e6c1f4cdd5843ced3205f76666b706e5f55ccf8e56e2d04791a376ff6",
+      "hashEvidence": "SHA256 of bytes downloaded from the official URL on 2026-10-26; GitHub release API digest was null",
+      "role": "Official prebuilt third-party dependencies, not a fully-from-source dependency toolchain"
+    },
+    {
+      "id": "deps-x86",
+      "url": "https://github.com/rime/librime/releases/download/1.13.1/rime-deps-1c23358-Windows-msvc-x86.7z",
+      "bytes": 2950758,
+      "sha256": "17688b5f75216b2fb11fb352bd9f97007650e1bc36b343def98fa9f0677bc0c9",
+      "hashEvidence": "SHA256 of bytes downloaded from the official URL on 2026-10-26; GitHub release API digest was null",
+      "role": "Official prebuilt third-party dependencies"
+    },
+    {
+      "id": "shared-data",
+      "url": "https://github.com/rime/weasel/releases/download/0.17.4/weasel-0.17.4.0-installer.exe",
+      "bytes": 12431118,
+      "sha256": "cf509534a8f5f8af9c98ed7cbb8f135439f145a8cbe7e50ede42bb5b5ab45c29",
+      "hashEvidence": "https://api.github.com/repos/rime/weasel/releases/assets/260794274",
+      "role": "Extract data only with 7-Zip; never execute the installer"
+    }
+  ],
+  "tests": [
+    {
+      "path": "native/tests/preedit_spacing_tests.cc",
+      "sha256": "b00a157f0ec1789127cbd295cfad79a1a01f27d20e7f815586a685d2bb2f6f97",
+      "scope": "34 production preedit helper checks"
+    },
+    {
+      "path": "native/tests/shift/ShiftKeySnapshotTests.cpp",
+      "sha256": "bedb6d25c5e7fd054e3730f42e13e7902d414fd3bc96aee220b974ea9d4eef41",
+      "scope": "Controlled capture/codec and extracted handler fixture; no real host integration"
+    },
+    {
+      "path": "native/tests/shift/Run-ShiftKeySnapshotTests.ps1",
+      "sha256": "4d21ac6756cb60cebe2900dcde3f67115a66fad475f189325eb3c251d180e759",
+      "scope": "Hosted-CI-only fixture runner"
+    },
+    {
+      "path": "native/tests/key-pairing/ControlledReadGrant.inc",
+      "sha256": "0d95e50844a8f251677349dee7e70f97d5e043b49e8c16f532cd595e0789ff6c",
+      "scope": "V13/V18/V19: 95 production Test/Actual callback checks per architecture; controlled COM context and same-run 61042 Server with R5 engine IPC"
+    },
+    {
+      "path": "native/tests/key-pairing/Deploy-PublicFixture.py",
+      "sha256": "3e424aeb2b021dddd1125f98ae9a9b8a1382d2299c534e98b6f982b91a4b4323",
+      "scope": "V13/V18/V19: 95 production Test/Actual callback checks per architecture; controlled COM context and same-run 61042 Server with R5 engine IPC"
+    },
+    {
+      "path": "native/tests/key-pairing/fixture/b01_public_fixture.dict.yaml",
+      "sha256": "001b3c53cd1ccfa223e518b60ce6a4a0a0e5cc2793c47a7560f69180cad0ed2f",
+      "scope": "V13/V18/V19: 95 production Test/Actual callback checks per architecture; controlled COM context and same-run 61042 Server with R5 engine IPC"
+    },
+    {
+      "path": "native/tests/key-pairing/fixture/default.yaml",
+      "sha256": "afc5188c5129533c6dbf9309243b041a332431e598e116787534dc62f4ad4ebb",
+      "scope": "V13/V18/V19: 95 production Test/Actual callback checks per architecture; controlled COM context and same-run 61042 Server with R5 engine IPC"
+    },
+    {
+      "path": "native/tests/key-pairing/fixture/gui_test.schema.yaml",
+      "sha256": "fa0ca63077994110547b422967b7ae50906c93632db494ae02e97acf6e16cfe4",
+      "scope": "V13/V18/V19: 95 production Test/Actual callback checks per architecture; controlled COM context and same-run 61042 Server with R5 engine IPC"
+    },
+    {
+      "path": "native/tests/key-pairing/fixture/weasel.yaml",
+      "sha256": "9f2910f4bc2ca5072bf0717d202fa6528a0c50c363066cdaa95e5417d43949e1",
+      "scope": "V13/V18/V19: 95 production Test/Actual callback checks per architecture; controlled COM context and same-run 61042 Server with R5 engine IPC"
+    },
+    {
+      "path": "native/tests/key-pairing/Invoke-KeyPairingTests.ps1",
+      "sha256": "95c18797436ce1497b6b1c09ff76f7b891fc521450f313f6b19ee879ebce54a5",
+      "scope": "V13/V18/V19: 95 production Test/Actual callback checks per architecture; controlled COM context and same-run 61042 Server with R5 engine IPC"
+    },
+    {
+      "path": "native/tests/key-pairing/ProductHostFixture.h",
+      "sha256": "b44f001a7c1442e429003434b839200e3bf7dd6a4695f22be6ca6f6527c0a284",
+      "scope": "V13/V18/V19: 95 production Test/Actual callback checks per architecture; controlled COM context and same-run 61042 Server with R5 engine IPC"
+    },
+    {
+      "path": "native/tests/key-pairing/ResponseOwnerProductTests.cpp",
+      "sha256": "530f65a8ab0c1a1391c8bcdbe5cb5a9e24088cc1e365ad166a1086a5177e4a49",
+      "scope": "V13/V18/V19: 95 production Test/Actual callback checks per architecture; controlled COM context and same-run 61042 Server with R5 engine IPC"
+    },
+    {
+      "path": "native/tests/key-pairing/Run-KeyPairingTests.ps1",
+      "sha256": "8626970fa939e51d94e5ede2d2611c9a900074043f3633b380edd3f41489b15f",
+      "scope": "V13/V18/V19: 95 production Test/Actual callback checks per architecture; controlled COM context and same-run 61042 Server with R5 engine IPC"
+    },
+    {
+      "path": "native/tests/key-pairing/SelectionControlledModes.inc",
+      "sha256": "ad079211a014049d6abf71066920016dc04ba41d3a8f0fd9fe4c9df8e874d144",
+      "scope": "V13/V18/V19: 95 production Test/Actual callback checks per architecture; controlled COM context and same-run 61042 Server with R5 engine IPC"
+    },
+    {
+      "path": "tests/rebuilt-profile/Test-RebuiltProfile.ps1",
+      "sha256": "dbf6cf1ef62fdfcff3d7efe17e226de76dd21f2013ec02ad67dd6b8bcfe53ca4",
+      "scope": "Fresh generated-profile deployment and fixed native behavior/learning cases; no desktop operation."
+    },
+    {
+      "path": "tests/rebuilt-profile/RimeProbe.cs",
+      "sha256": "286443589e71ef6e90934077f6fb327c145fb17d7f88e42c7c531ac60a6617eb",
+      "scope": "Fresh generated-profile deployment and fixed native behavior/learning cases; no desktop operation."
+    }
+  ],
+  "toolchain": {
+    "runner": "windows-2022",
+    "visualStudio": "VS2022, v143, ATL/MFC x86/x64",
+    "boost": "1.84.0",
+    "engineGenerator": "Ninja",
+    "actions": "Major action tags and hosted image revisions remain mutable; record actual versions per run",
+    "bitReproducible": false
+  },
+  "limits": [
+    "This manifest identifies source inputs; it does not assert a successful run of the new public workflow.",
+    "Engine third-party dependency archives are official prebuilt inputs with pinned hashes.",
+    "Source assembly, compilation, helper tests and end-to-end input validation are different checks.",
+    "No installer, personal configuration, learning database or historic private build artifact is included."
+  ],
+  "schemeSnapshot": "2026.11.24",
+  "role": "Retained native build recipes; current frontend is maintained in the companion repository.",
+  "currentFrontend": {
+    "repository": "https://github.com/unknownnumbers/rime-stellae",
+    "schemeCapabilities": "config/profiles.json",
+    "sourceManifest": "native/source-manifest.json in the companion repository"
+  },
+  "nativeInputSnapshotDate": "2026-10-29"
+}

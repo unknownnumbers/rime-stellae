@@ -1,6 +1,7 @@
 # SPDX-License-Identifier: GPL-3.0-only
 """Generate the source-tree license index from explicit upstream notice records."""
 import argparse
+import copy
 import hashlib
 import json
 from pathlib import Path
@@ -16,6 +17,28 @@ def main():
     originals = json.loads((ROOT / 'licenses/third-party-source-manifest.json').read_text('utf-8'))
     notices = {item['path']: item for item in originals['files']}
     sources = mapping['sources']
+    scheme_index = ROOT / 'schemes/licenses/file-licenses.json'
+    scheme_records = {}
+    if scheme_index.is_file():
+        nested = json.loads(scheme_index.read_text('utf-8'))
+        for key, original in nested['sources'].items():
+            source = copy.deepcopy(original)
+            for field in ('notices', 'evidence'):
+                if field in source:
+                    source[field] = ['schemes/' + name for name in source[field]]
+            sources['schemes:' + key] = source
+        for original in nested['files']:
+            record = copy.deepcopy(original)
+            record['path'] = 'schemes/' + record['path']
+            record['source_ids'] = ['schemes:' + key for key in record.get('source_ids', [])]
+            record['references'] = ['schemes/' + name for name in record.get('references', [])]
+            if 'notice_record' in record:
+                record['notice_record'] = 'schemes/' + record['notice_record']
+            scheme_records[record['path']] = record
+        nested_originals = json.loads((ROOT / 'schemes/licenses/third-party-source-manifest.json').read_text('utf-8'))
+        for original in nested_originals['files']:
+            notice = {**original, 'path': 'schemes/' + original['path']}
+            notices[notice['path']] = notice
     files = []
     for path in sorted(ROOT.rglob('*')):
         if not path.is_file():
@@ -25,7 +48,11 @@ def main():
                for part in relative.parts):
             continue
         name = relative.as_posix()
-        if name in notices:
+        if name.startswith('schemes/'):
+            if name not in scheme_records:
+                raise SystemExit('Scheme license index is stale: ' + name)
+            record = scheme_records[name]
+        elif name in notices:
             record = {'path': name, 'source_ids': [], 'references': [],
                       'notice_record': name}
         else:

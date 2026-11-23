@@ -8,7 +8,7 @@ import re
 from zipfile import ZipFile
 
 from apply_frontend_overlays import ENGINES, MACHINES, PRODUCTS, image_machine
-from prepare_bundle import DEFAULT_FONT_NAME, FONT_INSTALLER_HELPERS
+from prepare_bundle import DEFAULT_FONT_NAME, FONT_INSTALLER_HELPERS, check_scheme_archive
 
 
 def digest(path):
@@ -85,6 +85,16 @@ licenses = {row['installed_path']: row for row in load(a.stage / 'package-licens
 full_frontend = 'nativeFrontend' in inputs
 overlay = load(a.stage / 'server-overlay-verification.json')
 source_ref = manifest['sourceRef']
+if inputs.get('schemes', {}).get('sourceDirectory') == 'schemes':
+    archive_record = provenance['schemeArchive']
+    archive = contained(a.stage, 'scheme-notices/' + archive_record['name'])
+    if (archive_record['source_ref'] != source_ref or archive_record['source_prefix'] != 'schemes'
+            or archive_record['sha256'] != digest(archive)
+            or profile['archive_provenance']['source_ref'] != source_ref
+            or profile['archive_provenance']['source_prefix'] != 'schemes'):
+        raise SystemExit('The installed scheme and frontend do not share the same source commit')
+    with ZipFile(archive) as source:
+        check_scheme_archive(source, inputs, source_ref)
 if font_collection:
     license_row = licenses[font_collection['path']]
     if (license_row['sha256'] != font_collection['sha256']

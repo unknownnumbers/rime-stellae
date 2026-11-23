@@ -1,0 +1,242 @@
+{
+  "format": "rymcp-jp-v-compatibility-v1",
+  "description": "RymCp explicitly selected Japanese character set. Every listed character has independent Unihan Japanese-source evidence. Readings use the separately attributed official sources.",
+  "sources": {
+    "Unihan": "https://www.unicode.org/Public/17.0.0/ucd/Unihan.zip",
+    "Bunka": "https://www.bunka.go.jp/kokugo_nihongo/sisaku/joho/joho/kijun/naikaku/kanji/joyokanjisakuin/index.html",
+    "OpenCC": "https://github.com/BYVoid/OpenCC"
+  },
+  "characters": [
+    {
+      "character": "羽",
+      "codepoint": "U+FA1E",
+      "kIRG_JSource": "JMJ-030216",
+      "reference_character": "羽",
+      "reading_basis": "Unicode-canonical-equivalent:羽",
+      "variant": "異"
+    },
+    {
+      "character": "銳",
+      "codepoint": "U+92B3",
+      "kIRG_JSource": "JMJ-026853",
+      "reference_character": "鋭",
+      "reading_basis": "Unihan17-kJapanese",
+      "variant": "異"
+    },
+    {
+      "character": "益",
+      "codepoint": "U+FA17",
+      "kIRG_JSource": "JMJ-030209",
+      "reference_character": "益",
+      "reading_basis": "Unicode-canonical-equivalent:益",
+      "variant": "異"
+    },
+    {
+      "character": "悅",
+      "codepoint": "U+6085",
+      "kIRG_JSource": "JMJ-011574",
+      "reference_character": "悦",
+      "reading_basis": "Unihan17-kJapanese",
+      "variant": "異"
+    },
+    {
+      "character": "閱",
+      "codepoint": "U+95B1",
+      "kIRG_JSource": "JMJ-027465",
+      "reference_character": "閲",
+      "reading_basis": "Unihan17-kJapanese",
+      "variant": "異"
+    },
+    {
+      "character": "館",
+      "codepoint": "U+FA2C",
+      "kIRG_JSource": "JMJ-030242",
+      "reference_character": "館",
+      "reading_basis": "Unicode-canonical-equivalent:館",
+      "variant": "異"
+    },
+    {
+      "character": "旣",
+      "codepoint": "U+65E3",
+      "kIRG_JSource": "JMJ-013148",
+      "reference_character": "既",
+      "reading_basis": "Bunka-joyo-onkun:既",
+      "variant": "舊",
+      "variant_evidence": "https://www.kanjipedia.jp/kanji/0001219300"
+    },
+    {
+      "character": "敎",
+      "codepoint": "U+654E",
+      "kIRG_JSource": "JMJ-012975",
+      "reference_character": "教",
+      "reading_basis": "Bunka-joyo-onkun:教",
+      "variant": "舊",
+      "variant_evidence": "https://www.kanjipedia.jp/kanji/0001522000"
+    },
+    {
+      "character": "戶",
+      "codepoint": "U+6236",
+      "kIRG_JSource": "JMJ-012107",
+      "reference_character": "戸",
+      "reading_basis": "Unihan17-kJapanese",
+      "variant": "異"
+    },
+    {
+      "character": "吳",
+      "codepoint": "U+5433",
+      "kIRG_JSource": "JMJ-008108",
+      "reference_character": "呉",
+      "reading_basis": "Unihan17-kJapanese",
+      "variant": "異"
+    },
+    {
+      "character": "娛",
+      "codepoint": "U+5A1B",
+      "kIRG_JSource": "JMJ-009717",
+      "reference_character": "娯",
+      "reading_basis": "Bunka-joyo-onkun:娯",
+      "variant": "異",
+      "variant_evidence": "https://www.unicode.org/Public/17.0.0/ucd/Unihan.zip"
+    },
+    {
+      "character": "吿",
+      "codepoint": "U+543F",
+      "kIRG_JSource": "JMJ-008122",
+      "reference_character": "告",
+      "reading_basis": "Bunka-joyo-onkun:告",
+      "variant": "異",
+      "variant_evidence": "https://www.unicode.org/Public/17.0.0/ucd/Unihan.zip"
+    },
+    {
+      "character": "歲",
+      "codepoint": "U+6B72",
+      "kIRG_JSource": "JMJ-014841",
+      "reference_character": "歳",
+      "reading_basis": "Unihan17-kJapanese",
+      "variant": "異"
+    },
+    {
+      "character": "產",
+      "codepoint": "U+7522",
+      "kIRG_JSource": "JMJ-017621",
+      "reference_character": "産",
+      "reading_basis": "Unihan17-kJapanese",
+      "variant": "異"
+    },
+    {
+      "character": "飼",
+      "codepoint": "U+FA2B",
+      "kIRG_JSource": "JMJ-030241",
+      "reference_character": "飼",
+      "reading_basis": "Unicode-canonical-equivalent:飼",
+      "variant": "異"
+    },
+    {
+      "character": "尙",
+      "codepoint": "U+5C19",
+      "kIRG_JSource": "JMJ-010294",
+      "reference_character": "尚",
+      "reading_basis": "Bunka-joyo-onkun:尚",
+      "variant": "舊",
+      "variant_evidence": "https://www.kanjipedia.jp/kanji/0003358000"
+    },
+    {
+      "character": "靑",
+      "codepoint": "U+9751",
+      "kIRG_JSource": "JMJ-027896",
+      "reference_character": "青",
+      "reading_basis": "Bunka-joyo-onkun:青",
+      "variant": "舊",
+      "variant_evidence": "https://www.kanjipedia.jp/kanji/0003865600"
+    },
+    {
+      "character": "淸",
+      "codepoint": "U+6DF8",
+      "kIRG_JSource": "JMJ-015507",
+      "reference_character": "清",
+      "reading_basis": "Bunka-joyo-onkun:清",
+      "variant": "舊",
+      "variant_evidence": "https://www.kanjipedia.jp/kanji/0003887800"
+    },
+    {
+      "character": "晴",
+      "codepoint": "U+FA12",
+      "kIRG_JSource": "JMJ-030199",
+      "reference_character": "晴",
+      "reading_basis": "Unicode-canonical-equivalent:晴",
+      "variant": "異"
+    },
+    {
+      "character": "精",
+      "codepoint": "U+FA1D",
+      "kIRG_JSource": "JMJ-030215",
+      "reference_character": "精",
+      "reading_basis": "Unicode-canonical-equivalent:精",
+      "variant": "異"
+    },
+    {
+      "character": "稅",
+      "codepoint": "U+7A05",
+      "kIRG_JSource": "JMJ-019067",
+      "reference_character": "税",
+      "reading_basis": "Unihan17-kJapanese",
+      "variant": "異"
+    },
+    {
+      "character": "說",
+      "codepoint": "U+8AAA",
+      "kIRG_JSource": "JMJ-024533",
+      "reference_character": "説",
+      "reading_basis": "Unihan17-kJapanese",
+      "variant": "異"
+    },
+    {
+      "character": "絕",
+      "codepoint": "U+7D55",
+      "kIRG_JSource": "JMJ-020072",
+      "reference_character": "絶",
+      "reading_basis": "Unihan17-kJapanese",
+      "variant": "異"
+    },
+    {
+      "character": "脫",
+      "codepoint": "U+812B",
+      "kIRG_JSource": "JMJ-021075",
+      "reference_character": "脱",
+      "reading_basis": "Unihan17-kJapanese",
+      "variant": "異"
+    },
+    {
+      "character": "內",
+      "codepoint": "U+5167",
+      "kIRG_JSource": "JMJ-007266",
+      "reference_character": "内",
+      "reading_basis": "Unihan17-kJapanese",
+      "variant": "異"
+    },
+    {
+      "character": "飯",
+      "codepoint": "U+FA2A",
+      "kIRG_JSource": "JMJ-030240",
+      "reference_character": "飯",
+      "reading_basis": "Unicode-canonical-equivalent:飯",
+      "variant": "異"
+    },
+    {
+      "character": "姬",
+      "codepoint": "U+59EC",
+      "kIRG_JSource": "JMJ-009670",
+      "reference_character": "姫",
+      "reading_basis": "Unihan17-kJapanese",
+      "variant": "異"
+    },
+    {
+      "character": "礼",
+      "codepoint": "U+FA18",
+      "kIRG_JSource": "JMJ-030210",
+      "reference_character": "礼",
+      "reading_basis": "Unicode-canonical-equivalent:礼",
+      "variant": "異"
+    }
+  ]
+}

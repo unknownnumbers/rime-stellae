@@ -1,0 +1,34 @@
+{
+  "source": "Official Weasel 0.17.4 bundled data/stroke.dict.yaml",
+  "version": "1.1",
+  "entries": 75064,
+  "supplementary_boundary_line": 75028,
+  "policy": "first CNS-main code; supplementary first occurrence only if absent from main",
+  "supplementary_only_entries": 61,
+  "maximum_code_length": 64,
+  "examples": {
+    "軶": {
+      "code": "hszhhhsppzhz",
+      "line": 23223,
+      "source": "CNS-main"
+    },
+    "一": {
+      "code": "h",
+      "line": 6605,
+      "source": "CNS-main"
+    },
+    "龘": {
+      "code": "nhnphpznnhzhzhhhnhnphpznnhzhzhhhnhnphpznnhzhzhhh",
+      "line": 27480,
+      "source": "CNS-main"
+    },
+    "𪚥": {
+      "code": "nhnphpznnhzhzhhhnhnphpznnhzhzhhhnhnphpznnhzhzhhhnhnphpznnhzhzhhh",
+      "line": 70176,
+      "source": "CNS-main"
+    },
+    "𱁬": {
+      "code": null
+    }
+  }
+}

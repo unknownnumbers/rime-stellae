@@ -1,0 +1,9 @@
+/out/
+/build/
+/work/
+.venv/
+.pytest_cache/
+__pycache__/
+*.py[cod]
+/dlc/archives/
+/dlc/modules/
