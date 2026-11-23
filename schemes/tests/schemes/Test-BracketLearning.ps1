@@ -131,12 +131,18 @@ try {
     Highlight '俠客'
     Stroke 0x5b
     Stroke 0xff08
-    Highlight '俠客'
-    Check 'reopen-retains-whole-word' $true
-    Stroke 0x20
+    $state = State
+    Check 'pending-backspace-preserves-selected-prefix' ($state.Raw -ceq 'huangxiakehaod' -and $state.Preedit.StartsWith('黃俠') -and -not $state.Commit) $state
+    [RimeProbe]::RimeClearComposition($s)
+    Check 'pending-backspace-cancel-no-commit' (-not [RimeProbe]::ReadCommit($s))
+
+    Query 'huangxiakehaoda'
+    Pick '黃'
+    Pick '俠客'
+    Check 'normal-whole-word-selection' $true
     Pick '好大'
     $state = State
-    Check 'reopen-normal-output' ($state.Commit -ceq '黃俠客好大') $state
+    Check 'normal-whole-word-output' ($state.Commit -ceq '黃俠客好大') $state
 
     Query 'huangxia'
     $list = [RimeProbe]::Snapshot($s, 12)
@@ -151,7 +157,7 @@ try {
     Check 'prefix-learns-once-per-commit' ((Count 'huang xia' '黃俠') -eq 2) (Count 'huang xia' '黃俠')
     Check 'tail-final-learns-once' ((Count 'huang xia hao da' '黃俠好大') -eq 1) (Count 'huang xia hao da' '黃俠好大')
     Check 'last-character-learns-once' ((Count 'ke' '客') -eq 1) (Count 'ke' '客')
-    Check 'reopen-learns-normal-phrase' ((Count 'huang xia ke hao da' '黃俠客好大') -eq 1) (Count 'huang xia ke hao da' '黃俠客好大')
+    Check 'normal-whole-word-learns-once' ((Count 'huang xia ke hao da' '黃俠客好大') -eq 1) (Count 'huang xia ke hao da' '黃俠客好大')
     $wrong = @((Learning) | Where-Object {
         $parts = $_ -split "\t"
         ($parts[0] -ceq '俠' -and $parts[1] -ceq 'xia ke') -or

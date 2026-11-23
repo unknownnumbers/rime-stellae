@@ -2864,8 +2864,8 @@
     },
     {
       "path": "tests/schemes/Test-BracketLearning.ps1",
-      "bytes": 9053,
-      "sha256": "c240a447adc952b50cbe0ef83201a1cf8897e7c6b3b6c9b5d235496bb554e5d9"
+      "bytes": 9390,
+      "sha256": "63f113103115b19f7517904d3b30f73dde95a6fd9365e80a8a624e1c07526da6"
     },
     {
       "path": "tests/schemes/Test-ChineseDlc.ps1",
@@ -2889,8 +2889,8 @@
     },
     {
       "path": "tests/schemes/Test-MixedLearning.ps1",
-      "bytes": 9236,
-      "sha256": "4ae985746785b6111bce568b45563f0c3ac1b931c25c570c2b312591c812ffed"
+      "bytes": 9733,
+      "sha256": "c167aab04abda2efbaa8673daa6b55e3d0df87031016e530a43b5308185a95fa"
     },
     {
       "path": "tests/schemes/Test-OfficialChinese.ps1",

@@ -142,8 +142,16 @@ try {
     Highlight 'Wi-Fi 密碼'
     Stroke 0x5d
     Stroke 0xff08
-    Highlight 'Wi-Fi 密碼'
-    Check 'reopen-original-mixed-choice' $true
+    $state = State
+    Check 'pending-backspace-preserves-mixed-pick' ($state.Raw -ceq 'wodewifimimahaod' -and $state.Preedit.StartsWith('我的碼') -and -not $state.Commit) $state
+    [RimeProbe]::RimeClearComposition($s)
+    Check 'pending-backspace-cancel-no-commit' (-not [RimeProbe]::ReadCommit($s))
+
+    Query 'wodewifimimahaoda'
+    Pick '我的'
+    Pick 'Wi-Fi 密碼'
+    $state = State
+    Check 'normal-whole-mixed-choice-stays-pending' ($state.Raw -ceq 'wodewifimimahaoda' -and $state.Preedit.StartsWith('我的Wi-Fi 密碼') -and -not $state.Commit) $state
     [RimeProbe]::RimeClearComposition($s)
 
     # Abbreviated Chinese parts use the same existing mixed entry.
