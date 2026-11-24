@@ -1,7 +1,7 @@
 {
   "format": "rymcp-public-config-v2",
   "scheme_version": "2026.11.24.3",
-  "allowlisted_source_files": 183,
+  "allowlisted_source_files": 184,
   "source_files": [
     {
       "path": "JAPANESE.md",
@@ -35,8 +35,8 @@
     },
     {
       "path": "default.yaml",
-      "bytes": 1358,
-      "sha256": "60f61ef0d3ed0f0314af634955022ff4d4c192f9e6df9875ec31cb5a69626f7e"
+      "bytes": 1274,
+      "sha256": "ebe403660fbdd0bb2ad7a339a409c5f6a31d94295aee76efeb7def9ead546a9a"
     },
     {
       "path": "english_extensions.dict.yaml",
@@ -564,6 +564,11 @@
       "sha256": "79467679c0eac919afc7d18b84dd7d375522ab4c11133b01c9cb29bdb7ff2c53"
     },
     {
+      "path": "luna_pinyin.schema.yaml",
+      "bytes": 2162,
+      "sha256": "53f844938fe5d65e2bcbff12fcc864c9fea83655cf48e66441e2f21349caadea"
+    },
+    {
       "path": "opencc/STCharacters.ocd2",
       "bytes": 45310,
       "sha256": "4c7398b4ceedf9b58b5ea77cdd911bc7807c50c7491111dc9b4073c68ad5a2bb"
@@ -865,8 +870,8 @@
     },
     {
       "path": "source-dependencies.json",
-      "bytes": 2939,
-      "sha256": "e99450d6f10c4b19ebfde720e2c251526a4292e70be8b865e92a80de100bcbdb"
+      "bytes": 3889,
+      "sha256": "cd834c85a83878313e052fa41e58eadae6addaf1bb08ba4a2a03cf7ba61699a6"
     },
     {
       "path": "stroke.dict.yaml",
@@ -875,8 +880,8 @@
     },
     {
       "path": "stroke.schema.yaml",
-      "bytes": 3156,
-      "sha256": "f541d4c7450370b2652ae5e4190396803504edc987f74f16718458811312f303"
+      "bytes": 3135,
+      "sha256": "6201af057277c4353c1d199bb6ee4b8d7e8623fff91f84a41c93010240ce1a50"
     },
     {
       "path": "symbols.yaml",

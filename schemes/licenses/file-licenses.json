@@ -350,7 +350,7 @@
       ]
     },
     "luna_config": {
-      "origin": "rime/rime-luna-pinyin, official Weasel 0.17.4 data/pinyin.yaml",
+      "origin": "rime/rime-luna-pinyin, official Weasel 0.17.4 data/pinyin.yaml and luna_pinyin.schema.yaml",
       "upstream_commit": null,
       "retained_terms": [
         "GNU LGPL version 3",
@@ -557,7 +557,7 @@
         "LGPL-3.0",
         "rime-prelude AUTHORS"
       ],
-      "license_scope": "Unmodified upstream default configuration under LGPL-3.0; original attribution retained.",
+      "license_scope": "Upstream default configuration under LGPL-3.0 with a project-specific schema list; original attribution retained.",
       "references": [
         "LICENSE",
         "licenses/shared-config/prelude-LICENSE.txt",
@@ -2571,7 +2571,7 @@
         "LGPL-3.0",
         "CNS11643 and original AUTHORS attribution"
       ],
-      "license_scope": "Unmodified upstream stroke configuration/data under LGPL-3.0; original CNS11643 and supplementary-table attribution retained.",
+      "license_scope": "Upstream stroke configuration under LGPL-3.0; only schema/name omitted for internal lookup use, with original authorship and behavior retained.",
       "references": [
         "LICENSE",
         "licenses/radical-stroke/stroke-LGPL-3.0.txt",
@@ -2729,7 +2729,7 @@
         "LGPL-3.0",
         "rime-prelude AUTHORS"
       ],
-      "license_scope": "Unmodified upstream default configuration under LGPL-3.0; original attribution retained.",
+      "license_scope": "Upstream default configuration under LGPL-3.0 with a project-specific schema list; original attribution retained.",
       "references": [
         "LICENSE",
         "licenses/shared-config/prelude-LICENSE.txt",
@@ -4539,7 +4539,7 @@
         "LGPL-3.0",
         "CNS11643 and original AUTHORS attribution"
       ],
-      "license_scope": "Unmodified upstream stroke configuration/data under LGPL-3.0; original CNS11643 and supplementary-table attribution retained.",
+      "license_scope": "Upstream stroke configuration under LGPL-3.0; only schema/name omitted for internal lookup use, with original authorship and behavior retained.",
       "references": [
         "LICENSE",
         "licenses/radical-stroke/stroke-LGPL-3.0.txt",
@@ -6830,6 +6830,40 @@
       "references": [
         "THIRD_PARTY_NOTICES.md",
         "licenses/CC-BY-SA-4.0.txt"
+      ]
+    },
+    {
+      "path": "config/official-weasel/luna_pinyin.schema.yaml",
+      "kind": "program-or-configuration",
+      "source_ids": [
+        "luna_config"
+      ],
+      "retained_upstream_terms": [
+        "LGPL-3.0",
+        "original author and description"
+      ],
+      "license_scope": "Upstream Luna schema under LGPL-3.0; only schema/name omitted for internal lookup use, with original authorship and behavior retained.",
+      "references": [
+        "LICENSE",
+        "licenses/luna-pinyin-LGPL-3.0.txt",
+        "docs/sources/shared-config-sources.md"
+      ]
+    },
+    {
+      "path": "config/pc/luna_pinyin.schema.yaml",
+      "kind": "program-or-configuration",
+      "source_ids": [
+        "luna_config"
+      ],
+      "retained_upstream_terms": [
+        "LGPL-3.0",
+        "original author and description"
+      ],
+      "license_scope": "Upstream Luna schema under LGPL-3.0; only schema/name omitted for internal lookup use, with original authorship and behavior retained.",
+      "references": [
+        "LICENSE",
+        "licenses/luna-pinyin-LGPL-3.0.txt",
+        "docs/sources/shared-config-sources.md"
       ]
     }
   ]

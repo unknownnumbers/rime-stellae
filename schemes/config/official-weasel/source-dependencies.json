@@ -81,6 +81,28 @@
       "source": "retained rime-prelude notice",
       "license": "LGPL-3.0",
       "notice_commit": "95542a274915ba5496ff3260a2c71946238d4cce"
+    },
+    {
+      "path": "luna_pinyin.schema.yaml",
+      "bytes": 2162,
+      "sha256": "53f844938fe5d65e2bcbff12fcc864c9fea83655cf48e66441e2f21349caadea",
+      "source": "Fixed Weasel 0.17.4 packaged schema",
+      "upstream_sha256": "a80c89bd16d31842bacbee6b17b9ba1a4f5fd862b7db31049a229aed8628299e",
+      "modification": "Only schema/name omitted for an internal lookup dependency.",
+      "license": "LGPL-3.0",
+      "notices": [
+        "licenses/luna-pinyin-LGPL-3.0.txt"
+      ]
+    },
+    {
+      "path": "stroke.schema.yaml",
+      "bytes": 3135,
+      "sha256": "6201af057277c4353c1d199bb6ee4b8d7e8623fff91f84a41c93010240ce1a50",
+      "source": "Fixed Weasel 0.17.4 packaged schema",
+      "upstream_sha256": "f541d4c7450370b2652ae5e4190396803504edc987f74f16718458811312f303",
+      "modification": "Only schema/name omitted for an internal lookup dependency.",
+      "license": "LGPL-3.0",
+      "notices": []
     }
   ]
 }

@@ -207,8 +207,8 @@
     },
     {
       "path": "licenses/file-licenses.json",
-      "bytes": 300611,
-      "sha256": "f60cbaa067d1f11543a56476b6069fe62c423335297122e4c7bb20fe524794c8"
+      "bytes": 301954,
+      "sha256": "18655f761ded764f4d3aee86d889f334ab357ba73f619e3edf6f69437f796279"
     },
     {
       "path": "licenses/native-dependencies/boost/LICENSE_1_0.txt",
@@ -797,8 +797,8 @@
     },
     {
       "path": "schemes/config/official-weasel/default.yaml",
-      "bytes": 1358,
-      "sha256": "60f61ef0d3ed0f0314af634955022ff4d4c192f9e6df9875ec31cb5a69626f7e"
+      "bytes": 1274,
+      "sha256": "ebe403660fbdd0bb2ad7a339a409c5f6a31d94295aee76efeb7def9ead546a9a"
     },
     {
       "path": "schemes/config/official-weasel/english_extensions.dict.yaml",
@@ -1326,6 +1326,11 @@
       "sha256": "79467679c0eac919afc7d18b84dd7d375522ab4c11133b01c9cb29bdb7ff2c53"
     },
     {
+      "path": "schemes/config/official-weasel/luna_pinyin.schema.yaml",
+      "bytes": 2162,
+      "sha256": "53f844938fe5d65e2bcbff12fcc864c9fea83655cf48e66441e2f21349caadea"
+    },
+    {
       "path": "schemes/config/official-weasel/opencc/STCharacters.ocd2",
       "bytes": 45310,
       "sha256": "4c7398b4ceedf9b58b5ea77cdd911bc7807c50c7491111dc9b4073c68ad5a2bb"
@@ -1402,8 +1407,8 @@
     },
     {
       "path": "schemes/config/official-weasel/profile-manifest.json",
-      "bytes": 29611,
-      "sha256": "ac026bd24092b7a64b3ebf7ea7faf096c8e86898273deaad0604d623f2d410c5"
+      "bytes": 29769,
+      "sha256": "992ed567d7a504caed4212034bf4b85dbfe07e0e7ca2f714e3364ef315274092"
     },
     {
       "path": "schemes/config/official-weasel/project_radical.dict.yaml",
@@ -1642,8 +1647,8 @@
     },
     {
       "path": "schemes/config/official-weasel/source-dependencies.json",
-      "bytes": 2939,
-      "sha256": "e99450d6f10c4b19ebfde720e2c251526a4292e70be8b865e92a80de100bcbdb"
+      "bytes": 3889,
+      "sha256": "cd834c85a83878313e052fa41e58eadae6addaf1bb08ba4a2a03cf7ba61699a6"
     },
     {
       "path": "schemes/config/official-weasel/stroke.dict.yaml",
@@ -1652,8 +1657,8 @@
     },
     {
       "path": "schemes/config/official-weasel/stroke.schema.yaml",
-      "bytes": 3156,
-      "sha256": "f541d4c7450370b2652ae5e4190396803504edc987f74f16718458811312f303"
+      "bytes": 3135,
+      "sha256": "6201af057277c4353c1d199bb6ee4b8d7e8623fff91f84a41c93010240ce1a50"
     },
     {
       "path": "schemes/config/official-weasel/symbols.yaml",
@@ -1717,8 +1722,8 @@
     },
     {
       "path": "schemes/config/pc/config-source-manifest.json",
-      "bytes": 29673,
-      "sha256": "c02953cf0136902d26cb054642b41076ee3c0c6271ddee7b740d0a6eae40089d"
+      "bytes": 29831,
+      "sha256": "9231660e6472615a4b03cdf8db1ee45f05aebfcd91734aece158337b69be3934"
     },
     {
       "path": "schemes/config/pc/default.custom.yaml",
@@ -1727,8 +1732,8 @@
     },
     {
       "path": "schemes/config/pc/default.yaml",
-      "bytes": 1358,
-      "sha256": "60f61ef0d3ed0f0314af634955022ff4d4c192f9e6df9875ec31cb5a69626f7e"
+      "bytes": 1274,
+      "sha256": "ebe403660fbdd0bb2ad7a339a409c5f6a31d94295aee76efeb7def9ead546a9a"
     },
     {
       "path": "schemes/config/pc/english_extensions.dict.yaml",
@@ -2256,6 +2261,11 @@
       "sha256": "79467679c0eac919afc7d18b84dd7d375522ab4c11133b01c9cb29bdb7ff2c53"
     },
     {
+      "path": "schemes/config/pc/luna_pinyin.schema.yaml",
+      "bytes": 2162,
+      "sha256": "53f844938fe5d65e2bcbff12fcc864c9fea83655cf48e66441e2f21349caadea"
+    },
+    {
       "path": "schemes/config/pc/opencc/STCharacters.ocd2",
       "bytes": 45310,
       "sha256": "4c7398b4ceedf9b58b5ea77cdd911bc7807c50c7491111dc9b4073c68ad5a2bb"
@@ -2557,8 +2567,8 @@
     },
     {
       "path": "schemes/config/pc/source-dependencies.json",
-      "bytes": 2939,
-      "sha256": "e99450d6f10c4b19ebfde720e2c251526a4292e70be8b865e92a80de100bcbdb"
+      "bytes": 3889,
+      "sha256": "cd834c85a83878313e052fa41e58eadae6addaf1bb08ba4a2a03cf7ba61699a6"
     },
     {
       "path": "schemes/config/pc/stroke.dict.yaml",
@@ -2567,8 +2577,8 @@
     },
     {
       "path": "schemes/config/pc/stroke.schema.yaml",
-      "bytes": 3156,
-      "sha256": "f541d4c7450370b2652ae5e4190396803504edc987f74f16718458811312f303"
+      "bytes": 3135,
+      "sha256": "6201af057277c4353c1d199bb6ee4b8d7e8623fff91f84a41c93010240ce1a50"
     },
     {
       "path": "schemes/config/pc/symbols.yaml",
@@ -2882,8 +2892,8 @@
     },
     {
       "path": "schemes/docs/sources/shared-config-sources.md",
-      "bytes": 3392,
-      "sha256": "3b429682e5d4a8eda234e0115014067f558f4f30a06893493b6dd7156b5f3f1d"
+      "bytes": 3995,
+      "sha256": "32e13149e317567c45e750d81106b779dde70f84c40f6a9b0c0b0d4453428c62"
     },
     {
       "path": "schemes/docs/sources/tools-sources.md",
@@ -2992,8 +3002,8 @@
     },
     {
       "path": "schemes/licenses/file-licenses.json",
-      "bytes": 228458,
-      "sha256": "e514030b1b32ab05769e0ee09c5f1ba5f9a43229d2ed29fa46a0b452d625f64b"
+      "bytes": 229721,
+      "sha256": "6a19f206b8d8cba6f98b534bef65311821191c0c4789439120039909f3ad6b18"
     },
     {
       "path": "schemes/licenses/luna-compact-model-LGPL-3.0.txt",
@@ -3402,8 +3412,8 @@
     },
     {
       "path": "schemes/release-manifest.json",
-      "bytes": 103413,
-      "sha256": "5fb1f6ca04d4eb7c9893fd70fd2fda2fe3f8c32583dc0a342f5097f08b16373e"
+      "bytes": 103762,
+      "sha256": "7b71462272de807a1a29002f40ecb96b052221f9b555aa106f87391db10accc4"
     },
     {
       "path": "schemes/scripts/build_dlc.py",
