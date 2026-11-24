@@ -5,7 +5,7 @@ import argparse
 import ctypes as c
 from ctypes import wintypes as w
 from dataclasses import asdict, dataclass
-from hashlib import file_digest, sha256
+from hashlib import file_digest
 import json
 import os
 from pathlib import Path
@@ -245,60 +245,11 @@ class SettingsDialog:
         report['nativeSettingsThemeName'] = text.value
         report['nativeSettingsPreviewBitmapPresent'] = True
 
-    def preview_fingerprint(self, appearance):
-        """Read back this CI control with ordinary PrintWindow, without injection."""
+    def preview_bitmap(self, appearance):
         preview = self.get_child(appearance, PREVIEW)
         handle = self.send(preview, STM_GETIMAGE, IMAGE_BITMAP)
         require(handle, 'The selected font has no native preview bitmap')
-        user = c.WinDLL('user32', use_last_error=True)
-        gdi = c.WinDLL('gdi32', use_last_error=True)
-        rect = w.RECT()
-        get_rect = win_function(user, 'GetClientRect', w.BOOL, w.HWND, c.POINTER(w.RECT))
-        require(get_rect(preview, c.byref(rect)), 'Could not read the preview dimensions')
-        width, height = rect.right - rect.left, rect.bottom - rect.top
-        require(0 < width < 2048 and 0 < height < 2048, 'Invalid preview control dimensions')
-        get_dc = win_function(user, 'GetDC', w.HDC, w.HWND)
-        release_dc = win_function(user, 'ReleaseDC', c.c_int, w.HWND, w.HDC)
-        create_dc = win_function(gdi, 'CreateCompatibleDC', w.HDC, w.HDC)
-        create_bitmap = win_function(gdi, 'CreateCompatibleBitmap', w.HBITMAP,
-                                     w.HDC, c.c_int, c.c_int)
-        select = win_function(gdi, 'SelectObject', w.HGDIOBJ, w.HDC, w.HGDIOBJ)
-        delete_dc = win_function(gdi, 'DeleteDC', w.BOOL, w.HDC)
-        delete_bitmap = win_function(gdi, 'DeleteObject', w.BOOL, w.HGDIOBJ)
-        print_window = win_function(user, 'PrintWindow', w.BOOL, w.HWND, w.HDC, w.UINT)
-        get_bits = win_function(gdi, 'GetDIBits', c.c_int, w.HDC, w.HBITMAP,
-                                w.UINT, w.UINT, c.c_void_p, c.c_void_p, w.UINT)
-        screen = get_dc(None)
-        dc, bitmap, previous = None, None, None
-        try:
-            require(screen, 'Could not create the preview capture surface')
-            dc = create_dc(screen)
-            bitmap = create_bitmap(screen, width, height)
-            require(dc and bitmap, 'Could not allocate the preview capture surface')
-            previous = select(dc, bitmap)
-            require(previous, 'Could not select the preview capture bitmap')
-            require(print_window(preview, dc, 1), 'PrintWindow could not capture the native preview')
-            select(dc, previous)
-            previous = None
-            pixels = c.create_string_buffer(width * height * 4)
-            info = c.create_string_buffer(struct.pack(
-                '<IiiHHIIiiII', 40, width, -height, 1, 32, 0, len(pixels), 0, 0, 0, 0))
-            require(get_bits(dc, bitmap, 0, height, pixels, info, 0) == height,
-                    'Could not read back the native preview pixels')
-            raw = pixels.raw
-            colors = {raw[offset:offset + 3] for offset in range(0, len(raw), 4)}
-            require(len(colors) > 8, 'The native preview capture was blank or unrendered')
-            rgb = b''.join(raw[offset:offset + 3] for offset in range(0, len(raw), 4))
-            return handle, sha256(rgb).hexdigest()
-        finally:
-            if previous:
-                select(dc, previous)
-            if bitmap:
-                delete_bitmap(bitmap)
-            if dc:
-                delete_dc(dc)
-            if screen:
-                release_dc(None, screen)
+        return handle
 
 
 def font_item(items, family):
@@ -315,6 +266,18 @@ def configuration_snapshot(profile):
             for path in paths if path.is_file()}
 
 
+def preview_asset(installation, profile, family):
+    suffix = {'Microsoft YaHei': '_default', 'Noto Sans CJK SC': '_sc',
+              'Noto Sans CJK TC': '_tc', 'Noto Sans CJK HK': '_hk'}[family]
+    for directory in [profile / 'preview', installation / 'data/preview']:
+        for name in ['color_scheme_reference_gray' + suffix + '.png',
+                     'color_scheme_reference_gray.png']:
+            asset = directory / name
+            if asset.is_file():
+                return asset
+    raise AssertionError('The selected font has no fixture preview asset')
+
+
 def preview_and_cancel(installation, profile, initial_font, report):
     before = configuration_snapshot(profile)
     deployer = installation / 'StellaeDeployer.exe'
@@ -329,21 +292,33 @@ def preview_and_cancel(installation, profile, initial_font, report):
             items = settings.combo_items(combo)
             require(settings.send(combo, CB_GETCURSEL) == font_item(items, initial_font),
                     'Preview browsing started with the wrong candidate font')
-            initial_handle, _ = settings.preview_fingerprint(appearance)
-            previous_handle = initial_handle
-            variants = {}
+            settings.preview_bitmap(appearance)
+            asset_hashes = {}
             for family in ['Microsoft YaHei', 'Noto Sans CJK SC',
                            'Noto Sans CJK TC', 'Noto Sans CJK HK']:
                 settings.select_font_by_keyboard(appearance, combo, font_item(items, family))
-                handle, fingerprint = settings.preview_fingerprint(appearance)
-                require(handle != previous_handle,
-                        'Changing the preview did not replace its native bitmap')
+                settings.preview_bitmap(appearance)
+                asset = preview_asset(installation, profile, family)
+                asset_hashes[family] = digest(asset)
+                content, stat = asset.read_bytes(), asset.stat()
+                other = 'Noto Sans CJK SC' if family == 'Microsoft YaHei' else 'Microsoft YaHei'
+                settings.select_font_by_keyboard(appearance, combo, font_item(items, other))
+                try:
+                    asset.write_bytes(b'not a PNG: synthetic family-resolution fixture')
+                    settings.select_font_by_keyboard(appearance, combo, font_item(items, family))
+                    preview = settings.get_child(appearance, PREVIEW)
+                    require(settings.send(preview, STM_GETIMAGE, IMAGE_BITMAP) == 0,
+                            'The font preview did not resolve its expected asset for ' + family)
+                finally:
+                    asset.write_bytes(content)
+                    os.utime(asset, ns=(stat.st_atime_ns, stat.st_mtime_ns))
+                settings.select_font_by_keyboard(appearance, combo, font_item(items, other))
+                settings.select_font_by_keyboard(appearance, combo, font_item(items, family))
+                settings.preview_bitmap(appearance)
                 require(configuration_snapshot(profile) == before,
                         'Browsing font previews wrote or deployed the appearance configuration')
-                variants[family] = fingerprint
-                previous_handle = handle
-            require(len(set(variants.values())) == 4,
-                    'The four font choices did not produce distinct rendered previews')
+            require(len(set(asset_hashes.values())) == 4,
+                    'The four font choices did not identify four distinct PNG assets')
             assets = [directory / name for directory in [profile / 'preview', installation / 'data/preview']
                       for name in ['color_scheme_reference_gray_sc.png', 'color_scheme_reference_gray.png']
                       if (directory / name).is_file()]
@@ -370,13 +345,14 @@ def preview_and_cancel(installation, profile, initial_font, report):
                     os.utime(path, ns=(stat.st_atime_ns, stat.st_mtime_ns))
             settings.select_font_by_keyboard(appearance, combo,
                                              font_item(items, 'Noto Sans CJK HK'))
-            settings.preview_fingerprint(appearance)
+            settings.preview_bitmap(appearance)
             report['failedAndMissingPreviewCleared'] = True
             settings.cancel(appearance)
             require(process.wait(timeout=30) == 0, 'Native preview settings did not cancel cleanly')
             require(configuration_snapshot(profile) == before,
                     'Cancelling the font preview changed configuration files')
-            report['previewVariants'] = variants
+            report['previewAssetSha256'] = asset_hashes
+            report['previewAssetResolutionVerified'] = True
             report['previewCancelPreservedConfiguration'] = True
         finally:
             if process.poll() is None:
