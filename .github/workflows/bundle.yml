@@ -167,6 +167,9 @@ jobs:
           $null=New-Item -ItemType Directory -Path $shared -Force
           Copy-Item -LiteralPath installer/default.yaml -Destination $shared
           Copy-Item -LiteralPath native/tests/key-pairing/fixture/weasel.yaml -Destination $shared
+          foreach($name in @('key_bindings.yaml','punctuation.yaml','symbols.yaml')){
+            Copy-Item -LiteralPath (Join-Path 'schemes/config/pc' $name) -Destination $shared
+          }
           ./native/tests/key-pairing/Run-ControlledKeys.ps1 -SourceRoot $source -SharedData $shared -Architecture Win32 -UseX64Backend -RuntimeN01 $engine
           if(Test-Path -LiteralPath (Join-Path $output 'Win32/StellaeServer.exe')){throw 'The application compatibility test must not build an x86 service'}
       - uses: actions/upload-artifact@v4
