@@ -1,0 +1,62 @@
+name: Diagnose installer profile placement
+on:
+  push:
+    branches: ['ci/installer-policy-20261124']
+permissions:
+  contents: read
+  actions: read
+jobs:
+  diagnose:
+    runs-on: windows-2022
+    timeout-minutes: 15
+    env:
+      STELLAE_INSTALLER_POLICY_TRACE: '1'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: 73bb93868f7784a01b6a1ed3a5fd73c0b4e2ebe6
+          persist-credentials: false
+      - uses: actions/download-artifact@v4
+        with:
+          artifact-ids: 14883574198
+          run-id: 45309723558
+          github-token: ${{ github.token }}
+          path: ${{ runner.temp }}/installer-input
+          merge-multiple: true
+      - name: Reproduce bare upgrade with policy diagnostics
+        shell: pwsh
+        run: |
+          $ErrorActionPreference='Stop'
+          $spec=Get-Content installer/bundle-inputs.json -Raw|ConvertFrom-Json
+          $native=Get-Content native/source-manifest.json -Raw|ConvertFrom-Json
+          $official=@($native.assets|Where-Object id -eq 'shared-data')[0]
+          foreach($item in @(@{name='official.exe';spec=$official},@{name='bare.exe';spec=$spec.frontendInstaller})){
+            $path=Join-Path $env:RUNNER_TEMP $item.name
+            Invoke-WebRequest -Uri $item.spec.url -OutFile $path
+            if((Get-FileHash $path).Hash -ine $item.spec.sha256){throw 'Fixture installer hash differs'}
+            $p=Start-Process -FilePath $path -ArgumentList '/S' -PassThru -WindowStyle Hidden
+            if(-not $p.WaitForExit(180000) -or $p.ExitCode -notin @(0,3010)){throw 'Fixture setup failed'}
+            $p.Dispose()
+          }
+          $server=Join-Path $env:ProgramFiles 'RimeStellae/StellaeServer.exe'
+          $p=Start-Process -FilePath $server -ArgumentList '/quit' -PassThru -WindowStyle Hidden
+          if(-not $p.WaitForExit(30000) -or $p.ExitCode -ne 0){throw 'Bare server shutdown failed'}
+          $p.Dispose()
+          $out=Join-Path $env:GITHUB_WORKSPACE 'policy-diagnostics'
+          $null=New-Item -ItemType Directory -Path $out -Force
+          $env:STELLAE_BUNDLE_TEST_TRACE=Join-Path $out 'installer.log'
+          $installer=Join-Path $env:RUNNER_TEMP 'installer-input/stellae-installer.exe'
+          $p=Start-Process -FilePath $installer -ArgumentList '/S' -PassThru -WindowStyle Hidden
+          if(-not $p.WaitForExit(600000)){throw 'Upgrade timed out'}
+          $code=$p.ExitCode
+          $p.Dispose()
+          Write-Output ('Installer exit '+$code)
+          if(Test-Path (Join-Path $out 'Finalize-error.json')){Get-Content (Join-Path $out 'Finalize-error.json') -Raw}
+          if($code -notin @(0,3010)){throw 'Upgrade failed; see policy diagnostics'}
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: installer-policy-diagnostics
+          path: policy-diagnostics/*
+          if-no-files-found: warn
+          retention-days: 7
