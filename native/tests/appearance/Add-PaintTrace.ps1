@@ -31,7 +31,7 @@ $text = Replace-Anchor $text @'
       UpdateLayeredWindow(m_hWnd, ScreenDC, &WindowPosAtScreen, &sz, dc,
                           &PointOriginal, RGB(0, 0, 0), &bf, ULW_ALPHA);
   if (visible_frame && AppearancePaintTrace::active)
-    AppearancePaintTrace::active->Append(m_hWnd, m_ctx);
+    AppearancePaintTrace::active->Append(m_hWnd, m_ctx, m_style);
 '@
 $text = Replace-Anchor $text '    pDWR->DrawTextLayoutAt({offsetx, offsety});' @'
     pDWR->DrawTextLayoutAt({offsetx, offsety});

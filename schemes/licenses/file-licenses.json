@@ -2012,6 +2012,61 @@
         "LICENSE",
         "docs/sources/official-weasel-sources.md"
       ],
+      "path": "config/official-weasel/preview/candidate_font.png"
+    },
+    {
+      "kind": "original-status-asset-or-generator",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "LICENSE",
+        "docs/sources/official-weasel-sources.md"
+      ],
+      "path": "config/official-weasel/preview/candidate_font_default.png"
+    },
+    {
+      "kind": "original-status-asset-or-generator",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "LICENSE",
+        "docs/sources/official-weasel-sources.md"
+      ],
+      "path": "config/official-weasel/preview/candidate_font_hk.png"
+    },
+    {
+      "kind": "original-status-asset-or-generator",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "LICENSE",
+        "docs/sources/official-weasel-sources.md"
+      ],
+      "path": "config/official-weasel/preview/candidate_font_sc.png"
+    },
+    {
+      "kind": "original-status-asset-or-generator",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "LICENSE",
+        "docs/sources/official-weasel-sources.md"
+      ],
+      "path": "config/official-weasel/preview/candidate_font_tc.png"
+    },
+    {
+      "kind": "original-status-asset-or-generator",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "LICENSE",
+        "docs/sources/official-weasel-sources.md"
+      ],
       "path": "config/official-weasel/preview/color_scheme_reference_gray.png"
     },
     {
@@ -2023,7 +2078,7 @@
         "LICENSE",
         "docs/sources/official-weasel-sources.md"
       ],
-      "path": "config/official-weasel/preview/color_scheme_reference_gray_default.png"
+      "path": "config/official-weasel/preview/color_scheme_stellae_crimson.png"
     },
     {
       "kind": "original-status-asset-or-generator",
@@ -2034,7 +2089,7 @@
         "LICENSE",
         "docs/sources/official-weasel-sources.md"
       ],
-      "path": "config/official-weasel/preview/color_scheme_reference_gray_hk.png"
+      "path": "config/official-weasel/preview/color_scheme_stellae_lavender.png"
     },
     {
       "kind": "original-status-asset-or-generator",
@@ -2045,7 +2100,7 @@
         "LICENSE",
         "docs/sources/official-weasel-sources.md"
       ],
-      "path": "config/official-weasel/preview/color_scheme_reference_gray_sc.png"
+      "path": "config/official-weasel/preview/color_scheme_stellae_mono.png"
     },
     {
       "kind": "original-status-asset-or-generator",
@@ -2056,7 +2111,18 @@
         "LICENSE",
         "docs/sources/official-weasel-sources.md"
       ],
-      "path": "config/official-weasel/preview/color_scheme_reference_gray_tc.png"
+      "path": "config/official-weasel/preview/color_scheme_stellae_night.png"
+    },
+    {
+      "kind": "original-status-asset-or-generator",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "LICENSE",
+        "docs/sources/official-weasel-sources.md"
+      ],
+      "path": "config/official-weasel/preview/color_scheme_stellae_sakura.png"
     },
     {
       "kind": "project-metadata",
@@ -4065,6 +4131,56 @@
       "references": [
         "LICENSE"
       ],
+      "path": "config/pc/preview/candidate_font.png"
+    },
+    {
+      "kind": "original-status-asset-or-generator",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "LICENSE"
+      ],
+      "path": "config/pc/preview/candidate_font_default.png"
+    },
+    {
+      "kind": "original-status-asset-or-generator",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "LICENSE"
+      ],
+      "path": "config/pc/preview/candidate_font_hk.png"
+    },
+    {
+      "kind": "original-status-asset-or-generator",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "LICENSE"
+      ],
+      "path": "config/pc/preview/candidate_font_sc.png"
+    },
+    {
+      "kind": "original-status-asset-or-generator",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "LICENSE"
+      ],
+      "path": "config/pc/preview/candidate_font_tc.png"
+    },
+    {
+      "kind": "original-status-asset-or-generator",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "LICENSE"
+      ],
       "path": "config/pc/preview/color_scheme_reference_gray.png"
     },
     {
@@ -4075,7 +4191,7 @@
       "references": [
         "LICENSE"
       ],
-      "path": "config/pc/preview/color_scheme_reference_gray_default.png"
+      "path": "config/pc/preview/color_scheme_stellae_crimson.png"
     },
     {
       "kind": "original-status-asset-or-generator",
@@ -4085,7 +4201,7 @@
       "references": [
         "LICENSE"
       ],
-      "path": "config/pc/preview/color_scheme_reference_gray_hk.png"
+      "path": "config/pc/preview/color_scheme_stellae_lavender.png"
     },
     {
       "kind": "original-status-asset-or-generator",
@@ -4095,7 +4211,7 @@
       "references": [
         "LICENSE"
       ],
-      "path": "config/pc/preview/color_scheme_reference_gray_sc.png"
+      "path": "config/pc/preview/color_scheme_stellae_mono.png"
     },
     {
       "kind": "original-status-asset-or-generator",
@@ -4105,7 +4221,17 @@
       "references": [
         "LICENSE"
       ],
-      "path": "config/pc/preview/color_scheme_reference_gray_tc.png"
+      "path": "config/pc/preview/color_scheme_stellae_night.png"
+    },
+    {
+      "kind": "original-status-asset-or-generator",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "LICENSE"
+      ],
+      "path": "config/pc/preview/color_scheme_stellae_sakura.png"
     },
     {
       "path": "config/pc/project_radical.dict.yaml",

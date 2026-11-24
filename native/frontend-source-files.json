@@ -1,7 +1,7 @@
 {
   "schema": "stellae-frontend-source-files/1",
   "upstreamCommit": "9cc96e20dc71b80876b12f689bb5863c76c2a7ed",
-  "patchSha256": "e6ef195339a1f4037e7193f5b73f68b2851715e18bf8731d50eb6e5bcf4b9442",
+  "patchSha256": "739dc60a839736e7240428d07fdb68b7f957164c62facc27f5827efcb5a271b6",
   "files": [
     {
       "path": "RimeWithWeasel/RimeWithWeasel.cpp",
@@ -30,12 +30,14 @@
     {
       "path": "WeaselDeployer/DictManagementDialog.cpp",
       "bytes": 12379,
-      "sha256": "5107c407e1ff03c1cb95c1c408cc0f09a953391f17249270a8cbce71e6222781"
+      "sha256": "5107c407e1ff03c1cb95c1c408cc0f09a953391f17249270a8cbce71e6222781",
+      "replayMatchesFrozen": true
     },
     {
       "path": "WeaselDeployer/DictManagementDialog.h",
       "bytes": 1551,
-      "sha256": "68bf2e403d8e9a63c24948b2a86f4307ce78f648ad72c2d9d80f975bc4556264"
+      "sha256": "68bf2e403d8e9a63c24948b2a86f4307ce78f648ad72c2d9d80f975bc4556264",
+      "replayMatchesFrozen": true
     },
     {
       "path": "WeaselDeployer/SwitcherSettingsDialog.cpp",
@@ -45,26 +47,26 @@
     },
     {
       "path": "WeaselDeployer/UIStyleSettings.cpp",
-      "sha256": "24f6ac563d8cdf5b466c99ad6dce5c7201abba99f2557fd8db534057e2145306",
-      "bytes": 6663,
+      "sha256": "6ae67584c3f17874c1f0af0182dc45ef370ab3bb2e6db3891782fb53dff48133",
+      "bytes": 7500,
       "replayMatchesFrozen": true
     },
     {
       "path": "WeaselDeployer/UIStyleSettings.h",
-      "sha256": "efd0a3286987a7e81d7522fd688300e7585896073e1f8bc71a406e44e2509984",
-      "bytes": 868,
+      "sha256": "4b8ba5c76fde13d9a947d90eeaf4cc19a53606f090fc733467bb324fc8afde75",
+      "bytes": 858,
       "replayMatchesFrozen": true
     },
     {
       "path": "WeaselDeployer/UIStyleSettingsDialog.cpp",
-      "sha256": "24282174fbf31c6f72622983d009e9450f21e2b18da358d8c4cb615d828cba65",
-      "bytes": 4299,
+      "sha256": "3bdc12d465f60936c1dd820432c7d68429625dc657451c614447093d6fb4f439",
+      "bytes": 4770,
       "replayMatchesFrozen": true
     },
     {
       "path": "WeaselDeployer/UIStyleSettingsDialog.h",
-      "sha256": "02f63b5dd4886fcf80efa94e0b04185fdb7c1471fe19ac809bf12a492fe76d7c",
-      "bytes": 1341,
+      "sha256": "337db0cb79146f4f9140fe4f9fbf057fc394c7c07308a8825d562bda20619a77",
+      "bytes": 1565,
       "replayMatchesFrozen": true
     },
     {
@@ -75,8 +77,8 @@
     },
     {
       "path": "WeaselDeployer/WeaselDeployer.rc",
-      "sha256": "c5ce2b41f870e66425e2f98ac235ac11e145a6ecbbfc2ec35394ae02522d2f7c",
-      "bytes": 47064,
+      "sha256": "b500aec6d812bb55d5da89529e3cfcc48068556ef81186471fc67ea86f3d0fd0",
+      "bytes": 48256,
       "replayMatchesFrozen": true
     },
     {
@@ -87,8 +89,9 @@
     },
     {
       "path": "WeaselDeployer/resource.h",
-      "bytes": 3401,
-      "sha256": "3d9b2af4ef233c5faff0321c2e194c208854da28d0fbaba8b1dbd4dc5a65a99c"
+      "bytes": 3447,
+      "sha256": "241cba0e41755a1be3912b6d01ad28f2541d108ef161aec3b1d6051d4d77f868",
+      "replayMatchesFrozen": true
     },
     {
       "path": "WeaselDeployer/xmake.lua",

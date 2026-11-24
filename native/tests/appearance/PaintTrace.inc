@@ -119,7 +119,9 @@ class AppearancePaintTrace {
       family_ = std::move(glyphs.family);
   }
 
-  void Append(HWND window, const weasel::Context& context) const {
+  void Append(HWND window,
+              const weasel::Context& context,
+              const weasel::UIStyle& style) const {
     if (!submitted || family_.empty() || context.preedit.str.empty() ||
         context.cinfo.candies.empty() ||
         context.cinfo.highlighted >= context.cinfo.candies.size())
@@ -134,7 +136,11 @@ class AppearancePaintTrace {
     const std::wstring line =
         std::to_wstring(reinterpret_cast<UINT_PTR>(window)) + L"\t" +
         std::to_wstring(draft) + L"\t" + std::to_wstring(selected) + L"\t" +
-        std::to_wstring(context.cinfo.candies.size()) + L"\t" + family_ + L"\n";
+        std::to_wstring(context.cinfo.candies.size()) + L"\t" + family_ + L"\t" +
+        std::to_wstring(static_cast<std::uint32_t>(style.back_color)) + L"\t" +
+        std::to_wstring(static_cast<std::uint32_t>(style.candidate_text_color)) + L"\t" +
+        std::to_wstring(static_cast<std::uint32_t>(style.hilited_candidate_back_color)) + L"\t" +
+        std::to_wstring(static_cast<std::uint32_t>(style.hilited_candidate_text_color)) + L"\n";
     const int bytes = WideCharToMultiByte(CP_UTF8, 0, line.data(),
         static_cast<int>(line.size()), nullptr, 0, nullptr, nullptr);
     if (bytes <= 0)

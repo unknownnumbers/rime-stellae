@@ -658,34 +658,64 @@
       "sha256": "f2d291166946a848fd88e541844567415f1ed3d9c5a7477757b88aeb3a69c0ca"
     },
     {
+      "path": "config/official-weasel/preview/candidate_font.png",
+      "bytes": 16016,
+      "sha256": "c9886f0ce54a0684ab741af62e3d751eba2847b4c07c54b9226707bb92e993e7"
+    },
+    {
+      "path": "config/official-weasel/preview/candidate_font_default.png",
+      "bytes": 16151,
+      "sha256": "220731bef34a0ea7a1e93743aad9ed8646b1d1a9837ced6a0edf00a65b268694"
+    },
+    {
+      "path": "config/official-weasel/preview/candidate_font_hk.png",
+      "bytes": 17025,
+      "sha256": "48b2a0f29d9d8b9ee4147540794becc7337e918e2c197b64b60c4894e1e13332"
+    },
+    {
+      "path": "config/official-weasel/preview/candidate_font_sc.png",
+      "bytes": 16807,
+      "sha256": "671c9cc13abceff226cca535058dd6ddfa0100a08d705735ef162535582ecce3"
+    },
+    {
+      "path": "config/official-weasel/preview/candidate_font_tc.png",
+      "bytes": 17716,
+      "sha256": "daaaaa61181870f8a2b9370cb199f1a8e42f039ca6da5b235cb6741be2b91137"
+    },
+    {
       "path": "config/official-weasel/preview/color_scheme_reference_gray.png",
-      "bytes": 23142,
-      "sha256": "c6e5b73c28af6ac86a361b92067e0b6784fa45ee6060d51376b3aaccd21ccb73"
+      "bytes": 10548,
+      "sha256": "faeb8232f84a1cb48d3e0a5ad13c12fb8b6a1a489c89e1d864f7934313ae62a3"
     },
     {
-      "path": "config/official-weasel/preview/color_scheme_reference_gray_default.png",
-      "bytes": 23044,
-      "sha256": "d03eb67cc29f514921c819b76ac29760159f826859d6b7a42d2f36c65d4fa27c"
+      "path": "config/official-weasel/preview/color_scheme_stellae_crimson.png",
+      "bytes": 11233,
+      "sha256": "b35a439a0a67b6e886c355de8e98f29dec19249820b5206ef7bdea41a09c6839"
     },
     {
-      "path": "config/official-weasel/preview/color_scheme_reference_gray_hk.png",
-      "bytes": 23006,
-      "sha256": "788083761043eded420b6f94fff9975104f6284f04c6de9f114adcd5ac5e7236"
+      "path": "config/official-weasel/preview/color_scheme_stellae_lavender.png",
+      "bytes": 11057,
+      "sha256": "bed286eb3d797cccbba9df9acaf68264cf3bf4b0b69176d3681ff3caa2ef8343"
     },
     {
-      "path": "config/official-weasel/preview/color_scheme_reference_gray_sc.png",
-      "bytes": 23129,
-      "sha256": "f5f55846497fecacb0e43a72c2cd2e8755d17a53413501b3c031ea810503d0e6"
+      "path": "config/official-weasel/preview/color_scheme_stellae_mono.png",
+      "bytes": 11011,
+      "sha256": "7b8a28de2b2784ec857fec18c97e404a497bdd3193280d548af0ee12fa1ad407"
     },
     {
-      "path": "config/official-weasel/preview/color_scheme_reference_gray_tc.png",
-      "bytes": 23131,
-      "sha256": "a651efe058fdc549e56fa2ea4e0792b95516677f62a6578a1984441944604155"
+      "path": "config/official-weasel/preview/color_scheme_stellae_night.png",
+      "bytes": 11289,
+      "sha256": "3a6e3a4eae215b9013afa1945dac823011e080137d621bc800142b6d3a60d76f"
+    },
+    {
+      "path": "config/official-weasel/preview/color_scheme_stellae_sakura.png",
+      "bytes": 11078,
+      "sha256": "d91c9382d0cad8b7c26c000be230c5d4a7b2c5310b0da695f88986ef59a7baa9"
     },
     {
       "path": "config/official-weasel/profile-manifest.json",
-      "bytes": 29769,
-      "sha256": "992ed567d7a504caed4212034bf4b85dbfe07e0e7ca2f714e3364ef315274092"
+      "bytes": 30754,
+      "sha256": "374199f9944500b7b9e4e5bcf3cb7b186393170c23e567a1d470b3c39b820438"
     },
     {
       "path": "config/official-weasel/project_radical.dict.yaml",
@@ -919,8 +949,8 @@
     },
     {
       "path": "config/official-weasel/samples/weasel.custom.yaml",
-      "bytes": 2369,
-      "sha256": "c173290394cfcfe5c79555d999b4d518595d6d018fda3d9a1e95400c703f6210"
+      "bytes": 7196,
+      "sha256": "3a1848f077b03c7480da0571ca1f448e93284da52a25f9cca1058a6c4dbb489a"
     },
     {
       "path": "config/official-weasel/source-dependencies.json",
@@ -999,8 +1029,8 @@
     },
     {
       "path": "config/pc/config-source-manifest.json",
-      "bytes": 29831,
-      "sha256": "9231660e6472615a4b03cdf8db1ee45f05aebfcd91734aece158337b69be3934"
+      "bytes": 30816,
+      "sha256": "4f113bc82b20c61cf58b6adb830b4d32e8c59d0684d513de72b79da4f5341013"
     },
     {
       "path": "config/pc/default.custom.yaml",
@@ -1593,29 +1623,59 @@
       "sha256": "f2d291166946a848fd88e541844567415f1ed3d9c5a7477757b88aeb3a69c0ca"
     },
     {
+      "path": "config/pc/preview/candidate_font.png",
+      "bytes": 16016,
+      "sha256": "c9886f0ce54a0684ab741af62e3d751eba2847b4c07c54b9226707bb92e993e7"
+    },
+    {
+      "path": "config/pc/preview/candidate_font_default.png",
+      "bytes": 16151,
+      "sha256": "220731bef34a0ea7a1e93743aad9ed8646b1d1a9837ced6a0edf00a65b268694"
+    },
+    {
+      "path": "config/pc/preview/candidate_font_hk.png",
+      "bytes": 17025,
+      "sha256": "48b2a0f29d9d8b9ee4147540794becc7337e918e2c197b64b60c4894e1e13332"
+    },
+    {
+      "path": "config/pc/preview/candidate_font_sc.png",
+      "bytes": 16807,
+      "sha256": "671c9cc13abceff226cca535058dd6ddfa0100a08d705735ef162535582ecce3"
+    },
+    {
+      "path": "config/pc/preview/candidate_font_tc.png",
+      "bytes": 17716,
+      "sha256": "daaaaa61181870f8a2b9370cb199f1a8e42f039ca6da5b235cb6741be2b91137"
+    },
+    {
       "path": "config/pc/preview/color_scheme_reference_gray.png",
-      "bytes": 23142,
-      "sha256": "c6e5b73c28af6ac86a361b92067e0b6784fa45ee6060d51376b3aaccd21ccb73"
+      "bytes": 10548,
+      "sha256": "faeb8232f84a1cb48d3e0a5ad13c12fb8b6a1a489c89e1d864f7934313ae62a3"
     },
     {
-      "path": "config/pc/preview/color_scheme_reference_gray_default.png",
-      "bytes": 23044,
-      "sha256": "d03eb67cc29f514921c819b76ac29760159f826859d6b7a42d2f36c65d4fa27c"
+      "path": "config/pc/preview/color_scheme_stellae_crimson.png",
+      "bytes": 11233,
+      "sha256": "b35a439a0a67b6e886c355de8e98f29dec19249820b5206ef7bdea41a09c6839"
     },
     {
-      "path": "config/pc/preview/color_scheme_reference_gray_hk.png",
-      "bytes": 23006,
-      "sha256": "788083761043eded420b6f94fff9975104f6284f04c6de9f114adcd5ac5e7236"
+      "path": "config/pc/preview/color_scheme_stellae_lavender.png",
+      "bytes": 11057,
+      "sha256": "bed286eb3d797cccbba9df9acaf68264cf3bf4b0b69176d3681ff3caa2ef8343"
     },
     {
-      "path": "config/pc/preview/color_scheme_reference_gray_sc.png",
-      "bytes": 23129,
-      "sha256": "f5f55846497fecacb0e43a72c2cd2e8755d17a53413501b3c031ea810503d0e6"
+      "path": "config/pc/preview/color_scheme_stellae_mono.png",
+      "bytes": 11011,
+      "sha256": "7b8a28de2b2784ec857fec18c97e404a497bdd3193280d548af0ee12fa1ad407"
     },
     {
-      "path": "config/pc/preview/color_scheme_reference_gray_tc.png",
-      "bytes": 23131,
-      "sha256": "a651efe058fdc549e56fa2ea4e0792b95516677f62a6578a1984441944604155"
+      "path": "config/pc/preview/color_scheme_stellae_night.png",
+      "bytes": 11289,
+      "sha256": "3a6e3a4eae215b9013afa1945dac823011e080137d621bc800142b6d3a60d76f"
+    },
+    {
+      "path": "config/pc/preview/color_scheme_stellae_sakura.png",
+      "bytes": 11078,
+      "sha256": "d91c9382d0cad8b7c26c000be230c5d4a7b2c5310b0da695f88986ef59a7baa9"
     },
     {
       "path": "config/pc/project_radical.dict.yaml",
@@ -1889,8 +1949,8 @@
     },
     {
       "path": "config/pc/weasel.custom.yaml",
-      "bytes": 2369,
-      "sha256": "c173290394cfcfe5c79555d999b4d518595d6d018fda3d9a1e95400c703f6210"
+      "bytes": 7196,
+      "sha256": "3a1848f077b03c7480da0571ca1f448e93284da52a25f9cca1058a6c4dbb489a"
     },
     {
       "path": "config/pc/zh-hant-t-essay-bgw-compact.gram",
@@ -2279,8 +2339,8 @@
     },
     {
       "path": "licenses/file-licenses.json",
-      "bytes": 229721,
-      "sha256": "6a19f206b8d8cba6f98b534bef65311821191c0c4789439120039909f3ad6b18"
+      "bytes": 234595,
+      "sha256": "5a9e5c13d796e128e21cf9b782dda413934e2d4c1eaec43e0df7c4c933e006db"
     },
     {
       "path": "licenses/luna-compact-model-LGPL-3.0.txt",
@@ -2804,8 +2864,8 @@
     },
     {
       "path": "scripts/verify_release.py",
-      "bytes": 13707,
-      "sha256": "cf2cbbb43a4728dd751935fefeaedf070b66d40f0abc513d62ef00ba51fcd451"
+      "bytes": 13506,
+      "sha256": "74251dfeda4997f3e3e7027fb0fd7aa9036368035ff00df7d5b955d53ea79037"
     },
     {
       "path": "sources/base-build.json",

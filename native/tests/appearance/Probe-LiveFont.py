@@ -18,7 +18,7 @@ import time
 ECHO, START, END, KEY = range(0x8001, 0x8005)
 FOCUS_IN, MOVE_CARET = 0x8006, 0x8008
 FRAME_BYTES = 64 * 1024  # PipeChannel default, including the native header.
-SCHEMA_LIST, THEME_LIST, FONT_COMBO, PREVIEW = 1000, 1004, 1005, 1006
+SCHEMA_LIST, THEME_LIST, FONT_COMBO, PREVIEW, FONT_PREVIEW = 1000, 1004, 1005, 1006, 1013
 LB_GETCURSEL, LB_GETTEXT, LB_GETTEXTLEN = 0x0188, 0x0189, 0x018A
 LB_GETCOUNT, LB_SETCURSEL = 0x018B, 0x0186
 STM_GETIMAGE, IMAGE_BITMAP = 0x0173, 0
@@ -27,6 +27,11 @@ WM_CLOSE = 0x0010
 WM_KEYDOWN, WM_KEYUP, WM_NEXTDLGCTL = 0x0100, 0x0101, 0x0028
 VK_HOME, VK_DOWN = 0x24, 0x28
 DEFAULT_LABELS = {'Default', '默认', '預設'}
+BUILTIN_THEMES = ('reference_gray', 'stellae_sakura', 'stellae_lavender',
+                  'stellae_night', 'stellae_crimson', 'stellae_mono')
+CUSTOM_THEME = 'ci_custom_theme'
+STYLE_COLORS = ('back_color', 'candidate_text_color',
+                'hilited_candidate_back_color', 'hilited_candidate_text_color')
 CB_GETCOUNT, CB_GETCURSEL, CB_GETLBTEXT, CB_GETLBTEXTLEN = (
     0x0146, 0x0147, 0x0148, 0x0149,
 )
@@ -115,6 +120,10 @@ class Frame:
     selected: int
     count: int
     family: str
+    back_color: int
+    candidate_text_color: int
+    hilited_candidate_back_color: int
+    hilited_candidate_text_color: int
 
 
 def read_frames(trace):
@@ -123,12 +132,13 @@ def read_frames(trace):
     frames = []
     for line in trace.read_text(encoding='utf-8').splitlines():
         fields = line.split('\t')
-        if len(fields) == 5:
-            frames.append(Frame(*(int(value) for value in fields[:4]), fields[4]))
+        if len(fields) == 9:
+            frames.append(Frame(*(int(value) for value in fields[:4]), fields[4],
+                                *(int(value) for value in fields[5:])))
     return frames
 
 
-def wait_for_frame(trace, pid, offset=0, expected_family=None):
+def wait_for_frame(trace, pid, offset=0, expected_family=None, expected_colors=None):
     user = c.WinDLL('user32', use_last_error=True)
     is_visible = win_function(user, 'IsWindowVisible', w.BOOL, w.HWND)
     get_pid = win_function(user, 'GetWindowThreadProcessId', w.DWORD, w.HWND,
@@ -138,6 +148,9 @@ def wait_for_frame(trace, pid, offset=0, expected_family=None):
         frames = read_frames(trace)
         for frame in reversed(frames[offset:]):
             if expected_family and frame.family != expected_family:
+                continue
+            if expected_colors and any(getattr(frame, key) != value
+                                       for key, value in expected_colors.items()):
                 continue
             owner = w.DWORD()
             if get_pid(frame.window, c.byref(owner)) and owner.value == pid and is_visible(frame.window):
@@ -159,6 +172,9 @@ class SettingsDialog:
         self.is_visible = api('IsWindowVisible', w.BOOL, w.HWND)
         self.is_enabled = api('IsWindowEnabled', w.BOOL, w.HWND)
         self.get_child = api('GetDlgItem', w.HWND, w.HWND, c.c_int)
+        self.get_window_rect = api('GetWindowRect', w.BOOL, w.HWND, c.POINTER(w.RECT))
+        self.get_client_rect = api('GetClientRect', w.BOOL, w.HWND, c.POINTER(w.RECT))
+        self.client_to_screen = api('ClientToScreen', w.BOOL, w.HWND, c.POINTER(w.POINT))
         self.post_message = api('PostMessageW', w.BOOL, w.HWND, w.UINT, w.WPARAM, w.LPARAM)
         self.send_message = api('SendMessageTimeoutW', w.LPARAM, w.HWND, w.UINT,
                                 w.WPARAM, w.LPARAM, w.UINT, w.UINT, c.POINTER(c.c_size_t))
@@ -244,12 +260,64 @@ class SettingsDialog:
                 'The current native theme did not load a preview bitmap')
         report['nativeSettingsThemeName'] = text.value
         report['nativeSettingsPreviewBitmapPresent'] = True
+        require(self.preview_bitmap(appearance, FONT_PREVIEW),
+                'The native settings did not load its independent font preview')
+        report['nativeSettingsFontPreviewBitmapPresent'] = True
+        self.verify_preview_layout(appearance, report)
 
-    def preview_bitmap(self, appearance):
-        preview = self.get_child(appearance, PREVIEW)
+    def verify_preview_layout(self, appearance, report):
+        client, origin = w.RECT(), w.POINT()
+        require(self.get_client_rect(appearance, c.byref(client)) and
+                self.client_to_screen(appearance, c.byref(origin)),
+                'Could not inspect the dialog client area')
+        bounds = {}
+        for control in (PREVIEW, FONT_PREVIEW, FONT_COMBO):
+            rectangle = w.RECT()
+            require(self.get_window_rect(self.get_child(appearance, control), c.byref(rectangle)),
+                    'Could not inspect a preview control rectangle')
+            values = (rectangle.left - origin.x, rectangle.top - origin.y,
+                      rectangle.right - origin.x, rectangle.bottom - origin.y)
+            require(0 <= values[0] < values[2] <= client.right and
+                    0 <= values[1] < values[3] <= client.bottom,
+                    'A preview or font selector is clipped outside the dialog')
+            bounds[control] = values
+        skin, font, combo = (bounds[k] for k in (PREVIEW, FONT_PREVIEW, FONT_COMBO))
+        require(skin[2] - skin[0] >= 348 and skin[3] - skin[1] >= 190,
+                'The theme preview control is smaller than its image')
+        require(font[2] - font[0] >= 348 and font[3] - font[1] >= 150,
+                'The font preview control is smaller than its image')
+        disjoint = (skin[2] <= font[0] or font[2] <= skin[0] or
+                    skin[3] <= font[1] or font[3] <= skin[1])
+        require(disjoint and max(skin[3], font[3]) <= combo[1],
+                'The theme preview, font preview and selector overlap')
+        report['independentPreviewBounds'] = {str(k): list(v) for k, v in bounds.items()}
+
+    def preview_bitmap(self, appearance, control=PREVIEW, required=True):
+        preview = self.get_child(appearance, control)
+        require(preview and self.is_visible(preview), 'A native preview control is missing or hidden')
         handle = self.send(preview, STM_GETIMAGE, IMAGE_BITMAP)
-        require(handle, 'The selected font has no native preview bitmap')
+        if required:
+            require(handle, 'The selected item has no native preview bitmap')
         return handle
+
+    def theme_items(self, appearance):
+        themes = self.get_child(appearance, THEME_LIST)
+        count = self.send(themes, LB_GETCOUNT)
+        require(len(BUILTIN_THEMES) <= count <= len(BUILTIN_THEMES) + 1,
+                'Unexpected builtin or custom theme count')
+        items = []
+        for index in range(count):
+            length = self.send(themes, LB_GETTEXTLEN, index)
+            require(0 < length <= 512, 'Unexpected theme name length')
+            text = c.create_unicode_buffer(length + 1)
+            require(self.send(themes, LB_GETTEXT, index, c.addressof(text)) == length,
+                    'Could not read a native theme name')
+            items.append(text.value)
+        return themes, items
+
+    def select_theme(self, appearance, themes, index):
+        require(self.send(themes, LB_SETCURSEL, index) >= 0, 'Could not select the native theme')
+        self.send(appearance, WM_COMMAND, THEME_LIST | (1 << 16), themes)
 
 
 def font_item(items, family):
@@ -293,12 +361,28 @@ def preview_asset(installation, profile, family):
     suffix = {'Microsoft YaHei': '_default', 'Noto Sans CJK SC': '_sc',
               'Noto Sans CJK TC': '_tc', 'Noto Sans CJK HK': '_hk'}[family]
     for directory in [profile / 'preview', installation / 'data/preview']:
-        for name in ['color_scheme_reference_gray' + suffix + '.png',
-                     'color_scheme_reference_gray.png']:
+        for name in ['candidate_font' + suffix + '.png', 'candidate_font.png']:
             asset = directory / name
             if asset.is_file():
                 return asset
     raise AssertionError('The selected font has no fixture preview asset')
+
+
+def theme_asset(installation, profile, theme):
+    for directory in [profile / 'preview', installation / 'data/preview']:
+        asset = directory / ('color_scheme_' + theme + '.png')
+        if asset.is_file():
+            return asset
+    raise AssertionError('The builtin theme has no fixture preview asset')
+
+
+def compiled_themes(profile):
+    import yaml
+    config = yaml.safe_load((profile / 'build/weasel.yaml').read_text(encoding='utf-8-sig'))
+    themes = config['preset_color_schemes']
+    require(set(themes) == {*BUILTIN_THEMES, CUSTOM_THEME},
+            'The installed themes differ from the six builtins and retained custom fixture')
+    return themes
 
 
 def preview_and_cancel(installation, profile, initial_font, report):
@@ -315,12 +399,15 @@ def preview_and_cancel(installation, profile, initial_font, report):
             items = settings.combo_items(combo)
             require(settings.send(combo, CB_GETCURSEL) == font_item(items, initial_font),
                     'Preview browsing started with the wrong candidate font')
-            settings.preview_bitmap(appearance)
+            skin_bitmap = settings.preview_bitmap(appearance)
+            settings.preview_bitmap(appearance, FONT_PREVIEW)
             asset_hashes = {}
             for family in ['Microsoft YaHei', 'Noto Sans CJK SC',
                            'Noto Sans CJK TC', 'Noto Sans CJK HK']:
                 settings.select_font_by_keyboard(appearance, combo, font_item(items, family))
-                settings.preview_bitmap(appearance)
+                settings.preview_bitmap(appearance, FONT_PREVIEW)
+                require(settings.preview_bitmap(appearance) == skin_bitmap,
+                        'Selecting a font replaced the independent skin preview')
                 asset = preview_asset(installation, profile, family)
                 asset_hashes[family] = digest(asset)
                 content, stat = asset.read_bytes(), asset.stat()
@@ -329,31 +416,33 @@ def preview_and_cancel(installation, profile, initial_font, report):
                 try:
                     asset.write_bytes(b'not a PNG: synthetic family-resolution fixture')
                     settings.select_font_by_keyboard(appearance, combo, font_item(items, family))
-                    preview = settings.get_child(appearance, PREVIEW)
+                    preview = settings.get_child(appearance, FONT_PREVIEW)
                     require(settings.send(preview, STM_GETIMAGE, IMAGE_BITMAP) == 0,
                             'The font preview did not resolve its expected asset for ' + family)
+                    require(settings.preview_bitmap(appearance) == skin_bitmap,
+                            'A corrupt font preview cleared the independent skin preview')
                 finally:
                     asset.write_bytes(content)
                     os.utime(asset, ns=(stat.st_atime_ns, stat.st_mtime_ns))
                 settings.select_font_by_keyboard(appearance, combo, font_item(items, other))
                 settings.select_font_by_keyboard(appearance, combo, font_item(items, family))
-                settings.preview_bitmap(appearance)
+                settings.preview_bitmap(appearance, FONT_PREVIEW)
                 require(configuration_snapshot(profile) == before,
                         'Browsing font previews wrote or deployed the appearance configuration')
             require(len(set(asset_hashes.values())) == 4,
                     'The four font choices did not identify four distinct PNG assets')
             assets = [directory / name for directory in [profile / 'preview', installation / 'data/preview']
-                      for name in ['color_scheme_reference_gray_sc.png', 'color_scheme_reference_gray.png']
+                      for name in ['candidate_font_sc.png', 'candidate_font.png']
                       if (directory / name).is_file()]
-            require(assets, 'The fixture has no reference-theme preview files')
+            require(assets, 'The fixture has no font-comparison preview files')
             saved = [(path, path.read_bytes(), path.stat()) for path in assets]
             try:
                 assets[0].write_bytes(b'not a PNG: synthetic fixture')
                 settings.select_font_by_keyboard(appearance, combo,
                                                  font_item(items, 'Noto Sans CJK SC'))
-                preview = settings.get_child(appearance, PREVIEW)
+                preview = settings.get_child(appearance, FONT_PREVIEW)
                 require(settings.send(preview, STM_GETIMAGE, IMAGE_BITMAP) == 0,
-                        'A failed preview load retained the previous theme bitmap')
+                        'A failed font preview load retained its previous bitmap')
                 for path in assets:
                     path.unlink()
                 settings.select_font_by_keyboard(appearance, combo,
@@ -361,15 +450,74 @@ def preview_and_cancel(installation, profile, initial_font, report):
                 settings.select_font_by_keyboard(appearance, combo,
                                                  font_item(items, 'Noto Sans CJK SC'))
                 require(settings.send(preview, STM_GETIMAGE, IMAGE_BITMAP) == 0,
-                        'A missing preview retained the previous theme bitmap')
+                        'A missing font preview retained its previous bitmap')
+                require(settings.preview_bitmap(appearance) == skin_bitmap,
+                        'A missing font preview cleared the independent skin preview')
             finally:
                 for path, content, stat in saved:
                     path.write_bytes(content)
                     os.utime(path, ns=(stat.st_atime_ns, stat.st_mtime_ns))
             settings.select_font_by_keyboard(appearance, combo,
                                              font_item(items, 'Noto Sans CJK HK'))
-            settings.preview_bitmap(appearance)
-            report['failedAndMissingPreviewCleared'] = True
+            font_bitmap = settings.preview_bitmap(appearance, FONT_PREVIEW)
+            report['failedAndMissingFontPreviewClearedOnlyItself'] = True
+            themes, theme_labels = settings.theme_items(appearance)
+            palettes = compiled_themes(profile)
+            require(set(theme_labels) == {value['name'] for value in palettes.values()},
+                    'The native theme list lost a custom theme or retained an old builtin')
+            skin_hashes = {}
+            for theme in BUILTIN_THEMES:
+                target = theme_labels.index(palettes[theme]['name'])
+                other_theme = 'stellae_sakura' if theme == 'reference_gray' else 'reference_gray'
+                other = theme_labels.index(palettes[other_theme]['name'])
+                settings.select_theme(appearance, themes, target)
+                settings.preview_bitmap(appearance)
+                require(settings.preview_bitmap(appearance, FONT_PREVIEW) == font_bitmap,
+                        'Selecting a theme replaced the independent font preview')
+                asset = theme_asset(installation, profile, theme)
+                skin_hashes[theme] = digest(asset)
+                content, stat = asset.read_bytes(), asset.stat()
+                settings.select_theme(appearance, themes, other)
+                try:
+                    asset.write_bytes(b'not a PNG: synthetic theme-resolution fixture')
+                    settings.select_theme(appearance, themes, target)
+                    require(settings.preview_bitmap(appearance, required=False) == 0,
+                            'A theme preview did not resolve its expected PNG')
+                    require(settings.preview_bitmap(appearance, FONT_PREVIEW) == font_bitmap,
+                            'A corrupt skin preview cleared the independent font preview')
+                finally:
+                    asset.write_bytes(content)
+                    os.utime(asset, ns=(stat.st_atime_ns, stat.st_mtime_ns))
+                settings.select_theme(appearance, themes, other)
+                settings.select_theme(appearance, themes, target)
+                settings.preview_bitmap(appearance)
+            require(len(set(skin_hashes.values())) == len(BUILTIN_THEMES),
+                    'The six builtin themes did not resolve six distinct previews')
+            missing_theme = 'stellae_sakura'
+            missing = [directory / ('color_scheme_' + missing_theme + '.png')
+                       for directory in (profile / 'preview', installation / 'data/preview')
+                       if (directory / ('color_scheme_' + missing_theme + '.png')).is_file()]
+            saved = [(path, path.read_bytes(), path.stat()) for path in missing]
+            require(saved, 'The fixture has no removable skin preview')
+            try:
+                for path in missing:
+                    path.unlink()
+                settings.select_theme(appearance, themes,
+                                      theme_labels.index(palettes['reference_gray']['name']))
+                settings.select_theme(appearance, themes,
+                                      theme_labels.index(palettes[missing_theme]['name']))
+                require(settings.preview_bitmap(appearance, required=False) == 0,
+                        'A missing skin preview retained its previous bitmap')
+                require(settings.preview_bitmap(appearance, FONT_PREVIEW) == font_bitmap,
+                        'A missing skin preview cleared the independent font preview')
+            finally:
+                for path, content, stat in saved:
+                    path.write_bytes(content)
+                    os.utime(path, ns=(stat.st_atime_ns, stat.st_mtime_ns))
+            report['skinPreviewAssetSha256'] = skin_hashes
+            report['sixBuiltinsAndCustomThemeVisible'] = True
+            report['failedAndMissingSkinPreviewClearedOnlyItself'] = True
+            report['previewsUpdatedIndependently'] = True
             settings.cancel(appearance)
             require(process.wait(timeout=30) == 0, 'Native preview settings did not cancel cleanly')
             require(configuration_snapshot(profile) == before,
@@ -418,6 +566,47 @@ def apply_through_settings(installation, profile, initial_font, replacement_font
                 process.kill()
 
 
+def apply_theme_through_settings(installation, profile, theme, report):
+    import yaml
+
+    palettes = compiled_themes(profile)
+    expected_name = palettes[theme]['name']
+    deployer = installation / 'StellaeDeployer.exe'
+    with subprocess.Popen([str(deployer)], cwd=installation, stdout=subprocess.DEVNULL,
+                          stderr=subprocess.DEVNULL) as process:
+        try:
+            settings = SettingsDialog(process)
+            switcher, _ = settings.wait_for(SCHEMA_LIST)
+            settings.accept(switcher)
+            appearance, combo = settings.wait_for(FONT_COMBO)
+            font_index = settings.send(combo, CB_GETCURSEL)
+            font_bitmap = settings.preview_bitmap(appearance, FONT_PREVIEW)
+            themes, names = settings.theme_items(appearance)
+            settings.select_theme(appearance, themes, names.index(expected_name))
+            settings.preview_bitmap(appearance)
+            require(settings.preview_bitmap(appearance, FONT_PREVIEW) == font_bitmap and
+                    settings.send(combo, CB_GETCURSEL) == font_index,
+                    'A theme-only selection changed the independent font choice or preview')
+            settings.verify_preview_layout(appearance, report)
+            clock = next_configuration_second(profile, report, 'native theme OK: ' + theme)
+            start = time.monotonic()
+            settings.accept(appearance)
+            require(process.wait(timeout=90) == 0, 'The native theme selection did not apply')
+            record_configuration_write(profile, clock)
+            report['applyMilliseconds'] = round((time.monotonic() - start) * 1000)
+            compiled = yaml.safe_load((profile / 'build/weasel.yaml').read_text('utf-8-sig'))
+            require(compiled['style']['color_scheme'] == theme,
+                    'The compiled appearance did not select the requested theme')
+            require(compiled['style']['color_scheme_dark'] == theme,
+                    'An aligned dark theme did not follow the selected normal theme')
+            report['themeId'] = theme
+            report['normalAndAlignedDarkTheme'] = theme
+            return {key: int(palettes[theme][key]) & 0xffffffff for key in STYLE_COLORS}
+        finally:
+            if process.poll() is None:
+                process.kill()
+
+
 def verify_custom_font_defaults(installation, profile, report):
     """Use fixed CI-only custom values, then restore the fixture configuration."""
     import yaml
@@ -453,17 +642,19 @@ def verify_custom_font_defaults(installation, profile, report):
                 items = settings.combo_items(combo)
                 require(settings.send(combo, CB_GETCURSEL) == items.index(custom_stack),
                         'An explicit custom fallback stack was mislabeled as Default')
+                settings.preview_bitmap(appearance, FONT_PREVIEW)
+                report['customFontPreviewBitmapPresent'] = True
                 if default:
                     settings.select_font_by_keyboard(appearance, combo,
                                                      font_item(items, 'Microsoft YaHei'))
                 else:
-                    themes = settings.get_child(appearance, THEME_LIST)
-                    count = settings.send(themes, LB_GETCOUNT)
-                    require(count > 1, 'The fixture needs an unrelated theme choice')
+                    themes, names = settings.theme_items(appearance)
+                    palettes = compiled_themes(profile)
                     current = settings.send(themes, LB_GETCURSEL)
-                    selected = 0 if current != 0 else 1
-                    settings.send(themes, LB_SETCURSEL, selected)
-                    settings.send(appearance, WM_COMMAND, THEME_LIST | (1 << 16), themes)
+                    selected = names.index(palettes['stellae_night']['name'])
+                    if selected == current:
+                        selected = names.index(palettes['stellae_sakura']['name'])
+                    settings.select_theme(appearance, themes, selected)
                 clock = next_configuration_second(
                     profile, report, 'custom fixture Default OK' if default else 'unrelated theme OK')
                 settings.accept(appearance)
@@ -509,6 +700,24 @@ def verify_custom_font_defaults(installation, profile, report):
                 distinct['comment_font_face'] == 'Consolas',
                 'Default removed a distinct fallback stack sharing the same primary font')
         report['defaultPreservedDistinctSamePrimaryFallback'] = True
+        patch['style/color_scheme_dark'] = CUSTOM_THEME
+        write_custom(yaml.safe_dump(data, allow_unicode=True, sort_keys=False).encode('utf-8'),
+                     'write distinct custom dark-theme fixture')
+        compile_appearance()
+        configure(False)
+        require(style()['color_scheme_dark'] == CUSTOM_THEME,
+                'A normal theme change overwrote a distinct custom dark theme')
+        report['distinctCustomDarkThemePreserved'] = True
+        patch['style/color_scheme_dark'] = None
+        write_custom(yaml.safe_dump(data, allow_unicode=True, sort_keys=False).encode('utf-8'),
+                     'write absent dark-theme fixture')
+        compile_appearance()
+        require(not style().get('color_scheme_dark'),
+                'The absent dark-theme fixture still has an effective dark selection')
+        configure(False)
+        require(not style().get('color_scheme_dark'),
+                'A normal theme change invented an absent dark selection')
+        report['absentDarkThemeNotInvented'] = True
     finally:
         write_custom(original, 'restore original fixture configuration')
         compile_appearance()
@@ -565,6 +774,10 @@ def validate(args, report):
         report['before'] = asdict(before)
         require(before.family == initial_font,
                 'Initial candidate glyphs did not use the selected installer default font')
+        initial_palette = compiled_themes(profile)['reference_gray']
+        require(all(getattr(before, key) == (int(initial_palette[key]) & 0xffffffff)
+                    for key in STYLE_COLORS),
+                'The initial candidate frame did not use the retained gray palette')
 
         # Leave a deterministic reason for a *full* deploy to recompile, even
         # if the GitHub VM copied every dictionary with the same timestamp.
@@ -603,6 +816,23 @@ def validate(args, report):
         require((before.window, before.composition, before.selected, before.count) ==
                 (after.window, after.composition, after.selected, after.count),
                 'The pre-existing candidate window or its draft changed during appearance reload')
+        offset = len(read_frames(trace))
+        report['phase'] = 'apply each builtin theme without changing the live draft'
+        theme_results = []
+        # Start with a different theme so each native OK has an actual change.
+        for theme in (*BUILTIN_THEMES[1:], BUILTIN_THEMES[0]):
+            theme_report = {}
+            colors = apply_theme_through_settings(installation, profile, theme, theme_report)
+            themed, offset = wait_for_frame(trace, args.server_pid, offset,
+                                            replacement_font, colors)
+            require((before.window, before.composition, before.selected, before.count) ==
+                    (themed.window, themed.composition, themed.selected, themed.count),
+                    'A theme change altered the retained candidate window or composition')
+            theme_report['paintedFrame'] = asdict(themed)
+            theme_report['actualPaintStyleColorsMatched'] = True
+            theme_results.append(theme_report)
+        report['themeApplications'] = theme_results
+        report['sixThemesPreservedSameLiveDraft'] = True
         files_after = scheme_snapshot(installation, profile)
         changed = sorted(name for name in set(files_before) | set(files_after)
                          if files_before.get(name) != files_after.get(name))

@@ -3395,6 +3395,23 @@
       ]
     },
     {
+      "path": "schemes/config/official-weasel/luna_pinyin.schema.yaml",
+      "kind": "program-or-configuration",
+      "source_ids": [
+        "schemes:luna_config"
+      ],
+      "retained_upstream_terms": [
+        "LGPL-3.0",
+        "original author and description"
+      ],
+      "license_scope": "Upstream Luna schema under LGPL-3.0; only schema/name omitted for internal lookup use, with original authorship and behavior retained.",
+      "references": [
+        "schemes/LICENSE",
+        "schemes/licenses/luna-pinyin-LGPL-3.0.txt",
+        "schemes/docs/sources/shared-config-sources.md"
+      ]
+    },
+    {
       "path": "schemes/config/official-weasel/opencc/mdx_t2s.json",
       "kind": "program-or-configuration",
       "project_license": "GPL-3.0-only",
@@ -3570,6 +3587,66 @@
         "schemes/LICENSE",
         "schemes/docs/sources/official-weasel-sources.md"
       ],
+      "path": "schemes/config/official-weasel/preview/candidate_font.png",
+      "source_ids": []
+    },
+    {
+      "kind": "original-status-asset-or-generator",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "schemes/LICENSE",
+        "schemes/docs/sources/official-weasel-sources.md"
+      ],
+      "path": "schemes/config/official-weasel/preview/candidate_font_default.png",
+      "source_ids": []
+    },
+    {
+      "kind": "original-status-asset-or-generator",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "schemes/LICENSE",
+        "schemes/docs/sources/official-weasel-sources.md"
+      ],
+      "path": "schemes/config/official-weasel/preview/candidate_font_hk.png",
+      "source_ids": []
+    },
+    {
+      "kind": "original-status-asset-or-generator",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "schemes/LICENSE",
+        "schemes/docs/sources/official-weasel-sources.md"
+      ],
+      "path": "schemes/config/official-weasel/preview/candidate_font_sc.png",
+      "source_ids": []
+    },
+    {
+      "kind": "original-status-asset-or-generator",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "schemes/LICENSE",
+        "schemes/docs/sources/official-weasel-sources.md"
+      ],
+      "path": "schemes/config/official-weasel/preview/candidate_font_tc.png",
+      "source_ids": []
+    },
+    {
+      "kind": "original-status-asset-or-generator",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "schemes/LICENSE",
+        "schemes/docs/sources/official-weasel-sources.md"
+      ],
       "path": "schemes/config/official-weasel/preview/color_scheme_reference_gray.png",
       "source_ids": []
     },
@@ -3582,7 +3659,7 @@
         "schemes/LICENSE",
         "schemes/docs/sources/official-weasel-sources.md"
       ],
-      "path": "schemes/config/official-weasel/preview/color_scheme_reference_gray_default.png",
+      "path": "schemes/config/official-weasel/preview/color_scheme_stellae_crimson.png",
       "source_ids": []
     },
     {
@@ -3594,7 +3671,7 @@
         "schemes/LICENSE",
         "schemes/docs/sources/official-weasel-sources.md"
       ],
-      "path": "schemes/config/official-weasel/preview/color_scheme_reference_gray_hk.png",
+      "path": "schemes/config/official-weasel/preview/color_scheme_stellae_lavender.png",
       "source_ids": []
     },
     {
@@ -3606,7 +3683,7 @@
         "schemes/LICENSE",
         "schemes/docs/sources/official-weasel-sources.md"
       ],
-      "path": "schemes/config/official-weasel/preview/color_scheme_reference_gray_sc.png",
+      "path": "schemes/config/official-weasel/preview/color_scheme_stellae_mono.png",
       "source_ids": []
     },
     {
@@ -3618,7 +3695,19 @@
         "schemes/LICENSE",
         "schemes/docs/sources/official-weasel-sources.md"
       ],
-      "path": "schemes/config/official-weasel/preview/color_scheme_reference_gray_tc.png",
+      "path": "schemes/config/official-weasel/preview/color_scheme_stellae_night.png",
+      "source_ids": []
+    },
+    {
+      "kind": "original-status-asset-or-generator",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "schemes/LICENSE",
+        "schemes/docs/sources/official-weasel-sources.md"
+      ],
+      "path": "schemes/config/official-weasel/preview/color_scheme_stellae_sakura.png",
       "source_ids": []
     },
     {
@@ -5585,6 +5674,23 @@
       ]
     },
     {
+      "path": "schemes/config/pc/luna_pinyin.schema.yaml",
+      "kind": "program-or-configuration",
+      "source_ids": [
+        "schemes:luna_config"
+      ],
+      "retained_upstream_terms": [
+        "LGPL-3.0",
+        "original author and description"
+      ],
+      "license_scope": "Upstream Luna schema under LGPL-3.0; only schema/name omitted for internal lookup use, with original authorship and behavior retained.",
+      "references": [
+        "schemes/LICENSE",
+        "schemes/licenses/luna-pinyin-LGPL-3.0.txt",
+        "schemes/docs/sources/shared-config-sources.md"
+      ]
+    },
+    {
       "path": "schemes/config/pc/opencc/mdx_t2s.json",
       "kind": "program-or-configuration",
       "project_license": "GPL-3.0-only",
@@ -5748,6 +5854,61 @@
       "references": [
         "schemes/LICENSE"
       ],
+      "path": "schemes/config/pc/preview/candidate_font.png",
+      "source_ids": []
+    },
+    {
+      "kind": "original-status-asset-or-generator",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "schemes/LICENSE"
+      ],
+      "path": "schemes/config/pc/preview/candidate_font_default.png",
+      "source_ids": []
+    },
+    {
+      "kind": "original-status-asset-or-generator",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "schemes/LICENSE"
+      ],
+      "path": "schemes/config/pc/preview/candidate_font_hk.png",
+      "source_ids": []
+    },
+    {
+      "kind": "original-status-asset-or-generator",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "schemes/LICENSE"
+      ],
+      "path": "schemes/config/pc/preview/candidate_font_sc.png",
+      "source_ids": []
+    },
+    {
+      "kind": "original-status-asset-or-generator",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "schemes/LICENSE"
+      ],
+      "path": "schemes/config/pc/preview/candidate_font_tc.png",
+      "source_ids": []
+    },
+    {
+      "kind": "original-status-asset-or-generator",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "schemes/LICENSE"
+      ],
       "path": "schemes/config/pc/preview/color_scheme_reference_gray.png",
       "source_ids": []
     },
@@ -5759,7 +5920,7 @@
       "references": [
         "schemes/LICENSE"
       ],
-      "path": "schemes/config/pc/preview/color_scheme_reference_gray_default.png",
+      "path": "schemes/config/pc/preview/color_scheme_stellae_crimson.png",
       "source_ids": []
     },
     {
@@ -5770,7 +5931,7 @@
       "references": [
         "schemes/LICENSE"
       ],
-      "path": "schemes/config/pc/preview/color_scheme_reference_gray_hk.png",
+      "path": "schemes/config/pc/preview/color_scheme_stellae_lavender.png",
       "source_ids": []
     },
     {
@@ -5781,7 +5942,7 @@
       "references": [
         "schemes/LICENSE"
       ],
-      "path": "schemes/config/pc/preview/color_scheme_reference_gray_sc.png",
+      "path": "schemes/config/pc/preview/color_scheme_stellae_mono.png",
       "source_ids": []
     },
     {
@@ -5792,7 +5953,18 @@
       "references": [
         "schemes/LICENSE"
       ],
-      "path": "schemes/config/pc/preview/color_scheme_reference_gray_tc.png",
+      "path": "schemes/config/pc/preview/color_scheme_stellae_night.png",
+      "source_ids": []
+    },
+    {
+      "kind": "original-status-asset-or-generator",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "schemes/LICENSE"
+      ],
+      "path": "schemes/config/pc/preview/color_scheme_stellae_sakura.png",
       "source_ids": []
     },
     {
@@ -8955,40 +9127,6 @@
       ],
       "references": [
         "licenses/CC-BY-SA-4.0.txt"
-      ]
-    },
-    {
-      "path": "schemes/config/official-weasel/luna_pinyin.schema.yaml",
-      "kind": "program-or-configuration",
-      "source_ids": [
-        "schemes:luna_config"
-      ],
-      "retained_upstream_terms": [
-        "LGPL-3.0",
-        "original author and description"
-      ],
-      "license_scope": "Upstream Luna schema under LGPL-3.0; only schema/name omitted for internal lookup use, with original authorship and behavior retained.",
-      "references": [
-        "schemes/LICENSE",
-        "schemes/licenses/luna-pinyin-LGPL-3.0.txt",
-        "schemes/docs/sources/shared-config-sources.md"
-      ]
-    },
-    {
-      "path": "schemes/config/pc/luna_pinyin.schema.yaml",
-      "kind": "program-or-configuration",
-      "source_ids": [
-        "schemes:luna_config"
-      ],
-      "retained_upstream_terms": [
-        "LGPL-3.0",
-        "original author and description"
-      ],
-      "license_scope": "Upstream Luna schema under LGPL-3.0; only schema/name omitted for internal lookup use, with original authorship and behavior retained.",
-      "references": [
-        "schemes/LICENSE",
-        "schemes/licenses/luna-pinyin-LGPL-3.0.txt",
-        "schemes/docs/sources/shared-config-sources.md"
       ]
     }
   ]

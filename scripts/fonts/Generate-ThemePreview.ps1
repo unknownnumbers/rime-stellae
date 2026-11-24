@@ -4,8 +4,8 @@ param(
   [string]$DefaultFont=(Join-Path $env:WINDIR 'Fonts/msyh.ttc'),
   [string]$Python='python',
   [string]$ThemeFile=(Join-Path $PSScriptRoot '../../schemes/config/pc/weasel.custom.yaml'),
-  [string]$OutputFile=(Join-Path $PSScriptRoot '../../schemes/config/pc/preview/color_scheme_reference_gray.png')
+  [string]$OutputDirectory=(Join-Path $PSScriptRoot '../../schemes/config/pc/preview')
 )
 $ErrorActionPreference='Stop'
-& $Python (Join-Path $PSScriptRoot 'Generate-ThemePreview.py') --theme $ThemeFile --collection $FontCollection --default-font $DefaultFont --output-file $OutputFile
+& $Python (Join-Path $PSScriptRoot 'Generate-ThemePreview.py') --theme $ThemeFile --collection $FontCollection --default-font $DefaultFont --output-directory $OutputDirectory
 if($LASTEXITCODE){throw 'Static theme preview generation failed.'}

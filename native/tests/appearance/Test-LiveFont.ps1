@@ -107,6 +107,30 @@ try {
     throw 'A standalone font tool was installed with the native appearance setting.'
   }
 
+  # Check the fresh builtin set, then retain a synthetic user-owned theme through
+  # an ordinary coverage upgrade before exercising the same installed dialog.
+  $seedTheme = @'
+import json,sys,time,yaml
+from pathlib import Path
+profile=Path(sys.argv[1]);report=Path(sys.argv[2])
+expected={'reference_gray','stellae_sakura','stellae_lavender','stellae_night','stellae_crimson','stellae_mono'}
+compiled=yaml.safe_load((profile/'build/weasel.yaml').read_text('utf-8-sig'))
+assert set(compiled['preset_color_schemes'])==expected,'Fresh installation retained old builtin themes'
+custom=profile/'weasel.custom.yaml';data=yaml.safe_load(custom.read_text('utf-8-sig'))
+time.sleep(max(0,custom.stat().st_mtime_ns//1_000_000_000+1.05-time.time()))
+data.setdefault('patch',{})['preset_color_schemes/ci_custom_theme']={'name':'CI custom theme','author':'Synthetic fixture','color_format':'abgr','back_color':0xff292b30,'candidate_text_color':0xfff5f5f5,'hilited_candidate_back_color':0xff735345,'hilited_candidate_text_color':0xffffffff}
+custom.write_text(yaml.safe_dump(data,allow_unicode=True,sort_keys=False),encoding='utf-8')
+report.write_text(json.dumps({'freshBuiltinThemeIds':sorted(expected),'customThemeSeeded':True})+'\n',encoding='utf-8')
+'@
+  Invoke-FixtureStep $python @('-c', $seedTheme, $profileDirectory,
+    (Join-Path $reportRoot 'upgrade-theme.json')) 'seed-custom-theme' 30000
+  $customPath = Join-Path $profileDirectory 'weasel.custom.yaml'
+  $customBeforeUpgrade = (Get-FileHash -LiteralPath $customPath).Hash
+  Invoke-FixtureStep $installerPath $arguments 'coverage-upgrade' 600000 @(0,3010)
+  if ((Get-FileHash -LiteralPath $customPath).Hash -cne $customBeforeUpgrade) {
+    throw 'The coverage upgrade rewrote the user-owned custom theme configuration.'
+  }
+
   $installedServer = Join-Path $program 'StellaeServer.exe'
   foreach ($current in @(Get-Process -Name StellaeServer -ErrorAction SilentlyContinue)) {
     try {
@@ -128,6 +152,8 @@ try {
   if ($result.passed -ne $true -or $result.sameSessionCommitted -ne $true) {
     throw 'The appearance and draft assertions did not complete.'
   }
+  $result | Add-Member -NotePropertyName coverageUpgradePreservedCustomTheme -NotePropertyValue $true
+  $result | ConvertTo-Json -Depth 30 | Set-Content -LiteralPath $report -Encoding utf8NoBOM
   Write-Output "PASS actual candidate font, same live draft, $($result.schemeFilesChecked) untouched scheme files"
 } catch {
   if (-not (Test-Path -LiteralPath $report)) {

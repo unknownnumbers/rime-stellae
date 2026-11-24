@@ -178,18 +178,17 @@ def main():
                 raise SystemExit('Invalid En status icon container')
             continue
         if path.suffix == '.png':
-            if path.relative_to(ROOT).as_posix() not in {
-                'config/pc/preview/color_scheme_reference_gray.png',
-                'config/pc/preview/color_scheme_reference_gray_default.png',
-                'config/pc/preview/color_scheme_reference_gray_sc.png',
-                'config/pc/preview/color_scheme_reference_gray_tc.png',
-                'config/pc/preview/color_scheme_reference_gray_hk.png',
-                'config/official-weasel/preview/color_scheme_reference_gray.png',
-                'config/official-weasel/preview/color_scheme_reference_gray_default.png',
-                'config/official-weasel/preview/color_scheme_reference_gray_sc.png',
-                'config/official-weasel/preview/color_scheme_reference_gray_tc.png',
-                'config/official-weasel/preview/color_scheme_reference_gray_hk.png',
-            } or not path.read_bytes().startswith(b'\x89PNG\r\n\x1a\n'):
+            preview_names = {
+                'color_scheme_' + theme + '.png' for theme in (
+                    'reference_gray', 'stellae_sakura', 'stellae_lavender',
+                    'stellae_night', 'stellae_crimson', 'stellae_mono',
+                )
+            } | {'candidate_font' + suffix + '.png'
+                 for suffix in ('', '_default', '_sc', '_tc', '_hk')}
+            allowed_previews = {'config/' + profile + '/preview/' + name
+                                for profile in ('pc', 'official-weasel')
+                                for name in preview_names}
+            if path.relative_to(ROOT).as_posix() not in allowed_previews or not path.read_bytes().startswith(b'\x89PNG\r\n\x1a\n'):
                 raise SystemExit('Unexpected theme preview resource')
             continue
         if path.suffix in {'.bin', '.gram', '.ocd2', '.gz', '.xz'}:

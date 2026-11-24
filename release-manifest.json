@@ -3,7 +3,7 @@
   "date": "2026-11-25",
   "kind": "frontend-and-input-scheme-source",
   "frontendVersion": "0.17.4.61052",
-  "bundleVersion": "2026.11.24.3",
+  "bundleVersion": "2026.11.25.1",
   "nativeBinariesIncluded": false,
   "personalLearningIncluded": false,
   "productionInputSchemesIncluded": true,
@@ -112,8 +112,8 @@
     },
     {
       "path": "docs/BUILD.md",
-      "bytes": 4040,
-      "sha256": "db9daaab03cc275cc4e69c1cb63bc5218fdcdc39cb7d1f30a43822d95986e72c"
+      "bytes": 4178,
+      "sha256": "3c55401d8cfa54e78aea82db40a76f33c208b41fe76eca250dde61dbd629167d"
     },
     {
       "path": "docs/PC.md",
@@ -143,7 +143,7 @@
     {
       "path": "installer/bundle-inputs.json",
       "bytes": 5390,
-      "sha256": "b019ac3c4b2735e686a85d3fab6f63c9a360fc3f323b49e4f635b22453ce79d5"
+      "sha256": "2f50c5198dc410a03513b73bddb68c1f1f37c0f9b634c189d39f7710da9d5e55"
     },
     {
       "path": "installer/bundle.nsi",
@@ -207,8 +207,8 @@
     },
     {
       "path": "licenses/file-licenses.json",
-      "bytes": 301954,
-      "sha256": "18655f761ded764f4d3aee86d889f334ab357ba73f619e3edf6f69437f796279"
+      "bytes": 307356,
+      "sha256": "04370e815d5cdb1924b5b7e0355dbbeb06ee28d5426f9a7fadf0239a1370829e"
     },
     {
       "path": "licenses/native-dependencies/boost/LICENSE_1_0.txt",
@@ -497,8 +497,8 @@
     },
     {
       "path": "native/frontend-source-files.json",
-      "bytes": 22527,
-      "sha256": "2c70e24e1c1dd10fcddbe1c13c7db8421d1a8479835ddcd43b24cf576ca98ea4"
+      "bytes": 22632,
+      "sha256": "a957aba37578447400a0d97434df7d5e601e51d55827546033c9936ed889d1d7"
     },
     {
       "path": "native/notification-inputs.json",
@@ -508,27 +508,27 @@
     {
       "path": "native/source-manifest.json",
       "bytes": 12544,
-      "sha256": "9048251fc43711c3999685b50dd638dd1d892262e2d6d61a13ecdf92038bef56"
+      "sha256": "4ddd2a9a4b14948856c3cbb4849013e8782289b7d5a5da99d46e1f0f1a7b68d1"
     },
     {
       "path": "native/tests/appearance/Add-PaintTrace.ps1",
-      "bytes": 2289,
-      "sha256": "3697cc0c256745920b388de824ca9be7fe9d6e68560648114c168dea2776cd79"
+      "bytes": 2298,
+      "sha256": "ab3e21abfb2b97c74b73472cb6d7584a9b115a77529ac9b12307633bac0326e5"
     },
     {
       "path": "native/tests/appearance/PaintTrace.inc",
-      "bytes": 6100,
-      "sha256": "4ae704407e1e4307180440ca86d438ae57928cddeb402cb4dd51f8d8d620a298"
+      "bytes": 6524,
+      "sha256": "0520ed122090ae9d7b3b45af61d901ae99a85c5929cc9551117f4f506de9b19a"
     },
     {
       "path": "native/tests/appearance/Probe-LiveFont.py",
-      "bytes": 32749,
-      "sha256": "f6ceb9e0c7800dbe2962f63f2d5b5b6c9efc96fcef758c5576eedc4de2dfa700"
+      "bytes": 46720,
+      "sha256": "372a7391f9d1303bf8454cf9a5735e44e99227dc15320bfa34c415aa26c9d315"
     },
     {
       "path": "native/tests/appearance/Test-LiveFont.ps1",
-      "bytes": 7095,
-      "sha256": "e18d491c9c9341913121b7fee32e58847da12dbbecf564c820b9f0099b06c8b2"
+      "bytes": 9062,
+      "sha256": "69a1b4377f1e57ac70b5cba324fa77b724e6c83edb495c527d66586ad724e3d8"
     },
     {
       "path": "native/tests/installer/Export-SyntheticLearning.py",
@@ -727,8 +727,8 @@
     },
     {
       "path": "native/weasel/stellae-61052.patch",
-      "bytes": 980943,
-      "sha256": "e6ef195339a1f4037e7193f5b73f68b2851715e18bf8731d50eb6e5bcf4b9442"
+      "bytes": 976281,
+      "sha256": "739dc60a839736e7240428d07fdb68b7f957164c62facc27f5827efcb5a271b6"
     },
     {
       "path": "schemes/.gitattributes",
@@ -1381,34 +1381,64 @@
       "sha256": "f2d291166946a848fd88e541844567415f1ed3d9c5a7477757b88aeb3a69c0ca"
     },
     {
+      "path": "schemes/config/official-weasel/preview/candidate_font.png",
+      "bytes": 16016,
+      "sha256": "c9886f0ce54a0684ab741af62e3d751eba2847b4c07c54b9226707bb92e993e7"
+    },
+    {
+      "path": "schemes/config/official-weasel/preview/candidate_font_default.png",
+      "bytes": 16151,
+      "sha256": "220731bef34a0ea7a1e93743aad9ed8646b1d1a9837ced6a0edf00a65b268694"
+    },
+    {
+      "path": "schemes/config/official-weasel/preview/candidate_font_hk.png",
+      "bytes": 17025,
+      "sha256": "48b2a0f29d9d8b9ee4147540794becc7337e918e2c197b64b60c4894e1e13332"
+    },
+    {
+      "path": "schemes/config/official-weasel/preview/candidate_font_sc.png",
+      "bytes": 16807,
+      "sha256": "671c9cc13abceff226cca535058dd6ddfa0100a08d705735ef162535582ecce3"
+    },
+    {
+      "path": "schemes/config/official-weasel/preview/candidate_font_tc.png",
+      "bytes": 17716,
+      "sha256": "daaaaa61181870f8a2b9370cb199f1a8e42f039ca6da5b235cb6741be2b91137"
+    },
+    {
       "path": "schemes/config/official-weasel/preview/color_scheme_reference_gray.png",
-      "bytes": 23142,
-      "sha256": "c6e5b73c28af6ac86a361b92067e0b6784fa45ee6060d51376b3aaccd21ccb73"
+      "bytes": 10548,
+      "sha256": "faeb8232f84a1cb48d3e0a5ad13c12fb8b6a1a489c89e1d864f7934313ae62a3"
     },
     {
-      "path": "schemes/config/official-weasel/preview/color_scheme_reference_gray_default.png",
-      "bytes": 23044,
-      "sha256": "d03eb67cc29f514921c819b76ac29760159f826859d6b7a42d2f36c65d4fa27c"
+      "path": "schemes/config/official-weasel/preview/color_scheme_stellae_crimson.png",
+      "bytes": 11233,
+      "sha256": "b35a439a0a67b6e886c355de8e98f29dec19249820b5206ef7bdea41a09c6839"
     },
     {
-      "path": "schemes/config/official-weasel/preview/color_scheme_reference_gray_hk.png",
-      "bytes": 23006,
-      "sha256": "788083761043eded420b6f94fff9975104f6284f04c6de9f114adcd5ac5e7236"
+      "path": "schemes/config/official-weasel/preview/color_scheme_stellae_lavender.png",
+      "bytes": 11057,
+      "sha256": "bed286eb3d797cccbba9df9acaf68264cf3bf4b0b69176d3681ff3caa2ef8343"
     },
     {
-      "path": "schemes/config/official-weasel/preview/color_scheme_reference_gray_sc.png",
-      "bytes": 23129,
-      "sha256": "f5f55846497fecacb0e43a72c2cd2e8755d17a53413501b3c031ea810503d0e6"
+      "path": "schemes/config/official-weasel/preview/color_scheme_stellae_mono.png",
+      "bytes": 11011,
+      "sha256": "7b8a28de2b2784ec857fec18c97e404a497bdd3193280d548af0ee12fa1ad407"
     },
     {
-      "path": "schemes/config/official-weasel/preview/color_scheme_reference_gray_tc.png",
-      "bytes": 23131,
-      "sha256": "a651efe058fdc549e56fa2ea4e0792b95516677f62a6578a1984441944604155"
+      "path": "schemes/config/official-weasel/preview/color_scheme_stellae_night.png",
+      "bytes": 11289,
+      "sha256": "3a6e3a4eae215b9013afa1945dac823011e080137d621bc800142b6d3a60d76f"
+    },
+    {
+      "path": "schemes/config/official-weasel/preview/color_scheme_stellae_sakura.png",
+      "bytes": 11078,
+      "sha256": "d91c9382d0cad8b7c26c000be230c5d4a7b2c5310b0da695f88986ef59a7baa9"
     },
     {
       "path": "schemes/config/official-weasel/profile-manifest.json",
-      "bytes": 29769,
-      "sha256": "992ed567d7a504caed4212034bf4b85dbfe07e0e7ca2f714e3364ef315274092"
+      "bytes": 30754,
+      "sha256": "374199f9944500b7b9e4e5bcf3cb7b186393170c23e567a1d470b3c39b820438"
     },
     {
       "path": "schemes/config/official-weasel/project_radical.dict.yaml",
@@ -1642,8 +1672,8 @@
     },
     {
       "path": "schemes/config/official-weasel/samples/weasel.custom.yaml",
-      "bytes": 2369,
-      "sha256": "c173290394cfcfe5c79555d999b4d518595d6d018fda3d9a1e95400c703f6210"
+      "bytes": 7196,
+      "sha256": "3a1848f077b03c7480da0571ca1f448e93284da52a25f9cca1058a6c4dbb489a"
     },
     {
       "path": "schemes/config/official-weasel/source-dependencies.json",
@@ -1722,8 +1752,8 @@
     },
     {
       "path": "schemes/config/pc/config-source-manifest.json",
-      "bytes": 29831,
-      "sha256": "9231660e6472615a4b03cdf8db1ee45f05aebfcd91734aece158337b69be3934"
+      "bytes": 30816,
+      "sha256": "4f113bc82b20c61cf58b6adb830b4d32e8c59d0684d513de72b79da4f5341013"
     },
     {
       "path": "schemes/config/pc/default.custom.yaml",
@@ -2316,29 +2346,59 @@
       "sha256": "f2d291166946a848fd88e541844567415f1ed3d9c5a7477757b88aeb3a69c0ca"
     },
     {
+      "path": "schemes/config/pc/preview/candidate_font.png",
+      "bytes": 16016,
+      "sha256": "c9886f0ce54a0684ab741af62e3d751eba2847b4c07c54b9226707bb92e993e7"
+    },
+    {
+      "path": "schemes/config/pc/preview/candidate_font_default.png",
+      "bytes": 16151,
+      "sha256": "220731bef34a0ea7a1e93743aad9ed8646b1d1a9837ced6a0edf00a65b268694"
+    },
+    {
+      "path": "schemes/config/pc/preview/candidate_font_hk.png",
+      "bytes": 17025,
+      "sha256": "48b2a0f29d9d8b9ee4147540794becc7337e918e2c197b64b60c4894e1e13332"
+    },
+    {
+      "path": "schemes/config/pc/preview/candidate_font_sc.png",
+      "bytes": 16807,
+      "sha256": "671c9cc13abceff226cca535058dd6ddfa0100a08d705735ef162535582ecce3"
+    },
+    {
+      "path": "schemes/config/pc/preview/candidate_font_tc.png",
+      "bytes": 17716,
+      "sha256": "daaaaa61181870f8a2b9370cb199f1a8e42f039ca6da5b235cb6741be2b91137"
+    },
+    {
       "path": "schemes/config/pc/preview/color_scheme_reference_gray.png",
-      "bytes": 23142,
-      "sha256": "c6e5b73c28af6ac86a361b92067e0b6784fa45ee6060d51376b3aaccd21ccb73"
+      "bytes": 10548,
+      "sha256": "faeb8232f84a1cb48d3e0a5ad13c12fb8b6a1a489c89e1d864f7934313ae62a3"
     },
     {
-      "path": "schemes/config/pc/preview/color_scheme_reference_gray_default.png",
-      "bytes": 23044,
-      "sha256": "d03eb67cc29f514921c819b76ac29760159f826859d6b7a42d2f36c65d4fa27c"
+      "path": "schemes/config/pc/preview/color_scheme_stellae_crimson.png",
+      "bytes": 11233,
+      "sha256": "b35a439a0a67b6e886c355de8e98f29dec19249820b5206ef7bdea41a09c6839"
     },
     {
-      "path": "schemes/config/pc/preview/color_scheme_reference_gray_hk.png",
-      "bytes": 23006,
-      "sha256": "788083761043eded420b6f94fff9975104f6284f04c6de9f114adcd5ac5e7236"
+      "path": "schemes/config/pc/preview/color_scheme_stellae_lavender.png",
+      "bytes": 11057,
+      "sha256": "bed286eb3d797cccbba9df9acaf68264cf3bf4b0b69176d3681ff3caa2ef8343"
     },
     {
-      "path": "schemes/config/pc/preview/color_scheme_reference_gray_sc.png",
-      "bytes": 23129,
-      "sha256": "f5f55846497fecacb0e43a72c2cd2e8755d17a53413501b3c031ea810503d0e6"
+      "path": "schemes/config/pc/preview/color_scheme_stellae_mono.png",
+      "bytes": 11011,
+      "sha256": "7b8a28de2b2784ec857fec18c97e404a497bdd3193280d548af0ee12fa1ad407"
     },
     {
-      "path": "schemes/config/pc/preview/color_scheme_reference_gray_tc.png",
-      "bytes": 23131,
-      "sha256": "a651efe058fdc549e56fa2ea4e0792b95516677f62a6578a1984441944604155"
+      "path": "schemes/config/pc/preview/color_scheme_stellae_night.png",
+      "bytes": 11289,
+      "sha256": "3a6e3a4eae215b9013afa1945dac823011e080137d621bc800142b6d3a60d76f"
+    },
+    {
+      "path": "schemes/config/pc/preview/color_scheme_stellae_sakura.png",
+      "bytes": 11078,
+      "sha256": "d91c9382d0cad8b7c26c000be230c5d4a7b2c5310b0da695f88986ef59a7baa9"
     },
     {
       "path": "schemes/config/pc/project_radical.dict.yaml",
@@ -2612,8 +2672,8 @@
     },
     {
       "path": "schemes/config/pc/weasel.custom.yaml",
-      "bytes": 2369,
-      "sha256": "c173290394cfcfe5c79555d999b4d518595d6d018fda3d9a1e95400c703f6210"
+      "bytes": 7196,
+      "sha256": "3a1848f077b03c7480da0571ca1f448e93284da52a25f9cca1058a6c4dbb489a"
     },
     {
       "path": "schemes/config/pc/zh-hant-t-essay-bgw-compact.gram",
@@ -3002,8 +3062,8 @@
     },
     {
       "path": "schemes/licenses/file-licenses.json",
-      "bytes": 229721,
-      "sha256": "6a19f206b8d8cba6f98b534bef65311821191c0c4789439120039909f3ad6b18"
+      "bytes": 234595,
+      "sha256": "5a9e5c13d796e128e21cf9b782dda413934e2d4c1eaec43e0df7c4c933e006db"
     },
     {
       "path": "schemes/licenses/luna-compact-model-LGPL-3.0.txt",
@@ -3412,8 +3472,8 @@
     },
     {
       "path": "schemes/release-manifest.json",
-      "bytes": 103762,
-      "sha256": "7b71462272de807a1a29002f40ecb96b052221f9b555aa106f87391db10accc4"
+      "bytes": 105930,
+      "sha256": "c6425c4aa040a9ffdc14a5bc691e45116c5b87e47dec9430d9f2b51eb378ba11"
     },
     {
       "path": "schemes/scripts/build_dlc.py",
@@ -3532,8 +3592,8 @@
     },
     {
       "path": "schemes/scripts/verify_release.py",
-      "bytes": 13707,
-      "sha256": "cf2cbbb43a4728dd751935fefeaedf070b66d40f0abc513d62ef00ba51fcd451"
+      "bytes": 13506,
+      "sha256": "74251dfeda4997f3e3e7027fb0fd7aa9036368035ff00df7d5b955d53ea79037"
     },
     {
       "path": "schemes/sources/base-build.json",
@@ -3687,13 +3747,13 @@
     },
     {
       "path": "scripts/fonts/Generate-ThemePreview.ps1",
-      "bytes": 660,
-      "sha256": "3495e72bfd062b047f8d1d9d636a19e4dee612c4ba4dae91d7ee73bd8fb93585"
+      "bytes": 643,
+      "sha256": "d59043deb4d8dcc86293b8de355ba2680548026b7d4df30a85081e51a0a5cc9d"
     },
     {
       "path": "scripts/fonts/Generate-ThemePreview.py",
-      "bytes": 3799,
-      "sha256": "b89a570f18e82b2849b4304950cc0b7afe5047d6b873c548aa3b38283dfc0c98"
+      "bytes": 7067,
+      "sha256": "6df328edcbf418873132f2e6482502546b2be28a07e8f5ce37dd819a24d034b7"
     },
     {
       "path": "scripts/fonts/Install-CandidateFont.ps1",

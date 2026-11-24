@@ -25,14 +25,14 @@ After a reviewed source change, update the file license index with `python licen
 [Source inputs](SOURCES.md) | [User guide](PC.md)
 
 
-## Static font previews
+## Static appearance previews
 
-The appearance dialog uses the upstream static PNG preview mechanism. The project theme includes Default, SC, TC and HK comparison images with the same Unicode sample. The selected font highlights its row; browsing images does not deploy a scheme.
+The appearance dialog uses the upstream static PNG preview mechanism. Each of the six bundled themes has a candidate-window preview with a five-item Chinese row and a six-item English column. A separate, neutral font preview compares Default, SC, TC and HK using the same Unicode sample. The selected font highlights its row. Theme and font previews update independently; browsing does not deploy a scheme.
 
 To regenerate these assets on Windows, use Pillow 13.0.0, the pinned Noto Sans CJK 2.004 Regular collection, and Microsoft YaHei from Windows:
 
 ```powershell
-python scripts/fonts/Generate-ThemePreview.py --theme schemes/config/pc/weasel.custom.yaml --collection PATH_TO_NotoSansCJK-Regular.ttc --default-font C:/Windows/Fonts/msyh.ttc --output-file schemes/config/pc/preview/color_scheme_reference_gray.png
+python scripts/fonts/Generate-ThemePreview.py --theme schemes/config/pc/weasel.custom.yaml --collection PATH_TO_NotoSansCJK-Regular.ttc --default-font C:/Windows/Fonts/msyh.ttc --output-directory schemes/config/pc/preview
 ```
 
 The generator checks the collection hash and each face name. Only the rendered PNG files are included in the scheme.

@@ -1,5 +1,5 @@
 diff --git a/RimeWithWeasel/RimeWithWeasel.cpp b/RimeWithWeasel/RimeWithWeasel.cpp
-index 3f4e59d9f410c79ad605460c5492314d71bdfb65..ebfeb853e68a33996a60b305842504b09ec44af0 100644
+index 3f4e59d..ebfeb85 100644
 --- a/RimeWithWeasel/RimeWithWeasel.cpp
 +++ b/RimeWithWeasel/RimeWithWeasel.cpp
 @@ -1,4 +1,4 @@
@@ -908,7 +908,7 @@ index 3f4e59d9f410c79ad605460c5492314d71bdfb65..ebfeb853e68a33996a60b305842504b0
          TextAttribute attr;
          attr.type = HIGHLIGHTED;
 diff --git a/RimeWithWeasel/WeaselUtility.cpp b/RimeWithWeasel/WeaselUtility.cpp
-index 9a07343b46d01d022ac67c2bf65b187d1b213a45..76c3f16cef50f7ffaeadfc5268dec9fcde69698a 100644
+index 9a07343..76c3f16 100644
 --- a/RimeWithWeasel/WeaselUtility.cpp
 +++ b/RimeWithWeasel/WeaselUtility.cpp
 @@ -5,7 +5,7 @@
@@ -930,7 +930,7 @@ index 9a07343b46d01d022ac67c2bf65b187d1b213a45..76c3f16cef50f7ffaeadfc5268dec9fc
  }
  
 diff --git a/WeaselDeployer/Configurator.cpp b/WeaselDeployer/Configurator.cpp
-index 15023226746b715a55935d8d043762348b3acc42..7d1fa01da71c3cb1bc57bef9c9bf871ec9c9ad7b 100644
+index 1502322..7d1fa01 100644
 --- a/WeaselDeployer/Configurator.cpp
 +++ b/WeaselDeployer/Configurator.cpp
 @@ -1,4 +1,5 @@
@@ -1083,7 +1083,7 @@ index 15023226746b715a55935d8d043762348b3acc42..7d1fa01da71c3cb1bc57bef9c9bf871e
    }
  
 diff --git a/WeaselDeployer/Configurator.h b/WeaselDeployer/Configurator.h
-index ac14091d600f8662d45df5f1f09d5e03babfb45e..73bac69c566724bbef269301c880137adb3abb41 100644
+index ac14091..73bac69 100644
 --- a/WeaselDeployer/Configurator.h
 +++ b/WeaselDeployer/Configurator.h
 @@ -4,11 +4,12 @@ class UIStyleSettings;
@@ -1101,7 +1101,7 @@ index ac14091d600f8662d45df5f1f09d5e03babfb45e..73bac69c566724bbef269301c880137a
    int SyncUserData();
  };
 diff --git a/WeaselDeployer/DictManagementDialog.cpp b/WeaselDeployer/DictManagementDialog.cpp
-index 078dbb06850dd0f305e6d9b6014f0e62d8c756d0..eddbd6730edea2355a73e756788220d12e8ac74d 100644
+index 078dbb0..eddbd67 100644
 --- a/WeaselDeployer/DictManagementDialog.cpp
 +++ b/WeaselDeployer/DictManagementDialog.cpp
 @@ -4,6 +4,25 @@
@@ -1299,7 +1299,7 @@ index 078dbb06850dd0f305e6d9b6014f0e62d8c756d0..eddbd6730edea2355a73e756788220d1
    return 0;
  }
 diff --git a/WeaselDeployer/DictManagementDialog.h b/WeaselDeployer/DictManagementDialog.h
-index edb8786564b62007157c0b45c9ecd01c6a625224..8369285d12afe2146a6458f83847ab521d511660 100644
+index edb8786..8369285 100644
 --- a/WeaselDeployer/DictManagementDialog.h
 +++ b/WeaselDeployer/DictManagementDialog.h
 @@ -3,6 +3,16 @@
@@ -1333,7 +1333,7 @@ index edb8786564b62007157c0b45c9ecd01c6a625224..8369285d12afe2146a6458f83847ab52
    CButton restore_;
    CButton export_;
 diff --git a/WeaselDeployer/SwitcherSettingsDialog.cpp b/WeaselDeployer/SwitcherSettingsDialog.cpp
-index 587cbc714149302897dfebe179804fba7131f1bc..48cbd11eb79476e04cb445f40667902bddb9cd9c 100644
+index 587cbc7..48cbd11 100644
 --- a/WeaselDeployer/SwitcherSettingsDialog.cpp
 +++ b/WeaselDeployer/SwitcherSettingsDialog.cpp
 @@ -1,4 +1,5 @@
@@ -1355,7 +1355,7 @@ index 587cbc714149302897dfebe179804fba7131f1bc..48cbd11eb79476e04cb445f40667902b
    if (ret == ERROR_SUCCESS) {
      WCHAR value[MAX_PATH];
 diff --git a/WeaselDeployer/UIStyleSettings.cpp b/WeaselDeployer/UIStyleSettings.cpp
-index 22e7380a70240b15fbf0406243d8daa5fc5b0064..372d6d55867d5399400fb515044c3bfc98bceeef 100644
+index 22e7380..c20b70a 100644
 --- a/WeaselDeployer/UIStyleSettings.cpp
 +++ b/WeaselDeployer/UIStyleSettings.cpp
 @@ -1,7 +1,39 @@
@@ -1398,13 +1398,8 @@ index 22e7380a70240b15fbf0406243d8daa5fc5b0064..372d6d55867d5399400fb515044c3bfc
  UIStyleSettings::UIStyleSettings() {
    api_ = (RimeLeversApi*)rime_get_api()->find_module("levers")->get_api();
    settings_ = api_->custom_settings_init("weasel", "Weasel::UIStyleSettings");
-@@ -47,15 +79,28 @@ static inline bool IfFileExist(std::string filename) {
- 
- // get preview image from user dir first, then shared_dir
- std::string UIStyleSettings::GetColorSchemePreview(
--    const std::string& color_scheme_id) {
-+    const std::string& color_scheme_id,
-+    const std::string& candidate_font) {
+@@ -50,12 +82,35 @@ std::string UIStyleSettings::GetColorSchemePreview(
+     const std::string& color_scheme_id) {
    std::string shared_dir = rime_get_api()->get_shared_data_dir();
    std::string user_dir = rime_get_api()->get_user_data_dir();
 -  std::string filename =
@@ -1413,6 +1408,17 @@ index 22e7380a70240b15fbf0406243d8daa5fc5b0064..372d6d55867d5399400fb515044c3bfc
 -    return filename;
 -  else
 -    return (shared_dir + "\\preview\\color_scheme_" + color_scheme_id + ".png");
++  const std::string filename =
++      "\\preview\\color_scheme_" + color_scheme_id + ".png";
++  if (IfFileExist(user_dir + filename))
++    return user_dir + filename;
++  return shared_dir + filename;
++}
++
++std::string UIStyleSettings::GetFontPreview(
++    const std::string& candidate_font) {
++  std::string shared_dir = rime_get_api()->get_shared_data_dir();
++  std::string user_dir = rime_get_api()->get_user_data_dir();
 +  std::string suffix;
 +  const auto family = PrimaryFontFamily(candidate_font);
 +  if (candidate_font.empty())
@@ -1423,7 +1429,7 @@ index 22e7380a70240b15fbf0406243d8daa5fc5b0064..372d6d55867d5399400fb515044c3bfc
 +    suffix = "_tc";
 +  else if (family == "Noto Sans CJK HK")
 +    suffix = "_hk";
-+  const std::string stem = "\\preview\\color_scheme_" + color_scheme_id;
++  const std::string stem = "\\preview\\candidate_font";
 +  for (const auto& directory : {user_dir, shared_dir}) {
 +    if (!suffix.empty() && IfFileExist(directory + stem + suffix + ".png"))
 +      return directory + stem + suffix + ".png";
@@ -1434,10 +1440,26 @@ index 22e7380a70240b15fbf0406243d8daa5fc5b0064..372d6d55867d5399400fb515044c3bfc
  }
  
  std::string UIStyleSettings::GetActiveColorScheme() {
-@@ -73,3 +118,66 @@ bool UIStyleSettings::SelectColorScheme(const std::string& color_scheme_id) {
-                          color_scheme_id.c_str());
-   return true;
+@@ -69,7 +124,80 @@ std::string UIStyleSettings::GetActiveColorScheme() {
  }
+ 
+ bool UIStyleSettings::SelectColorScheme(const std::string& color_scheme_id) {
+-  api_->customize_string(settings_, "style/color_scheme",
+-                         color_scheme_id.c_str());
++  RimeConfig config = {0};
++  api_->settings_get_config(settings_, &config);
++  const auto active = FontSetting(&config, "style/color_scheme");
++  const auto dark = FontSetting(&config, "style/color_scheme_dark");
++  if (active == color_scheme_id)
++    return true;
++  if (!api_->customize_string(settings_, "style/color_scheme",
++                              color_scheme_id.c_str()))
++    return false;
++  if (!dark.empty() && dark == active)
++    return api_->customize_string(settings_, "style/color_scheme_dark",
++                                  color_scheme_id.c_str());
++  return true;
++}
 +
 +std::vector<std::string> UIStyleSettings::GetInstalledCandidateFonts() const {
 +  std::vector<std::string> fonts;
@@ -1499,19 +1521,17 @@ index 22e7380a70240b15fbf0406243d8daa5fc5b0064..372d6d55867d5399400fb515044c3bfc
 +        return false;
 +    }
 +  }
-+  return true;
-+}
+   return true;
+ }
 diff --git a/WeaselDeployer/UIStyleSettings.h b/WeaselDeployer/UIStyleSettings.h
-index f229eecb3e03de91bca682f82aa4c7ac25d8258a..81c806a216a1dd63cb3db3bdafb1aaa5ad33b2b5 100644
+index f229eec..8cd46e0 100644
 --- a/WeaselDeployer/UIStyleSettings.h
 +++ b/WeaselDeployer/UIStyleSettings.h
-@@ -15,9 +15,13 @@ class UIStyleSettings {
-   UIStyleSettings();
+@@ -16,8 +16,12 @@ class UIStyleSettings {
  
    bool GetPresetColorSchemes(std::vector<ColorSchemeInfo>* result);
--  std::string GetColorSchemePreview(const std::string& color_scheme_id);
-+  std::string GetColorSchemePreview(const std::string& color_scheme_id,
-+                                   const std::string& candidate_font = "");
+   std::string GetColorSchemePreview(const std::string& color_scheme_id);
++  std::string GetFontPreview(const std::string& candidate_font);
    std::string GetActiveColorScheme();
    bool SelectColorScheme(const std::string& color_scheme_id);
 +  std::vector<std::string> GetInstalledCandidateFonts() const;
@@ -1521,10 +1541,10 @@ index f229eecb3e03de91bca682f82aa4c7ac25d8258a..81c806a216a1dd63cb3db3bdafb1aaa5
    RimeCustomSettings* settings() { return settings_; }
  
 diff --git a/WeaselDeployer/UIStyleSettingsDialog.cpp b/WeaselDeployer/UIStyleSettingsDialog.cpp
-index b00e82de96f97cabeecd35e9f2c7e03a84c46503..2cd9c16717d478f585c8da0569e6ede8322d3a19 100644
+index b00e82d..f1c4e5c 100644
 --- a/WeaselDeployer/UIStyleSettingsDialog.cpp
 +++ b/WeaselDeployer/UIStyleSettingsDialog.cpp
-@@ -2,10 +2,15 @@
+@@ -2,13 +2,19 @@
  #include "UIStyleSettingsDialog.h"
  #include "UIStyleSettings.h"
  #include "Configurator.h"
@@ -1540,8 +1560,13 @@ index b00e82de96f97cabeecd35e9f2c7e03a84c46503..2cd9c16717d478f585c8da0569e6ede8
 +      initial_font_index_(-1) {}
  
  UIStyleSettingsDialog::~UIStyleSettingsDialog() {
-   image_.Destroy();
-@@ -26,16 +31,36 @@ void UIStyleSettingsDialog::Populate() {
+-  image_.Destroy();
++  theme_image_.Destroy();
++  font_image_.Destroy();
+ }
+ 
+ void UIStyleSettingsDialog::Populate() {
+@@ -26,16 +32,37 @@ void UIStyleSettingsDialog::Populate() {
    }
    if (active_index >= 0) {
      color_schemes_.SetCurSel(active_index);
@@ -1568,32 +1593,48 @@ index b00e82de96f97cabeecd35e9f2c7e03a84c46503..2cd9c16717d478f585c8da0569e6ede8
 +  initial_font_index_ = active_font_index;
 +  select_font_.EnableWindow(fonts_.size() > 1);
    loaded_ = true;
-+  if (active_index >= 0)
-+    Preview(active_index);
++  PreviewTheme(active_index);
++  PreviewFont();
  }
  
  LRESULT UIStyleSettingsDialog::OnInitDialog(UINT, WPARAM, LPARAM, BOOL&) {
    color_schemes_.Attach(GetDlgItem(IDC_COLOR_SCHEME));
-   preview_.Attach(GetDlgItem(IDC_PREVIEW));
+-  preview_.Attach(GetDlgItem(IDC_PREVIEW));
++  theme_preview_.Attach(GetDlgItem(IDC_PREVIEW));
++  font_preview_.Attach(GetDlgItem(IDC_FONT_PREVIEW));
    select_font_.Attach(GetDlgItem(IDC_SELECT_FONT));
 -  select_font_.EnableWindow(FALSE);
  
    Populate();
  
-@@ -49,7 +74,25 @@ LRESULT UIStyleSettingsDialog::OnClose(UINT, WPARAM, LPARAM, BOOL&) {
+@@ -49,7 +76,39 @@ LRESULT UIStyleSettingsDialog::OnClose(UINT, WPARAM, LPARAM, BOOL&) {
    return 0;
  }
  
 +LRESULT UIStyleSettingsDialog::OnDestroy(UINT, WPARAM, LPARAM, BOOL&) {
-+  ClearPreview();
++  ClearPreview(theme_preview_, theme_image_);
++  ClearPreview(font_preview_, font_image_);
 +  return 0;
 +}
 +
-+void UIStyleSettingsDialog::ClearPreview() {
-+  const HBITMAP previous = preview_.SetBitmap(NULL);
-+  if (previous && previous != static_cast<HBITMAP>(image_))
++void UIStyleSettingsDialog::ClearPreview(CStatic& preview, CImage& image) {
++  const HBITMAP previous = preview.SetBitmap(NULL);
++  if (previous && previous != static_cast<HBITMAP>(image))
 +    DeleteObject(previous);
-+  image_.Destroy();
++  image.Destroy();
++}
++
++void UIStyleSettingsDialog::LoadPreview(CStatic& preview, CImage& image,
++                                      const std::string& file_path) {
++  CImage next_image;
++  // it is from ansi coding, not utf8
++  if (!file_path.empty())
++    next_image.Load(acptow(file_path).c_str());
++  ClearPreview(preview, image);
++  if (!next_image.IsNull()) {
++    preview.SetBitmap(next_image);
++    image.Attach(next_image.Detach());
++  }
 +}
 +
  LRESULT UIStyleSettingsDialog::OnOK(WORD, WORD code, HWND, BOOL&) {
@@ -1606,56 +1647,57 @@ index b00e82de96f97cabeecd35e9f2c7e03a84c46503..2cd9c16717d478f585c8da0569e6ede8
    EndDialog(code);
    return 0;
  }
-@@ -63,17 +106,36 @@ LRESULT UIStyleSettingsDialog::OnColorSchemeSelChange(WORD, WORD, HWND, BOOL&) {
+@@ -58,22 +117,33 @@ LRESULT UIStyleSettingsDialog::OnColorSchemeSelChange(WORD, WORD, HWND, BOOL&) {
+   int index = color_schemes_.GetCurSel();
+   if (index >= 0 && index < (int)preset_.size()) {
+     settings_->SelectColorScheme(preset_[index].color_scheme_id);
+-    Preview(index);
++    PreviewTheme(index);
+   }
    return 0;
  }
  
+-void UIStyleSettingsDialog::Preview(int index) {
+-  if (index < 0 || index >= (int)preset_.size())
+-    return;
+-  const std::string file_path(
+-      settings_->GetColorSchemePreview(preset_[index].color_scheme_id));
+-  if (file_path.empty())
 +LRESULT UIStyleSettingsDialog::OnCandidateFontSelChange(WORD, WORD, HWND, BOOL&) {
 +  if (loaded_) {
 +    font_changed_ = select_font_.GetCurSel() != initial_font_index_;
-+    Preview(color_schemes_.GetCurSel());
++    PreviewFont();
 +  }
 +  return 0;
 +}
 +
- void UIStyleSettingsDialog::Preview(int index) {
--  if (index < 0 || index >= (int)preset_.size())
++void UIStyleSettingsDialog::PreviewTheme(int index) {
 +  if (index < 0 || index >= (int)preset_.size()) {
-+    ClearPreview();
++    ClearPreview(theme_preview_, theme_image_);
      return;
--  const std::string file_path(
--      settings_->GetColorSchemePreview(preset_[index].color_scheme_id));
--  if (file_path.empty())
-+  }
+-  image_.Destroy();
+-  // it is from ansi coding, not utf8
+-  image_.Load(acptow(file_path).c_str());
+-  if (!image_.IsNull()) {
+-    preview_.SetBitmap(image_);
+   }
++  LoadPreview(theme_preview_, theme_image_,
++              settings_->GetColorSchemePreview(preset_[index].color_scheme_id));
++}
++
++void UIStyleSettingsDialog::PreviewFont() {
 +  const int font_index = select_font_.GetCurSel();
 +  const std::string family =
 +      font_index >= 0 && font_index < static_cast<int>(fonts_.size())
 +          ? fonts_[font_index]
 +          : std::string();
-+  const std::string file_path(settings_->GetColorSchemePreview(
-+      preset_[index].color_scheme_id, family));
-+  if (file_path.empty()) {
-+    ClearPreview();
-     return;
--  image_.Destroy();
-+  }
-+  CImage next_image;
-   // it is from ansi coding, not utf8
--  image_.Load(acptow(file_path).c_str());
--  if (!image_.IsNull()) {
--    preview_.SetBitmap(image_);
-+  next_image.Load(acptow(file_path).c_str());
-+  ClearPreview();
-+  if (!next_image.IsNull()) {
-+    preview_.SetBitmap(next_image);
-+    image_.Attach(next_image.Detach());
-   }
++  LoadPreview(font_preview_, font_image_, settings_->GetFontPreview(family));
  }
 diff --git a/WeaselDeployer/UIStyleSettingsDialog.h b/WeaselDeployer/UIStyleSettingsDialog.h
-index e81aad77b5e2fdd662a7281e9bcf4a8677a0b9c8..8c034da65aa4465bf58479cb8717e5b7e18079d6 100644
+index e81aad7..319872a 100644
 --- a/WeaselDeployer/UIStyleSettingsDialog.h
 +++ b/WeaselDeployer/UIStyleSettingsDialog.h
-@@ -13,25 +13,33 @@ class UIStyleSettingsDialog : public CDialogImpl<UIStyleSettingsDialog> {
+@@ -13,25 +13,38 @@ class UIStyleSettingsDialog : public CDialogImpl<UIStyleSettingsDialog> {
   protected:
    BEGIN_MSG_MAP(UIStyleSettingsDialog)
    MESSAGE_HANDLER(WM_INITDIALOG, OnInitDialog)
@@ -1674,8 +1716,12 @@ index e81aad77b5e2fdd662a7281e9bcf4a8677a0b9c8..8c034da65aa4465bf58479cb8717e5b7
 +  LRESULT OnCandidateFontSelChange(WORD, WORD, HWND, BOOL&);
  
    void Populate();
-+  void ClearPreview();
-   void Preview(int index);
+-  void Preview(int index);
++  void ClearPreview(CStatic& preview, CImage& image);
++  void LoadPreview(CStatic& preview, CImage& image,
++                   const std::string& file_path);
++  void PreviewTheme(int index);
++  void PreviewFont();
  
    UIStyleSettings* settings_;
    bool loaded_;
@@ -1685,13 +1731,17 @@ index e81aad77b5e2fdd662a7281e9bcf4a8677a0b9c8..8c034da65aa4465bf58479cb8717e5b7
 +  std::vector<std::string> fonts_;
  
    CListBox color_schemes_;
-   CStatic preview_;
-   CImage image_;
+-  CStatic preview_;
+-  CImage image_;
 -  CButton select_font_;
++  CStatic theme_preview_;
++  CStatic font_preview_;
++  CImage theme_image_;
++  CImage font_image_;
 +  CComboBox select_font_;
  };
 diff --git a/WeaselDeployer/WeaselDeployer.cpp b/WeaselDeployer/WeaselDeployer.cpp
-index a57801435a7cd33247884614f650a230e7b9f0a3..dc18c3b83e4c069a38889df86c1bf9dff888818c 100644
+index a578014..dc18c3b 100644
 --- a/WeaselDeployer/WeaselDeployer.cpp
 +++ b/WeaselDeployer/WeaselDeployer.cpp
 @@ -1,6 +1,7 @@
@@ -1744,59 +1794,64 @@ index a57801435a7cd33247884614f650a230e7b9f0a3..dc18c3b83e4c069a38889df86c1bf9df
      return 0;
    }
 diff --git a/WeaselDeployer/WeaselDeployer.rc b/WeaselDeployer/WeaselDeployer.rc
-index d8b9e1769bd38aeb087a695fae53d90e5eb6a02b..79e279b8a918bd7b5ad3ad4570fc4a18b6b5dbb8 100644
+index d8b9e1769bd38aeb087a695fae53d90e5eb6a02b..f84d139db940ff735dbbd1c81e32523dd94c60b8 100644
 GIT binary patch
-delta 4755
-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
+delta 5384
+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
+E4Mrf?=>Px#
 
-delta 928
-zcmccdo@vcdrVW$W+4*Ds6ur(CoSew1IC%&A8a4=ja|XvQb|`zYn!p_xQzuJd^1Lll
-zn;isavA~qx6P?BcV^>H#gR_&Q!<Z)j^H37p*F7sbJUZB4j{yXg7<492EK{DW=OQtA
-zjS9!)I!`l3!^yfX`jcm9$xTj>|HKD%l7U94dD7YLN!}ACzf+hqS)qYN(v(4m!H2<#
-zA($Z^i2WIY7(y5n7-|?4CL8*6Z@#1?!pmqd`M-W8qrv8h26vgDCcT(YR6iw7qjYjZ
-zw8`Xk#v+pqVk9QB7>P`tU@SISz(j#NoFSDVk)aq!=1g7~lRbHbNferx?c@!ya<D*9
-zFtwV@6Zd8E9J7+mJFE}E1ES6$1ma=cE|7<>%);a0&AKj*jIdBEa-9MXH7<`=aP|)`
-z6GkHZUE+I<3-0g4N!m=46{0sG`Tb-f(SAQlz~7sB;+8O>rx_kdgz@_6r%6tjoW~Ke
-z`9Wd^JoWfwqNkq84uV3P74mPefl`NLFfiClfU%gykk60@WMK`o&3fgZIAo0&3>i%D
-zCV{L*9|5GG;AZAUid$eZSr}tGc}+A25vd??@~&wu*g^wEY-5ZrFlF!ogJlsDs>H0b
-i$o$PyXY=x)2<%+m$cQ2kxYC_v@(ydM%{#UzFarQHJ2|BQ
+delta 1119
+zcmZqp$+YGu(}qdx?EEo*ie6_6PEO=hoO~;J4G)CR>!+V~vw!l0l#tDbI1<>|Afl7i
+z1n$6?2Du88|811o>>xOc1uC}rp6E0t7`sA3glX~u_e(JKNzxaXEf@?Z$G2EcE|5{-
+zHDoYhFlW$VFk~=hu$VkwCVMiUOPjPIgBgPnP}B%04w6GwQy8c(xUYLwba-^Iza9e!
+zDlzCxJ}9p|S+7ZA@|#Aj$qfnutRV9YC+jxl0xjp6%%^w^=AavjCXBL%45mP+!{Ec<
+z#1PC755)cqK@1@b3Jf(23X>PgbZ-t(5#ePtnA~Vs2_$2UBsc3A9btlo%8Lm_^;6;|
+zKZx_1JYkl^<V&VnlPlsCxWgGz84?+afn?5P#@UIJ70gml#3q_W!yNI!Y!TyTE87pu
+zNI^5n=^Pb8Mz;$TGFN614jKK;3GPCSFc+11Oo7K4pZ6;``;RYC!Br7(jSDTf>KHdq
+zh;@TmF!@$o0D;irnk<kIg*(Lb7&o&dZD2%CsW1<8r5u8%&ww2C^f}o<P-yZ$JBQ5;
+zf?kZ9*A**(66J--^U7{e9_Et+>RCiffN3X<A)g_Sp#+>J(NkpsFti02H~ZCAvCD!|
+zwF%zTC)DO6fEk<%W|T0Zgiqoc;mH?FbtZ3!<Ctt<DuO3`pQ7jkrbHC}LNn{l0*Q;5
+rPy_`R%TK<Mybf7xv+V+29u$GZHH|1v+Wd2^JIiD%TdB<nI~AA#!SP*H
 
 diff --git a/WeaselDeployer/WeaselDeployer.vcxproj b/WeaselDeployer/WeaselDeployer.vcxproj
-index 88fbaa2fecc2c2db12ea51784657527cfc5d6651..02e9d401539bc04e8fdd42fed9a18162479e028e 100644
+index 88fbaa2..02e9d40 100644
 --- a/WeaselDeployer/WeaselDeployer.vcxproj
 +++ b/WeaselDeployer/WeaselDeployer.vcxproj
 @@ -1,229 +1,231 @@
@@ -2261,7 +2316,7 @@ index 88fbaa2fecc2c2db12ea51784657527cfc5d6651..02e9d401539bc04e8fdd42fed9a18162
 +  </ImportGroup>
 +</Project>
 diff --git a/WeaselDeployer/resource.h b/WeaselDeployer/resource.h
-index 25bc31ab5d44218ea0ade8aa9448d49826ba7d01..518b4e09a54f9aef49a913a304f2ce42b97e63a4 100644
+index 25bc31a..237e63e 100644
 --- a/WeaselDeployer/resource.h
 +++ b/WeaselDeployer/resource.h
 @@ -38,6 +38,20 @@
@@ -2285,25 +2340,26 @@ index 25bc31ab5d44218ea0ade8aa9448d49826ba7d01..518b4e09a54f9aef49a913a304f2ce42
  #define IDC_SCHEMA_LIST                 1000
  #define IDC_SCHEMA_DESCRIPTION          1001
  #define IDC_GET_SCHEMATA                1002
-@@ -50,6 +64,7 @@
+@@ -50,6 +64,8 @@
  #define IDC_RESTORE                     1009
  #define IDC_EXPORT                      1010
  #define IDC_IMPORT                      1011
 +#define IDC_USER_DICT_DESCRIPTION       1012
++#define IDC_FONT_PREVIEW                1013
  #define IDC_STATIC1                     -1
  
  // Next default values for new objects
-@@ -59,7 +74,7 @@
+@@ -59,7 +75,7 @@
  #define _APS_NO_MFC                     1
  #define _APS_NEXT_RESOURCE_VALUE        135
  #define _APS_NEXT_COMMAND_VALUE         32771
 -#define _APS_NEXT_CONTROL_VALUE         1012
-+#define _APS_NEXT_CONTROL_VALUE         1013
++#define _APS_NEXT_CONTROL_VALUE         1014
  #define _APS_NEXT_SYMED_VALUE           110
  #endif
  #endif
 diff --git a/WeaselDeployer/xmake.lua b/WeaselDeployer/xmake.lua
-index 61823d48d3d05d783f99ccaab86175efdd56ed55..471eb07e565b25fc40494667433c9f37015112e8 100644
+index 61823d4..471eb07 100644
 --- a/WeaselDeployer/xmake.lua
 +++ b/WeaselDeployer/xmake.lua
 @@ -1,24 +1,25 @@
@@ -2357,7 +2413,7 @@ index 61823d48d3d05d783f99ccaab86175efdd56ed55..471eb07e565b25fc40494667433c9f37
 +    end
 +  end)
 diff --git a/WeaselIME/WeaselIME.cpp b/WeaselIME/WeaselIME.cpp
-index 438a0cafd6372fd5d54abe9bbd1368a5b21c0425..40f662fbab2c0c03c2cd9fae27a96cb7d375138f 100644
+index 438a0ca..40f662f 100644
 --- a/WeaselIME/WeaselIME.cpp
 +++ b/WeaselIME/WeaselIME.cpp
 @@ -2,6 +2,7 @@
@@ -2411,7 +2467,7 @@ z$rl79CST##n!JElfjgWbl_8O#7)a(!UdX3Axk9jmyBtZ3S16bbV$kLfd@YRBHWcWt
 Ld7GJp_pt#0!DvHy
 
 diff --git a/WeaselIME/WeaselIME.vcxproj b/WeaselIME/WeaselIME.vcxproj
-index ad8006f8d8e571112daf63b695c65ff6c6eba6a1..6fd528823755ab9ac3fa2e1d23316c1562f7e568 100644
+index ad8006f..6fd5288 100644
 --- a/WeaselIME/WeaselIME.vcxproj
 +++ b/WeaselIME/WeaselIME.vcxproj
 @@ -1,504 +1,505 @@
@@ -3425,7 +3481,7 @@ index ad8006f8d8e571112daf63b695c65ff6c6eba6a1..6fd528823755ab9ac3fa2e1d23316c15
 +  </ImportGroup>
 +</Project>
 diff --git a/WeaselIME/xmake.lua b/WeaselIME/xmake.lua
-index d24d4a353b1a6296a18c74769a698139e4efdc4e..9fed37176a44a909cc563f873b4feac1fb50ca39 100644
+index d24d4a3..9fed371 100644
 --- a/WeaselIME/xmake.lua
 +++ b/WeaselIME/xmake.lua
 @@ -1,30 +1,30 @@
@@ -3490,7 +3546,7 @@ index d24d4a353b1a6296a18c74769a698139e4efdc4e..9fed37176a44a909cc563f873b4feac1
 +  set_filename(fname)
 +
 diff --git a/WeaselIPC/Configurator.cpp b/WeaselIPC/Configurator.cpp
-index a16c4fa224129277429d45c34b2e236a22cb8367..42dc4b9e1b96a514d775b766328d906146b507aa 100644
+index a16c4fa..42dc4b9 100644
 --- a/WeaselIPC/Configurator.cpp
 +++ b/WeaselIPC/Configurator.cpp
 @@ -1,23 +1,23 @@
@@ -3541,7 +3597,7 @@ index a16c4fa224129277429d45c34b2e236a22cb8367..42dc4b9e1b96a514d775b766328d9061
 +  }
 +}
 diff --git a/WeaselIPC/ContextUpdater.cpp b/WeaselIPC/ContextUpdater.cpp
-index 8d8c2f0e03b5c066b10967315562ba5be19437c6..39bc11ceeef227c8ea01d658f2545d00484eb85b 100644
+index 8d8c2f0..39bc11c 100644
 --- a/WeaselIPC/ContextUpdater.cpp
 +++ b/WeaselIPC/ContextUpdater.cpp
 @@ -59,7 +59,8 @@ void ContextUpdater::_StoreText(Text& target,
@@ -3577,7 +3633,7 @@ index 8d8c2f0e03b5c066b10967315562ba5be19437c6..39bc11ceeef227c8ea01d658f2545d00
  
  // StatusUpdater
 diff --git a/WeaselIPC/Deserializer.h b/WeaselIPC/Deserializer.h
-index aa7d6a0f0001977ee2817de69b466ab3874f1a2a..c1a1ee452271db95309b0151107b821f33535642 100644
+index aa7d6a0..c1a1ee4 100644
 --- a/WeaselIPC/Deserializer.h
 +++ b/WeaselIPC/Deserializer.h
 @@ -4,16 +4,6 @@
@@ -3598,7 +3654,7 @@ index aa7d6a0f0001977ee2817de69b466ab3874f1a2a..c1a1ee452271db95309b0151107b821f
   public:
    typedef std::vector<std::wstring> KeyType;
 diff --git a/WeaselIPC/PipeChannel.cpp b/WeaselIPC/PipeChannel.cpp
-index c3912a588a9f17cf7b8e8344848eb27d9fefd8b6..4a6d3a7afe7b84455ef1bad2ccaa9611077caf00 100644
+index c3912a5..4a6d3a7 100644
 --- a/WeaselIPC/PipeChannel.cpp
 +++ b/WeaselIPC/PipeChannel.cpp
 @@ -1,125 +1,139 @@
@@ -3867,7 +3923,7 @@ index c3912a588a9f17cf7b8e8344848eb27d9fefd8b6..4a6d3a7afe7b84455ef1bad2ccaa9611
 +  has_body = false;
 +}
 diff --git a/WeaselIPC/ResponseParser.cpp b/WeaselIPC/ResponseParser.cpp
-index 7aaf7d2022e7c87ce249be04eabeda98059c2dce..21cbabdf8d193e5072b0f13c1bc85a5e15f6a6e7 100644
+index 7aaf7d2..21cbabd 100644
 --- a/WeaselIPC/ResponseParser.cpp
 +++ b/WeaselIPC/ResponseParser.cpp
 @@ -1,6 +1,7 @@
@@ -3894,7 +3950,7 @@ index 7aaf7d2022e7c87ce249be04eabeda98059c2dce..21cbabdf8d193e5072b0f13c1bc85a5e
    return bs.good();
  }
 diff --git a/WeaselIPC/Styler.cpp b/WeaselIPC/Styler.cpp
-index 1bba123500dd2ace509374538fed09a92adaa301..35aacd802813661e26256a76919021f3b4b85d73 100644
+index 1bba123..35aacd8 100644
 --- a/WeaselIPC/Styler.cpp
 +++ b/WeaselIPC/Styler.cpp
 @@ -1,25 +1,26 @@
@@ -3950,7 +4006,7 @@ index 1bba123500dd2ace509374538fed09a92adaa301..35aacd802813661e26256a76919021f3
 +  return Deserializer::Ptr(new Styler(pTarget));
 +}
 diff --git a/WeaselIPC/WeaselClientImpl.cpp b/WeaselIPC/WeaselClientImpl.cpp
-index 26122ad50a1550c4e4b8daccc5de5625141d33ee..bc851573d7a7d0b20b51e5216b16f17a2a6e180f 100644
+index 26122ad..bc85157 100644
 --- a/WeaselIPC/WeaselClientImpl.cpp
 +++ b/WeaselIPC/WeaselClientImpl.cpp
 @@ -1,5 +1,6 @@
@@ -4197,7 +4253,7 @@ index 26122ad50a1550c4e4b8daccc5de5625141d33ee..bc851573d7a7d0b20b51e5216b16f17a
 +  return m_pImpl->ResponseGeneration();
 +}
 diff --git a/WeaselIPC/WeaselClientImpl.h b/WeaselIPC/WeaselClientImpl.h
-index 7602792869408ccf24b4e82ada2b8be8ec0f56ed..c0091c6e3845123b6bf56e5d6fbc6a2c1d62fe2d 100644
+index 7602792..c0091c6 100644
 --- a/WeaselIPC/WeaselClientImpl.h
 +++ b/WeaselIPC/WeaselClientImpl.h
 @@ -12,12 +12,15 @@ class ClientImpl {
@@ -4234,7 +4290,7 @@ index 7602792869408ccf24b4e82ada2b8be8ec0f56ed..c0091c6e3845123b6bf56e5d6fbc6a2c
    bool _Connected() const { return channel.Connected(); }
    bool _Active() const { return channel.Connected() && session_id != 0; }
 diff --git a/WeaselIPCServer/WeaselServerImpl.cpp b/WeaselIPCServer/WeaselServerImpl.cpp
-index 11225c445de8cb3c8f10810cc988cbf33bfe7462..e6b36dfb7be6b9656cd5047c1caa04d9eee99e72 100644
+index 11225c4..e6b36df 100644
 --- a/WeaselIPCServer/WeaselServerImpl.cpp
 +++ b/WeaselIPCServer/WeaselServerImpl.cpp
 @@ -1,26 +1,67 @@
@@ -4787,7 +4843,7 @@ index 11225c445de8cb3c8f10810cc988cbf33bfe7462..e6b36dfb7be6b9656cd5047c1caa04d9
  
  // weasel::Server
 diff --git a/WeaselIPCServer/WeaselServerImpl.h b/WeaselIPCServer/WeaselServerImpl.h
-index a4d123ddb5a91fe663c94e164304dc67837cdf27..5f88b307814e39b6d98217e227d00a5d286e9c43 100644
+index a4d123d..5f88b30 100644
 --- a/WeaselIPCServer/WeaselServerImpl.h
 +++ b/WeaselIPCServer/WeaselServerImpl.h
 @@ -5,6 +5,7 @@
@@ -4834,7 +4890,7 @@ index a4d123ddb5a91fe663c94e164304dc67837cdf27..5f88b307814e39b6d98217e227d00a5d
    std::map<UINT, CommandHandler> m_MenuHandlers;
    HMODULE m_hUser32Module;
 diff --git a/WeaselServer/WeaselServer.cpp b/WeaselServer/WeaselServer.cpp
-index b4cf8b2f16149a9afc0707e0d848895645ebb0d6..966ce4ee13f94b7c5855727a4ca0e42aff3b98e4 100644
+index b4cf8b2..966ce4e 100644
 --- a/WeaselServer/WeaselServer.cpp
 +++ b/WeaselServer/WeaselServer.cpp
 @@ -9,7 +9,6 @@
@@ -4867,7 +4923,7 @@ zA=^@r4VsK%(+(ySx&M-$o0ANRkSwxeW=2sl(=i;6-yWi<1=@tdzv!U5xk0xF)5?2p
 GA9w&Op*>#!
 
 diff --git a/WeaselServer/WeaselServer.vcxproj b/WeaselServer/WeaselServer.vcxproj
-index 8e3cc1f6b2444ff695c9979cad8cf7d24b91f482..24b699dc748cb0a7616fdf7695b0e1cc2b254ff5 100644
+index 8e3cc1f..24b699d 100644
 --- a/WeaselServer/WeaselServer.vcxproj
 +++ b/WeaselServer/WeaselServer.vcxproj
 @@ -40,6 +40,8 @@
@@ -4952,7 +5008,7 @@ index 8e3cc1f6b2444ff695c9979cad8cf7d24b91f482..24b699dc748cb0a7616fdf7695b0e1cc
        <GenerateDebugInformation>false</GenerateDebugInformation>
        <SubSystem>Windows</SubSystem>
 diff --git a/WeaselServer/WeaselServerApp.cpp b/WeaselServer/WeaselServerApp.cpp
-index e09c4c5ed2a5f716a4d8b4b112eb49e441be3633..391e3c0030a06c32dcedbb0cf4ecc8d1f50ee81b 100644
+index e09c4c5..391e3c0 100644
 --- a/WeaselServer/WeaselServerApp.cpp
 +++ b/WeaselServer/WeaselServerApp.cpp
 @@ -1,76 +1,65 @@
@@ -5098,7 +5154,7 @@ index e09c4c5ed2a5f716a4d8b4b112eb49e441be3633..391e3c0030a06c32dcedbb0cf4ecc8d1
 +                          std::bind(explore, WeaselLogPath()));
 +}
 diff --git a/WeaselServer/WeaselServerApp.h b/WeaselServer/WeaselServerApp.h
-index d5e32e0067af10b4b90f6cd17353fb19b82a2817..252db0b5999a70dec3a075dd76bb5db5ea3ecd37 100644
+index d5e32e0..252db0b 100644
 --- a/WeaselServer/WeaselServerApp.h
 +++ b/WeaselServer/WeaselServerApp.h
 @@ -1,70 +1,66 @@
@@ -5239,7 +5295,7 @@ index d5e32e0067af10b4b90f6cd17353fb19b82a2817..252db0b5999a70dec3a075dd76bb5db5
 +  std::unique_ptr<RimeWithWeaselHandler> m_handler;
 +};
 diff --git a/WeaselServer/WeaselService.h b/WeaselServer/WeaselService.h
-index 28927fbff04134930c62841a6ba1c6f9d776bac2..ce78d3ee76771cc5467420d11e257f2a7e194c99 100644
+index 28927fb..ce78d3e 100644
 --- a/WeaselServer/WeaselService.h
 +++ b/WeaselServer/WeaselService.h
 @@ -1,49 +1,49 @@
@@ -5342,7 +5398,7 @@ index 28927fbff04134930c62841a6ba1c6f9d776bac2..ce78d3ee76771cc5467420d11e257f2a
 +  WeaselServerApp app;
 +};
 diff --git a/WeaselServer/xmake.lua b/WeaselServer/xmake.lua
-index 78b99b0d32c16f8dc6b1a3e13e9af7ea89bdaceb..9d99e05ab927effb5b6753f72680528a667e523d 100644
+index 78b99b0..9d99e05 100644
 --- a/WeaselServer/xmake.lua
 +++ b/WeaselServer/xmake.lua
 @@ -1,27 +1,28 @@
@@ -5402,7 +5458,7 @@ index 78b99b0d32c16f8dc6b1a3e13e9af7ea89bdaceb..9d99e05ab927effb5b6753f72680528a
 +  end)
 +
 diff --git a/WeaselSetup/WeaselSetup.cpp b/WeaselSetup/WeaselSetup.cpp
-index 9b2a240f1219a7474cca46c8dc5af472690f8df0..d5c3148135520d5ae793186697e82ee15793389c 100644
+index 9b2a240..d5c3148 100644
 --- a/WeaselSetup/WeaselSetup.cpp
 +++ b/WeaselSetup/WeaselSetup.cpp
 @@ -1,7 +1,8 @@
@@ -6037,7 +6093,7 @@ z;crLdE6Pbuev%}>smTCMFO&Btit{7c0Zcy{lOL*!PYy{IP=%?21P>@x1_RvzN@GYm
 VCT~p&N3l~mITD$_d2;e%W&oj-E|CBL
 
 diff --git a/WeaselSetup/WeaselSetup.vcxproj b/WeaselSetup/WeaselSetup.vcxproj
-index a141fc515c3337cd07faa37dd8e7b00736474db9..5f814b0ad195552a748130df79b7756431171564 100644
+index a141fc5..5f814b0 100644
 --- a/WeaselSetup/WeaselSetup.vcxproj
 +++ b/WeaselSetup/WeaselSetup.vcxproj
 @@ -1,160 +1,162 @@
@@ -6364,7 +6420,7 @@ index a141fc515c3337cd07faa37dd8e7b00736474db9..5f814b0ad195552a748130df79b77564
  </Project>
 \ No newline at end of file
 diff --git a/WeaselSetup/imesetup.cpp b/WeaselSetup/imesetup.cpp
-index ed48aea998cc1347bf41338575a0f9656351b846..b7aa5581b0a1170258846833df2fc92936c0ad9b 100644
+index ed48aea..b7aa558 100644
 --- a/WeaselSetup/imesetup.cpp
 +++ b/WeaselSetup/imesetup.cpp
 @@ -1,4 +1,5 @@
@@ -6885,7 +6941,7 @@ index ed48aea998cc1347bf41338575a0f9656351b846..b7aa5581b0a1170258846833df2fc929
            !(attr & FILE_ATTRIBUTE_DIRECTORY));
  }
 diff --git a/WeaselSetup/xmake.lua b/WeaselSetup/xmake.lua
-index 865392e46b1fb0fdba22cd614816ee6f12784137..e54235dc82342ca93a26aea32e52dcb28f946100 100644
+index 865392e..e54235d 100644
 --- a/WeaselSetup/xmake.lua
 +++ b/WeaselSetup/xmake.lua
 @@ -1,33 +1,34 @@
@@ -6957,7 +7013,7 @@ index 865392e46b1fb0fdba22cd614816ee6f12784137..e54235dc82342ca93a26aea32e52dcb2
 +      os.cp(path.join(target:targetdir(), "StellaeSetup.pdb"), "$(projectdir)/output")
 +  end)
 diff --git a/WeaselTSF/CandidateList.cpp b/WeaselTSF/CandidateList.cpp
-index 7c1e8509fd7d6e2c5db78afc89272b279633298f..7c335c2a72d406713c2a41ddc639fce606835d3f 100644
+index 7c1e850..7c335c2 100644
 --- a/WeaselTSF/CandidateList.cpp
 +++ b/WeaselTSF/CandidateList.cpp
 @@ -1,442 +1,761 @@
@@ -8165,7 +8221,7 @@ index 7c1e8509fd7d6e2c5db78afc89272b279633298f..7c335c2a72d406713c2a41ddc639fce6
 +    _HandleMousePageEvent(next, scroll_next);
 +}
 diff --git a/WeaselTSF/CandidateList.h b/WeaselTSF/CandidateList.h
-index 648732cc121a8627497fd264d8effbf98368c8ed..844a125bb01bfbf4a5c8b7af1add9f81fe95ff2e 100644
+index 648732c..844a125 100644
 --- a/WeaselTSF/CandidateList.h
 +++ b/WeaselTSF/CandidateList.h
 @@ -1,91 +1,126 @@
@@ -8387,7 +8443,7 @@ index 648732cc121a8627497fd264d8effbf98368c8ed..844a125bb01bfbf4a5c8b7af1add9f81
 +  weasel::UIStyle _style;
 +};
 diff --git a/WeaselTSF/Compartment.cpp b/WeaselTSF/Compartment.cpp
-index a45e0d1f902d727e911d164a080dadbb6b8b7f10..5b093454358a5d4d801e9675f38a46275f4005a8 100644
+index a45e0d1..5b09345 100644
 --- a/WeaselTSF/Compartment.cpp
 +++ b/WeaselTSF/Compartment.cpp
 @@ -1,278 +1,299 @@
@@ -8969,7 +9025,7 @@ index a45e0d1f902d727e911d164a080dadbb6b8b7f10..5b093454358a5d4d801e9675f38a4627
 +  return S_OK;
 +}
 diff --git a/WeaselTSF/Compartment.h b/WeaselTSF/Compartment.h
-index d030666acb67376d5a1e929c5f5891856a88aedb..886e8722aef632bc986ccfce44a59b34f6fc6871 100644
+index d030666..886e872 100644
 --- a/WeaselTSF/Compartment.h
 +++ b/WeaselTSF/Compartment.h
 @@ -1,30 +1,30 @@
@@ -9034,7 +9090,7 @@ index d030666acb67376d5a1e929c5f5891856a88aedb..886e8722aef632bc986ccfce44a59b34
 +  LONG _refCount;
 +};
 diff --git a/WeaselTSF/Composition.cpp b/WeaselTSF/Composition.cpp
-index e94cea0a57575bf0f9fbe9742a7eaaf6d7b6fd3b..862dfd7cd40c34378ecdd836e354da4b946e6531 100644
+index e94cea0..862dfd7 100644
 --- a/WeaselTSF/Composition.cpp
 +++ b/WeaselTSF/Composition.cpp
 @@ -1,421 +1,990 @@
@@ -10450,7 +10506,7 @@ index e94cea0a57575bf0f9fbe9742a7eaaf6d7b6fd3b..862dfd7cd40c34378ecdd836e354da4b
 +}
 +
 diff --git a/WeaselTSF/DisplayAttribute.cpp b/WeaselTSF/DisplayAttribute.cpp
-index 679c799262d0ae0eed346d72837fb5cfa3b0e8ad..4cf221ce7a4fae3f9c28a4a04db5aff1ac529f56 100644
+index 679c799..4cf221c 100644
 --- a/WeaselTSF/DisplayAttribute.cpp
 +++ b/WeaselTSF/DisplayAttribute.cpp
 @@ -1,75 +1,76 @@
@@ -10606,7 +10662,7 @@ index 679c799262d0ae0eed346d72837fb5cfa3b0e8ad..4cf221ce7a4fae3f9c28a4a04db5aff1
 +  return (hr == S_OK);
 +}
 diff --git a/WeaselTSF/DisplayAttributeInfo.cpp b/WeaselTSF/DisplayAttributeInfo.cpp
-index a18bdb4f0e0af10853d76dd290cf970d67c93999..2eb40b8e4f2c0eccbfde3f3903cf5c9df985560a 100644
+index a18bdb4..2eb40b8 100644
 --- a/WeaselTSF/DisplayAttributeInfo.cpp
 +++ b/WeaselTSF/DisplayAttributeInfo.cpp
 @@ -1,117 +1,117 @@
@@ -10845,7 +10901,7 @@ index a18bdb4f0e0af10853d76dd290cf970d67c93999..2eb40b8e4f2c0eccbfde3f3903cf5c9d
 +  return SetAttributeInfo(_pDisplayAttribute);
 +}
 diff --git a/WeaselTSF/EditSession.cpp b/WeaselTSF/EditSession.cpp
-index 8f4d503676f507f4728ac31c64a7bda4b6046136..199990e31c80f6fec7857b65729649b837ca5514 100644
+index 8f4d503..199990e 100644
 --- a/WeaselTSF/EditSession.cpp
 +++ b/WeaselTSF/EditSession.cpp
 @@ -1,47 +1,899 @@
@@ -11796,7 +11852,7 @@ index 8f4d503676f507f4728ac31c64a7bda4b6046136..199990e31c80f6fec7857b65729649b8
 +  return consume;
 +}
 diff --git a/WeaselTSF/Globals.cpp b/WeaselTSF/Globals.cpp
-index c5d28b9a07f76b38fcc6fb424e283deac6417e4b..b1f3975c0003859ddf2a996851c35d985ea3a67a 100644
+index c5d28b9..b1f3975 100644
 --- a/WeaselTSF/Globals.cpp
 +++ b/WeaselTSF/Globals.cpp
 @@ -1,65 +1,42 @@
@@ -11908,7 +11964,7 @@ index c5d28b9a07f76b38fcc6fb424e283deac6417e4b..b1f3975c0003859ddf2a996851c35d98
 +    0x4b42,
 +    {0xa9, 0x6d, 0xce, 0xc7, 0xc5, 0x0e, 0x0e, 0xae}};
 diff --git a/WeaselTSF/KeyEvent.cpp b/WeaselTSF/KeyEvent.cpp
-index 8eb062e99f6d33add5650be7b53680a27650b1d5..98f87dd74fbeba4b5765f5f36a84aee3456e0bc4 100644
+index 8eb062e..98f87dd 100644
 --- a/WeaselTSF/KeyEvent.cpp
 +++ b/WeaselTSF/KeyEvent.cpp
 @@ -1,274 +1,286 @@
@@ -12473,7 +12529,7 @@ index 8eb062e99f6d33add5650be7b53680a27650b1d5..98f87dd74fbeba4b5765f5f36a84aee3
 + };
 +*/
 diff --git a/WeaselTSF/KeyEventSink.cpp b/WeaselTSF/KeyEventSink.cpp
-index c885dddf9479c98c2df29edab086feacc84653df..cc5dc1b126a1d5d5efa416d59f3eff2a8f167aba 100644
+index c885ddd..cc5dc1b 100644
 --- a/WeaselTSF/KeyEventSink.cpp
 +++ b/WeaselTSF/KeyEventSink.cpp
 @@ -1,201 +1,385 @@
@@ -13064,7 +13120,7 @@ index c885dddf9479c98c2df29edab086feacc84653df..cc5dc1b126a1d5d5efa416d59f3eff2a
 +  // It cannot process a fresh key after this activation has been retired.
 +}
 diff --git a/WeaselTSF/LanguageBar.cpp b/WeaselTSF/LanguageBar.cpp
-index a03b6159c980e3bb4108de8850299f8e6a9e3423..1da4da547a4bca864116c5c058525e89b2e6c4d7 100644
+index a03b615..1da4da5 100644
 --- a/WeaselTSF/LanguageBar.cpp
 +++ b/WeaselTSF/LanguageBar.cpp
 @@ -1,4 +1,4 @@
@@ -13470,7 +13526,7 @@ index a03b6159c980e3bb4108de8850299f8e6a9e3423..1da4da547a4bca864116c5c058525e89
 -}
 +// end-of-file
 diff --git a/WeaselTSF/LanguageBar.h b/WeaselTSF/LanguageBar.h
-index 2c0513ab3054ac5d61041e27a798421ab2040f8c..6ae46a9260b871da1693ea4aa28b022ff2f11638 100644
+index 2c0513a..6ae46a9 100644
 --- a/WeaselTSF/LanguageBar.h
 +++ b/WeaselTSF/LanguageBar.h
 @@ -1,48 +1,53 @@
@@ -13577,7 +13633,7 @@ index 2c0513ab3054ac5d61041e27a798421ab2040f8c..6ae46a9260b871da1693ea4aa28b022f
 +};
 diff --git a/WeaselTSF/PromptTrace.h b/WeaselTSF/PromptTrace.h
 new file mode 100644
-index 0000000000000000000000000000000000000000..119a633e87642649585767a210b3896177bea06f
+index 0000000..119a633
 --- /dev/null
 +++ b/WeaselTSF/PromptTrace.h
 @@ -0,0 +1,376 @@
@@ -13958,7 +14014,7 @@ index 0000000000000000000000000000000000000000..119a633e87642649585767a210b38961
 +#endif
 +}  // namespace prompt_trace
 diff --git a/WeaselTSF/Register.cpp b/WeaselTSF/Register.cpp
-index 69dccc5215a02aedf340d1b3ca4093658d662d55..05b4e1154a0f766ad33e61cc131dcc138af2a588 100644
+index 69dccc5..05b4e11 100644
 --- a/WeaselTSF/Register.cpp
 +++ b/WeaselTSF/Register.cpp
 @@ -1,259 +1,269 @@
@@ -14492,7 +14548,7 @@ index 69dccc5215a02aedf340d1b3ca4093658d662d55..05b4e1154a0f766ad33e61cc131dcc13
 +}
 diff --git a/WeaselTSF/ResponseOwner.h b/WeaselTSF/ResponseOwner.h
 new file mode 100644
-index 0000000000000000000000000000000000000000..6ab46ee736c8ee6134675ef88c059b0a40db26ad
+index 0000000..6ab46ee
 --- /dev/null
 +++ b/WeaselTSF/ResponseOwner.h
 @@ -0,0 +1,167 @@
@@ -14664,7 +14720,7 @@ index 0000000000000000000000000000000000000000..6ab46ee736c8ee6134675ef88c059b0a
 +
 +}  // namespace response_owner
 diff --git a/WeaselTSF/TextEditSink.cpp b/WeaselTSF/TextEditSink.cpp
-index a6bc1f02d6202f2cd8670039f86478f9fa9447fc..b0a3227522d9058377c959f140f759ef3d0e05fb 100644
+index a6bc1f0..b0a3227 100644
 --- a/WeaselTSF/TextEditSink.cpp
 +++ b/WeaselTSF/TextEditSink.cpp
 @@ -1,118 +1,279 @@
@@ -15037,7 +15093,7 @@ index a6bc1f02d6202f2cd8670039f86478f9fa9447fc..b0a3227522d9058377c959f140f759ef
 +      request->layoutCookie != TF_INVALID_COOKIE;
  }
 diff --git a/WeaselTSF/ThreadMgrEventSink.cpp b/WeaselTSF/ThreadMgrEventSink.cpp
-index a46ca37868c73124f8f7c91ec1bf2604995030d2..4cc6697a55395891653e577113855fd29353906e 100644
+index a46ca37..4cc6697 100644
 --- a/WeaselTSF/ThreadMgrEventSink.cpp
 +++ b/WeaselTSF/ThreadMgrEventSink.cpp
 @@ -1,62 +1,195 @@
@@ -15299,7 +15355,7 @@ index a46ca37868c73124f8f7c91ec1bf2604995030d2..4cc6697a55395891653e577113855fd2
 +  activation.RecordCleanup(activation.threadEvents.Disconnect());
 +}
 diff --git a/WeaselTSF/WeaselTSF.cpp b/WeaselTSF/WeaselTSF.cpp
-index 590d3b8f2b91a9220688ec21414140810b98f966..8c283ca276c212a2e55aaca74097e684dcf8b9bc 100644
+index 590d3b8..8c283ca 100644
 --- a/WeaselTSF/WeaselTSF.cpp
 +++ b/WeaselTSF/WeaselTSF.cpp
 @@ -1,263 +1,418 @@
@@ -15985,7 +16041,7 @@ index 590d3b8f2b91a9220688ec21414140810b98f966..8c283ca276c212a2e55aaca74097e684
 +  return false;
 +}
 diff --git a/WeaselTSF/WeaselTSF.h b/WeaselTSF/WeaselTSF.h
-index 696d3cce4b9c394d2420ff1cae7cbbdbcb527a49..fa8998e0bab7cd252dbc44c6d3bc08d466bbc394 100644
+index 696d3cc..fa8998e 100644
 --- a/WeaselTSF/WeaselTSF.h
 +++ b/WeaselTSF/WeaselTSF.h
 @@ -3,10 +3,18 @@
@@ -16444,7 +16500,7 @@ zAQ{9E4CMPycH|bH{D6mJa)Acl<TnNi$i_|fH!z;;W2iDYM{^H5#2}@~2Mx3*PcSN)
 uET_)3`HEHuBXw->(Zz1V7QH4$6esx_1d`{G#Xg3pCIxEfZk}Ky#RC96=6-Ad
 
 diff --git a/WeaselTSF/WeaselTSF.vcxproj b/WeaselTSF/WeaselTSF.vcxproj
-index 3257ea66cd5e5b29fce58302fbcd4fba947acf8e..043926ee829d59e9c9ef2d8d9ad117f3676f2904 100644
+index 3257ea6..043926e 100644
 --- a/WeaselTSF/WeaselTSF.vcxproj
 +++ b/WeaselTSF/WeaselTSF.vcxproj
 @@ -40,6 +40,7 @@
@@ -16597,7 +16653,7 @@ index 3257ea66cd5e5b29fce58302fbcd4fba947acf8e..043926ee829d59e9c9ef2d8d9ad117f3
        <GenerateDebugInformation>true</GenerateDebugInformation>
        <SubSystem>Windows</SubSystem>
 diff --git a/WeaselTSF/dllmain.cpp b/WeaselTSF/dllmain.cpp
-index 212eea1058562a8720ad45b3bd97aee18246c93d..a11aeffd96b33a329fcd58fa1dda3ebee042f689 100644
+index 212eea1..a11aeff 100644
 --- a/WeaselTSF/dllmain.cpp
 +++ b/WeaselTSF/dllmain.cpp
 @@ -39,7 +39,7 @@ LONG WINAPI _UnhandledExceptionFilter(EXCEPTION_POINTERS* pExceptionPointers) {
@@ -16610,7 +16666,7 @@ index 212eea1058562a8720ad45b3bd97aee18246c93d..a11aeffd96b33a329fcd58fa1dda3ebe
    _stprintf_s(szFileName, MAX_PATH, _T("%s\\%s-%s-%s.%lu.dmp"), _path,
                pszBaseName, pszDllBaseName, szDateTime, dwProcessId);
 diff --git a/WeaselTSF/xmake.lua b/WeaselTSF/xmake.lua
-index e13d9be869ef86d48012901f40f847c9c827b16d..bda3522f82ef52b06af1c09782e3b01814c1121a 100644
+index e13d9be..bda3522 100644
 --- a/WeaselTSF/xmake.lua
 +++ b/WeaselTSF/xmake.lua
 @@ -1,31 +1,31 @@
@@ -16677,7 +16733,7 @@ index e13d9be869ef86d48012901f40f847c9c827b16d..bda3522f82ef52b06af1c09782e3b018
 +    os.cp(path.join(target:targetdir(), "stellae*.pdb"), "$(projectdir)/output")
 +  end)
 diff --git a/WeaselUI/DirectWriteResources.cpp b/WeaselUI/DirectWriteResources.cpp
-index 07d3481e64dcb3c7bb1f9f3596dc44ef1faef1c2..d8dba9c1d40de55a30b07b18586fc62c26e18025 100644
+index 07d3481..d8dba9c 100644
 --- a/WeaselUI/DirectWriteResources.cpp
 +++ b/WeaselUI/DirectWriteResources.cpp
 @@ -1,278 +1,325 @@
@@ -17285,7 +17341,7 @@ index 07d3481e64dcb3c7bb1f9f3596dc44ef1faef1c2..d8dba9c1d40de55a30b07b18586fc62c
 +  decltype(fallbackFontsVector)().swap(fallbackFontsVector);
 +}
 diff --git a/WeaselUI/FullScreenLayout.cpp b/WeaselUI/FullScreenLayout.cpp
-index 96f10cf9b0891250ce9bec6b7305182d425866e5..aa0b667afdb0dcb7026fccfc2307c8eeaa51aac6 100644
+index 96f10cf..aa0b667 100644
 --- a/WeaselUI/FullScreenLayout.cpp
 +++ b/WeaselUI/FullScreenLayout.cpp
 @@ -61,10 +61,8 @@ void weasel::FullScreenLayout::DoLayout(CDCHandle dc, PDWR pDWR) {
@@ -17302,7 +17358,7 @@ index 96f10cf9b0891250ce9bec6b7305182d425866e5..aa0b667afdb0dcb7026fccfc2307c8ee
    for (auto i = 0, n = (int)_context.cinfo.candies.size();
         i < n && i < MAX_CANDIDATES_COUNT; ++i) {
 diff --git a/WeaselUI/HorizontalLayout.cpp b/WeaselUI/HorizontalLayout.cpp
-index 99d8e64cbc5a2061feadc2ff978050a94e0bd3a0..7cc6da920311f952084124f0a139a6a30eb2a83b 100644
+index 99d8e64..7cc6da9 100644
 --- a/WeaselUI/HorizontalLayout.cpp
 +++ b/WeaselUI/HorizontalLayout.cpp
 @@ -64,7 +64,10 @@ void HorizontalLayout::DoLayout(CDCHandle dc, PDWR pDWR) {
@@ -17329,7 +17385,7 @@ index 99d8e64cbc5a2061feadc2ff978050a94e0bd3a0..7cc6da920311f952084124f0a139a6a3
        w += size.cx * textFontValid;
 diff --git a/WeaselUI/JpCommentInlineObject.h b/WeaselUI/JpCommentInlineObject.h
 new file mode 100644
-index 0000000000000000000000000000000000000000..be1fe396210f2c7433e5db0b79bf6f52c6213eb5
+index 0000000..be1fe39
 --- /dev/null
 +++ b/WeaselUI/JpCommentInlineObject.h
 @@ -0,0 +1,226 @@
@@ -17561,7 +17617,7 @@ index 0000000000000000000000000000000000000000..be1fe396210f2c7433e5db0b79bf6f52
 +}  // namespace weasel
 diff --git a/WeaselUI/JpCommentStyle.h b/WeaselUI/JpCommentStyle.h
 new file mode 100644
-index 0000000000000000000000000000000000000000..958db3e7dee5a9dca5b65b52f8b362d6530c4b7a
+index 0000000..958db3e
 --- /dev/null
 +++ b/WeaselUI/JpCommentStyle.h
 @@ -0,0 +1,130 @@
@@ -17696,7 +17752,7 @@ index 0000000000000000000000000000000000000000..958db3e7dee5a9dca5b65b52f8b362d6
 +}  // namespace jp_comment
 +}  // namespace weasel
 diff --git a/WeaselUI/Layout.h b/WeaselUI/Layout.h
-index d96ad8e8036a6fd37981c1fe3b3661cf4d73e71c..330217f141008f4e0fab1939de0961cbc0f83614 100644
+index d96ad8e..330217f 100644
 --- a/WeaselUI/Layout.h
 +++ b/WeaselUI/Layout.h
 @@ -1,126 +1,129 @@
@@ -17956,7 +18012,7 @@ index d96ad8e8036a6fd37981c1fe3b3661cf4d73e71c..330217f141008f4e0fab1939de0961cb
 +};
 +};  // namespace weasel
 diff --git a/WeaselUI/StandardLayout.cpp b/WeaselUI/StandardLayout.cpp
-index bdffad09e46173934570a4d126db3bc767b36152..a076f75a2cbde72e79d5e2ea41db7ed9808013cd 100644
+index bdffad0..a076f75 100644
 --- a/WeaselUI/StandardLayout.cpp
 +++ b/WeaselUI/StandardLayout.cpp
 @@ -16,7 +16,8 @@ void weasel::StandardLayout::GetTextSizeDW(
@@ -18076,7 +18132,7 @@ index bdffad09e46173934570a4d126db3bc767b36152..a076f75a2cbde72e79d5e2ea41db7ed9
        size.cx = width_max;
        size.cy = height_max;
 diff --git a/WeaselUI/StandardLayout.h b/WeaselUI/StandardLayout.h
-index 23eef3590ade02e0f4e5b4ffa3f3d731109e9fa8..99e1b08058c817562f098784924b145efdcd288b 100644
+index 23eef35..99e1b08 100644
 --- a/WeaselUI/StandardLayout.h
 +++ b/WeaselUI/StandardLayout.h
 @@ -1,89 +1,95 @@
@@ -18265,7 +18321,7 @@ index 23eef3590ade02e0f4e5b4ffa3f3d731109e9fa8..99e1b08058c817562f098784924b145e
 +};
 +};  // namespace weasel
 diff --git a/WeaselUI/VHorizontalLayout.cpp b/WeaselUI/VHorizontalLayout.cpp
-index 1f571131ed8330cf61594035bb747f2d91626e90..82aafd5fb7fe8781f5ee25e9a6b32d5525919340 100644
+index 1f57113..82aafd5 100644
 --- a/WeaselUI/VHorizontalLayout.cpp
 +++ b/WeaselUI/VHorizontalLayout.cpp
 @@ -69,7 +69,10 @@ void VHorizontalLayout::DoLayout(CDCHandle dc, PDWR pDWR) {
@@ -18313,7 +18369,7 @@ index 1f571131ed8330cf61594035bb747f2d91626e90..82aafd5fb7fe8781f5ee25e9a6b32d55
                                       h + size.cy * textFontValid);
        h += size.cy * textFontValid;
 diff --git a/WeaselUI/VerticalLayout.cpp b/WeaselUI/VerticalLayout.cpp
-index fee38f6c3f939a75ceb931859e49058ba976eef6..1128727ed1d46128b158fdc58f010869c10266f6 100644
+index fee38f6..1128727 100644
 --- a/WeaselUI/VerticalLayout.cpp
 +++ b/WeaselUI/VerticalLayout.cpp
 @@ -65,7 +65,10 @@ void weasel::VerticalLayout::DoLayout(CDCHandle dc, PDWR pDWR) {
@@ -18339,7 +18395,7 @@ index fee38f6c3f939a75ceb931859e49058ba976eef6..1128727ed1d46128b158fdc58f010869
                                     height + size.cy);
      _candidateTextRects[i].OffsetRect(offsetX, offsetY);
 diff --git a/WeaselUI/WeaselPanel.cpp b/WeaselUI/WeaselPanel.cpp
-index 18964a0f8907121ef3ad49ac39a139b7e21a2eae..cf3a309400d8c881b0f753e4593f39efd74e27c8 100644
+index 18964a0..cf3a309 100644
 --- a/WeaselUI/WeaselPanel.cpp
 +++ b/WeaselUI/WeaselPanel.cpp
 @@ -64,6 +64,7 @@ WeaselPanel::WeaselPanel(weasel::UI& ui)
@@ -18702,7 +18758,7 @@ index 18964a0f8907121ef3ad49ac39a139b7e21a2eae..cf3a309400d8c881b0f753e4593f39ef
      DWRITE_FLOW_DIRECTION flow = m_style.vertical_text_left_to_right
                                       ? DWRITE_FLOW_DIRECTION_LEFT_TO_RIGHT
 diff --git a/WeaselUI/WeaselPanel.h b/WeaselUI/WeaselPanel.h
-index 478e79863ae4f1752a53b54715841b106f0ecf61..92cd0b4ed7633c77c6ec07d6ad61850bb2296aaf 100644
+index 478e798..92cd0b4 100644
 --- a/WeaselUI/WeaselPanel.h
 +++ b/WeaselUI/WeaselPanel.h
 @@ -35,6 +35,7 @@ class WeaselPanel
@@ -18773,7 +18829,7 @@ index 478e79863ae4f1752a53b54715841b106f0ecf61..92cd0b4ed7633c77c6ec07d6ad61850b
    float dpiScaleLayout = 1.0f;
    int m_hoverIndex = -1;
 diff --git a/WeaselUI/WeaselUI.cpp b/WeaselUI/WeaselUI.cpp
-index 53a9b92fe20752ac1500a7149cf582bbc6ca95fd..7ba61d3efb3c0989a3e3a12c9c40a17e71e16f9a 100644
+index 53a9b92..7ba61d3 100644
 --- a/WeaselUI/WeaselUI.cpp
 +++ b/WeaselUI/WeaselUI.cpp
 @@ -8,102 +8,112 @@ class weasel::UIImpl {
@@ -18951,7 +19007,7 @@ index 53a9b92fe20752ac1500a7149cf582bbc6ca95fd..7ba61d3efb3c0989a3e3a12c9c40a17e
      for (auto& c : ctx_.cinfo.candies) {
        if (c.str.length() > (size_t)style_.candidate_abbreviate_length) {
 diff --git a/WeaselUI/WeaselUI.vcxproj b/WeaselUI/WeaselUI.vcxproj
-index 216bce16e02b73225227eb32fa5ea9ae3b2680d5..f47d0f645bd1939ca3bada8ad2a8100634390922 100644
+index 216bce1..f47d0f6 100644
 --- a/WeaselUI/WeaselUI.vcxproj
 +++ b/WeaselUI/WeaselUI.vcxproj
 @@ -305,6 +305,8 @@
@@ -18964,7 +19020,7 @@ index 216bce16e02b73225227eb32fa5ea9ae3b2680d5..f47d0f645bd1939ca3bada8ad2a81006
      <ClInclude Include="HorizontalLayout.h" />
      <ClInclude Include="Layout.h" />
 diff --git a/arm64x_wrapper/WeaselIME_arm64.def b/arm64x_wrapper/WeaselIME_arm64.def
-index 12c8480b304d404241e0dfc406782965c6758f4c..9bfb379664de2c8e44d491600f6e15c17834c5ee 100644
+index 12c8480..9bfb379 100644
 --- a/arm64x_wrapper/WeaselIME_arm64.def
 +++ b/arm64x_wrapper/WeaselIME_arm64.def
 @@ -1,16 +1,16 @@
@@ -19001,7 +19057,7 @@ index 12c8480b304d404241e0dfc406782965c6758f4c..9bfb379664de2c8e44d491600f6e15c1
 +	ImeEnumRegisterWord = stellaeARM64.ime.ImeEnumRegisterWord
 +	ImeSetCompositionString = stellaeARM64.ime.ImeSetCompositionString
 diff --git a/arm64x_wrapper/WeaselIME_x64.def b/arm64x_wrapper/WeaselIME_x64.def
-index bc8fc17827d70a68c4a34fbd6d32adc5e74c85ed..2133e1e16b2ea8628843401f65b28981f99f86fb 100644
+index bc8fc17..2133e1e 100644
 --- a/arm64x_wrapper/WeaselIME_x64.def
 +++ b/arm64x_wrapper/WeaselIME_x64.def
 @@ -1,16 +1,16 @@
@@ -19038,7 +19094,7 @@ index bc8fc17827d70a68c4a34fbd6d32adc5e74c85ed..2133e1e16b2ea8628843401f65b28981
 +	ImeEnumRegisterWord = stellaex64.ime.ImeEnumRegisterWord
 +	ImeSetCompositionString = stellaex64.ime.ImeSetCompositionString
 diff --git a/arm64x_wrapper/WeaselTSF_arm64.def b/arm64x_wrapper/WeaselTSF_arm64.def
-index 8e3a5472a9f76fd8813292bbee4028de2be2f477..e920bbd71ffa6f17a2e8695fc767f61afd0fef1d 100644
+index 8e3a547..e920bbd 100644
 --- a/arm64x_wrapper/WeaselTSF_arm64.def
 +++ b/arm64x_wrapper/WeaselTSF_arm64.def
 @@ -1,5 +1,5 @@
@@ -19055,7 +19111,7 @@ index 8e3a5472a9f76fd8813292bbee4028de2be2f477..e920bbd71ffa6f17a2e8695fc767f61a
 +	DllUnregisterServer = stellaeARM64.dll.DllUnregisterServer
 \ No newline at end of file
 diff --git a/arm64x_wrapper/WeaselTSF_x64.def b/arm64x_wrapper/WeaselTSF_x64.def
-index 11ed1b5e4882d1ed1ec49f138eb85d423c7546c2..6c4441e3d38252fe1c68a91ff88ab9c88f9a8342 100644
+index 11ed1b5..6c4441e 100644
 --- a/arm64x_wrapper/WeaselTSF_x64.def
 +++ b/arm64x_wrapper/WeaselTSF_x64.def
 @@ -1,5 +1,5 @@
@@ -19072,7 +19128,7 @@ index 11ed1b5e4882d1ed1ec49f138eb85d423c7546c2..6c4441e3d38252fe1c68a91ff88ab9c8
 +	DllUnregisterServer = stellaex64.dll.DllUnregisterServer
 \ No newline at end of file
 diff --git a/arm64x_wrapper/build.bat b/arm64x_wrapper/build.bat
-index c1a591f582c40221dbd461138fecec4eea70f254..b2e45b6b7be7ca73e76ab470d321a2ada90c95df 100644
+index c1a591f..b2e45b6 100644
 --- a/arm64x_wrapper/build.bat
 +++ b/arm64x_wrapper/build.bat
 @@ -1,50 +1,50 @@
@@ -19177,7 +19233,7 @@ index c1a591f582c40221dbd461138fecec4eea70f254..b2e45b6b7be7ca73e76ab470d321a2ad
 +exit /b
 +
 diff --git a/build.bat b/build.bat
-index 6cdb23e72d3f423ffe3c2a3a150de8f7cb26a1ed..fc653ffe899d81b72b7c0b5b13b4586528fa8e90 100644
+index 6cdb23e..fc653ff 100644
 --- a/build.bat
 +++ b/build.bat
 @@ -126,10 +126,10 @@ if %build_rime% == 0 (
@@ -19240,7 +19296,7 @@ index 6cdb23e72d3f423ffe3c2a3a150de8f7cb26a1ed..fc653ffe899d81b72b7c0b5b13b45865
  :end
  cd %WEASEL_ROOT%
 diff --git a/get-rime.ps1 b/get-rime.ps1
-index dd394b22c06b937efb4261722df33eebe0296891..01b29a7ce08d9d7d70a830076065ed1b8dd6f4b7 100644
+index dd394b2..01b29a7 100644
 --- a/get-rime.ps1
 +++ b/get-rime.ps1
 @@ -1,389 +1,392 @@
@@ -20026,7 +20082,7 @@ index dd394b22c06b937efb4261722df33eebe0296891..01b29a7ce08d9d7d70a830076065ed1b
 +}
 +SafeExit
 diff --git a/include/KeyEvent.h b/include/KeyEvent.h
-index 6fe8adef669b79cf9b644a6ab885afd81d0cf453..6154d3215c147f619bb3758b38b77d86cc9432b9 100644
+index 6fe8ade..6154d32 100644
 --- a/include/KeyEvent.h
 +++ b/include/KeyEvent.h
 @@ -1,4 +1,5 @@
@@ -20045,7 +20101,7 @@ index 6fe8adef669b79cf9b644a6ab885afd81d0cf453..6154d3215c147f619bb3758b38b77d86
    KeyEvent(UINT _keycode, UINT _mask) : keycode(_keycode), mask(_mask) {}
    KeyEvent(UINT x) { *reinterpret_cast<UINT*>(this) = x; }
 diff --git a/include/PipeChannel.h b/include/PipeChannel.h
-index bebc73a087ac2bf917b20751ed8a48a1e2fa6c45..de5ff7d3c389ff6b45f0ca6bd48538851190fb56 100644
+index bebc73a..de5ff7d 100644
 --- a/include/PipeChannel.h
 +++ b/include/PipeChannel.h
 @@ -1,163 +1,235 @@
@@ -20448,7 +20504,7 @@ index bebc73a087ac2bf917b20751ed8a48a1e2fa6c45..de5ff7d3c389ff6b45f0ca6bd4853885
 +};
 +};  // namespace weasel
 diff --git a/include/RimeWithWeasel.h b/include/RimeWithWeasel.h
-index 6fb0a4cab82cba3943a0c2ea6c2bc54caa1938a9..facae0526d645572904eefe52df2f97af109ce2c 100644
+index 6fb0a4c..facae05 100644
 --- a/include/RimeWithWeasel.h
 +++ b/include/RimeWithWeasel.h
 @@ -3,6 +3,9 @@
@@ -20538,7 +20594,7 @@ index 6fb0a4cab82cba3943a0c2ea6c2bc54caa1938a9..facae0526d645572904eefe52df2f97a
    bool m_global_ascii_mode;
 diff --git a/include/ShiftKeySnapshot.h b/include/ShiftKeySnapshot.h
 new file mode 100644
-index 0000000000000000000000000000000000000000..a3424e4b1b6261eb6b00c5d9c8e4919f7d1c8fa8
+index 0000000..a3424e4
 --- /dev/null
 +++ b/include/ShiftKeySnapshot.h
 @@ -0,0 +1,55 @@
@@ -20599,7 +20655,7 @@ index 0000000000000000000000000000000000000000..a3424e4b1b6261eb6b00c5d9c8e4919f
 +}  // namespace weasel
 diff --git a/include/ShiftKeySnapshotWin.h b/include/ShiftKeySnapshotWin.h
 new file mode 100644
-index 0000000000000000000000000000000000000000..00b92be4034b571d0d04dd2ed1d8d8c9259b0eeb
+index 0000000..00b92be
 --- /dev/null
 +++ b/include/ShiftKeySnapshotWin.h
 @@ -0,0 +1,41 @@
@@ -20646,7 +20702,7 @@ index 0000000000000000000000000000000000000000..00b92be4034b571d0d04dd2ed1d8d8c9
 +}  // namespace weasel
 diff --git a/include/StellaeIdentity.h b/include/StellaeIdentity.h
 new file mode 100644
-index 0000000000000000000000000000000000000000..125470d62aa9dc1688d8ad80c4e6613d2db320d9
+index 0000000..125470d
 --- /dev/null
 +++ b/include/StellaeIdentity.h
 @@ -0,0 +1,46 @@
@@ -20697,7 +20753,7 @@ index 0000000000000000000000000000000000000000..125470d62aa9dc1688d8ad80c4e6613d
 +}  // namespace identity
 +}  // namespace stellae
 diff --git a/include/WeaselConstants.h b/include/WeaselConstants.h
-index 09625e4d34705a27354b4de81debfc6dfecd7f43..961f37377e770c46d49e1252a93a360830054713 100644
+index 09625e4..961f373 100644
 --- a/include/WeaselConstants.h
 +++ b/include/WeaselConstants.h
 @@ -1,8 +1,10 @@
@@ -20715,7 +20771,7 @@ index 09625e4d34705a27354b4de81debfc6dfecd7f43..961f37377e770c46d49e1252a93a3608
  #define STRINGIZE(x) #x
  #define VERSION_STR(x) STRINGIZE(x)
 diff --git a/include/WeaselIPC.h b/include/WeaselIPC.h
-index 3065cb57d49095eefbc04eddbe5ec2801216f8b4..1a174463d1f933ba5dbfd72ef293542ee47f1831 100644
+index 3065cb5..1a17446 100644
 --- a/include/WeaselIPC.h
 +++ b/include/WeaselIPC.h
 @@ -1,13 +1,14 @@
@@ -20818,7 +20874,7 @@ index 3065cb57d49095eefbc04eddbe5ec2801216f8b4..1a174463d1f933ba5dbfd72ef293542e
   private:
    ClientImpl* m_pImpl;
 diff --git a/include/WeaselUI.h b/include/WeaselUI.h
-index da17956a275d73a1c67d3a6e070403b007376b94..652bdf1a6a83e0cadc81ce6638f4cabbf9c9cdd4 100644
+index da17956..652bdf1 100644
 --- a/include/WeaselUI.h
 +++ b/include/WeaselUI.h
 @@ -1,4 +1,4 @@
@@ -20892,7 +20948,7 @@ index da17956a275d73a1c67d3a6e070403b007376b94..652bdf1a6a83e0cadc81ce6638f4cabb
    ComPtr<IDWriteTextFormat1> pLabelTextFormat;
    ComPtr<IDWriteTextFormat1> pCommentTextFormat;
 diff --git a/include/WeaselUtility.h b/include/WeaselUtility.h
-index 54f840f48b3afef2fe3c5b490dc83f0bd441fae0..323abbd2f2ef21822d12fbc31d01fca59604e2b3 100644
+index 54f840f..323abbd 100644
 --- a/include/WeaselUtility.h
 +++ b/include/WeaselUtility.h
 @@ -1,4 +1,5 @@
@@ -20932,7 +20988,7 @@ index 54f840f48b3afef2fe3c5b490dc83f0bd441fae0..323abbd2f2ef21822d12fbc31d01fca5
      if (lang == L"chs")
        return MAKELANGID(LANG_CHINESE, SUBLANG_CHINESE_SIMPLIFIED);
 diff --git a/output/install.bat b/output/install.bat
-index 0c50c52b457c529ac476a108d08d7c0294edeaa7..2ea9c145b23b441f202af91c62ff014e8b6ced67 100644
+index 0c50c52..2ea9c14 100644
 --- a/output/install.bat
 +++ b/output/install.bat
 @@ -1,7 +1,9 @@
@@ -21000,7 +21056,7 @@ index 0c50c52b457c529ac476a108d08d7c0294edeaa7..2ea9c145b23b441f202af91c62ff014e
  if /i "%2" == "/register" pause
  echo installed.
 diff --git a/output/install.nsi b/output/install.nsi
-index 3d5130ce35d241973874c2bd1a31fb56c7f6b271..bb52d79cc2bd36004c01281f7322487754a961fc 100644
+index 3d5130c..bb52d79 100644
 --- a/output/install.nsi
 +++ b/output/install.nsi
 @@ -1,423 +1,443 @@
@@ -21871,7 +21927,7 @@ index 3d5130ce35d241973874c2bd1a31fb56c7f6b271..bb52d79cc2bd36004c01281f73224877
 +
 +SectionEnd
 diff --git a/output/rime-install-config.bat b/output/rime-install-config.bat
-index 7dfc62a445486f71977e2daef6f83b3bb6902445..bfbf09b9fd8be70bcbab087cdd445933f522e213 100644
+index 7dfc62a..bfbf09b 100644
 --- a/output/rime-install-config.bat
 +++ b/output/rime-install-config.bat
 @@ -6,12 +6,12 @@ rem CAUTION: may suffer from incomplete downloads.
@@ -21891,7 +21947,7 @@ index 7dfc62a445486f71977e2daef6f83b3bb6902445..bfbf09b9fd8be70bcbab087cdd445933
  for /f "tokens=2*" %%a in ('reg query "%key%" /v "%name%"') do set rime_dir=%%b
  
 diff --git a/output/start_service.bat b/output/start_service.bat
-index 1ae47b02f075bb73aa1077183ab27483b54bf0db..8fbfd0cfc43875cabd7e06965c6c84b13a99cf4b 100644
+index 1ae47b0..8fbfd0c 100644
 --- a/output/start_service.bat
 +++ b/output/start_service.bat
 @@ -1,2 +1,2 @@
@@ -21903,7 +21959,7 @@ index 1ae47b02f075bb73aa1077183ab27483b54bf0db..8fbfd0cfc43875cabd7e06965c6c84b1
 \ No newline at end of file
 diff --git a/output/stellae_identity.nsh b/output/stellae_identity.nsh
 new file mode 100644
-index 0000000000000000000000000000000000000000..db832d194ab3fe02e6803b7323a65756eb5f7cef
+index 0000000..db832d1
 --- /dev/null
 +++ b/output/stellae_identity.nsh
 @@ -0,0 +1,12 @@
@@ -21920,7 +21976,7 @@ index 0000000000000000000000000000000000000000..db832d194ab3fe02e6803b7323a65756
 +!define STELLAE_DEPLOYER_EXE "StellaeDeployer.exe"
 +!define STELLAE_SETUP_EXE "StellaeSetup.exe"
 diff --git a/output/stop_service.bat b/output/stop_service.bat
-index 243ad0d3a5d73f4df41201a94aa24b114f5affd4..4a247de7730086d8edc1920fc8b1b679e76730e0 100644
+index 243ad0d..4a247de 100644
 --- a/output/stop_service.bat
 +++ b/output/stop_service.bat
 @@ -1,2 +1,2 @@
@@ -21928,7 +21984,7 @@ index 243ad0d3a5d73f4df41201a94aa24b114f5affd4..4a247de7730086d8edc1920fc8b1b679
 -weaselserver.exe /q
 +StellaeServer.exe /q
 diff --git a/output/uninstall.bat b/output/uninstall.bat
-index fa490b902f453b30df52d7190696a1c8c12ffa7a..8696307ac564cc26f672c3a9eec3bbfb6a60180e 100644
+index fa490b9..8696307 100644
 --- a/output/uninstall.bat
 +++ b/output/uninstall.bat
 @@ -17,29 +17,29 @@ if not %errorlevel% == 0 (
@@ -22458,7 +22514,7 @@ q{gdj0gAaBG|M$ZyjT8s%s4E<P=}>pj2B97C!{HYXdDkKMEcgGItc_m)
 
 diff --git a/stellae.identity.props b/stellae.identity.props
 new file mode 100644
-index 0000000000000000000000000000000000000000..6ca616b586e2972a0ae0d9768a11b6db89431f0e
+index 0000000..6ca616b
 --- /dev/null
 +++ b/stellae.identity.props
 @@ -0,0 +1,10 @@
@@ -22473,7 +22529,7 @@ index 0000000000000000000000000000000000000000..6ca616b586e2972a0ae0d9768a11b6db
 +  </PropertyGroup>
 +</Project>
 diff --git a/update/appcast.xml b/update/appcast.xml
-index 7b43460f45422e8e8c6d3fd92bbd49a503d465d6..e6a94c11959f4661e432e3f46e5cf3f07632d7c4 100644
+index 7b43460..e6a94c1 100644
 --- a/update/appcast.xml
 +++ b/update/appcast.xml
 @@ -1,17 +1,5 @@
@@ -22499,7 +22555,7 @@ index 7b43460f45422e8e8c6d3fd92bbd49a503d465d6..e6a94c11959f4661e432e3f46e5cf3f0
 +  <description>No independent update channel is configured.</description>
 +</channel></rss>
 diff --git a/update/bump-version.ps1 b/update/bump-version.ps1
-index 8cbc333f1cfc7e8458bbcf3c70e695187e033c20..3b8c8c52e86d7dbe699e9e2a7e8f2b6ec618b609 100644
+index 8cbc333..3b8c8c5 100644
 --- a/update/bump-version.ps1
 +++ b/update/bump-version.ps1
 @@ -1,207 +1,208 @@
@@ -22919,7 +22975,7 @@ index 8cbc333f1cfc7e8458bbcf3c70e695187e033c20..3b8c8c52e86d7dbe699e9e2a7e8f2b6e
 +& git commit --message $release_message
 +& git tag --annotate $release_tag --message $release_message
 diff --git a/update/bump-version.sh b/update/bump-version.sh
-index dd57fe49f537103b7906b1bbb863d19852dd0152..e97ee595226af2b0cdd9da28ffcdfdb0ada0ca2d 100644
+index dd57fe4..e97ee59 100644
 --- a/update/bump-version.sh
 +++ b/update/bump-version.sh
 @@ -1,227 +1,229 @@
@@ -23380,7 +23436,7 @@ index dd57fe49f537103b7906b1bbb863d19852dd0152..e97ee595226af2b0cdd9da28ffcdfdb0
 +git commit -m "$release_message"
 +git tag -a "$release_tag" -m "$release_message"
 diff --git a/update/testing-appcast.xml b/update/testing-appcast.xml
-index de33491fcca9b526dc7f1d233b51d971f8ad0c2f..e6a94c11959f4661e432e3f46e5cf3f07632d7c4 100644
+index de33491..e6a94c1 100644
 --- a/update/testing-appcast.xml
 +++ b/update/testing-appcast.xml
 @@ -1,17 +1,5 @@
@@ -23406,7 +23462,7 @@ index de33491fcca9b526dc7f1d233b51d971f8ad0c2f..e6a94c11959f4661e432e3f46e5cf3f0
 +  <description>No independent update channel is configured.</description>
 +</channel></rss>
 diff --git a/weasel.props.template b/weasel.props.template
-index 3a70393c04070118e113a38a9ebba159c8eba868..567951fa6cb7a652f74dedc74fb0011a42a187d8 100644
+index 3a70393..567951f 100644
 --- a/weasel.props.template
 +++ b/weasel.props.template
 @@ -6,6 +6,7 @@
@@ -23427,7 +23483,7 @@ index 3a70393c04070118e113a38a9ebba159c8eba868..567951fa6cb7a652f74dedc74fb0011a
    </ItemDefinitionGroup>
  </Project>
 diff --git a/xbuild.bat b/xbuild.bat
-index e4e7412279d2be2f000f8174a91169557bd77684..942c24a9eb4119e7e017e78be67a1d1e355ab972 100644
+index e4e7412..942c24a 100644
 --- a/xbuild.bat
 +++ b/xbuild.bat
 @@ -121,10 +121,10 @@ if %build_commands% == 0 (
@@ -23457,7 +23513,7 @@ index e4e7412279d2be2f000f8174a91169557bd77684..942c24a9eb4119e7e017e78be67a1d1e
  )
  if %build_installer% == 1 (
 diff --git a/xmake.lua b/xmake.lua
-index 3a61b7fe17c3b19ded625fec32b75426055e67a3..1fbc0b2f9489e37776127867765abdb84fd6d1ea 100644
+index 3a61b7f..1fbc0b2 100644
 --- a/xmake.lua
 +++ b/xmake.lua
 @@ -1,107 +1,109 @@
