@@ -72,7 +72,7 @@ def render_fonts(fonts, label_font, selected):
     image = Image.new('RGB', (348, 150), 'white')
     draw = ImageDraw.Draw(image)
     draw.rectangle((8, 8, 339, 141), fill='#F5F6F8', outline='#D1D6DE')
-    draw.text((20, 11), 'Default / SC / TC / HK', font=label_font, fill='#343E4D')
+    draw.text((20, 11), 'Default (Microsoft YaHei)', font=label_font, fill='#343E4D')
     for index, (name, font) in enumerate(fonts.items()):
         top = 29 + index * 27
         color = '#263D5B' if name == selected else '#404750'
@@ -91,7 +91,6 @@ def render_theme(theme, default_font):
     chinese = ImageFont.truetype(str(default_font), 18, index=0)
     english = ImageFont.truetype(str(default_font), 13, index=0)
     label = ImageFont.truetype(str(default_font), 11, index=0)
-    caption = ImageFont.truetype(str(default_font), 13, index=0)
     bg, border = theme['back_color'], theme['border_color']
     draw.rounded_rectangle((8, 8, 339, 61), radius=8, fill=bg, outline=border)
     draw.text((17, 11), 'moxin|', font=english, fill=theme['text_color'])
@@ -113,8 +112,6 @@ def render_theme(theme, default_font):
         label_color = theme['hilited_label_color' if index == 0 else 'label_color']
         draw.text((17, top + 3), str(index + 1) + '.', font=label, fill=label_color)
         draw.text((34, top), word, font=english, fill=text_color)
-    draw.text((184, 80), 'Chinese / 5', font=caption, fill='#555B66')
-    draw.text((184, 103), 'English / 6', font=caption, fill='#555B66')
     return image
 
 

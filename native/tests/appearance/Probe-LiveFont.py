@@ -27,7 +27,7 @@ WM_COMMAND, IDOK = 0x0111, 1
 WM_CLOSE = 0x0010
 WM_KEYDOWN, WM_KEYUP, WM_NEXTDLGCTL = 0x0100, 0x0101, 0x0028
 VK_HOME, VK_DOWN = 0x24, 0x28
-DEFAULT_LABELS = {'Default', '默认', '預設'}
+DEFAULT_LABELS = {'Default (Microsoft YaHei)'}
 BUILTIN_THEMES = ('reference_gray', 'stellae_sakura', 'stellae_lavender',
                   'stellae_night', 'stellae_crimson', 'stellae_mono')
 CUSTOM_THEME = 'ci_custom_theme'
@@ -324,7 +324,8 @@ class SettingsDialog:
 def font_item(items, family):
     if family == 'Microsoft YaHei':
         matches = [index for index, label in enumerate(items) if label in DEFAULT_LABELS]
-        require(len(matches) == 1, 'The native font choices have no unique localized Default')
+        require(len(matches) == 1,
+                'The native font choices have no unique Default label naming Microsoft YaHei')
         return matches[0]
     return items.index(family)
 

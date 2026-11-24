@@ -31,5 +31,79 @@
       "path": "data/preview/color_scheme_reference_gray_hk.png",
       "sha256": "788083761043eded420b6f94fff9975104f6284f04c6de9f114adcd5ac5e7236"
     }
+  ],
+  "previousComponents": [
+    {
+      "componentVersion": "2026.11.25.1",
+      "sourceRef": "7a9256117e5c2c6bf3a4028d94a3b018aa58f783",
+      "manifestSha256": "5d7b10a8c8e1c7a53ee2599eba9bd6e32c0c211b9fe09e2b6bf78fa948dd4bef",
+      "files": [
+        {
+          "path": "StellaeDeployer.exe",
+          "bytes": 669696,
+          "sha256": "8cd11da50a734f1521d0dd939458bc7c26944e49ffed9e65169eda2a11acffc3"
+        },
+        {
+          "path": "data/stellae_bundle_weasel.yaml",
+          "bytes": 7196,
+          "sha256": "3a1848f077b03c7480da0571ca1f448e93284da52a25f9cca1058a6c4dbb489a"
+        },
+        {
+          "path": "data/preview/color_scheme_reference_gray.png",
+          "bytes": 10548,
+          "sha256": "faeb8232f84a1cb48d3e0a5ad13c12fb8b6a1a489c89e1d864f7934313ae62a3"
+        },
+        {
+          "path": "data/preview/color_scheme_stellae_sakura.png",
+          "bytes": 11078,
+          "sha256": "d91c9382d0cad8b7c26c000be230c5d4a7b2c5310b0da695f88986ef59a7baa9"
+        },
+        {
+          "path": "data/preview/color_scheme_stellae_lavender.png",
+          "bytes": 11057,
+          "sha256": "bed286eb3d797cccbba9df9acaf68264cf3bf4b0b69176d3681ff3caa2ef8343"
+        },
+        {
+          "path": "data/preview/color_scheme_stellae_night.png",
+          "bytes": 11289,
+          "sha256": "3a6e3a4eae215b9013afa1945dac823011e080137d621bc800142b6d3a60d76f"
+        },
+        {
+          "path": "data/preview/color_scheme_stellae_crimson.png",
+          "bytes": 11233,
+          "sha256": "b35a439a0a67b6e886c355de8e98f29dec19249820b5206ef7bdea41a09c6839"
+        },
+        {
+          "path": "data/preview/color_scheme_stellae_mono.png",
+          "bytes": 11011,
+          "sha256": "7b8a28de2b2784ec857fec18c97e404a497bdd3193280d548af0ee12fa1ad407"
+        },
+        {
+          "path": "data/preview/candidate_font.png",
+          "bytes": 16016,
+          "sha256": "c9886f0ce54a0684ab741af62e3d751eba2847b4c07c54b9226707bb92e993e7"
+        },
+        {
+          "path": "data/preview/candidate_font_default.png",
+          "bytes": 16151,
+          "sha256": "220731bef34a0ea7a1e93743aad9ed8646b1d1a9837ced6a0edf00a65b268694"
+        },
+        {
+          "path": "data/preview/candidate_font_sc.png",
+          "bytes": 16807,
+          "sha256": "671c9cc13abceff226cca535058dd6ddfa0100a08d705735ef162535582ecce3"
+        },
+        {
+          "path": "data/preview/candidate_font_tc.png",
+          "bytes": 17716,
+          "sha256": "daaaaa61181870f8a2b9370cb199f1a8e42f039ca6da5b235cb6741be2b91137"
+        },
+        {
+          "path": "data/preview/candidate_font_hk.png",
+          "bytes": 17025,
+          "sha256": "48b2a0f29d9d8b9ee4147540794becc7337e918e2c197b64b60c4894e1e13332"
+        }
+      ]
+    }
   ]
 }

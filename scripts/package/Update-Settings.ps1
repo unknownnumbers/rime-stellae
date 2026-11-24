@@ -78,7 +78,7 @@ foreach($entry in $spec.files){
  if(Test-Path -LiteralPath $target){
   $current=Hash $target
   $previous=if($entry.PSObject.Properties['previousSha256']){@($entry.previousSha256)}else{@()}
-  $known=if($entry.path -ceq 'StellaeDeployer.exe'){@($baselineDeployer,$entry.sha256)}else{@($entry.sha256)+$previous}
+  $known=if($entry.path -ceq 'StellaeDeployer.exe'){@($baselineDeployer,$entry.sha256)+$previous}else{@($entry.sha256)+$previous}
   if($current -cnotin $known){throw ('An unknown installed file is preserved; resolve its conflict first: '+$entry.path)}
  }
  if($entry.path -ceq 'StellaeDeployer.exe'){Require-X64 $origin}

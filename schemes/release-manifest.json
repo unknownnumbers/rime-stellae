@@ -659,63 +659,63 @@
     },
     {
       "path": "config/official-weasel/preview/candidate_font.png",
-      "bytes": 16016,
-      "sha256": "c9886f0ce54a0684ab741af62e3d751eba2847b4c07c54b9226707bb92e993e7"
+      "bytes": 16352,
+      "sha256": "2186b29f6783dd8b248297a6ff69af8d59d56713b8e99769b147b258ab92c1d9"
     },
     {
       "path": "config/official-weasel/preview/candidate_font_default.png",
-      "bytes": 16151,
-      "sha256": "220731bef34a0ea7a1e93743aad9ed8646b1d1a9837ced6a0edf00a65b268694"
+      "bytes": 16496,
+      "sha256": "59879ec4b32173ba07cafe6fba25f46d6683c83167b72eaec6e9ca2107ff8531"
     },
     {
       "path": "config/official-weasel/preview/candidate_font_hk.png",
-      "bytes": 17025,
-      "sha256": "48b2a0f29d9d8b9ee4147540794becc7337e918e2c197b64b60c4894e1e13332"
+      "bytes": 17364,
+      "sha256": "a0fbc7f948e90d216d137919072ab5880c678ab1b26968e789192740b75f6313"
     },
     {
       "path": "config/official-weasel/preview/candidate_font_sc.png",
-      "bytes": 16807,
-      "sha256": "671c9cc13abceff226cca535058dd6ddfa0100a08d705735ef162535582ecce3"
+      "bytes": 17147,
+      "sha256": "ce02b80205d525eaf51c6368ae68fc9d01b505a6637a93dff3d14f0b11c82793"
     },
     {
       "path": "config/official-weasel/preview/candidate_font_tc.png",
-      "bytes": 17716,
-      "sha256": "daaaaa61181870f8a2b9370cb199f1a8e42f039ca6da5b235cb6741be2b91137"
+      "bytes": 18056,
+      "sha256": "a6732ac6882ea5dd4608cd89dd3481f1358a650b6fd7ffe93b3efc5af93937f9"
     },
     {
       "path": "config/official-weasel/preview/color_scheme_reference_gray.png",
-      "bytes": 10548,
-      "sha256": "faeb8232f84a1cb48d3e0a5ad13c12fb8b6a1a489c89e1d864f7934313ae62a3"
+      "bytes": 8671,
+      "sha256": "73aafe8f1d875deb2523e38b8ed7d9b442bddb08d4876ba84cfd5e92900046cd"
     },
     {
       "path": "config/official-weasel/preview/color_scheme_stellae_crimson.png",
-      "bytes": 11233,
-      "sha256": "b35a439a0a67b6e886c355de8e98f29dec19249820b5206ef7bdea41a09c6839"
+      "bytes": 9441,
+      "sha256": "f1dacfac28bd1d8df8a57a234b7885d6951ffeb0e52bed3c9c776af16a4d9d0e"
     },
     {
       "path": "config/official-weasel/preview/color_scheme_stellae_lavender.png",
-      "bytes": 11057,
-      "sha256": "bed286eb3d797cccbba9df9acaf68264cf3bf4b0b69176d3681ff3caa2ef8343"
+      "bytes": 9178,
+      "sha256": "60888e4d587151a875b6659d612ed03c4b125bda8cb4b43fb45c43750eabfac3"
     },
     {
       "path": "config/official-weasel/preview/color_scheme_stellae_mono.png",
-      "bytes": 11011,
-      "sha256": "7b8a28de2b2784ec857fec18c97e404a497bdd3193280d548af0ee12fa1ad407"
+      "bytes": 9170,
+      "sha256": "9f3fcd9074017bf38005e561902d395ac73e22e72a31993ad8381f037ced27a9"
     },
     {
       "path": "config/official-weasel/preview/color_scheme_stellae_night.png",
-      "bytes": 11289,
-      "sha256": "3a6e3a4eae215b9013afa1945dac823011e080137d621bc800142b6d3a60d76f"
+      "bytes": 9351,
+      "sha256": "dcc49aa9f66ad8208ef1f2d4b3f64e047aea51f6c33087201bdf06b0229f2a63"
     },
     {
       "path": "config/official-weasel/preview/color_scheme_stellae_sakura.png",
-      "bytes": 11078,
-      "sha256": "d91c9382d0cad8b7c26c000be230c5d4a7b2c5310b0da695f88986ef59a7baa9"
+      "bytes": 9194,
+      "sha256": "80e3fd84f4b6ded71e5ddaeec7056280f1bedd85eee0bdb462b9390a060ce783"
     },
     {
       "path": "config/official-weasel/profile-manifest.json",
-      "bytes": 30754,
-      "sha256": "374199f9944500b7b9e4e5bcf3cb7b186393170c23e567a1d470b3c39b820438"
+      "bytes": 30748,
+      "sha256": "d7b42e282b4e31be7d65122db92a756780c1790724fb44a1b2f2a39176c96d6c"
     },
     {
       "path": "config/official-weasel/project_radical.dict.yaml",
@@ -1029,8 +1029,8 @@
     },
     {
       "path": "config/pc/config-source-manifest.json",
-      "bytes": 30816,
-      "sha256": "4f113bc82b20c61cf58b6adb830b4d32e8c59d0684d513de72b79da4f5341013"
+      "bytes": 30810,
+      "sha256": "a17c44defeda4fd2a8f0f4d92f3881d34ad484803a0147489ea1dba45d9da79d"
     },
     {
       "path": "config/pc/default.custom.yaml",
@@ -1624,58 +1624,58 @@
     },
     {
       "path": "config/pc/preview/candidate_font.png",
-      "bytes": 16016,
-      "sha256": "c9886f0ce54a0684ab741af62e3d751eba2847b4c07c54b9226707bb92e993e7"
+      "bytes": 16352,
+      "sha256": "2186b29f6783dd8b248297a6ff69af8d59d56713b8e99769b147b258ab92c1d9"
     },
     {
       "path": "config/pc/preview/candidate_font_default.png",
-      "bytes": 16151,
-      "sha256": "220731bef34a0ea7a1e93743aad9ed8646b1d1a9837ced6a0edf00a65b268694"
+      "bytes": 16496,
+      "sha256": "59879ec4b32173ba07cafe6fba25f46d6683c83167b72eaec6e9ca2107ff8531"
     },
     {
       "path": "config/pc/preview/candidate_font_hk.png",
-      "bytes": 17025,
-      "sha256": "48b2a0f29d9d8b9ee4147540794becc7337e918e2c197b64b60c4894e1e13332"
+      "bytes": 17364,
+      "sha256": "a0fbc7f948e90d216d137919072ab5880c678ab1b26968e789192740b75f6313"
     },
     {
       "path": "config/pc/preview/candidate_font_sc.png",
-      "bytes": 16807,
-      "sha256": "671c9cc13abceff226cca535058dd6ddfa0100a08d705735ef162535582ecce3"
+      "bytes": 17147,
+      "sha256": "ce02b80205d525eaf51c6368ae68fc9d01b505a6637a93dff3d14f0b11c82793"
     },
     {
       "path": "config/pc/preview/candidate_font_tc.png",
-      "bytes": 17716,
-      "sha256": "daaaaa61181870f8a2b9370cb199f1a8e42f039ca6da5b235cb6741be2b91137"
+      "bytes": 18056,
+      "sha256": "a6732ac6882ea5dd4608cd89dd3481f1358a650b6fd7ffe93b3efc5af93937f9"
     },
     {
       "path": "config/pc/preview/color_scheme_reference_gray.png",
-      "bytes": 10548,
-      "sha256": "faeb8232f84a1cb48d3e0a5ad13c12fb8b6a1a489c89e1d864f7934313ae62a3"
+      "bytes": 8671,
+      "sha256": "73aafe8f1d875deb2523e38b8ed7d9b442bddb08d4876ba84cfd5e92900046cd"
     },
     {
       "path": "config/pc/preview/color_scheme_stellae_crimson.png",
-      "bytes": 11233,
-      "sha256": "b35a439a0a67b6e886c355de8e98f29dec19249820b5206ef7bdea41a09c6839"
+      "bytes": 9441,
+      "sha256": "f1dacfac28bd1d8df8a57a234b7885d6951ffeb0e52bed3c9c776af16a4d9d0e"
     },
     {
       "path": "config/pc/preview/color_scheme_stellae_lavender.png",
-      "bytes": 11057,
-      "sha256": "bed286eb3d797cccbba9df9acaf68264cf3bf4b0b69176d3681ff3caa2ef8343"
+      "bytes": 9178,
+      "sha256": "60888e4d587151a875b6659d612ed03c4b125bda8cb4b43fb45c43750eabfac3"
     },
     {
       "path": "config/pc/preview/color_scheme_stellae_mono.png",
-      "bytes": 11011,
-      "sha256": "7b8a28de2b2784ec857fec18c97e404a497bdd3193280d548af0ee12fa1ad407"
+      "bytes": 9170,
+      "sha256": "9f3fcd9074017bf38005e561902d395ac73e22e72a31993ad8381f037ced27a9"
     },
     {
       "path": "config/pc/preview/color_scheme_stellae_night.png",
-      "bytes": 11289,
-      "sha256": "3a6e3a4eae215b9013afa1945dac823011e080137d621bc800142b6d3a60d76f"
+      "bytes": 9351,
+      "sha256": "dcc49aa9f66ad8208ef1f2d4b3f64e047aea51f6c33087201bdf06b0229f2a63"
     },
     {
       "path": "config/pc/preview/color_scheme_stellae_sakura.png",
-      "bytes": 11078,
-      "sha256": "d91c9382d0cad8b7c26c000be230c5d4a7b2c5310b0da695f88986ef59a7baa9"
+      "bytes": 9194,
+      "sha256": "80e3fd84f4b6ded71e5ddaeec7056280f1bedd85eee0bdb462b9390a060ce783"
     },
     {
       "path": "config/pc/project_radical.dict.yaml",

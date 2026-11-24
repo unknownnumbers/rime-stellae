@@ -54,7 +54,22 @@ def main():
 
     baseline = json.loads(source('installer/settings-update-baseline.json'))
     assert baseline['format'] == 'stellae-settings-baseline-v1'
-    previous = {r['path']: r['sha256'] for r in baseline['files']}
+    original = {r['path']: r['sha256'] for r in baseline['files']}
+    previous = {path: [value] for path, value in original.items()}
+    expected_paths = {'StellaeDeployer.exe', 'data/stellae_bundle_weasel.yaml'}
+    expected_paths.update('data/preview/color_scheme_' + name + '.png' for name in THEMES)
+    expected_paths.update('data/preview/candidate_font' + suffix + '.png'
+                          for suffix in ('', '_default', '_sc', '_tc', '_hk'))
+    for component in baseline.get('previousComponents', []):
+        assert re.fullmatch('[0-9a-f]{40}', component['sourceRef'])
+        assert re.fullmatch('[0-9a-f]{64}', component['manifestSha256'])
+        assert len(component['files']) == 13
+        assert {row['path'] for row in component['files']} == expected_paths
+        for row in component['files']:
+            assert re.fullmatch('[0-9a-f]{64}', row['sha256'])
+            hashes = previous.setdefault(row['path'], [])
+            if row['sha256'] not in hashes:
+                hashes.append(row['sha256'])
     updater = source('scripts/package/Update-Settings.ps1')
     inputs = json.loads(source('installer/bundle-inputs.json'))
     out = a.output.resolve()
@@ -67,7 +82,7 @@ def main():
         path.write_bytes(data)
         rows.append({'path': relative, 'bytes': len(data),
                      'sha256': hashlib.sha256(data).hexdigest(),
-                     'previousSha256': [previous[relative]] if relative in previous else []})
+                     'previousSha256': previous.get(relative, [])})
 
     add('StellaeDeployer.exe', raw)
     add('data/stellae_bundle_weasel.yaml', source('schemes/config/pc/weasel.custom.yaml'))
@@ -76,7 +91,7 @@ def main():
     for name in names:
         add('data/preview/' + name, source('schemes/config/pc/preview/' + name))
     retired = [{'path': 'data/preview/color_scheme_reference_gray_' + suffix + '.png',
-                'sha256': previous['data/preview/color_scheme_reference_gray_' + suffix + '.png']}
+                'sha256': original['data/preview/color_scheme_reference_gray_' + suffix + '.png']}
                for suffix in ('default', 'sc', 'tc', 'hk')]
     manifest = {'format': 'stellae-settings-update-v1', 'componentVersion': inputs['bundleVersion'],
                 'sourceRef': a.source_ref, 'baselineSourceRef': baseline['sourceRef'],

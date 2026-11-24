@@ -3,7 +3,7 @@
   "date": "2026-11-25",
   "kind": "frontend-and-input-scheme-source",
   "frontendVersion": "0.17.4.61052",
-  "bundleVersion": "2026.11.25.1",
+  "bundleVersion": "2026.11.25.2",
   "nativeBinariesIncluded": false,
   "personalLearningIncluded": false,
   "productionInputSchemesIncluded": true,
@@ -112,8 +112,8 @@
     },
     {
       "path": "docs/BUILD.md",
-      "bytes": 4178,
-      "sha256": "3c55401d8cfa54e78aea82db40a76f33c208b41fe76eca250dde61dbd629167d"
+      "bytes": 4137,
+      "sha256": "40f10aa3e86637c5d284c24d17131623ee22d17ba95ea16faf43f03a7fca94b5"
     },
     {
       "path": "docs/PC.md",
@@ -143,7 +143,7 @@
     {
       "path": "installer/bundle-inputs.json",
       "bytes": 5390,
-      "sha256": "aaa0e9423a5c3ef5ad757cad6861d43ae11d661464b861075c1bb41cebe67358"
+      "sha256": "1fab0fe9401dba907db4aae38b4cad1f5252de923711de3757f7377caf6d2f3e"
     },
     {
       "path": "installer/bundle.nsi",
@@ -182,8 +182,8 @@
     },
     {
       "path": "installer/settings-update-baseline.json",
-      "bytes": 1243,
-      "sha256": "f65a14f8e6580731798aa622ba9a9b98d2c94e970780691c1b0d6012f19f803c"
+      "bytes": 4021,
+      "sha256": "ab2d5353e60a8034013e95978100ce2b97ab207b0cb88e460f81af7afcf15db1"
     },
     {
       "path": "installer/stellae_identity.nsh",
@@ -503,7 +503,7 @@
     {
       "path": "native/frontend-source-files.json",
       "bytes": 22632,
-      "sha256": "f170eed6f3d1fe0591b36bf78cc6fc22df8d8215cc978a2b6b8e8c4adfd0d1cd"
+      "sha256": "8a201d1c52e8809c8b3d254c4f89a25a6a50b67703403bbe9cd7bf9922b0817a"
     },
     {
       "path": "native/notification-inputs.json",
@@ -513,7 +513,7 @@
     {
       "path": "native/source-manifest.json",
       "bytes": 12544,
-      "sha256": "2bdbcb56d5913265351c1c0d9d6bad21bc02ad4df12b76dd50df2f6970104769"
+      "sha256": "2ce015d93f093ff700ac5ca25d0d69fef114f98f90bba6aa7ae10a751a050347"
     },
     {
       "path": "native/tests/appearance/Add-PaintTrace.ps1",
@@ -527,8 +527,8 @@
     },
     {
       "path": "native/tests/appearance/Probe-LiveFont.py",
-      "bytes": 54283,
-      "sha256": "b2b2796fa26fe4f65b1fdd8044c462fb68967064840a7900692889a5b5c7d549"
+      "bytes": 54316,
+      "sha256": "1a7953b8e28c0e8ae91537fb72357fcf7fcb3678530c3bf5ee3e9f1f2a2025ea"
     },
     {
       "path": "native/tests/appearance/Test-LiveFont.ps1",
@@ -732,8 +732,8 @@
     },
     {
       "path": "native/weasel/stellae-61052.patch",
-      "bytes": 976227,
-      "sha256": "3a696bcbe4779474c64c2538b2561fca9686d52b9417b4d53f21491ed0a6d240"
+      "bytes": 976259,
+      "sha256": "66acb7a9342b2733525b371042251a4a0cff0c8800855805a0d157295fe37ff8"
     },
     {
       "path": "schemes/.gitattributes",
@@ -1387,63 +1387,63 @@
     },
     {
       "path": "schemes/config/official-weasel/preview/candidate_font.png",
-      "bytes": 16016,
-      "sha256": "c9886f0ce54a0684ab741af62e3d751eba2847b4c07c54b9226707bb92e993e7"
+      "bytes": 16352,
+      "sha256": "2186b29f6783dd8b248297a6ff69af8d59d56713b8e99769b147b258ab92c1d9"
     },
     {
       "path": "schemes/config/official-weasel/preview/candidate_font_default.png",
-      "bytes": 16151,
-      "sha256": "220731bef34a0ea7a1e93743aad9ed8646b1d1a9837ced6a0edf00a65b268694"
+      "bytes": 16496,
+      "sha256": "59879ec4b32173ba07cafe6fba25f46d6683c83167b72eaec6e9ca2107ff8531"
     },
     {
       "path": "schemes/config/official-weasel/preview/candidate_font_hk.png",
-      "bytes": 17025,
-      "sha256": "48b2a0f29d9d8b9ee4147540794becc7337e918e2c197b64b60c4894e1e13332"
+      "bytes": 17364,
+      "sha256": "a0fbc7f948e90d216d137919072ab5880c678ab1b26968e789192740b75f6313"
     },
     {
       "path": "schemes/config/official-weasel/preview/candidate_font_sc.png",
-      "bytes": 16807,
-      "sha256": "671c9cc13abceff226cca535058dd6ddfa0100a08d705735ef162535582ecce3"
+      "bytes": 17147,
+      "sha256": "ce02b80205d525eaf51c6368ae68fc9d01b505a6637a93dff3d14f0b11c82793"
     },
     {
       "path": "schemes/config/official-weasel/preview/candidate_font_tc.png",
-      "bytes": 17716,
-      "sha256": "daaaaa61181870f8a2b9370cb199f1a8e42f039ca6da5b235cb6741be2b91137"
+      "bytes": 18056,
+      "sha256": "a6732ac6882ea5dd4608cd89dd3481f1358a650b6fd7ffe93b3efc5af93937f9"
     },
     {
       "path": "schemes/config/official-weasel/preview/color_scheme_reference_gray.png",
-      "bytes": 10548,
-      "sha256": "faeb8232f84a1cb48d3e0a5ad13c12fb8b6a1a489c89e1d864f7934313ae62a3"
+      "bytes": 8671,
+      "sha256": "73aafe8f1d875deb2523e38b8ed7d9b442bddb08d4876ba84cfd5e92900046cd"
     },
     {
       "path": "schemes/config/official-weasel/preview/color_scheme_stellae_crimson.png",
-      "bytes": 11233,
-      "sha256": "b35a439a0a67b6e886c355de8e98f29dec19249820b5206ef7bdea41a09c6839"
+      "bytes": 9441,
+      "sha256": "f1dacfac28bd1d8df8a57a234b7885d6951ffeb0e52bed3c9c776af16a4d9d0e"
     },
     {
       "path": "schemes/config/official-weasel/preview/color_scheme_stellae_lavender.png",
-      "bytes": 11057,
-      "sha256": "bed286eb3d797cccbba9df9acaf68264cf3bf4b0b69176d3681ff3caa2ef8343"
+      "bytes": 9178,
+      "sha256": "60888e4d587151a875b6659d612ed03c4b125bda8cb4b43fb45c43750eabfac3"
     },
     {
       "path": "schemes/config/official-weasel/preview/color_scheme_stellae_mono.png",
-      "bytes": 11011,
-      "sha256": "7b8a28de2b2784ec857fec18c97e404a497bdd3193280d548af0ee12fa1ad407"
+      "bytes": 9170,
+      "sha256": "9f3fcd9074017bf38005e561902d395ac73e22e72a31993ad8381f037ced27a9"
     },
     {
       "path": "schemes/config/official-weasel/preview/color_scheme_stellae_night.png",
-      "bytes": 11289,
-      "sha256": "3a6e3a4eae215b9013afa1945dac823011e080137d621bc800142b6d3a60d76f"
+      "bytes": 9351,
+      "sha256": "dcc49aa9f66ad8208ef1f2d4b3f64e047aea51f6c33087201bdf06b0229f2a63"
     },
     {
       "path": "schemes/config/official-weasel/preview/color_scheme_stellae_sakura.png",
-      "bytes": 11078,
-      "sha256": "d91c9382d0cad8b7c26c000be230c5d4a7b2c5310b0da695f88986ef59a7baa9"
+      "bytes": 9194,
+      "sha256": "80e3fd84f4b6ded71e5ddaeec7056280f1bedd85eee0bdb462b9390a060ce783"
     },
     {
       "path": "schemes/config/official-weasel/profile-manifest.json",
-      "bytes": 30754,
-      "sha256": "374199f9944500b7b9e4e5bcf3cb7b186393170c23e567a1d470b3c39b820438"
+      "bytes": 30748,
+      "sha256": "d7b42e282b4e31be7d65122db92a756780c1790724fb44a1b2f2a39176c96d6c"
     },
     {
       "path": "schemes/config/official-weasel/project_radical.dict.yaml",
@@ -1757,8 +1757,8 @@
     },
     {
       "path": "schemes/config/pc/config-source-manifest.json",
-      "bytes": 30816,
-      "sha256": "4f113bc82b20c61cf58b6adb830b4d32e8c59d0684d513de72b79da4f5341013"
+      "bytes": 30810,
+      "sha256": "a17c44defeda4fd2a8f0f4d92f3881d34ad484803a0147489ea1dba45d9da79d"
     },
     {
       "path": "schemes/config/pc/default.custom.yaml",
@@ -2352,58 +2352,58 @@
     },
     {
       "path": "schemes/config/pc/preview/candidate_font.png",
-      "bytes": 16016,
-      "sha256": "c9886f0ce54a0684ab741af62e3d751eba2847b4c07c54b9226707bb92e993e7"
+      "bytes": 16352,
+      "sha256": "2186b29f6783dd8b248297a6ff69af8d59d56713b8e99769b147b258ab92c1d9"
     },
     {
       "path": "schemes/config/pc/preview/candidate_font_default.png",
-      "bytes": 16151,
-      "sha256": "220731bef34a0ea7a1e93743aad9ed8646b1d1a9837ced6a0edf00a65b268694"
+      "bytes": 16496,
+      "sha256": "59879ec4b32173ba07cafe6fba25f46d6683c83167b72eaec6e9ca2107ff8531"
     },
     {
       "path": "schemes/config/pc/preview/candidate_font_hk.png",
-      "bytes": 17025,
-      "sha256": "48b2a0f29d9d8b9ee4147540794becc7337e918e2c197b64b60c4894e1e13332"
+      "bytes": 17364,
+      "sha256": "a0fbc7f948e90d216d137919072ab5880c678ab1b26968e789192740b75f6313"
     },
     {
       "path": "schemes/config/pc/preview/candidate_font_sc.png",
-      "bytes": 16807,
-      "sha256": "671c9cc13abceff226cca535058dd6ddfa0100a08d705735ef162535582ecce3"
+      "bytes": 17147,
+      "sha256": "ce02b80205d525eaf51c6368ae68fc9d01b505a6637a93dff3d14f0b11c82793"
     },
     {
       "path": "schemes/config/pc/preview/candidate_font_tc.png",
-      "bytes": 17716,
-      "sha256": "daaaaa61181870f8a2b9370cb199f1a8e42f039ca6da5b235cb6741be2b91137"
+      "bytes": 18056,
+      "sha256": "a6732ac6882ea5dd4608cd89dd3481f1358a650b6fd7ffe93b3efc5af93937f9"
     },
     {
       "path": "schemes/config/pc/preview/color_scheme_reference_gray.png",
-      "bytes": 10548,
-      "sha256": "faeb8232f84a1cb48d3e0a5ad13c12fb8b6a1a489c89e1d864f7934313ae62a3"
+      "bytes": 8671,
+      "sha256": "73aafe8f1d875deb2523e38b8ed7d9b442bddb08d4876ba84cfd5e92900046cd"
     },
     {
       "path": "schemes/config/pc/preview/color_scheme_stellae_crimson.png",
-      "bytes": 11233,
-      "sha256": "b35a439a0a67b6e886c355de8e98f29dec19249820b5206ef7bdea41a09c6839"
+      "bytes": 9441,
+      "sha256": "f1dacfac28bd1d8df8a57a234b7885d6951ffeb0e52bed3c9c776af16a4d9d0e"
     },
     {
       "path": "schemes/config/pc/preview/color_scheme_stellae_lavender.png",
-      "bytes": 11057,
-      "sha256": "bed286eb3d797cccbba9df9acaf68264cf3bf4b0b69176d3681ff3caa2ef8343"
+      "bytes": 9178,
+      "sha256": "60888e4d587151a875b6659d612ed03c4b125bda8cb4b43fb45c43750eabfac3"
     },
     {
       "path": "schemes/config/pc/preview/color_scheme_stellae_mono.png",
-      "bytes": 11011,
-      "sha256": "7b8a28de2b2784ec857fec18c97e404a497bdd3193280d548af0ee12fa1ad407"
+      "bytes": 9170,
+      "sha256": "9f3fcd9074017bf38005e561902d395ac73e22e72a31993ad8381f037ced27a9"
     },
     {
       "path": "schemes/config/pc/preview/color_scheme_stellae_night.png",
-      "bytes": 11289,
-      "sha256": "3a6e3a4eae215b9013afa1945dac823011e080137d621bc800142b6d3a60d76f"
+      "bytes": 9351,
+      "sha256": "dcc49aa9f66ad8208ef1f2d4b3f64e047aea51f6c33087201bdf06b0229f2a63"
     },
     {
       "path": "schemes/config/pc/preview/color_scheme_stellae_sakura.png",
-      "bytes": 11078,
-      "sha256": "d91c9382d0cad8b7c26c000be230c5d4a7b2c5310b0da695f88986ef59a7baa9"
+      "bytes": 9194,
+      "sha256": "80e3fd84f4b6ded71e5ddaeec7056280f1bedd85eee0bdb462b9390a060ce783"
     },
     {
       "path": "schemes/config/pc/project_radical.dict.yaml",
@@ -3477,8 +3477,8 @@
     },
     {
       "path": "schemes/release-manifest.json",
-      "bytes": 105930,
-      "sha256": "c6425c4aa040a9ffdc14a5bc691e45116c5b87e47dec9430d9f2b51eb378ba11"
+      "bytes": 105918,
+      "sha256": "7d172f2c438e393ec4d8ce422eba8a66ff5f930078ec86ba80b64fee87c07a8b"
     },
     {
       "path": "schemes/scripts/build_dlc.py",
@@ -3757,8 +3757,8 @@
     },
     {
       "path": "scripts/fonts/Generate-ThemePreview.py",
-      "bytes": 7067,
-      "sha256": "6df328edcbf418873132f2e6482502546b2be28a07e8f5ce37dd819a24d034b7"
+      "bytes": 6864,
+      "sha256": "5c431369c493d8a130deedf8d7ff8d462ef521bdcc4f385a022a12df052d2ccf"
     },
     {
       "path": "scripts/fonts/Install-CandidateFont.ps1",
@@ -3817,8 +3817,8 @@
     },
     {
       "path": "scripts/package/Update-Settings.ps1",
-      "bytes": 8257,
-      "sha256": "56e2a37eb4705d1ee457f0e6cf9c222fbd38195fafb579e6d10ff2f92d650837"
+      "bytes": 8267,
+      "sha256": "b41a480cff13451f6d4810d8bac2299a8a8b0aad842355c4ffdbe3050b31530d"
     },
     {
       "path": "scripts/package/apply_frontend_overlays.py",
@@ -3852,8 +3852,8 @@
     },
     {
       "path": "scripts/package/stage_settings_update.py",
-      "bytes": 5173,
-      "sha256": "f18a8f524c7e52d2bce6b45887164d78e41389bc6f303acbcd0a3f081d270d42"
+      "bytes": 6111,
+      "sha256": "6f526e0a53f938cf586877dcd34457b4ea9a08a7845f745877abe73ce04564bc"
     },
     {
       "path": "scripts/package/verify_bundle.py",

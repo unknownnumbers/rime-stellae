@@ -1,6 +1,6 @@
 {
   "format": "stellae-bundle-inputs-v2",
-  "bundleVersion": "2026.11.25.1",
+  "bundleVersion": "2026.11.25.2",
   "frontendVersion": "0.17.4.61052",
   "frontendInstaller": {
     "url": "https://github.com/unknownnumbers/rime-stellae/releases/download/v0.17.4.61052/stellae-0.17.4.61052-installer.exe",
@@ -17,7 +17,7 @@
   "schemes": {
     "sourceDirectory": "schemes",
     "profile": "stellae",
-    "version": "2026.11.25.1"
+    "version": "2026.11.25.2"
   },
   "nativeEngines": {
     "x64": "engine-n01",
@@ -43,7 +43,7 @@
       "WeaselDeployer/UIStyleSettingsDialog.cpp": "3bdc12d465f60936c1dd820432c7d68429625dc657451c614447093d6fb4f439",
       "WeaselDeployer/UIStyleSettingsDialog.h": "337db0cb79146f4f9140fe4f9fbf057fc394c7c07308a8825d562bda20619a77",
       "WeaselDeployer/WeaselDeployer.cpp": "09bcffb1d43e0798e69dd991c00a9b9e81b31cd3380761656c25bb00c73368f3",
-      "WeaselDeployer/WeaselDeployer.rc": "b500aec6d812bb55d5da89529e3cfcc48068556ef81186471fc67ea86f3d0fd0",
+      "WeaselDeployer/WeaselDeployer.rc": "72af0a9b9a5794a7b1e7e871e3571081680e5b20c8d2c26138af066d676ffd7b",
       "WeaselDeployer/resource.h": "241cba0e41755a1be3912b6d01ad28f2541d108ef161aec3b1d6051d4d77f868",
       "WeaselIPC/WeaselClientImpl.cpp": "4a1e156b954449870e95d7d4f59da8cc846763863a0c770bb4e1b0c8370036cf",
       "WeaselIPC/WeaselClientImpl.h": "4c9657f380d5016e8189706f2d7657eb4ced41eeb86eb15a51d861239fedd0ac",
