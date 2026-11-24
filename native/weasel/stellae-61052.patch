@@ -1101,7 +1101,7 @@ index ac14091..73bac69 100644
    int SyncUserData();
  };
 diff --git a/WeaselDeployer/DictManagementDialog.cpp b/WeaselDeployer/DictManagementDialog.cpp
-index 078dbb0..eddbd67 100644
+index 078dbb0..a0d6f0a 100644
 --- a/WeaselDeployer/DictManagementDialog.cpp
 +++ b/WeaselDeployer/DictManagementDialog.cpp
 @@ -4,6 +4,25 @@
@@ -1113,11 +1113,11 @@ index 078dbb0..eddbd67 100644
 +namespace {
 +
 +UserDictionaryInfo DescribeDictionary(const std::string& id) {
-+  if (id == "luna_pinyin")
++  if (id == "cn_stellae" || id == "luna_pinyin")
 +    return {id, "cn_stellae", 0, IDS_DICT_DESC_CN};
-+  if (id == "pc_english")
++  if (id == "en_intelligence" || id == "pc_english")
 +    return {id, "en_intelligence", 0, IDS_DICT_DESC_EN};
-+  if (id == "jp_family")
++  if (id == "jp_kanji" || id == "jp_family")
 +    return {id, "jp_kanji", 0, IDS_DICT_DESC_JP};
 +  if (id == "pc_mixed")
 +    return {id, id, 1, IDS_DICT_DESC_MIXED_HISTORY};

@@ -104,6 +104,78 @@
           "sha256": "48b2a0f29d9d8b9ee4147540794becc7337e918e2c197b64b60c4894e1e13332"
         }
       ]
+    },
+    {
+      "componentVersion": "2026.11.25.3",
+      "sourceRef": "f051eb7624b3e7a188250e33ea4c6577a54f2477",
+      "manifestSha256": "f8ffd249e99cf11d79a564ef9194752cda649675d93da4e0d378cea51b90b5e3",
+      "files": [
+        {
+          "path": "StellaeDeployer.exe",
+          "bytes": 669696,
+          "sha256": "de4e9cf0f379f88c8b32afc6a648a2b508a5c29f76f927456297f93376bc7e6f"
+        },
+        {
+          "path": "data/stellae_bundle_weasel.yaml",
+          "bytes": 7196,
+          "sha256": "3a1848f077b03c7480da0571ca1f448e93284da52a25f9cca1058a6c4dbb489a"
+        },
+        {
+          "path": "data/preview/color_scheme_reference_gray.png",
+          "bytes": 8671,
+          "sha256": "73aafe8f1d875deb2523e38b8ed7d9b442bddb08d4876ba84cfd5e92900046cd"
+        },
+        {
+          "path": "data/preview/color_scheme_stellae_sakura.png",
+          "bytes": 9194,
+          "sha256": "80e3fd84f4b6ded71e5ddaeec7056280f1bedd85eee0bdb462b9390a060ce783"
+        },
+        {
+          "path": "data/preview/color_scheme_stellae_lavender.png",
+          "bytes": 9178,
+          "sha256": "60888e4d587151a875b6659d612ed03c4b125bda8cb4b43fb45c43750eabfac3"
+        },
+        {
+          "path": "data/preview/color_scheme_stellae_night.png",
+          "bytes": 9351,
+          "sha256": "dcc49aa9f66ad8208ef1f2d4b3f64e047aea51f6c33087201bdf06b0229f2a63"
+        },
+        {
+          "path": "data/preview/color_scheme_stellae_crimson.png",
+          "bytes": 9441,
+          "sha256": "f1dacfac28bd1d8df8a57a234b7885d6951ffeb0e52bed3c9c776af16a4d9d0e"
+        },
+        {
+          "path": "data/preview/color_scheme_stellae_mono.png",
+          "bytes": 9170,
+          "sha256": "9f3fcd9074017bf38005e561902d395ac73e22e72a31993ad8381f037ced27a9"
+        },
+        {
+          "path": "data/preview/candidate_font.png",
+          "bytes": 16352,
+          "sha256": "2186b29f6783dd8b248297a6ff69af8d59d56713b8e99769b147b258ab92c1d9"
+        },
+        {
+          "path": "data/preview/candidate_font_default.png",
+          "bytes": 16496,
+          "sha256": "59879ec4b32173ba07cafe6fba25f46d6683c83167b72eaec6e9ca2107ff8531"
+        },
+        {
+          "path": "data/preview/candidate_font_sc.png",
+          "bytes": 17147,
+          "sha256": "ce02b80205d525eaf51c6368ae68fc9d01b505a6637a93dff3d14f0b11c82793"
+        },
+        {
+          "path": "data/preview/candidate_font_tc.png",
+          "bytes": 18056,
+          "sha256": "a6732ac6882ea5dd4608cd89dd3481f1358a650b6fd7ffe93b3efc5af93937f9"
+        },
+        {
+          "path": "data/preview/candidate_font_hk.png",
+          "bytes": 17364,
+          "sha256": "a0fbc7f948e90d216d137919072ab5880c678ab1b26968e789192740b75f6313"
+        }
+      ]
     }
   ]
 }

@@ -163,7 +163,7 @@ function Export-Learning([string]$db,[string]$label){
  $rows.Add([pscustomobject]@{Kind='synthetic-export';Value=$value})
  return $value
 }
-function Word-Count($export,[string]$word){foreach($line in $export.Lines){$fields=$line.Split("`t");if($fields.Count -ge 3 -and $fields[0] -ceq $word -and ($export.Db -ne 'jp_family' -or $fields[1].TrimEnd() -ceq $word)){return [int]$fields[2]}};return 0}
+function Word-Count($export,[string]$word){foreach($line in $export.Lines){$fields=$line.Split("`t");if($fields.Count -ge 3 -and $fields[0] -ceq $word -and ($export.Db -ne 'jp_kanji' -or $fields[1].TrimEnd() -ceq $word)){return [int]$fields[2]}};return 0}
 try{
  [RimeProbe]::RimeSetup([ref]$traits);[RimeProbe]::RimeInitialize([ref]$traits)
  $result.EngineVersion=[RimeProbe]::Version()
@@ -228,47 +228,47 @@ try{
   Check 'small-composed-Tab-boundary' ((Snap).Caret -eq 3) (Snap).Caret
   Add-Row 'small-composed-Tab' 'xXaA' $before
  }elseif($Phase -eq 'SequenceLearning'){
-  $before=Export-Learning 'jp_family' 'sequence-before'
+  $before=Export-Learning 'jp_kanji' 'sequence-before'
   if((Word-Count $before '桜小路') -le 0){
    # A preceding reset leaves hidden native history. Revive it once before
    # measuring ordinary +1 selections, rather than assuming erased history.
    Select-Target 'qQsakurakouji' '桜小路'
-   $before=Export-Learning 'jp_family' 'sequence-active-before'
+   $before=Export-Learning 'jp_kanji' 'sequence-active-before'
   }
   Select-Target 'qQsakurakouji' '桜小路'
-  $after=Export-Learning 'jp_family' 'sequence-after-Space'
+  $after=Export-Learning 'jp_kanji' 'sequence-after-Space'
   Check 'sequence-count-exactly-one-Space' ((Word-Count $after '桜小路') -eq ((Word-Count $before '桜小路')+1)) @{Before=(Word-Count $before '桜小路');After=(Word-Count $after '桜小路')}
   Check 'sequence-reading-zero-count-present' (@($after.Lines|Where-Object {$_ -match '^桜小路\s+@jpq1\|' -and $_ -match '\s0$'}).Count -gt 0) @($after.Lines|Where-Object {$_ -match '^桜小路\s+@jpq1\|'})
   $learned=Query 'qQSAKURAKOUJI'
   Check 'learned-sequence-promoted' ($learned.Snapshot.Candidates[0] -ceq '桜小路') $learned.Snapshot.Candidates
   Press '1 selected learned sequence' 0x31
   Check 'learned-number-commit' (((Commits)-join '') -ceq '桜小路') (Commits)
-  $second=Export-Learning 'jp_family' 'sequence-after-number'
+  $second=Export-Learning 'jp_kanji' 'sequence-after-number'
   Check 'sequence-count-exactly-one-number' ((Word-Count $second '桜小路') -eq ((Word-Count $after '桜小路')+1)) @{Before=(Word-Count $after '桜小路');After=(Word-Count $second '桜小路')}
   $mouse=Query 'qQsakurakouji'
   $mouseIndex=[Array]::IndexOf([string[]]$mouse.Snapshot.Candidates,'桜小路')
   $mouseSelected=[RimeProbe]::SelectCandidate($script:session,$mouseIndex)
   $mouseCommit=[RimeProbe]::ReadCommit($script:session)
   Check 'sequence-mouse-commit' ($mouseSelected -and $mouseCommit -ceq '桜小路') $mouseCommit
-  $mouseAfter=Export-Learning 'jp_family' 'sequence-after-mouse'
+  $mouseAfter=Export-Learning 'jp_kanji' 'sequence-after-mouse'
   Check 'sequence-count-exactly-one-mouse' ((Word-Count $mouseAfter '桜小路') -eq ((Word-Count $second '桜小路')+1)) @{Before=(Word-Count $second '桜小路');After=(Word-Count $mouseAfter '桜小路')}
   $cross=Query 'qsakurakouji'
   Check 'sequence-shared-single-q' ($cross.Snapshot.Candidates[0] -ceq '桜小路') $cross.Snapshot.Candidates
   $reset=Query 'qQsakurakouji';[void](Highlight '桜小路')
   Press 'Shift Delete resets composed word' 0xffff 1
-  $deleted=Export-Learning 'jp_family' 'sequence-after-reset'
+  $deleted=Export-Learning 'jp_kanji' 'sequence-after-reset'
   Check 'sequence-reset-no-positive-count' ((Word-Count $deleted '桜小路') -le 0) (Word-Count $deleted '桜小路')
   $static=Query 'qQsakurakouji'
   Check 'sequence-remains-available-after-reset' ($static.Snapshot.Candidates -contains '桜小路') $static.Snapshot.Candidates
  }elseif($Phase -eq 'Reset'){
-  $prior=Export-Learning 'jp_family' 'before-reset'
+  $prior=Export-Learning 'jp_kanji' 'before-reset'
   $before=Query 'qQtaberu';[void](Highlight '食べる')
   Press 'Shift Delete resets only selected JP family' 0xffff 1
   Check 'reset-retains-draft' ((Snap).Input -ceq 'qQtaberu' -and (Commits).Count -eq 0) (Snap)
-  $after=Export-Learning 'jp_family' 'after-reset'
+  $after=Export-Learning 'jp_kanji' 'after-reset'
   Check 'mixed-reset-clears-positive-learning' ((Word-Count $after '食べる') -le 0) (Word-Count $after '食べる')
   Select-Target 'qQtaberu' '食べる'
-  $relearned=Export-Learning 'jp_family' 'after-relearn'
+  $relearned=Export-Learning 'jp_kanji' 'after-relearn'
   # Native UserDictionary deletion suppresses a record; it does not erase its
   # stored historical count. Re-selecting revives that count and adds one.
   Check 'mixed-relearn-keeps-native-count-semantics' ((Word-Count $relearned '食べる') -eq ((Word-Count $prior '食べる')+1)) @{Before=(Word-Count $prior '食べる');After=(Word-Count $relearned '食べる')}
@@ -293,9 +293,9 @@ try{
   Check 'bracket-partial-tail' (((Commits)-join '') -ceq '食' -and (Snap).Input -ceq 'qQhana') @{Commits=(Commits);State=(Snap)}
   Add-Row 'partial-bracket' 'qQtaberuhana' $before
  }else{
-  $familyBefore=Export-Learning 'jp_family' 'before'
+  $familyBefore=Export-Learning 'jp_kanji' 'before'
   $kanaStoreBefore=Test-Path -LiteralPath (Join-Path $user 'jp_sela_custom.userdb')
-  $cnBefore=Export-Learning 'luna_pinyin' 'before'
+  $cnBefore=Export-Learning 'cn_stellae' 'before'
   Select-Target 'vVshen' '生'
   $qBefore=Query 'qsei';Check 'v-learning-promotes-qsei' ($qBefore.Snapshot.Candidates[0] -ceq '生') $qBefore.Snapshot.Candidates;Add-Row 'shared-qsei' 'qsei' $qBefore
   Select-Target 'qsei' '生'
@@ -304,8 +304,8 @@ try{
   $vAfter=Query 'vVshen';Check 'q-learning-promotes-v' ($vAfter.Snapshot.Candidates[0] -ceq '生') $vAfter.Snapshot.Candidates;Add-Row 'shared-v' 'vVshen' $vAfter
   Select-Target 'qtaberu' '食べる'
   Select-Target 'qQTaBeRu' '食べる'
-  $familyAfter=Export-Learning 'jp_family' 'after-JP'
-  $cnAfter=Export-Learning 'luna_pinyin' 'after-JP'
+  $familyAfter=Export-Learning 'jp_kanji' 'after-JP'
+  $cnAfter=Export-Learning 'cn_stellae' 'after-JP'
   Check 'shared-sei-exact-three-native-selections' ((Word-Count $familyAfter '生') -eq ((Word-Count $familyBefore '生')+3)) @{Before=(Word-Count $familyBefore '生');After=(Word-Count $familyAfter '生')}
   Check 'mixed-form-exact-two-native-selections' ((Word-Count $familyAfter '食べる') -eq ((Word-Count $familyBefore '食べる')+2)) @{Before=(Word-Count $familyBefore '食べる');After=(Word-Count $familyAfter '食べる')}
   Check 'mixed-form-one-canonical-family-row' (@($familyAfter.Lines|Where-Object {$_.StartsWith("食べる`t")}).Count -eq 1) @($familyAfter.Lines|Where-Object {$_.StartsWith("食べる`t")})

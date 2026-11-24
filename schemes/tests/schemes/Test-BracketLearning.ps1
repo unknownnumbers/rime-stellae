@@ -59,7 +59,7 @@ function Query([string]$raw, [bool]$sc=$false) {
     }
 }
 function Learning {
-    [RimeProbe]::ExportUserDict('luna_pinyin', $export) | Out-Null
+    [RimeProbe]::ExportUserDict('cn_stellae', $export) | Out-Null
     return @(Get-Content -LiteralPath $export -Encoding UTF8 | Where-Object { $_ -and -not $_.StartsWith('#') })
 }
 function Count([string]$code, [string]$word) {
@@ -186,7 +186,7 @@ try {
         [RimeProbe]::RimeDestroySession($s) | Out-Null
         $s = [UIntPtr]::Zero
         $jpExport = Join-Path $dir 'jp-learning.tsv'
-        [RimeProbe]::ExportUserDict('jp_family', $jpExport) | Out-Null
+        [RimeProbe]::ExportUserDict('jp_kanji', $jpExport) | Out-Null
         $jpRows = Get-Content -LiteralPath $jpExport -Encoding UTF8
         Check 'JP-picked-word-learning' ($jpRows -contains ('鍋','鍋','1' -join [char]9) -and $jpRows -contains ('路','路','1' -join [char]9)) $jpRows
         Check 'JP-reading-pick-learning' ($jpRows -contains ('花','花','4' -join [char]9)) $jpRows

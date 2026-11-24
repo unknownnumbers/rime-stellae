@@ -1,5 +1,5 @@
 -- Research prototype. This module creates no Memory and owns no counter.
--- Every row lives in the existing jp_family user dictionary, with commits=0.
+-- Every row lives in the jp_kanji user dictionary, with commits=0.
 local M = {prefix='@jpq1|'}
 
 local function hex(value)

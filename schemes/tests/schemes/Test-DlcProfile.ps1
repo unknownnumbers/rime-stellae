@@ -109,7 +109,7 @@ function Check-Tables([string]$name){
  & $PythonExe (Join-Path $PSScriptRoot 'Check-ChineseDlcTables.py') --build-dir (Join-Path $user 'build') --modules-dir (Join-Path $user 'stellae_dlc') --output (Join-Path $out ('capacity-'+$name+'.json'))
  Check 'native-tables-exact-complete-without-growth' ($LASTEXITCODE -eq 0)
 }
-function Export-Learning([string]$name){Close-Engine;Start-Engine;[RimeProbe]::RimeDeployerInitialize([ref]$traits);$path=Join-Path $out $name;Check $name ([RimeProbe]::ExportUserDict('luna_pinyin',$path) -gt 0);Close-Engine;return @([IO.File]::ReadAllLines($path,$utf8)|Where-Object {$_ -and -not $_.StartsWith('#')}) -join "`n"}
+function Export-Learning([string]$name){Close-Engine;Start-Engine;[RimeProbe]::RimeDeployerInitialize([ref]$traits);$path=Join-Path $out $name;Check $name ([RimeProbe]::ExportUserDict('cn_stellae',$path) -gt 0);Close-Engine;return @([IO.File]::ReadAllLines($path,$utf8)|Where-Object {$_ -and -not $_.StartsWith('#')}) -join "`n"}
 $errorText=$null;$samples=@();$inputHashes=[ordered]@{}
 foreach($name in @('essay.txt','luna_pinyin.dict.yaml','cn_stellae.dict.yaml','cn_stellae.schema.yaml','cn_stellae.custom.yaml','lua/cn_translator.lua','lua/cn_dlc.lua','lua/stellae_dlc.lua')){$inputHashes[$name]=(Get-FileHash -Algorithm SHA256 -LiteralPath (Join-Path $user $name)).Hash.ToLowerInvariant()}
 try{

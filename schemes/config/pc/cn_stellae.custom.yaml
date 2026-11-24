@@ -9048,7 +9048,7 @@ patch:
     enable_user_dict: true
     initial_quality: 0
   probe/unified_memory: true
-  translator/user_dict: luna_pinyin
+  translator/user_dict: cn_stellae
 
   cn_decoder:
     dictionary: cn_stellae
@@ -9072,7 +9072,7 @@ patch:
   english_native:
     dictionary: english_full
     prism: english_full
-    user_dict: pc_english
+    user_dict: en_intelligence
     tag: abc
     delimiter: " "
     enable_user_dict: true

@@ -1,6 +1,6 @@
 {
   "format": "rymcp-public-config-v2",
-  "scheme_version": "2026.11.25.3",
+  "scheme_version": "2026.11.25.4",
   "allowlisted_source_files": 190,
   "source_files": [
     {
@@ -30,8 +30,8 @@
     },
     {
       "path": "cn_stellae.custom.yaml",
-      "bytes": 295507,
-      "sha256": "579b0f1e7577fc2f1e8de6546c50a24cb3d7d862c94ad9ad36ff99b2b1cfb14f"
+      "bytes": 295511,
+      "sha256": "709693eda6d406671a0eb1d3e75ae108a7f92f45f61ed2f4d83a26cc177a2c95"
     },
     {
       "path": "cn_stellae.dict.yaml",
@@ -165,8 +165,8 @@
     },
     {
       "path": "jp_stellae.custom.yaml",
-      "bytes": 3913,
-      "sha256": "468baec126ec2358be8e99a6bd2add985098f9dc03049b9fbce2f6e1c2df4401"
+      "bytes": 3912,
+      "sha256": "71412cb5c0ca2cbdb10ce00f94255223784458b48b4befffba06ea240a346c6b"
     },
     {
       "path": "jp_stellae.schema.yaml",
@@ -185,8 +185,8 @@
     },
     {
       "path": "jp_v_pc_lookup.schema.yaml",
-      "bytes": 275043,
-      "sha256": "22a208b301fbb832fa867326b08fffe633d935594690da36ad5b705ea18b333b"
+      "bytes": 275042,
+      "sha256": "679464ba10d1c1ec61ec0638b4f3ca83b2ab763c3687d370cc6526d19085268a"
     },
     {
       "path": "jp_v_words.tsv",
@@ -460,8 +460,8 @@
     },
     {
       "path": "lua/jp_reading_metadata.lua",
-      "bytes": 4613,
-      "sha256": "df34e790ee674d63ecd2ac8a7210954df9fa50305483869b8084b9a7e2ed07d8"
+      "bytes": 4603,
+      "sha256": "f8bc18eb9ccb12a30a95a5e7563ffeb6c9081305c1cbcf5cf4641434b3a3d968"
     },
     {
       "path": "lua/jp_sequence.lua",

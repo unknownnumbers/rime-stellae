@@ -41,7 +41,7 @@ try {
     [RimeProbe]::RimeDestroySession($session) | Out-Null
     $session = [UIntPtr]::Zero
     $export = Join-Path $out 'reopened-learning.tsv'
-    [RimeProbe]::ExportUserDict('luna_pinyin', $export) | Out-Null
+    [RimeProbe]::ExportUserDict('cn_stellae', $export) | Out-Null
     $expected = @(Get-Content -LiteralPath $ExpectedLearning -Encoding UTF8 | Where-Object { $_ -and -not $_.StartsWith('#') } | Sort-Object)
     $actual = @(Get-Content -LiteralPath $export -Encoding UTF8 | Where-Object { $_ -and -not $_.StartsWith('#') } | Sort-Object)
     $rows.Add([pscustomobject]@{Id='reopened-canonical-learning-counts';Passed=($expected.Count -gt 0 -and ($expected -join "`n") -ceq ($actual -join "`n"));Rows=$actual.Count})

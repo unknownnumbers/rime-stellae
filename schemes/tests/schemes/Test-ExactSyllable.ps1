@@ -470,7 +470,7 @@ try {
     [RimeProbe]::RimeFinalize()
     [RimeProbe]::RimeDeployerInitialize([ref]$traits)
     $export = Join-Path $output 'synthetic-learning.tsv'
-    Check 'offline-synthetic-learning-export' ([RimeProbe]::ExportUserDict('luna_pinyin',$export) -gt 0)
+    Check 'offline-synthetic-learning-export' ([RimeProbe]::ExportUserDict('cn_stellae',$export) -gt 0)
     $learned = @(foreach ($line in [IO.File]::ReadAllLines($export,$utf8)) {
         if ($line -and -not $line.StartsWith('#')) {
             $parts = $line -split "`t"

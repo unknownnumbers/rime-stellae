@@ -3,7 +3,7 @@
   "date": "2026-11-25",
   "kind": "frontend-and-input-scheme-source",
   "frontendVersion": "0.17.4.61052",
-  "bundleVersion": "2026.11.25.3",
+  "bundleVersion": "2026.11.25.4",
   "nativeBinariesIncluded": false,
   "personalLearningIncluded": false,
   "productionInputSchemesIncluded": true,
@@ -143,7 +143,7 @@
     {
       "path": "installer/bundle-inputs.json",
       "bytes": 5493,
-      "sha256": "761c665df6f7c2b53b21dde6e3528531e3ed13bab84e7f1424b7a88694cbf78e"
+      "sha256": "dc5f586317bd65fa455341cad182dda30a8e7ccc12463af1108d372ac8be6885"
     },
     {
       "path": "installer/bundle.nsi",
@@ -182,8 +182,8 @@
     },
     {
       "path": "installer/settings-update-baseline.json",
-      "bytes": 4021,
-      "sha256": "ab2d5353e60a8034013e95978100ce2b97ab207b0cb88e460f81af7afcf15db1"
+      "bytes": 6763,
+      "sha256": "b4717d1efec2d4177301783e45a3ec147cd42bd1ad9b11a34711bd3c4da9f743"
     },
     {
       "path": "installer/stellae_identity.nsh",
@@ -503,7 +503,7 @@
     {
       "path": "native/frontend-source-files.json",
       "bytes": 22632,
-      "sha256": "20d70b294b86bf8764fd896063c8b9f723b597607d52caf019159ddc6f51c702"
+      "sha256": "d92b41a9f5cdcebc47fbf6883977af270e696a2918ee590155e69491dfb55714"
     },
     {
       "path": "native/notification-inputs.json",
@@ -513,7 +513,7 @@
     {
       "path": "native/source-manifest.json",
       "bytes": 13006,
-      "sha256": "725269588ec1f79b6932a8a8e2e232fe9148c999b022e0f829e9584509d76e09"
+      "sha256": "683ae7347379de2d046e1bc140b81483ead8eee0e01251809a7bbfbb1fdcaaca"
     },
     {
       "path": "native/tests/appearance/Add-PaintTrace.ps1",
@@ -717,8 +717,8 @@
     },
     {
       "path": "native/tests/settings/Probe-DictionaryManager.py",
-      "bytes": 14159,
-      "sha256": "a242cbbb4a5ac8e7d0cbcd28b8322bfa536110290f7910a1eec154b63deb8443"
+      "bytes": 14169,
+      "sha256": "7031af7d538163cc43a83daf190384e6f7b08330745366cc5f12871da2475fbd"
     },
     {
       "path": "native/tests/shift/Run-ShiftKeySnapshotTests.ps1",
@@ -742,8 +742,8 @@
     },
     {
       "path": "native/weasel/stellae-61052.patch",
-      "bytes": 976313,
-      "sha256": "77edffd043cf14f066c0f045bc68d05335789aa1025df2816395de378611e274"
+      "bytes": 976382,
+      "sha256": "bedcf923697a65fa2194dc156d923ad7dc592ffcc869d47540f7bcc9a1411a6c"
     },
     {
       "path": "schemes/.gitattributes",
@@ -812,8 +812,8 @@
     },
     {
       "path": "schemes/config/official-weasel/cn_stellae.custom.yaml",
-      "bytes": 295159,
-      "sha256": "362164d535630f71f927318f782c232e7d38416ff2a2e2a93c453b5abea1ea25"
+      "bytes": 295163,
+      "sha256": "72e92b5144c9c208ce39e4fd67111a18c074449682081b12ae6146715d8b2e88"
     },
     {
       "path": "schemes/config/official-weasel/cn_stellae.dict.yaml",
@@ -942,8 +942,8 @@
     },
     {
       "path": "schemes/config/official-weasel/jp_stellae.custom.yaml",
-      "bytes": 3913,
-      "sha256": "468baec126ec2358be8e99a6bd2add985098f9dc03049b9fbce2f6e1c2df4401"
+      "bytes": 3912,
+      "sha256": "71412cb5c0ca2cbdb10ce00f94255223784458b48b4befffba06ea240a346c6b"
     },
     {
       "path": "schemes/config/official-weasel/jp_stellae.schema.yaml",
@@ -962,8 +962,8 @@
     },
     {
       "path": "schemes/config/official-weasel/jp_v_pc_lookup.schema.yaml",
-      "bytes": 275043,
-      "sha256": "22a208b301fbb832fa867326b08fffe633d935594690da36ad5b705ea18b333b"
+      "bytes": 275042,
+      "sha256": "679464ba10d1c1ec61ec0638b4f3ca83b2ab763c3687d370cc6526d19085268a"
     },
     {
       "path": "schemes/config/official-weasel/jp_v_words.tsv",
@@ -1237,8 +1237,8 @@
     },
     {
       "path": "schemes/config/official-weasel/lua/jp_reading_metadata.lua",
-      "bytes": 4613,
-      "sha256": "df34e790ee674d63ecd2ac8a7210954df9fa50305483869b8084b9a7e2ed07d8"
+      "bytes": 4603,
+      "sha256": "f8bc18eb9ccb12a30a95a5e7563ffeb6c9081305c1cbcf5cf4641434b3a3d968"
     },
     {
       "path": "schemes/config/official-weasel/lua/jp_sequence.lua",
@@ -1453,7 +1453,7 @@
     {
       "path": "schemes/config/official-weasel/profile-manifest.json",
       "bytes": 30812,
-      "sha256": "556d163994a6dfbf61934a3afef2dd12f6e2ffc0b49ba17d0a2733c3855135fc"
+      "sha256": "6fc648100a78a1546976ea8b8ba0cecb8824eb24cb311bdaade53ec5c02c3405"
     },
     {
       "path": "schemes/config/official-weasel/project_radical.dict.yaml",
@@ -1767,8 +1767,8 @@
     },
     {
       "path": "schemes/config/pc/cn_stellae.custom.yaml",
-      "bytes": 295507,
-      "sha256": "579b0f1e7577fc2f1e8de6546c50a24cb3d7d862c94ad9ad36ff99b2b1cfb14f"
+      "bytes": 295511,
+      "sha256": "709693eda6d406671a0eb1d3e75ae108a7f92f45f61ed2f4d83a26cc177a2c95"
     },
     {
       "path": "schemes/config/pc/cn_stellae.dict.yaml",
@@ -1783,7 +1783,7 @@
     {
       "path": "schemes/config/pc/config-source-manifest.json",
       "bytes": 30874,
-      "sha256": "839bf1ca90c31472ce9349baaa92e833574bbdb1cf4005267fceb5ff996d40d1"
+      "sha256": "f15e1cdf27960c0ef0a052a26e659f62df1413e671e625980eaa85f551bf1eac"
     },
     {
       "path": "schemes/config/pc/default.custom.yaml",
@@ -1907,8 +1907,8 @@
     },
     {
       "path": "schemes/config/pc/jp_stellae.custom.yaml",
-      "bytes": 3913,
-      "sha256": "468baec126ec2358be8e99a6bd2add985098f9dc03049b9fbce2f6e1c2df4401"
+      "bytes": 3912,
+      "sha256": "71412cb5c0ca2cbdb10ce00f94255223784458b48b4befffba06ea240a346c6b"
     },
     {
       "path": "schemes/config/pc/jp_stellae.schema.yaml",
@@ -1927,8 +1927,8 @@
     },
     {
       "path": "schemes/config/pc/jp_v_pc_lookup.schema.yaml",
-      "bytes": 275043,
-      "sha256": "22a208b301fbb832fa867326b08fffe633d935594690da36ad5b705ea18b333b"
+      "bytes": 275042,
+      "sha256": "679464ba10d1c1ec61ec0638b4f3ca83b2ab763c3687d370cc6526d19085268a"
     },
     {
       "path": "schemes/config/pc/jp_v_words.tsv",
@@ -2202,8 +2202,8 @@
     },
     {
       "path": "schemes/config/pc/lua/jp_reading_metadata.lua",
-      "bytes": 4613,
-      "sha256": "df34e790ee674d63ecd2ac8a7210954df9fa50305483869b8084b9a7e2ed07d8"
+      "bytes": 4603,
+      "sha256": "f8bc18eb9ccb12a30a95a5e7563ffeb6c9081305c1cbcf5cf4641434b3a3d968"
     },
     {
       "path": "schemes/config/pc/lua/jp_sequence.lua",
@@ -3488,7 +3488,7 @@
     {
       "path": "schemes/release-manifest.json",
       "bytes": 106046,
-      "sha256": "24dfc13200254802ec8f1e92c2e2dd0480a901e66294916c4c76118fc789f15b"
+      "sha256": "644c432bba4f65cbd596c545490fd41597b31a83706340ef27758f3b10c69188"
     },
     {
       "path": "schemes/scripts/build_dlc.py",
@@ -3652,8 +3652,8 @@
     },
     {
       "path": "schemes/tests/Probe-Configuration.ps1",
-      "bytes": 22798,
-      "sha256": "8c828196bd4828826aceff06b1832033d234bbaa40c72756a1c852924317f952"
+      "bytes": 22784,
+      "sha256": "31c6e38b3164f444fd98e2d0844ce70b220ad1a10e5b40c5bb22ae276b4341fe"
     },
     {
       "path": "schemes/tests/RimeProbe.cs",
@@ -3677,8 +3677,8 @@
     },
     {
       "path": "schemes/tests/rebuilt-profile/Test-RebuiltProfile.ps1",
-      "bytes": 20235,
-      "sha256": "f0a8f5edb8fd1269c5ba771af11cc44e188d2f749013b99fcf138b3610dd4467"
+      "bytes": 20233,
+      "sha256": "a8892e281d34b4a5fc8134fccacb2fb55a0c999e954ad615fdccf704b039e78e"
     },
     {
       "path": "schemes/tests/schemes/Check-ChineseDlcTables.py",
@@ -3687,8 +3687,8 @@
     },
     {
       "path": "schemes/tests/schemes/Test-BracketLearning.ps1",
-      "bytes": 9394,
-      "sha256": "41d800fcaa6bf6b1a5b8852c32ad1e46234b96c8fcb5c2a0bb73267b1bdd510b"
+      "bytes": 9392,
+      "sha256": "5ba3c71d9142e3817d80058b2e236b3d7e53219fbf9efee6d476686dbafedb54"
     },
     {
       "path": "schemes/tests/schemes/Test-ChineseDlc.ps1",
@@ -3697,33 +3697,33 @@
     },
     {
       "path": "schemes/tests/schemes/Test-DlcProfile.ps1",
-      "bytes": 15344,
-      "sha256": "54bfc94a193821e9c8391826ed44b300cee66fb5cd6ef66ffcbdc225cfddf289"
+      "bytes": 15343,
+      "sha256": "29d55346424d8e7336db1e5e5db0842adbdef70a4ba68101eb2402964d59e4cc"
     },
     {
       "path": "schemes/tests/schemes/Test-EnglishDlc.ps1",
-      "bytes": 14398,
-      "sha256": "b4c1fea10c39233c34a824f5352042a81b462ab24cd2d14488b2e37046c3d7d1"
+      "bytes": 14408,
+      "sha256": "14aa01609061e84acd4666ee72e3470eca370eb47f7cb9e5927016cb613ba012"
     },
     {
       "path": "schemes/tests/schemes/Test-ExactSyllable.ps1",
-      "bytes": 27142,
-      "sha256": "76de729741dbc05f788144b9b3f60051bc28d1155d369dc1a835a29e4cb89da7"
+      "bytes": 27141,
+      "sha256": "8527f2fe7a75980ee49044d51dd0115f533e3f3147c3f46cd2911545468447f6"
     },
     {
       "path": "schemes/tests/schemes/Test-OfficialChinese.ps1",
-      "bytes": 10044,
-      "sha256": "18172a96772fddd6cbbcb171de1cc63b12c42f0d0d94eca6418d6e954aa62c40"
+      "bytes": 10042,
+      "sha256": "2b0b9b7b0271ec90eed53fc31ed46620943d70313358ce9d6b699e87c7f08342"
     },
     {
       "path": "schemes/tests/schemes/Test-OfficialEnglish.ps1",
-      "bytes": 8314,
-      "sha256": "4f2ac194f58d6262aeaca84286482727f105a56e9ce50a1b1cd3d5b846b36e21"
+      "bytes": 8319,
+      "sha256": "e1c526102ebf372a5544f1394187ec888bc407361fd91589517932eacba48705"
     },
     {
       "path": "schemes/tests/schemes/Test-OfficialPersistence.ps1",
-      "bytes": 3537,
-      "sha256": "c5909d7d93363da5f3d65348dabdd49222923d31b1cdc0d06d52562c7f271be9"
+      "bytes": 3536,
+      "sha256": "0ed6362ae841994904df942c3e4648f01011547dcd8dc149f6e9dabee6d2a27c"
     },
     {
       "path": "schemes/tests/schemes/Test-RemovedMixed.ps1",

@@ -44,7 +44,7 @@ translator:
   dictionary: en_dlc_synthetic
 english_native:
   dictionary: en_dlc_synthetic
-  user_dict: pc_english
+  user_dict: en_intelligence
   enable_user_dict: true
   enable_encoder: false
   enable_sentence: false
@@ -120,7 +120,7 @@ function Select-Word([string]$raw,[string]$target,[bool]$cn=$false){
 }
 function Learning-Rows([string]$name){
  Close-Engine;Start-Engine;[RimeProbe]::RimeDeployerInitialize([ref]$traits)
- $path=Join-Path $out ($name+'.tsv');Check 'synthetic-learning-export' ([RimeProbe]::ExportUserDict('pc_english',$path) -gt 0)
+ $path=Join-Path $out ($name+'.tsv');Check 'synthetic-learning-export' ([RimeProbe]::ExportUserDict('en_intelligence',$path) -gt 0)
  $rows=@([IO.File]::ReadAllLines($path,$utf8)|Where-Object {$_ -and -not $_.StartsWith('#')})
  Close-Engine;Start-Engine;Open-Session
  return ,$rows

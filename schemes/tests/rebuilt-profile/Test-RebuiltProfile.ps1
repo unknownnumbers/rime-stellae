@@ -139,7 +139,7 @@ function Export-Poem([string]$label){
   [void][RimeProbe]::RimeDestroySession($session)
   $script:session=[UIntPtr]::Zero
   $file=Join-Path $out ($label+'.tsv')
-  if([RimeProbe]::ExportUserDict('luna_pinyin',$file) -lt 0){throw 'Synthetic native learning export failed.'}
+  if([RimeProbe]::ExportUserDict('cn_stellae',$file) -lt 0){throw 'Synthetic native learning export failed.'}
   $rows=@(foreach($line in [IO.File]::ReadLines($file)){
     if($line -and -not $line.StartsWith('#')){
       $pieces=$line.Split("`t")
@@ -269,7 +269,7 @@ try{
   [RimeProbe]::RimeClearComposition($session)
   [void][RimeProbe]::RimeDestroySession($session);$session=[UIntPtr]::Zero
   $jpLearning=Join-Path $out 'jp-family-learning.tsv'
-  $exported=[RimeProbe]::ExportUserDict('jp_family',$jpLearning)
+  $exported=[RimeProbe]::ExportUserDict('jp_kanji',$jpLearning)
   $ownRows=@(if($exported -ge 0){[IO.File]::ReadLines($jpLearning)|Where-Object {$_ -and -not $_.StartsWith('#')} })
   $ownHan=@($ownRows|Where-Object {($_ -split "`t")[0] -ceq '我' -and [int](($_ -split "`t")[2]) -gt 0})
   Record 'Kanji learning remains active' ($ownHan.Count -gt 0) $ownHan

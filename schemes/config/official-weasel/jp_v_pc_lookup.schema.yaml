@@ -5,7 +5,7 @@ schema:
 translator:
   dictionary: cn_stellae
   prism: jp_v_pc_lookup
-  user_dict: luna_pinyin
+  user_dict: cn_stellae
   enable_user_dict: true
   enable_completion: false
   contextual_suggestions: false

@@ -1,7 +1,7 @@
 {
   "format": "rymcp-official-profile-v2",
-  "version": "2026.11.25.3",
-  "maintenance_source_manifest_sha256": "839bf1ca90c31472ce9349baaa92e833574bbdb1cf4005267fceb5ff996d40d1",
+  "version": "2026.11.25.4",
+  "maintenance_source_manifest_sha256": "f15e1cdf27960c0ef0a052a26e659f62df1413e671e625980eaa85f551bf1eac",
   "files": [
     {
       "path": "JAPANESE.md",
@@ -30,8 +30,8 @@
     },
     {
       "path": "cn_stellae.custom.yaml",
-      "bytes": 295159,
-      "sha256": "362164d535630f71f927318f782c232e7d38416ff2a2e2a93c453b5abea1ea25"
+      "bytes": 295163,
+      "sha256": "72e92b5144c9c208ce39e4fd67111a18c074449682081b12ae6146715d8b2e88"
     },
     {
       "path": "cn_stellae.dict.yaml",
@@ -160,8 +160,8 @@
     },
     {
       "path": "jp_stellae.custom.yaml",
-      "bytes": 3913,
-      "sha256": "468baec126ec2358be8e99a6bd2add985098f9dc03049b9fbce2f6e1c2df4401"
+      "bytes": 3912,
+      "sha256": "71412cb5c0ca2cbdb10ce00f94255223784458b48b4befffba06ea240a346c6b"
     },
     {
       "path": "jp_stellae.schema.yaml",
@@ -180,8 +180,8 @@
     },
     {
       "path": "jp_v_pc_lookup.schema.yaml",
-      "bytes": 275043,
-      "sha256": "22a208b301fbb832fa867326b08fffe633d935594690da36ad5b705ea18b333b"
+      "bytes": 275042,
+      "sha256": "679464ba10d1c1ec61ec0638b4f3ca83b2ab763c3687d370cc6526d19085268a"
     },
     {
       "path": "jp_v_words.tsv",
@@ -455,8 +455,8 @@
     },
     {
       "path": "lua/jp_reading_metadata.lua",
-      "bytes": 4613,
-      "sha256": "df34e790ee674d63ecd2ac8a7210954df9fa50305483869b8084b9a7e2ed07d8"
+      "bytes": 4603,
+      "sha256": "f8bc18eb9ccb12a30a95a5e7563ffeb6c9081305c1cbcf5cf4641434b3a3d968"
     },
     {
       "path": "lua/jp_sequence.lua",

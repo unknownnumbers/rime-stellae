@@ -15,9 +15,9 @@ import winreg
 
 
 FIXTURES = [
-    ('luna_pinyin', 'Active: cn_stellae', 'fixturecn'),
-    ('pc_english', 'Active: en_intelligence', 'fixtureen'),
-    ('jp_family', 'Active: jp_kanji', 'fixturejp'),
+    ('cn_stellae', 'Active: cn_stellae', 'fixturecn'),
+    ('en_intelligence', 'Active: en_intelligence', 'fixtureen'),
+    ('jp_kanji', 'Active: jp_kanji', 'fixturejp'),
     ('pc_mixed', 'History: pc_mixed', 'fixturemixed'),
     ('terra_pinyin', 'Other: Bopomofo / Terra Pinyin', 'fixtureother'),
 ]
@@ -249,11 +249,11 @@ def main():
                                 'Snapshot operation used the display alias instead of the storage ID')
                         results.append({'storageId': dictionary, 'label': label,
                                         'description': description, 'snapshotIdentityPreserved': True})
-                    require(not list(user.glob('cn_stellae.userdb*')) and
-                            not list(user.glob('en_intelligence.userdb*')) and
-                            not list(user.glob('jp_kanji.userdb*')) and
+                    require(not list(user.glob('luna_pinyin.userdb*')) and
+                            not list(user.glob('pc_english.userdb*')) and
+                            not list(user.glob('jp_family.userdb*')) and
                             not list(user.glob('jp_romaji.userdb*')),
-                            'Display aliases created replacement learning databases')
+                            'Dictionary operations created a legacy or kana learning database')
                     dialog.send(dialog.window, WM_CLOSE)
                     require(process.wait(timeout=15) == 0, 'The dictionary manager failed to close')
                     require(directory_fingerprint(hidden_database) == hidden_before,

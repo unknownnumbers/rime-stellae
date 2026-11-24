@@ -130,8 +130,8 @@ try {
     Check 'learning-rank' ((Pos $state '可能') -le $before) @{Before=$before; After=(Pos $state '可能')}
     [RimeProbe]::RimeDestroySession($session) | Out-Null
     $session = [UIntPtr]::Zero
-    $export = Join-Path $evidence 'luna_pinyin.userdb.txt'
-    $result.LearningExportRows = [RimeProbe]::ExportUserDict('luna_pinyin',$export)
+    $export = Join-Path $evidence 'cn_stellae.userdb.txt'
+    $result.LearningExportRows = [RimeProbe]::ExportUserDict('cn_stellae',$export)
     Check 'learning-export' ((Test-Path -LiteralPath $export) -and [IO.File]::ReadAllText($export,$utf8).Contains('可能'))
     $session = [RimeProbe]::RimeCreateSession()
     if (-not [RimeProbe]::RimeSelectSchema($session,'cn_stellae')) { throw 'Schema reselection failed' }

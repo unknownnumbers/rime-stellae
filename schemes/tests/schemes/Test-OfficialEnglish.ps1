@@ -97,7 +97,7 @@ try {
  Check 'ctrl-backspace-pending-word' (-not [RimeProbe]::Input($script:s)) (Snap)
  [RimeProbe]::RimeDestroySession($script:s)|Out-Null;$script:s=[UIntPtr]::Zero
  $export=Join-Path $evidence 'english-learning.tsv'
- [void][RimeProbe]::ExportUserDict('pc_english',$export)
+ [void][RimeProbe]::ExportUserDict('en_intelligence',$export)
  $learned=Get-Content -LiteralPath $export -Encoding UTF8
  Check 'english-native-learning' ([bool]($learned | Where-Object {$_ -cmatch '^form\t'})) @($learned | Where-Object {$_ -cmatch '^form\t'})
  $script:s=[RimeProbe]::RimeCreateSession()
