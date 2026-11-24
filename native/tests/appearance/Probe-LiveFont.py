@@ -4,6 +4,7 @@
 import argparse
 import ctypes as c
 from ctypes import wintypes as w
+from contextlib import contextmanager
 from dataclasses import asdict, dataclass
 from hashlib import file_digest
 import json
@@ -385,6 +386,64 @@ def compiled_themes(profile):
     return themes
 
 
+@contextmanager
+def effective_dark_reader(engine, shared, profile, logs):
+    """Read the same compiled CustomSettings value used by the native dialog."""
+    class Traits(c.Structure):
+        _fields_ = [('data_size', c.c_int)] + [(name, c.c_char_p) for name in (
+            'shared_data_dir', 'user_data_dir', 'distribution_name', 'distribution_code_name',
+            'distribution_version', 'app_name')] + [('modules', c.c_void_p),
+            ('min_log_level', c.c_int), ('log_dir', c.c_char_p),
+            ('prebuilt_data_dir', c.c_char_p), ('staging_dir', c.c_char_p)]
+    class Module(c.Structure):
+        _fields_ = [('data_size', c.c_int), ('module_name', c.c_char_p),
+                    ('initialize', c.c_void_p), ('finalize', c.c_void_p), ('get_api', c.c_void_p)]
+    class Levers(c.Structure):
+        _fields_ = [('data_size', c.c_int)] + [(name, c.c_void_p) for name in (
+            'custom_settings_init', 'custom_settings_destroy', 'load_settings', 'save_settings',
+            'customize_bool', 'customize_int', 'customize_double', 'customize_string',
+            'is_first_run', 'settings_is_modified', 'settings_get_config')]
+    class Config(c.Structure):
+        _fields_ = [('ptr', c.c_void_p)]
+    logs.mkdir(parents=True, exist_ok=True)
+    with os.add_dll_directory(str(engine.parent)):
+        library = c.CDLL(str(engine))
+        traits = Traits()
+        traits.data_size = c.sizeof(traits) - c.sizeof(c.c_int)
+        traits.shared_data_dir, traits.user_data_dir = str(shared).encode(), str(profile).encode()
+        traits.prebuilt_data_dir, traits.staging_dir = str(shared).encode(), str(profile / 'build').encode()
+        traits.log_dir, traits.min_log_level = str(logs).encode(), 2
+        traits.app_name = b'rime.appearance_custom_settings_fixture'
+        win_function(library, 'RimeSetup', None, c.POINTER(Traits))(c.byref(traits))
+        win_function(library, 'RimeDeployerInitialize', None, c.c_void_p)(None)
+        try:
+            module = win_function(library, 'RimeFindModule', c.POINTER(Module), c.c_char_p)(b'levers')
+            require(module, 'The fixture could not find the native levers module')
+            api = c.CFUNCTYPE(c.POINTER(Levers))(module.contents.get_api)().contents
+            def lever(name, result, parameters):
+                return c.CFUNCTYPE(result, *parameters)(getattr(api, name))
+            def read():
+                settings = lever('custom_settings_init', c.c_void_p, (c.c_char_p, c.c_char_p))(
+                    b'weasel', b'appearance-fixture')
+                require(settings, 'The fixture could not create native CustomSettings')
+                try:
+                    require(lever('load_settings', c.c_int, (c.c_void_p,))(settings),
+                            'The fixture could not load native CustomSettings')
+                    config = Config()
+                    require(lever('settings_get_config', c.c_int,
+                                  (c.c_void_p, c.POINTER(Config)))(settings, c.byref(config)),
+                            'The fixture could not inspect the native settings configuration')
+                    value = win_function(library, 'RimeConfigGetCString', c.c_char_p,
+                                         c.POINTER(Config), c.c_char_p)(
+                                             c.byref(config), b'style/color_scheme_dark')
+                    return None if value is None else value.decode('utf-8')
+                finally:
+                    lever('custom_settings_destroy', None, (c.c_void_p,))(settings)
+            yield read
+        finally:
+            win_function(library, 'RimeFinalize', None)()
+
+
 def preview_and_cancel(installation, profile, initial_font, report):
     before = configuration_snapshot(profile)
     deployer = installation / 'StellaeDeployer.exe'
@@ -566,7 +625,7 @@ def apply_through_settings(installation, profile, initial_font, replacement_font
                 process.kill()
 
 
-def apply_theme_through_settings(installation, profile, theme, report):
+def apply_theme_through_settings(installation, profile, theme, report, preceding_theme=None):
     import yaml
 
     palettes = compiled_themes(profile)
@@ -582,6 +641,9 @@ def apply_theme_through_settings(installation, profile, theme, report):
             font_index = settings.send(combo, CB_GETCURSEL)
             font_bitmap = settings.preview_bitmap(appearance, FONT_PREVIEW)
             themes, names = settings.theme_items(appearance)
+            if preceding_theme:
+                settings.select_theme(appearance, themes,
+                                      names.index(palettes[preceding_theme]['name']))
             settings.select_theme(appearance, themes, names.index(expected_name))
             settings.preview_bitmap(appearance)
             require(settings.preview_bitmap(appearance, FONT_PREVIEW) == font_bitmap and
@@ -615,6 +677,7 @@ def verify_custom_font_defaults(installation, profile, report):
     original = custom.read_bytes()
     custom_stack = 'Microsoft YaHei, Noto Sans CJK TC'
     deployer = installation / 'StellaeDeployer.exe'
+    baseline_saved = []
 
     def compile_appearance():
         subprocess.run([str(deployer), '/deploy-appearance'], cwd=installation,
@@ -628,8 +691,41 @@ def verify_custom_font_defaults(installation, profile, report):
         clock = next_configuration_second(profile, report, operation)
         custom.write_bytes(content)
         atime = custom.stat().st_atime_ns
-        os.utime(custom, ns=(atime, clock['readySecond'] * 1_000_000_000))
+        # Stay in the middle of the synthetic timestamp second. Conversion
+        # between filesystem/system clocks can straddle an exact boundary.
+        os.utime(custom, ns=(atime, clock['readySecond'] * 1_000_000_000 + 500_000_000))
         record_configuration_write(profile, clock)
+
+    def remove_baseline_dark():
+        changed = []
+        for directory in (installation / 'data', profile):
+            for filename in ('weasel.yaml', 'stellae_bundle_weasel.yaml',
+                             'rymcp_candidate_font.yaml', 'stellae_candidate_font.yaml'):
+                path = directory / filename
+                if not path.is_file():
+                    continue
+                raw, stat = path.read_bytes(), path.stat()
+                baseline = yaml.safe_load(raw) or {}
+                removed = False
+                for scope in (baseline, baseline.get('patch', {})):
+                    if not isinstance(scope, dict):
+                        continue
+                    if 'style/color_scheme_dark' in scope:
+                        scope.pop('style/color_scheme_dark')
+                        removed = True
+                    if isinstance(scope.get('style'), dict) and 'color_scheme_dark' in scope['style']:
+                        scope['style'].pop('color_scheme_dark')
+                        removed = True
+                if removed:
+                    baseline_saved.append((path, raw, stat))
+                    clock = next_configuration_second(profile, report, 'remove fixture baseline dark: ' + filename)
+                    path.write_text(yaml.safe_dump(baseline, allow_unicode=True, sort_keys=False),
+                                    encoding='utf-8')
+                    os.utime(path, ns=(stat.st_atime_ns,
+                                      clock['readySecond'] * 1_000_000_000 + 500_000_000))
+                    changed.append(('shared/' if directory == installation / 'data' else 'user/') + filename)
+        require(changed, 'The absent dark-theme fixture removed no inherited baseline')
+        report['absentDarkFixtureBaselineSources'] = changed
 
     def configure(default):
         with subprocess.Popen([str(deployer)], cwd=installation, stdout=subprocess.DEVNULL,
@@ -708,17 +804,31 @@ def verify_custom_font_defaults(installation, profile, report):
         require(style()['color_scheme_dark'] == CUSTOM_THEME,
                 'A normal theme change overwrote a distinct custom dark theme')
         report['distinctCustomDarkThemePreserved'] = True
-        patch['style/color_scheme_dark'] = None
+        # Rime's native YAML emitter drops null-valued map entries when saving
+        # unrelated settings. A null deletion patch therefore cannot represent
+        # persistent absence over a baseline that still defines this key.
+        patch.pop('style/color_scheme_dark', None)
+        remove_baseline_dark()
         write_custom(yaml.safe_dump(data, allow_unicode=True, sort_keys=False).encode('utf-8'),
                      'write absent dark-theme fixture')
         compile_appearance()
-        require(not style().get('color_scheme_dark'),
-                'The absent dark-theme fixture still has an effective dark selection')
-        configure(False)
-        require(not style().get('color_scheme_dark'),
-                'A normal theme change invented an absent dark selection')
+        require('color_scheme_dark' not in style(),
+                'The absent dark-theme fixture still has a compiled dark selection')
+        with effective_dark_reader(installation / 'rime.dll', installation / 'data', profile,
+                                   installation / 'AppearanceFixtureLogs') as read_dark:
+            require(read_dark() is None,
+                    'Native CustomSettings did not observe the genuinely absent dark selection')
+            configure(False)
+            require('color_scheme_dark' not in style() and read_dark() is None,
+                    'A normal theme change invented a genuinely absent dark selection')
+        report['absentDarkVerifiedThroughNativeCustomSettings'] = True
         report['absentDarkThemeNotInvented'] = True
     finally:
+        for path, raw, stat in baseline_saved:
+            path.write_bytes(raw)
+            os.utime(path, ns=(stat.st_atime_ns, stat.st_mtime_ns))
+            require(path.read_bytes() == raw and path.stat().st_mtime_ns == stat.st_mtime_ns,
+                    'A disposable fixture baseline did not restore exactly')
         write_custom(original, 'restore original fixture configuration')
         compile_appearance()
 
@@ -833,6 +943,10 @@ def validate(args, report):
             theme_results.append(theme_report)
         report['themeApplications'] = theme_results
         report['sixThemesPreservedSameLiveDraft'] = True
+        round_trip = {}
+        apply_theme_through_settings(installation, profile, 'reference_gray', round_trip,
+                                     preceding_theme='stellae_sakura')
+        report['themeRoundTripReturnedToInitialBeforeOK'] = round_trip
         files_after = scheme_snapshot(installation, profile)
         changed = sorted(name for name in set(files_before) | set(files_after)
                          if files_before.get(name) != files_after.get(name))
@@ -855,6 +969,9 @@ def validate(args, report):
         report['sameSessionCommitted'] = True
     report['phase'] = 'custom fallback and Default configuration'
     verify_custom_font_defaults(installation, profile, report)
+    require(scheme_snapshot(installation, profile) == files_before,
+            'The custom settings fixtures did not restore all scheme resources and timestamps')
+    report['customFixturesPreservedSchemeResources'] = True
 
 
 def main():

@@ -1005,6 +1005,15 @@
       ]
     },
     {
+      "path": "installer/settings-update-baseline.json",
+      "source_ids": [
+        "project-code"
+      ],
+      "references": [
+        "LICENSE"
+      ]
+    },
+    {
       "path": "installer/stellae_identity.nsh",
       "source_ids": [
         "project-code"
@@ -9077,6 +9086,24 @@
     },
     {
       "path": "scripts/package/render_installed_docs.py",
+      "source_ids": [
+        "project-code"
+      ],
+      "references": [
+        "LICENSE"
+      ]
+    },
+    {
+      "path": "scripts/package/stage_settings_update.py",
+      "source_ids": [
+        "project-code"
+      ],
+      "references": [
+        "LICENSE"
+      ]
+    },
+    {
+      "path": "scripts/package/Update-Settings.ps1",
       "source_ids": [
         "project-code"
       ],

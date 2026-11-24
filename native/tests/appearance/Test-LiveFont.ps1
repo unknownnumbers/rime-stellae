@@ -4,7 +4,8 @@ param(
   [Parameter(Mandatory)][string]$Installer,
   [Parameter(Mandatory)][ValidateSet('SC','TC')][string]$Profile,
   [Parameter(Mandatory)][string]$InstrumentedServer,
-  [Parameter(Mandatory)][string]$OutputDirectory
+  [Parameter(Mandatory)][string]$OutputDirectory,
+  [string]$SettingsUpdateDirectory
 )
 
 Set-StrictMode -Version Latest
@@ -34,6 +35,7 @@ $probeBinary = (Resolve-Path -LiteralPath $InstrumentedServer).Path
 $trace = Join-Path $reportRoot 'paint-frames.log'
 $report = Join-Path $reportRoot 'result.json'
 $python = (Get-Command python -CommandType Application).Source
+$settingsPayload = if ($SettingsUpdateDirectory) { (Resolve-Path -LiteralPath $SettingsUpdateDirectory).Path } else { $null }
 
 function Start-FixtureProcess([string]$File, [string[]]$Arguments,
     [string]$Name, [bool]$Redirect = $true) {
@@ -73,6 +75,40 @@ function Invoke-FixtureStep([string]$File, [string[]]$Arguments, [string]$Name,
   }
 }
 
+function Get-ProtectedSettingsFiles {
+  $records = [ordered]@{}
+  foreach ($entry in @(@{Prefix='runtime';Root=$program},
+                       @{Prefix='compiled';Root=(Join-Path $profileDirectory 'build')})) {
+    foreach ($file in @(Get-ChildItem -LiteralPath $entry.Root -Recurse -File | Sort-Object FullName)) {
+      $relative = [IO.Path]::GetRelativePath($entry.Root, $file.FullName).Replace('\','/')
+      if (($entry.Prefix -eq 'runtime' -and $relative -cne 'StellaeDeployer.exe' -and
+           $file.Extension -cin @('.dll','.exe','.ime')) -or
+          ($entry.Prefix -eq 'compiled' -and $file.Extension -ceq '.bin')) {
+        $records[$entry.Prefix+'/'+$relative] = @((Get-FileHash -LiteralPath $file.FullName).Hash,
+          $file.Length, $file.LastWriteTimeUtc.Ticks)
+      }
+    }
+  }
+  if ($records.Count -lt 5) { throw 'The baseline fixture has too few runtime/dictionary artifacts.' }
+  return ConvertTo-Json -InputObject $records -Depth 4 -Compress
+}
+
+function Invoke-SettingsComponent([string]$Name) {
+  $updater = (Resolve-Path -LiteralPath (Join-Path $PSScriptRoot '../../../scripts/package/Update-Settings.ps1')).Path
+  $pwsh = Join-Path $PSHOME 'pwsh.exe'
+  Invoke-FixtureStep $pwsh @('-NoProfile','-NonInteractive','-ExecutionPolicy','Bypass',
+    '-File',$updater,'-ProgramDirectory',$program,'-PayloadDirectory',$settingsPayload,
+    '-ReportFile',(Join-Path $reportRoot ($Name+'.json'))) $Name 90000
+  Invoke-FixtureStep (Join-Path $program 'StellaeDeployer.exe') @('/deploy-appearance') ($Name+'-appearance') 90000
+  if ((Get-ProtectedSettingsFiles) -cne $script:protectedSettingsFiles) {
+    throw 'The settings component update changed runtime images or compiled dictionary bytes/timestamps.'
+  }
+  $current = @((Get-Process -Name StellaeServer -ErrorAction Stop).Id | Sort-Object)
+  if (($current -join ',') -cne ($script:settingsServiceIds -join ',')) {
+    throw 'The settings component update restarted the existing input service.'
+  }
+}
+
 $server = $null
 try {
   $arguments = if ($Profile -ceq 'SC') { @('/S', '/ProfileSC') } else { @('/S', '/T') }
@@ -106,6 +142,11 @@ try {
   if (@($standalone | Where-Object { Test-Path -LiteralPath (Join-Path $program $_) }).Count -or $fontLinks.Count) {
     throw 'A standalone font tool was installed with the native appearance setting.'
   }
+  if ($settingsPayload) {
+    $script:protectedSettingsFiles = Get-ProtectedSettingsFiles
+    $script:settingsServiceIds = @((Get-Process -Name StellaeServer -ErrorAction Stop).Id | Sort-Object)
+    Invoke-SettingsComponent 'initial-settings-update'
+  }
 
   # Check the fresh builtin set, then retain a synthetic user-owned theme through
   # an ordinary coverage upgrade before exercising the same installed dialog.
@@ -115,7 +156,7 @@ from pathlib import Path
 profile=Path(sys.argv[1]);report=Path(sys.argv[2])
 expected={'reference_gray','stellae_sakura','stellae_lavender','stellae_night','stellae_crimson','stellae_mono'}
 compiled=yaml.safe_load((profile/'build/weasel.yaml').read_text('utf-8-sig'))
-assert set(compiled['preset_color_schemes'])==expected,'Fresh installation retained old builtin themes'
+assert set(compiled['preset_color_schemes'])==expected,'The fresh appearance configuration retained old builtin themes'
 custom=profile/'weasel.custom.yaml';data=yaml.safe_load(custom.read_text('utf-8-sig')) or {}
 time.sleep(max(0,custom.stat().st_mtime_ns//1_000_000_000+1.05-time.time()))
 data.setdefault('patch',{})['preset_color_schemes/ci_custom_theme']={'name':'CI custom theme','author':'Synthetic fixture','color_format':'abgr','back_color':0xff292b30,'candidate_text_color':0xfff5f5f5,'hilited_candidate_back_color':0xff735345,'hilited_candidate_text_color':0xffffffff}
@@ -126,7 +167,11 @@ report.write_text(json.dumps({'freshBuiltinThemeIds':sorted(expected),'customThe
     (Join-Path $reportRoot 'upgrade-theme.json')) 'seed-custom-theme' 30000
   $customPath = Join-Path $profileDirectory 'weasel.custom.yaml'
   $customBeforeUpgrade = (Get-FileHash -LiteralPath $customPath).Hash
-  Invoke-FixtureStep $installerPath $arguments 'coverage-upgrade' 600000 @(0,3010)
+  if ($settingsPayload) {
+    Invoke-SettingsComponent 'coverage-settings-update'
+  } else {
+    Invoke-FixtureStep $installerPath $arguments 'coverage-upgrade' 600000 @(0,3010)
+  }
   if ((Get-FileHash -LiteralPath $customPath).Hash -cne $customBeforeUpgrade) {
     throw 'The coverage upgrade rewrote the user-owned custom theme configuration.'
   }
@@ -153,6 +198,10 @@ report.write_text(json.dumps({'freshBuiltinThemeIds':sorted(expected),'customThe
     throw 'The appearance and draft assertions did not complete.'
   }
   $result | Add-Member -NotePropertyName coverageUpgradePreservedCustomTheme -NotePropertyValue $true
+  if ($settingsPayload) {
+    $result | Add-Member -NotePropertyName settingsComponentPreservedRuntimeAndCompiledDictionaries -NotePropertyValue $true
+    $result | Add-Member -NotePropertyName settingsComponentKeptInputService -NotePropertyValue $true
+  }
   $result | ConvertTo-Json -Depth 30 | Set-Content -LiteralPath $report -Encoding utf8NoBOM
   Write-Output "PASS actual candidate font, same live draft, $($result.schemeFilesChecked) untouched scheme files"
 } catch {

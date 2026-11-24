@@ -1,0 +1,35 @@
+{
+  "format": "stellae-settings-baseline-v1",
+  "bundleVersion": "2026.11.24.3",
+  "sourceRef": "408616b72b0b82b380992a2d16f99357a4b2cb69",
+  "files": [
+    {
+      "path": "StellaeDeployer.exe",
+      "sha256": "d5d9330446fa233b04e143e53a6d2a0d9499adfc107544915d6dd1a58cb026f6"
+    },
+    {
+      "path": "data/stellae_bundle_weasel.yaml",
+      "sha256": "c173290394cfcfe5c79555d999b4d518595d6d018fda3d9a1e95400c703f6210"
+    },
+    {
+      "path": "data/preview/color_scheme_reference_gray.png",
+      "sha256": "c6e5b73c28af6ac86a361b92067e0b6784fa45ee6060d51376b3aaccd21ccb73"
+    },
+    {
+      "path": "data/preview/color_scheme_reference_gray_default.png",
+      "sha256": "d03eb67cc29f514921c819b76ac29760159f826859d6b7a42d2f36c65d4fa27c"
+    },
+    {
+      "path": "data/preview/color_scheme_reference_gray_sc.png",
+      "sha256": "f5f55846497fecacb0e43a72c2cd2e8755d17a53413501b3c031ea810503d0e6"
+    },
+    {
+      "path": "data/preview/color_scheme_reference_gray_tc.png",
+      "sha256": "a651efe058fdc549e56fa2ea4e0792b95516677f62a6578a1984441944604155"
+    },
+    {
+      "path": "data/preview/color_scheme_reference_gray_hk.png",
+      "sha256": "788083761043eded420b6f94fff9975104f6284f04c6de9f114adcd5ac5e7236"
+    }
+  ]
+}

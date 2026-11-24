@@ -143,7 +143,7 @@
     {
       "path": "installer/bundle-inputs.json",
       "bytes": 5390,
-      "sha256": "2f50c5198dc410a03513b73bddb68c1f1f37c0f9b634c189d39f7710da9d5e55"
+      "sha256": "aaa0e9423a5c3ef5ad757cad6861d43ae11d661464b861075c1bb41cebe67358"
     },
     {
       "path": "installer/bundle.nsi",
@@ -181,6 +181,11 @@
       "sha256": "94ce36c8cc1f41ba8b8eda9d1dfb87cc1538b2db550fa134a626452f8978b3b9"
     },
     {
+      "path": "installer/settings-update-baseline.json",
+      "bytes": 1243,
+      "sha256": "f65a14f8e6580731798aa622ba9a9b98d2c94e970780691c1b0d6012f19f803c"
+    },
+    {
       "path": "installer/stellae_identity.nsh",
       "bytes": 534,
       "sha256": "802ae5ceeec5cf815dd43e8a786df2165bd520b21ab2bafc5a4460fc771d0b95"
@@ -207,8 +212,8 @@
     },
     {
       "path": "licenses/file-licenses.json",
-      "bytes": 307356,
-      "sha256": "04370e815d5cdb1924b5b7e0355dbbeb06ee28d5426f9a7fadf0239a1370829e"
+      "bytes": 307869,
+      "sha256": "c4b2e183513b41eda3de3bad129164a810585d536028bfbd6a5ad4c86e07706b"
     },
     {
       "path": "licenses/native-dependencies/boost/LICENSE_1_0.txt",
@@ -498,7 +503,7 @@
     {
       "path": "native/frontend-source-files.json",
       "bytes": 22632,
-      "sha256": "a957aba37578447400a0d97434df7d5e601e51d55827546033c9936ed889d1d7"
+      "sha256": "f170eed6f3d1fe0591b36bf78cc6fc22df8d8215cc978a2b6b8e8c4adfd0d1cd"
     },
     {
       "path": "native/notification-inputs.json",
@@ -508,7 +513,7 @@
     {
       "path": "native/source-manifest.json",
       "bytes": 12544,
-      "sha256": "4ddd2a9a4b14948856c3cbb4849013e8782289b7d5a5da99d46e1f0f1a7b68d1"
+      "sha256": "2bdbcb56d5913265351c1c0d9d6bad21bc02ad4df12b76dd50df2f6970104769"
     },
     {
       "path": "native/tests/appearance/Add-PaintTrace.ps1",
@@ -522,13 +527,13 @@
     },
     {
       "path": "native/tests/appearance/Probe-LiveFont.py",
-      "bytes": 46720,
-      "sha256": "372a7391f9d1303bf8454cf9a5735e44e99227dc15320bfa34c415aa26c9d315"
+      "bytes": 54102,
+      "sha256": "ec208b93d0bc805c9d0b7372451d5af05fbb572f856d7644e6271e8e7c5e7d25"
     },
     {
       "path": "native/tests/appearance/Test-LiveFont.ps1",
-      "bytes": 9068,
-      "sha256": "1896740f9b65504eb27fc03ff3066cf11f89f00fa23e0feeab40fd98ea70b86c"
+      "bytes": 11834,
+      "sha256": "bfb95cf7cbed52738910e1849d0fd81efec9247145c21cbb9b7d853338e38eb9"
     },
     {
       "path": "native/tests/installer/Export-SyntheticLearning.py",
@@ -727,8 +732,8 @@
     },
     {
       "path": "native/weasel/stellae-61052.patch",
-      "bytes": 976281,
-      "sha256": "739dc60a839736e7240428d07fdb68b7f957164c62facc27f5827efcb5a271b6"
+      "bytes": 976227,
+      "sha256": "3a696bcbe4779474c64c2538b2561fca9686d52b9417b4d53f21491ed0a6d240"
     },
     {
       "path": "schemes/.gitattributes",
@@ -3772,8 +3777,8 @@
     },
     {
       "path": "scripts/native/Build-FrontendOverlay.ps1",
-      "bytes": 6898,
-      "sha256": "fac28befba63d060a3827e92efd7d88fd64e20f21d0017d7edc8d55e7903a9cf"
+      "bytes": 7241,
+      "sha256": "990bb8450fa3d098cafd1e41b00be641ee109f7e454aa93783434aa5a086d579"
     },
     {
       "path": "scripts/native/Build-ServerNotification.ps1",
@@ -3811,6 +3816,11 @@
       "sha256": "acde859be8b3831353b9fb1fc8feacb9b86b8789c91e137ff65cf95e25c1d154"
     },
     {
+      "path": "scripts/package/Update-Settings.ps1",
+      "bytes": 8243,
+      "sha256": "83a5e60591adb9b6f3c3dfa7aa67f8756cfd7f11605230d486480b5da3b57007"
+    },
+    {
       "path": "scripts/package/apply_frontend_overlays.py",
       "bytes": 14963,
       "sha256": "f48d8b95af3b2912b274db8470b1a94affe06b411cb23fa5496ad90e4a51fc98"
@@ -3839,6 +3849,11 @@
       "path": "scripts/package/render_installed_docs.py",
       "bytes": 4139,
       "sha256": "f2efe26d52f84072100074277f091c5eba299ef9db40003c8ce81defd2608e81"
+    },
+    {
+      "path": "scripts/package/stage_settings_update.py",
+      "bytes": 5173,
+      "sha256": "f18a8f524c7e52d2bce6b45887164d78e41389bc6f303acbcd0a3f081d270d42"
     },
     {
       "path": "scripts/package/verify_bundle.py",

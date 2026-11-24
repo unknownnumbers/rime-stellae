@@ -1355,7 +1355,7 @@ index 587cbc7..48cbd11 100644
    if (ret == ERROR_SUCCESS) {
      WCHAR value[MAX_PATH];
 diff --git a/WeaselDeployer/UIStyleSettings.cpp b/WeaselDeployer/UIStyleSettings.cpp
-index 22e7380..c20b70a 100644
+index 22e7380..d6e512f 100644
 --- a/WeaselDeployer/UIStyleSettings.cpp
 +++ b/WeaselDeployer/UIStyleSettings.cpp
 @@ -1,7 +1,39 @@
@@ -1440,7 +1440,7 @@ index 22e7380..c20b70a 100644
  }
  
  std::string UIStyleSettings::GetActiveColorScheme() {
-@@ -69,7 +124,80 @@ std::string UIStyleSettings::GetActiveColorScheme() {
+@@ -69,7 +124,78 @@ std::string UIStyleSettings::GetActiveColorScheme() {
  }
  
  bool UIStyleSettings::SelectColorScheme(const std::string& color_scheme_id) {
@@ -1450,8 +1450,6 @@ index 22e7380..c20b70a 100644
 +  api_->settings_get_config(settings_, &config);
 +  const auto active = FontSetting(&config, "style/color_scheme");
 +  const auto dark = FontSetting(&config, "style/color_scheme_dark");
-+  if (active == color_scheme_id)
-+    return true;
 +  if (!api_->customize_string(settings_, "style/color_scheme",
 +                              color_scheme_id.c_str()))
 +    return false;
