@@ -27,6 +27,8 @@ jobs:
         shell: pwsh
         run: |
           $ErrorActionPreference='Stop'
+          $out=Join-Path $env:GITHUB_WORKSPACE 'policy-diagnostics'
+          $null=New-Item -ItemType Directory -Path $out -Force
           $spec=Get-Content installer/bundle-inputs.json -Raw|ConvertFrom-Json
           $native=Get-Content native/source-manifest.json -Raw|ConvertFrom-Json
           $official=@($native.assets|Where-Object id -eq 'shared-data')[0]
@@ -37,13 +39,25 @@ jobs:
             $p=Start-Process -FilePath $path -ArgumentList '/S' -PassThru -WindowStyle Hidden
             if(-not $p.WaitForExit(180000) -or $p.ExitCode -notin @(0,3010)){throw 'Fixture setup failed'}
             $p.Dispose()
+            if($item.name -eq 'official.exe'){
+              & "$env:WINDIR/System32/WindowsPowerShell/v1.0/powershell.exe" -NoProfile -ExecutionPolicy Bypass -File native/tests/installer/NativeProfileSnapshot.ps1 -OutputFile (Join-Path $out 'before-bundle.json')|Out-Null
+              if($LASTEXITCODE){throw 'Profile snapshot failed'}
+            }
           }
           $server=Join-Path $env:ProgramFiles 'RimeStellae/StellaeServer.exe'
           $p=Start-Process -FilePath $server -ArgumentList '/quit' -PassThru -WindowStyle Hidden
           if(-not $p.WaitForExit(30000) -or $p.ExitCode -ne 0){throw 'Bare server shutdown failed'}
           $p.Dispose()
-          $out=Join-Path $env:GITHUB_WORKSPACE 'policy-diagnostics'
-          $null=New-Item -ItemType Directory -Path $out -Force
+          $limit=[DateTime]::UtcNow.AddSeconds(15)
+          while((Get-Process StellaeServer -ErrorAction SilentlyContinue) -and [DateTime]::UtcNow -lt $limit){Start-Sleep -Milliseconds 100}
+          if(Get-Process StellaeServer -ErrorAction SilentlyContinue){throw 'Bare service did not stop'}
+          $user=Join-Path $env:APPDATA 'RimeStellae'
+          [IO.File]::WriteAllText((Join-Path $user 'bare-user-sentinel.txt'),'synthetic user file retained from bare installation')
+          [IO.File]::WriteAllText((Join-Path $user 'weasel.custom.yaml'),"patch:`n  style/font_point: 17`n")
+          $shared=Join-Path $env:ProgramFiles 'RimeStellae/data'
+          Add-Content -LiteralPath (Join-Path $shared 'symbols.yaml') -Value '# synthetic shared modification retained from bare installation'
+          $null=New-Item -ItemType Directory -Path (Join-Path $shared 'unmanaged') -Force
+          [IO.File]::WriteAllText((Join-Path $shared 'unmanaged/bare-keep.txt'),'synthetic unknown nested file retained from bare installation')
           $env:STELLAE_BUNDLE_TEST_TRACE=Join-Path $out 'installer.log'
           $installer=Join-Path $env:RUNNER_TEMP 'installer-input/stellae-installer.exe'
           $p=Start-Process -FilePath $installer -ArgumentList '/S' -PassThru -WindowStyle Hidden
