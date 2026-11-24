@@ -1,6 +1,6 @@
 {
   "format": "stellae-source-release-v1",
-  "date": "2026-11-24",
+  "date": "2026-11-25",
   "kind": "frontend-and-input-scheme-source",
   "frontendVersion": "0.17.4.61052",
   "bundleVersion": "2026.11.24.3",
@@ -522,8 +522,8 @@
     },
     {
       "path": "native/tests/appearance/Probe-LiveFont.py",
-      "bytes": 30750,
-      "sha256": "a85a18e95bf2dc00839054489e3ab79a58935019f4305c32c3faa49dcc8fecc9"
+      "bytes": 32749,
+      "sha256": "f6ceb9e0c7800dbe2962f63f2d5b5b6c9efc96fcef758c5576eedc4de2dfa700"
     },
     {
       "path": "native/tests/appearance/Test-LiveFont.ps1",

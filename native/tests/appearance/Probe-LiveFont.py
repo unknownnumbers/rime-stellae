@@ -266,6 +266,29 @@ def configuration_snapshot(profile):
             for path in paths if path.is_file()}
 
 
+def next_configuration_second(profile, report, operation):
+    # Pinned librime's ConfigNeedsUpdate compares whole-second source mtimes.
+    # Keep this rapid synthetic sequence distinct under that upstream contract.
+    custom = profile / 'weasel.custom.yaml'
+    previous = custom.stat().st_mtime_ns // 1_000_000_000
+    delay = previous + 1.05 - time.time()
+    require(delay < 5, 'The fixture configuration timestamp is ahead of the runner clock')
+    if delay > 0:
+        time.sleep(delay)
+    ready = time.time_ns() // 1_000_000_000
+    require(ready > previous, 'The fixture did not cross the upstream timestamp boundary')
+    event = {'operation': operation, 'previousSourceSecond': previous, 'readySecond': ready}
+    report.setdefault('configurationClock', []).append(event)
+    return event
+
+
+def record_configuration_write(profile, event):
+    actual = (profile / 'weasel.custom.yaml').stat().st_mtime_ns // 1_000_000_000
+    event['writtenSourceSecond'] = actual
+    require(actual >= event['readySecond'] and actual > event['previousSourceSecond'],
+            'The fixture configuration write reused its previous cached timestamp')
+
+
 def preview_asset(installation, profile, family):
     suffix = {'Microsoft YaHei': '_default', 'Noto Sans CJK SC': '_sc',
               'Noto Sans CJK TC': '_tc', 'Noto Sans CJK HK': '_hk'}[family]
@@ -359,7 +382,7 @@ def preview_and_cancel(installation, profile, initial_font, report):
                 process.kill()
 
 
-def apply_through_settings(installation, initial_font, replacement_font, report):
+def apply_through_settings(installation, profile, initial_font, replacement_font, report):
     deployer = installation / 'StellaeDeployer.exe'
     with subprocess.Popen([str(deployer)], cwd=installation, stdout=subprocess.DEVNULL,
                           stderr=subprocess.DEVNULL) as process:
@@ -383,9 +406,11 @@ def apply_through_settings(installation, initial_font, replacement_font, report)
             replacement = font_item(items, replacement_font)
             settings.select_font_by_keyboard(appearance, combo, replacement)
             report['nativeSettingsSelectionMethod'] = 'keyboard-home-down'
+            clock = next_configuration_second(profile, report, 'native font OK: ' + replacement_font)
             start = time.monotonic()
             settings.accept(appearance)
             require(process.wait(timeout=90) == 0, 'Native settings did not apply the replacement font')
+            record_configuration_write(profile, clock)
             report['applyMilliseconds'] = round((time.monotonic() - start) * 1000)
             report['nativeSettingsReplacementFont'] = replacement_font
         finally:
@@ -410,6 +435,13 @@ def verify_custom_font_defaults(installation, profile, report):
     def style():
         return yaml.safe_load((profile / 'build/weasel.yaml').read_text(encoding='utf-8-sig'))['style']
 
+    def write_custom(content, operation):
+        clock = next_configuration_second(profile, report, operation)
+        custom.write_bytes(content)
+        atime = custom.stat().st_atime_ns
+        os.utime(custom, ns=(atime, clock['readySecond'] * 1_000_000_000))
+        record_configuration_write(profile, clock)
+
     def configure(default):
         with subprocess.Popen([str(deployer)], cwd=installation, stdout=subprocess.DEVNULL,
                               stderr=subprocess.DEVNULL) as process:
@@ -432,8 +464,11 @@ def verify_custom_font_defaults(installation, profile, report):
                     selected = 0 if current != 0 else 1
                     settings.send(themes, LB_SETCURSEL, selected)
                     settings.send(appearance, WM_COMMAND, THEME_LIST | (1 << 16), themes)
+                clock = next_configuration_second(
+                    profile, report, 'custom fixture Default OK' if default else 'unrelated theme OK')
                 settings.accept(appearance)
                 require(process.wait(timeout=90) == 0, 'The custom-font settings did not apply')
+                record_configuration_write(profile, clock)
             finally:
                 if process.poll() is None:
                     process.kill()
@@ -444,7 +479,8 @@ def verify_custom_font_defaults(installation, profile, report):
         patch['style/font_face'] = custom_stack
         patch['style/label_font_face'] = custom_stack
         patch['style/comment_font_face'] = 'Consolas'
-        custom.write_text(yaml.safe_dump(data, allow_unicode=True, sort_keys=False), encoding='utf-8')
+        write_custom(yaml.safe_dump(data, allow_unicode=True, sort_keys=False).encode('utf-8'),
+                     'write inherited fallback fixture')
         compile_appearance()
         require(style()['font_face'] == custom_stack, 'The synthetic fallback fixture did not load')
         configure(False)
@@ -463,7 +499,8 @@ def verify_custom_font_defaults(installation, profile, report):
         report['defaultClearedInheritedStackOnly'] = True
         distinct_label = 'Microsoft YaHei, Segoe UI'
         patch['style/label_font_face'] = distinct_label
-        custom.write_text(yaml.safe_dump(data, allow_unicode=True, sort_keys=False), encoding='utf-8')
+        write_custom(yaml.safe_dump(data, allow_unicode=True, sort_keys=False).encode('utf-8'),
+                     'write distinct fallback fixture')
         compile_appearance()
         configure(True)
         distinct = style()
@@ -473,7 +510,7 @@ def verify_custom_font_defaults(installation, profile, report):
                 'Default removed a distinct fallback stack sharing the same primary font')
         report['defaultPreservedDistinctSamePrimaryFallback'] = True
     finally:
-        custom.write_bytes(original)
+        write_custom(original, 'restore original fixture configuration')
         compile_appearance()
 
 
@@ -548,7 +585,7 @@ def validate(args, report):
 
         report['phase'] = 'apply Default through native settings'
         default_report = {}
-        apply_through_settings(installation, initial_font, 'Microsoft YaHei', default_report)
+        apply_through_settings(installation, profile, initial_font, 'Microsoft YaHei', default_report)
         default_frame, offset = wait_for_frame(trace, args.server_pid, offset, 'Microsoft YaHei')
         require((before.window, before.composition, before.selected, before.count) ==
                 (default_frame.window, default_frame.composition,
@@ -557,7 +594,7 @@ def validate(args, report):
         report['defaultApply'] = default_report
         report['defaultFrame'] = asdict(default_frame)
         report['phase'] = 'native appearance-only apply'
-        apply_through_settings(installation, 'Microsoft YaHei', replacement_font, report)
+        apply_through_settings(installation, profile, 'Microsoft YaHei', replacement_font, report)
 
         # Observe the real repaint before sending any further IPC request.
         report['phase'] = 'repaint and compare'
