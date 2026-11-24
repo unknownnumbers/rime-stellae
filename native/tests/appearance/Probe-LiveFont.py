@@ -344,6 +344,34 @@ def preview_and_cancel(installation, profile, initial_font, report):
                 previous_handle = handle
             require(len(set(variants.values())) == 4,
                     'The four font choices did not produce distinct rendered previews')
+            assets = [directory / name for directory in [profile / 'preview', installation / 'data/preview']
+                      for name in ['color_scheme_reference_gray_sc.png', 'color_scheme_reference_gray.png']
+                      if (directory / name).is_file()]
+            require(assets, 'The fixture has no reference-theme preview files')
+            saved = [(path, path.read_bytes(), path.stat()) for path in assets]
+            try:
+                assets[0].write_bytes(b'not a PNG: synthetic fixture')
+                settings.select_font_by_keyboard(appearance, combo,
+                                                 font_item(items, 'Noto Sans CJK SC'))
+                preview = settings.get_child(appearance, PREVIEW)
+                require(settings.send(preview, STM_GETIMAGE, IMAGE_BITMAP) == 0,
+                        'A failed preview load retained the previous theme bitmap')
+                for path in assets:
+                    path.unlink()
+                settings.select_font_by_keyboard(appearance, combo,
+                                                 font_item(items, 'Noto Sans CJK HK'))
+                settings.select_font_by_keyboard(appearance, combo,
+                                                 font_item(items, 'Noto Sans CJK SC'))
+                require(settings.send(preview, STM_GETIMAGE, IMAGE_BITMAP) == 0,
+                        'A missing preview retained the previous theme bitmap')
+            finally:
+                for path, content, stat in saved:
+                    path.write_bytes(content)
+                    os.utime(path, ns=(stat.st_atime_ns, stat.st_mtime_ns))
+            settings.select_font_by_keyboard(appearance, combo,
+                                             font_item(items, 'Noto Sans CJK HK'))
+            settings.preview_fingerprint(appearance)
+            report['failedAndMissingPreviewCleared'] = True
             settings.cancel(appearance)
             require(process.wait(timeout=30) == 0, 'Native preview settings did not cancel cleanly')
             require(configuration_snapshot(profile) == before,
@@ -457,6 +485,17 @@ def verify_custom_font_defaults(installation, profile, report):
                 'Default did not reset inherited fonts while preserving a distinct custom font')
         report['customStackPreservedByUnrelatedTheme'] = True
         report['defaultClearedInheritedStackOnly'] = True
+        distinct_label = 'Microsoft YaHei, Segoe UI'
+        patch['style/label_font_face'] = distinct_label
+        custom.write_text(yaml.safe_dump(data, allow_unicode=True, sort_keys=False), encoding='utf-8')
+        compile_appearance()
+        configure(True)
+        distinct = style()
+        require(distinct['font_face'] == 'Microsoft YaHei' and
+                distinct['label_font_face'] == distinct_label and
+                distinct['comment_font_face'] == 'Consolas',
+                'Default removed a distinct fallback stack sharing the same primary font')
+        report['defaultPreservedDistinctSamePrimaryFallback'] = True
     finally:
         custom.write_bytes(original)
         compile_appearance()

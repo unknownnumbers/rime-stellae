@@ -1355,7 +1355,7 @@ index 587cbc714149302897dfebe179804fba7131f1bc..48cbd11eb79476e04cb445f40667902b
    if (ret == ERROR_SUCCESS) {
      WCHAR value[MAX_PATH];
 diff --git a/WeaselDeployer/UIStyleSettings.cpp b/WeaselDeployer/UIStyleSettings.cpp
-index 22e7380a70240b15fbf0406243d8daa5fc5b0064..6a8adf774d1c024c7a962360035c82d434e5b740 100644
+index 22e7380a70240b15fbf0406243d8daa5fc5b0064..372d6d55867d5399400fb515044c3bfc98bceeef 100644
 --- a/WeaselDeployer/UIStyleSettings.cpp
 +++ b/WeaselDeployer/UIStyleSettings.cpp
 @@ -1,7 +1,39 @@
@@ -1434,7 +1434,7 @@ index 22e7380a70240b15fbf0406243d8daa5fc5b0064..6a8adf774d1c024c7a962360035c82d4
  }
  
  std::string UIStyleSettings::GetActiveColorScheme() {
-@@ -73,3 +118,64 @@ bool UIStyleSettings::SelectColorScheme(const std::string& color_scheme_id) {
+@@ -73,3 +118,66 @@ bool UIStyleSettings::SelectColorScheme(const std::string& color_scheme_id) {
                           color_scheme_id.c_str());
    return true;
  }
@@ -1490,9 +1490,11 @@ index 22e7380a70240b15fbf0406243d8daa5fc5b0064..6a8adf774d1c024c7a962360035c82d4
 +  for (const char* key : {"style/label_font_face", "style/comment_font_face"}) {
 +    const auto stack = FontSetting(&config, key);
 +    if (!stack.empty() && PrimaryFontFamily(stack) == active_family) {
-+    const auto adjusted = family.empty()
-+                              ? std::string(kDefaultCandidateFont)
-+                              : ReplacePrimaryFont(stack, family);
++      const auto adjusted =
++          family.empty() && stack == active_stack
++              ? std::string(kDefaultCandidateFont)
++              : ReplacePrimaryFont(stack, family.empty() ? kDefaultCandidateFont
++                                                         : family);
 +      if (!api_->customize_string(settings_, key, adjusted.c_str()))
 +        return false;
 +    }
@@ -1519,7 +1521,7 @@ index f229eecb3e03de91bca682f82aa4c7ac25d8258a..81c806a216a1dd63cb3db3bdafb1aaa5
    RimeCustomSettings* settings() { return settings_; }
  
 diff --git a/WeaselDeployer/UIStyleSettingsDialog.cpp b/WeaselDeployer/UIStyleSettingsDialog.cpp
-index b00e82de96f97cabeecd35e9f2c7e03a84c46503..4bdc90a2e4d53edab079d0883107aa596739c905 100644
+index b00e82de96f97cabeecd35e9f2c7e03a84c46503..2cd9c16717d478f585c8da0569e6ede8322d3a19 100644
 --- a/WeaselDeployer/UIStyleSettingsDialog.cpp
 +++ b/WeaselDeployer/UIStyleSettingsDialog.cpp
 @@ -2,10 +2,15 @@
@@ -1578,16 +1580,20 @@ index b00e82de96f97cabeecd35e9f2c7e03a84c46503..4bdc90a2e4d53edab079d0883107aa59
  
    Populate();
  
-@@ -49,7 +74,21 @@ LRESULT UIStyleSettingsDialog::OnClose(UINT, WPARAM, LPARAM, BOOL&) {
+@@ -49,7 +74,25 @@ LRESULT UIStyleSettingsDialog::OnClose(UINT, WPARAM, LPARAM, BOOL&) {
    return 0;
  }
  
 +LRESULT UIStyleSettingsDialog::OnDestroy(UINT, WPARAM, LPARAM, BOOL&) {
++  ClearPreview();
++  return 0;
++}
++
++void UIStyleSettingsDialog::ClearPreview() {
 +  const HBITMAP previous = preview_.SetBitmap(NULL);
 +  if (previous && previous != static_cast<HBITMAP>(image_))
 +    DeleteObject(previous);
 +  image_.Destroy();
-+  return 0;
 +}
 +
  LRESULT UIStyleSettingsDialog::OnOK(WORD, WORD code, HWND, BOOL&) {
@@ -1600,7 +1606,7 @@ index b00e82de96f97cabeecd35e9f2c7e03a84c46503..4bdc90a2e4d53edab079d0883107aa59
    EndDialog(code);
    return 0;
  }
-@@ -63,17 +102,34 @@ LRESULT UIStyleSettingsDialog::OnColorSchemeSelChange(WORD, WORD, HWND, BOOL&) {
+@@ -63,17 +106,36 @@ LRESULT UIStyleSettingsDialog::OnColorSchemeSelChange(WORD, WORD, HWND, BOOL&) {
    return 0;
  }
  
@@ -1613,10 +1619,14 @@ index b00e82de96f97cabeecd35e9f2c7e03a84c46503..4bdc90a2e4d53edab079d0883107aa59
 +}
 +
  void UIStyleSettingsDialog::Preview(int index) {
-   if (index < 0 || index >= (int)preset_.size())
+-  if (index < 0 || index >= (int)preset_.size())
++  if (index < 0 || index >= (int)preset_.size()) {
++    ClearPreview();
      return;
 -  const std::string file_path(
 -      settings_->GetColorSchemePreview(preset_[index].color_scheme_id));
+-  if (file_path.empty())
++  }
 +  const int font_index = select_font_.GetCurSel();
 +  const std::string family =
 +      font_index >= 0 && font_index < static_cast<int>(fonts_.size())
@@ -1624,28 +1634,28 @@ index b00e82de96f97cabeecd35e9f2c7e03a84c46503..4bdc90a2e4d53edab079d0883107aa59
 +          : std::string();
 +  const std::string file_path(settings_->GetColorSchemePreview(
 +      preset_[index].color_scheme_id, family));
-   if (file_path.empty())
++  if (file_path.empty()) {
++    ClearPreview();
      return;
 -  image_.Destroy();
++  }
 +  CImage next_image;
    // it is from ansi coding, not utf8
 -  image_.Load(acptow(file_path).c_str());
 -  if (!image_.IsNull()) {
 -    preview_.SetBitmap(image_);
 +  next_image.Load(acptow(file_path).c_str());
++  ClearPreview();
 +  if (!next_image.IsNull()) {
-+    const HBITMAP previous = preview_.SetBitmap(next_image);
-+    if (previous && previous != static_cast<HBITMAP>(image_))
-+      DeleteObject(previous);
-+    image_.Destroy();
++    preview_.SetBitmap(next_image);
 +    image_.Attach(next_image.Detach());
    }
  }
 diff --git a/WeaselDeployer/UIStyleSettingsDialog.h b/WeaselDeployer/UIStyleSettingsDialog.h
-index e81aad77b5e2fdd662a7281e9bcf4a8677a0b9c8..99152a10ff742f186d95fb8db45c608563d8a6c5 100644
+index e81aad77b5e2fdd662a7281e9bcf4a8677a0b9c8..8c034da65aa4465bf58479cb8717e5b7e18079d6 100644
 --- a/WeaselDeployer/UIStyleSettingsDialog.h
 +++ b/WeaselDeployer/UIStyleSettingsDialog.h
-@@ -13,25 +13,32 @@ class UIStyleSettingsDialog : public CDialogImpl<UIStyleSettingsDialog> {
+@@ -13,25 +13,33 @@ class UIStyleSettingsDialog : public CDialogImpl<UIStyleSettingsDialog> {
   protected:
    BEGIN_MSG_MAP(UIStyleSettingsDialog)
    MESSAGE_HANDLER(WM_INITDIALOG, OnInitDialog)
@@ -1664,6 +1674,7 @@ index e81aad77b5e2fdd662a7281e9bcf4a8677a0b9c8..99152a10ff742f186d95fb8db45c6085
 +  LRESULT OnCandidateFontSelChange(WORD, WORD, HWND, BOOL&);
  
    void Populate();
++  void ClearPreview();
    void Preview(int index);
  
    UIStyleSettings* settings_;

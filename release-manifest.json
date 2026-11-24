@@ -143,7 +143,7 @@
     {
       "path": "installer/bundle-inputs.json",
       "bytes": 5390,
-      "sha256": "240b6c7d919346854f32bf00ffbaac95fd58703f7bb37fba16e65f5a1b6e97cf"
+      "sha256": "b019ac3c4b2735e686a85d3fab6f63c9a360fc3f323b49e4f635b22453ce79d5"
     },
     {
       "path": "installer/bundle.nsi",
@@ -498,7 +498,7 @@
     {
       "path": "native/frontend-source-files.json",
       "bytes": 22527,
-      "sha256": "50218cc8b3ab708c5ce9092e0d7eea8985118fe88af9a2126d3b98f3fab3ed2d"
+      "sha256": "2c70e24e1c1dd10fcddbe1c13c7db8421d1a8479835ddcd43b24cf576ca98ea4"
     },
     {
       "path": "native/notification-inputs.json",
@@ -508,7 +508,7 @@
     {
       "path": "native/source-manifest.json",
       "bytes": 12544,
-      "sha256": "b8dc3611f886a94dcca37e3b397ca8af436a27e653184bbafc604c867a4fe7ec"
+      "sha256": "9048251fc43711c3999685b50dd638dd1d892262e2d6d61a13ecdf92038bef56"
     },
     {
       "path": "native/tests/appearance/Add-PaintTrace.ps1",
@@ -522,8 +522,8 @@
     },
     {
       "path": "native/tests/appearance/Probe-LiveFont.py",
-      "bytes": 29607,
-      "sha256": "fd4f86e04a79faa8643d25b8ab629f144877af38e55f68616aa8d1d39028ae3d"
+      "bytes": 32149,
+      "sha256": "df91758a2a03acd14d7647f79ea491a57506c9dbb5672ba3f90283e5f873ae49"
     },
     {
       "path": "native/tests/appearance/Test-LiveFont.ps1",
@@ -727,8 +727,8 @@
     },
     {
       "path": "native/weasel/stellae-61052.patch",
-      "bytes": 980724,
-      "sha256": "188eefdfde5e8467a7c11e4e6e94420aa6d6e5db051ce65da5aabbd4b5b07204"
+      "bytes": 980943,
+      "sha256": "e6ef195339a1f4037e7193f5b73f68b2851715e18bf8731d50eb6e5bcf4b9442"
     },
     {
       "path": "schemes/.gitattributes",

@@ -1,7 +1,7 @@
 {
   "schema": "stellae-frontend-source-files/1",
   "upstreamCommit": "9cc96e20dc71b80876b12f689bb5863c76c2a7ed",
-  "patchSha256": "188eefdfde5e8467a7c11e4e6e94420aa6d6e5db051ce65da5aabbd4b5b07204",
+  "patchSha256": "e6ef195339a1f4037e7193f5b73f68b2851715e18bf8731d50eb6e5bcf4b9442",
   "files": [
     {
       "path": "RimeWithWeasel/RimeWithWeasel.cpp",
@@ -45,8 +45,8 @@
     },
     {
       "path": "WeaselDeployer/UIStyleSettings.cpp",
-      "sha256": "421b77236c6e5068001ee084f46cc9ff9d1736a3166e46d1c98f02f282b2c924",
-      "bytes": 6558,
+      "sha256": "24f6ac563d8cdf5b466c99ad6dce5c7201abba99f2557fd8db534057e2145306",
+      "bytes": 6663,
       "replayMatchesFrozen": true
     },
     {
@@ -57,14 +57,14 @@
     },
     {
       "path": "WeaselDeployer/UIStyleSettingsDialog.cpp",
-      "sha256": "d98b74d7d6806e3fc2fe610cc4cb7ecd4d092a66def7241abe51aaefd6cfafc2",
-      "bytes": 4296,
+      "sha256": "24282174fbf31c6f72622983d009e9450f21e2b18da358d8c4cb615d828cba65",
+      "bytes": 4299,
       "replayMatchesFrozen": true
     },
     {
       "path": "WeaselDeployer/UIStyleSettingsDialog.h",
-      "sha256": "e6aba3bc7e13bab2341ceb8eb35734d9be2c5f1ca3f1b54dab984fe862ed3059",
-      "bytes": 1317,
+      "sha256": "02f63b5dd4886fcf80efa94e0b04185fdb7c1471fe19ac809bf12a492fe76d7c",
+      "bytes": 1341,
       "replayMatchesFrozen": true
     },
     {
