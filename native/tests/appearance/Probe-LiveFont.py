@@ -705,7 +705,9 @@ def verify_custom_font_defaults(installation, profile, report):
                 if not path.is_file():
                     continue
                 raw, stat = path.read_bytes(), path.stat()
-                baseline = yaml.safe_load(raw) or {}
+                # The upstream baseline uses tabs immediately before comments;
+                # normalize that separator only in the stricter parser's copy.
+                baseline = yaml.safe_load(raw.replace(b'\t#', b' #')) or {}
                 removed = False
                 for scope in (baseline, baseline.get('patch', {})):
                     if not isinstance(scope, dict):
