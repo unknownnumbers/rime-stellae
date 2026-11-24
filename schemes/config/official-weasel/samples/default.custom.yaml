@@ -1,8 +1,8 @@
 # Shared Stellae preset. PC Shift behavior is owned by probe_global_mode.
 patch:
   schema_list:
-    - schema: pc_research
-    - schema: jp_sela
+    - schema: cn_stellae
+    - schema: jp_stellae
   menu/page_size: 6
   switcher/hotkeys: [Control+grave]
   key_binder/bindings:
@@ -16,8 +16,8 @@ patch:
     - {when: composing, accept: Control+d, send: Right}
     - {when: has_menu, accept: Control+w, send: Page_Up}
     - {when: has_menu, accept: Control+s, send: Page_Down}
-    - {when: always, accept: Control+e, select: jp_sela}
-    - {when: always, accept: Control+r, select: pc_research}
+    - {when: always, accept: Control+e, select: jp_stellae}
+    - {when: always, accept: Control+r, select: cn_stellae}
     - {when: always, accept: Control+Shift+f, toggle: simplification}
     - {when: always, accept: Control+Shift+F, toggle: simplification}
     - {when: always, accept: Control+period, toggle: ascii_punct}

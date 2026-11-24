@@ -61,7 +61,7 @@ try {
         (Join-Path $user 'project_radical.schema.yaml')
         (Join-Path $user 'project_radical_parts.schema.yaml')
         (Join-Path $user 'english_full.schema.yaml')
-        (Join-Path $user 'pc_research.schema.yaml')
+        (Join-Path $user 'cn_stellae.schema.yaml')
     )
     foreach ($schema in $schemas) {
         if (-not [RimeProbe]::RimeDeploySchema($schema)) {
@@ -70,7 +70,7 @@ try {
     }
     $result.DeployMilliseconds = $watch.ElapsedMilliseconds
     $session = [RimeProbe]::RimeCreateSession()
-    if (-not [RimeProbe]::RimeSelectSchema($session,'pc_research')) { throw 'Schema selection failed' }
+    if (-not [RimeProbe]::RimeSelectSchema($session,'cn_stellae')) { throw 'Schema selection failed' }
     $result.Engine = [RimeProbe]::Version()
     Check 'official-engine-version' ($result.Engine -ceq '1.13.1') $result.Engine
     Check 'default-SC' ([RimeProbe]::RimeGetOption($session,'simplification') -eq 1)
@@ -134,7 +134,7 @@ try {
     $result.LearningExportRows = [RimeProbe]::ExportUserDict('luna_pinyin',$export)
     Check 'learning-export' ((Test-Path -LiteralPath $export) -and [IO.File]::ReadAllText($export,$utf8).Contains('可能'))
     $session = [RimeProbe]::RimeCreateSession()
-    if (-not [RimeProbe]::RimeSelectSchema($session,'pc_research')) { throw 'Schema reselection failed' }
+    if (-not [RimeProbe]::RimeSelectSchema($session,'cn_stellae')) { throw 'Schema reselection failed' }
     [RimeProbe]::RimeSetOption($session,'research_english',1)
     foreach ($case in @(@('hello','hello'), @('hellp','hello'), @('differential','differential'))) {
         $raw,$target = $case

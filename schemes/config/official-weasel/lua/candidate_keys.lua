@@ -44,7 +44,7 @@ function M.func(key, env)
   local code = key.keycode
   local ctx = env.engine.context
   if (code == 0xff09 or code == 0xff08) and plain(key)
-      and env.engine.schema.schema_id == 'pc_research'
+      and env.engine.schema.schema_id == 'cn_stellae'
       and not ctx:get_option('ascii_mode') and not ctx:get_option('research_english')
       and not ctx.composition:empty() then
     local seg = ctx.composition:back()

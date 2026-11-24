@@ -1,11 +1,11 @@
 -- SPDX-License-Identifier: GPL-3.0-only
-local catalog = require('rymcp_dlc')
+local catalog = require('stellae_dlc')
 local M = {}
 local managed = {
-  rymcp_dlc_math=true, rymcp_dlc_physics=true,
-  rymcp_dlc_computer=true, rymcp_dlc_poetry=true,
+  stellae_dlc_math=true, stellae_dlc_physics=true,
+  stellae_dlc_computer=true, stellae_dlc_poetry=true,
 }
-for index = 0, 31 do managed[string.format('rymcp_dlc_poetry_%02d', index)] = true end
+for index = 0, 31 do managed[string.format('stellae_dlc_poetry_%02d', index)] = true end
 
 function M.configure(config, engine)
   local snapshot = catalog.modules(engine)

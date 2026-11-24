@@ -27,7 +27,7 @@ The output includes `config/pc`, `config/official-weasel` and provenance manifes
 
 Run `python scripts/data/rebuild_base.py` to reproduce the base dictionaries and English indexes from the committed fixed inputs, then refresh the official derivation. See [base dictionary sources](sources/base-dictionaries.md).
 
-Run `python scripts/build_dlc.py` to generate optional catalogs offline from the locked public snapshots and pinned reading dependencies. Expanded modules are written to `out/dlc/modules/rymcp_dlc/` and ZIPs to `out/dlc/`. These are generated outputs. Fixed input archives under `dlc/sources/` are source materials. See [DLC sources](dlc-sources.md).
+Run `python scripts/build_dlc.py` to generate optional catalogs offline from the locked public snapshots and pinned reading dependencies. Expanded modules are written to `out/dlc/modules/stellae_dlc/` and ZIPs to `out/dlc/`. These are generated outputs. Fixed input archives under `dlc/sources/` are source materials. See [DLC sources](dlc-sources.md).
 
 ## Validate
 

@@ -7,7 +7,7 @@ function M.func(key, env)
   if (code ~= 0x22 and code ~= 0x27 and code ~= 0x3b and code ~= 0xffff) or key:release() or key:ctrl()
       or key:alt() or key:super()
       or ((code == 0xffff or code == 0x3b or code == 0x27) and key:shift())
-      or env.engine.schema.schema_id ~= 'pc_research' then return 2 end
+      or env.engine.schema.schema_id ~= 'cn_stellae' then return 2 end
   local ctx = env.engine.context
   if ctx:get_option('ascii_mode') or ctx:get_option('research_english')
       or ctx.input == '' or ctx.composition:empty() then return 2 end
@@ -50,7 +50,7 @@ M.segmentor = {}
 
 function M.segmentor.func(segmentation, env)
   local ctx = env.engine.context
-  if env.engine.schema.schema_id ~= 'pc_research'
+  if env.engine.schema.schema_id ~= 'cn_stellae'
       or ctx:get_option('ascii_mode') or ctx:get_option('research_english') then return true end
   local start = segmentation:get_current_start_position()
   local input = segmentation.input:sub(start + 1)

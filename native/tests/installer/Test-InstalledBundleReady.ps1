@@ -35,7 +35,7 @@ function Query([string]$Raw){
   return [RimeProbe]::Snapshot($session,250)
 }
 try{
-  foreach($name in @('default.yaml','pc_research.schema.yaml','jp_sela.schema.yaml')){
+  foreach($name in @('default.yaml','cn_stellae.schema.yaml','jp_stellae.schema.yaml')){
     $path=Join-Path $user ('build/'+$name)
     Check ('installer-compiled-'+$name) (Test-Path -LiteralPath $path -PathType Leaf)
     $compiled[$name]=@{hash=(Get-FileHash -LiteralPath $path).Hash;written=(Get-Item -LiteralPath $path).LastWriteTimeUtc.Ticks}
@@ -45,8 +45,8 @@ try{
     }
   }
   $defaults=[IO.File]::ReadAllText((Join-Path $user 'build/default.yaml'))
-  Check 'installer-default-Chinese-entry' ($defaults -match '(?m)^\s*-\s*schema:\s*pc_research\s*$')
-  Check 'installer-default-Japanese-entry' ($defaults -match '(?m)^\s*-\s*schema:\s*jp_sela\s*$')
+  Check 'installer-default-Chinese-entry' ($defaults -match '(?m)^\s*-\s*schema:\s*cn_stellae\s*$')
+  Check 'installer-default-Japanese-entry' ($defaults -match '(?m)^\s*-\s*schema:\s*jp_stellae\s*$')
   $api=Get-Content -LiteralPath (Join-Path $SchemeSource 'tests/RimeProbe.cs') -Raw
   Add-Type -TypeDefinition $api.Replace('__RIME_ENGINE_DLL__',$engine)
   $env:PATH=(Split-Path $engine)+';'+$env:PATH
@@ -66,7 +66,7 @@ try{
   $session=[RimeProbe]::RimeCreateSession()
   Check 'installed-session-created' ($session -ne [UIntPtr]::Zero)
   $buffer=New-Object byte[] 256
-  Check 'installed-initial-Chinese-schema' ([bool][RimeProbe]::RimeGetCurrentSchema($session,$buffer,[UIntPtr]::new([uint32]256)) -and [Text.Encoding]::UTF8.GetString($buffer).Trim([char]0) -ceq 'pc_research')
+  Check 'installed-initial-Chinese-schema' ([bool][RimeProbe]::RimeGetCurrentSchema($session,$buffer,[UIntPtr]::new([uint32]256)) -and [Text.Encoding]::UTF8.GetString($buffer).Trim([char]0) -ceq 'cn_stellae')
   Check 'installed-initial-SC-output' ([RimeProbe]::RimeGetOption($session,'simplification') -eq 1)
   $state=Query 'nihao'
   $helloChinese=([string][char]0x4f60)+[char]0x597d
@@ -77,7 +77,7 @@ try{
   Check 'installed-English-candidate' ($state.Candidates -ccontains 'hello')
   [RimeProbe]::RimeClearComposition($session)
   [RimeProbe]::RimeSetOption($session,'research_english',0)
-  Check 'installed-Japanese-schema-selectable' ([bool][RimeProbe]::RimeSelectSchema($session,'jp_sela'))
+  Check 'installed-Japanese-schema-selectable' ([bool][RimeProbe]::RimeSelectSchema($session,'jp_stellae'))
   [RimeProbe]::RimeSetOption($session,'probe_options_ready',1)
   $state=Query 'qtaberu'
   $eatJapanese=([string][char]0x98df)+[char]0x3079+[char]0x308b
@@ -90,7 +90,7 @@ try{
 }finally{
   if($session -ne [UIntPtr]::Zero){
     [RimeProbe]::RimeClearComposition($session)
-    [RimeProbe]::RimeSelectSchema($session,'pc_research')|Out-Null
+    [RimeProbe]::RimeSelectSchema($session,'cn_stellae')|Out-Null
     [RimeProbe]::RimeDestroySession($session)|Out-Null
   }
   if($initialized){[RimeProbe]::RimeFinalize()}

@@ -45,7 +45,7 @@ try {
     [RimeProbe]::RimeSetup([ref]$traits)
     [RimeProbe]::RimeInitialize([ref]$traits)
     $s = [RimeProbe]::RimeCreateSession()
-    if (-not [RimeProbe]::RimeSelectSchema($s, 'pc_research')) { throw 'Cannot load pc_research.' }
+    if (-not [RimeProbe]::RimeSelectSchema($s, 'cn_stellae')) { throw 'Cannot load cn_stellae.' }
     [RimeProbe]::RimeSetOption($s, 'probe_options_ready', 1)
     [RimeProbe]::RimeSetOption($s, 'ascii_mode', 0)
     [RimeProbe]::RimeSetOption($s, 'research_english', 0)

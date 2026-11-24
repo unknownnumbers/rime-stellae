@@ -12,7 +12,7 @@ JMdict來源為[官方JMdict_e.gz](https://www.edrdg.org/pub/Nihongo/JMdict_e.gz
 
 ## 公開版假名/羅馬字基底
 
-歷史產生器曾從Selaube原假名表取得羅馬字映射. 本工程後續已有自己的假名、漢字與q/x/v規則, 不以兼容原方案為目標. 公開版由本工程按這些需求獨立編寫的`config/pc/tools/generate-japanese-base.py`生成假名表及322項`japanese-q-canonical.json`, 為現用q資料再生提供顯式來源; 原Sela schema及碼表正文沒有整檔打包. 檔名/schema ID `jp_sela`是目前模組使用的識別碼, 不代表原表沿用. 感謝[Selaube/rime-jp_sela](https://github.com/Selaube/rime-jp_sela) 提供早期設計借鑒; 未找到其整份原檔的明確再分發條款, 因此不將它改標GPL.
+歷史產生器曾從Selaube原假名表取得羅馬字映射. 本工程後續已有自己的假名、漢字與q/x/v規則, 不以兼容原方案為目標. 公開版由本工程按這些需求獨立編寫的`config/pc/tools/generate-japanese-base.py`生成假名表及322項`japanese-q-canonical.json`, 為現用q資料再生提供顯式來源; 原Sela schema及碼表正文沒有整檔打包. 檔名/schema ID `jp_stellae`是目前模組使用的識別碼, 不代表原表沿用. 感謝[Selaube/rime-jp_sela](https://github.com/Selaube/rime-jp_sela) 提供早期設計借鑒; 未找到其整份原檔的明確再分發條款, 因此不將它改標GPL.
 
 新假名生成程式/配置依GPLv3; JMdict衍生資料仍依CC BY-SA4.0. 公開生成器與322項inventory可獨立檢查. 本次已使用固定JMdict XML與新inventory完整重生423,663行q詞典, SHA256為`a88dbdca92805084447df214ce135402b58b1842844fcc7ffbfa8f4af1be7e05`, 與隨附詞典逐位元相同; 沒有使用原Sela詞典作再生輸入. 這項資料重生不等於真應用輸入已逐項驗收. 實際檢查與使用範圍見[日語PC說明](../../config/pc/JAPANESE.md).
 

@@ -78,16 +78,19 @@ def stage_math_upgrade(repo, stage, archive_path, inputs):
         'NOTICE-science-sources.txt', 'NOTICE.txt', 'SOURCE.json',
     )
     with zipfile.ZipFile(archive_path) as archive:
+        # This immutable input predates the module namespace change. Its
+        # English catalog and prepared index are copied without rebuilding.
+        legacy_root = 'rymcp_dlc/math/'
         for name, expected in (
             ('english.tsv', spec['math']['catalogSha256']),
             *[(f'english_index/{row["name"]}', row['sha256']) for row in spec['math']['index']],
         ):
-            if hashlib.sha256(archive.read(f'rymcp_dlc/math/{name}')).hexdigest() != expected:
+            if hashlib.sha256(archive.read(legacy_root + name)).hexdigest() != expected:
                 raise SystemExit(f'The math upgrade archive does not match {name}.')
         for name in (*notices, *[f'english_index/{row["name"]}' for row in spec['math']['index']]):
             target = migrations/'math'/safe_name(name)
             target.parent.mkdir(parents=True, exist_ok=True)
-            target.write_bytes(archive.read(f'rymcp_dlc/math/{name}'))
+            target.write_bytes(archive.read(legacy_root + name))
 
 
 def stage_default_fonts(repo, stage, source):

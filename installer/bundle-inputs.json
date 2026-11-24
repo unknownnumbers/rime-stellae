@@ -1,6 +1,6 @@
 {
   "format": "stellae-bundle-inputs-v2",
-  "bundleVersion": "2026.11.25.2",
+  "bundleVersion": "2026.11.25.3",
   "frontendVersion": "0.17.4.61052",
   "frontendInstaller": {
     "url": "https://github.com/unknownnumbers/rime-stellae/releases/download/v0.17.4.61052/stellae-0.17.4.61052-installer.exe",
@@ -17,7 +17,7 @@
   "schemes": {
     "sourceDirectory": "schemes",
     "profile": "stellae",
-    "version": "2026.11.25.2"
+    "version": "2026.11.25.3"
   },
   "nativeEngines": {
     "x64": "engine-n01",
@@ -67,7 +67,8 @@
       "include/ShiftKeySnapshotWin.h": "827ba6411731876d4d6f28a6724aae55243ed989ef93dce9a000a76d09369a9e",
       "include/StellaeIdentity.h": "665df00b74dfa51219d3d9b53b8fc749e6377ef6185bd27a750fb81aa841a2ab",
       "include/WeaselIPC.h": "ff81fbbcc0a8c52e6ad0df99a8a9e39b92d88a7760dd5cdf8beaa36bb0278e16",
-      "include/WeaselUI.h": "13662010d99f7204e5d484882fc5ecaa81624b01359512a5c5fcdaa219d8a7d7"
+      "include/WeaselUI.h": "13662010d99f7204e5d484882fc5ecaa81624b01359512a5c5fcdaa219d8a7d7",
+      "WeaselUI/JpCommentStyle.h": "fc9593fb6cc305bf2387611913eb5096219fedb1742b5276dd47cfaf2b393f30"
     }
   },
   "indexedMath": {

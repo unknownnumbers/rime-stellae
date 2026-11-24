@@ -78,7 +78,7 @@ function Check([string]$name, [bool]$passed, $detail=$null) {
 [RimeProbe]::RimeDeployerInitialize([ref]$traits)
 try {
     $s = [RimeProbe]::RimeCreateSession()
-    if (-not [RimeProbe]::RimeSelectSchema($s, 'pc_research')) { throw 'Cannot load pc_research' }
+    if (-not [RimeProbe]::RimeSelectSchema($s, 'cn_stellae')) { throw 'Cannot load cn_stellae' }
     [RimeProbe]::RimeSetOption($s, 'probe_options_ready', 1)
     foreach ($sc in $false, $true) {
         $label = if ($sc) { 'SC' } else { 'TC' }
@@ -166,7 +166,7 @@ try {
     Check 'no-discarded-syllable-learning' ($wrong.Count -eq 0) $wrong
     if (-not $SkipJapanese) {
         $s = [RimeProbe]::RimeCreateSession()
-        if (-not [RimeProbe]::RimeSelectSchema($s, 'jp_sela')) { throw 'Cannot load jp_sela' }
+        if (-not [RimeProbe]::RimeSelectSchema($s, 'jp_stellae')) { throw 'Cannot load jp_stellae' }
         foreach ($case in @(
             @{Raw='qQtaberunabebutahana';First='食べる';Word='鍋蓋';Key=0x5b;Text='食べる鍋';Last='花'},
             @{Raw='qQsakurakoujihana';First='桜';Word='小路';Key=0x5d;Text='桜路';Last='花'},

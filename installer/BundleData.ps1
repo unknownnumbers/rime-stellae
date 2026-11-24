@@ -73,7 +73,7 @@ if($notices -and $PreviousPackageManifest){
   if($priorNotices){foreach($entry in $priorNotices.files){$previous[$entry.path]=$entry}}
 }
 function Add-LegacyMathIndex($Migration,$MigrationDirectory,[string]$UserRoot){
-  $math=Resolve-Child $UserRoot 'rymcp_dlc/math'
+  $math=Resolve-Child $UserRoot 'stellae_dlc/math'
   $catalog=Resolve-Child $math 'english.tsv'
   $manifest=Resolve-Child $math 'manifest.tsv'
   if(-not (Test-Path -LiteralPath $catalog -PathType Leaf) -or

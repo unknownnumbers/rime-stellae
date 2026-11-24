@@ -38,11 +38,11 @@ if(Test-Path -LiteralPath (Join-Path $standard 'opencc')){Copy-Item -LiteralPath
 [IO.File]::WriteAllText((Join-Path $user '.synthetic-profile.json'),'{"kind":"fixed-synthetic-exact-profile","format":1}',$utf8)
 foreach($pair in @(@('observer.lua','cn_exact_test_observer.lua'),@('unit_runner.lua','cn_exact_unit_runner.lua'),@('processor_unit.lua','cn_exact_processor_unit.lua'))){Copy-Item -LiteralPath (Join-Path $PSScriptRoot ('exact_syllable/'+$pair[0])) -Destination (Join-Path $user ('lua/'+$pair[1]))}
 [IO.File]::AppendAllText((Join-Path $user 'rime.lua'),"`ncn_exact_test_observer = require('cn_exact_test_observer')`ncn_exact_unit_runner = require('cn_exact_unit_runner')`n",$utf8)
-[IO.File]::AppendAllText((Join-Path $user 'pc_research.custom.yaml'),"`n  'engine/processors/@before 0': lua_processor@cn_exact_test_observer`n  'engine/processors/@before 1': lua_processor@cn_exact_unit_runner`n",$utf8)
-$realJapanese=Test-Path -LiteralPath (Join-Path $user 'jp_sela.schema.yaml')
-$foreignSchema=if($realJapanese){'jp_sela'}else{'exact_foreign'}
+[IO.File]::AppendAllText((Join-Path $user 'cn_stellae.custom.yaml'),"`n  'engine/processors/@before 0': lua_processor@cn_exact_test_observer`n  'engine/processors/@before 1': lua_processor@cn_exact_unit_runner`n",$utf8)
+$realJapanese=Test-Path -LiteralPath (Join-Path $user 'jp_stellae.schema.yaml')
+$foreignSchema=if($realJapanese){'jp_stellae'}else{'exact_foreign'}
 $tabWordNavigation=$realJapanese
-[IO.File]::AppendAllText((Join-Path $user 'default.custom.yaml'),"`n  'schema_list/=':`n    - schema: pc_research`n    - schema: $foreignSchema`n",$utf8)
+[IO.File]::AppendAllText((Join-Path $user 'default.custom.yaml'),"`n  'schema_list/=':`n    - schema: cn_stellae`n    - schema: $foreignSchema`n",$utf8)
 if(-not $realJapanese){
  $foreign=@"
 schema:
@@ -67,7 +67,7 @@ punctuator:
  [IO.File]::WriteAllText((Join-Path $user 'exact_foreign.dict.yaml'),"---`nname: exact_foreign`nversion: '1'`n...`n$foreignWord`tkana`t100`n",$utf8)
 }
 $sourceHashes=[ordered]@{}
-foreach($name in @('pc_research.schema.yaml','pc_research.custom.yaml','lua/cn_match.lua','lua/cn_translator.lua','lua/cn_preedit_spacing.lua','lua/cn_exact_spelling.lua','lua/cn_exact_processor.lua')){$sourceHashes[$name]=(Get-FileHash -LiteralPath (Join-Path $profile $name) -Algorithm SHA256).Hash.ToLowerInvariant()}
+foreach($name in @('cn_stellae.schema.yaml','cn_stellae.custom.yaml','lua/cn_match.lua','lua/cn_translator.lua','lua/cn_preedit_spacing.lua','lua/cn_exact_spelling.lua','lua/cn_exact_processor.lua')){$sourceHashes[$name]=(Get-FileHash -LiteralPath (Join-Path $profile $name) -Algorithm SHA256).Hash.ToLowerInvariant()}
 $registrationSource=if(Test-Path -LiteralPath (Join-Path $profile 'samples/rime.lua')){'samples/rime.lua'}else{'rime.lua'}
 $sourceHashes[$registrationSource]=(Get-FileHash -LiteralPath (Join-Path $profile $registrationSource) -Algorithm SHA256).Hash.ToLowerInvariant()
 Add-Type -TypeDefinition ([IO.File]::ReadAllText((Join-Path $repo 'tests/RimeProbe.cs'),$utf8).Replace('__RIME_ENGINE_DLL__',$dll))
@@ -132,7 +132,7 @@ function Close-Session {
         $script:s = [UIntPtr]::Zero
     }
 }
-function New-Session([string]$schema='pc_research', [bool]$english=$false) {
+function New-Session([string]$schema='cn_stellae', [bool]$english=$false) {
     Close-Session
     $script:s = [RimeProbe]::RimeCreateSession()
     if (-not [RimeProbe]::RimeSelectSchema($script:s, $schema)) { throw 'Synthetic schema unavailable.' }
@@ -215,8 +215,8 @@ try {
     [RimeProbe]::RimeInitialize([ref]$traits)
     [RimeProbe]::RimeDeployerInitialize([ref]$traits)
     Check 'native-workspace-deploy' ([RimeProbe]::RimeDeployWorkspace() -ne 0)
-    Check 'compiled-main-schema' (Test-Path -LiteralPath (Join-Path $user 'build/pc_research.schema.yaml'))
-    if ($realJapanese) { Check 'native-japanese-schema-deploy' ([RimeProbe]::RimeDeploySchema((Join-Path $user 'jp_sela.schema.yaml')) -ne 0) }
+    Check 'compiled-main-schema' (Test-Path -LiteralPath (Join-Path $user 'build/cn_stellae.schema.yaml'))
+    if ($realJapanese) { Check 'native-japanese-schema-deploy' ([RimeProbe]::RimeDeploySchema((Join-Path $user 'jp_stellae.schema.yaml')) -ne 0) }
     else { Check 'native-foreign-schema-deploy' ([RimeProbe]::RimeDeploySchema((Join-Path $user 'exact_foreign.schema.yaml')) -ne 0) }
     [RimeProbe]::RimeFinalize()
     [RimeProbe]::RimeInitialize([ref]$traits)
@@ -447,7 +447,7 @@ try {
     Quote
     Check 'quote-after-complete-composition-is-punctuation' ([RimeProbe]::Input($script:s) -ceq '' -and ($script:commits -join '').StartsWith('笑') -and ($script:commits -join '').Length -gt 1)
 
-    New-Session 'pc_research' $true
+    New-Session 'cn_stellae' $true
     [void](Query 'hello')
     Quote
     Commit-Is 'English-quote-keeps-literal-behavior' 'hello"'

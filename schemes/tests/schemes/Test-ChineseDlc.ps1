@@ -23,7 +23,7 @@ $words=@();foreach($cp in @(0x7532,0x4e59,0x4e19,0x4e01)){$words+=(([string][cha
 $overlapWord=([string][char]0x91cd)*2
 Write-Text (Join-Path $user 'rime.lua') ''
 if($Guarded){
- foreach($name in @('rymcp_dlc.lua','cn_dlc.lua','en_dlc_format.lua')){Write-Text (Join-Path $user ('lua/'+$name)) ([IO.File]::ReadAllText((Join-Path $repo ('config/pc/lua/'+$name)),$utf8))}
+ foreach($name in @('stellae_dlc.lua','cn_dlc.lua','en_dlc_format.lua')){Write-Text (Join-Path $user ('lua/'+$name)) ([IO.File]::ReadAllText((Join-Path $repo ('config/pc/lua/'+$name)),$utf8))}
  Write-Text (Join-Path $user 'rime.lua') @'
 dlc_synthetic = {
   init = function(env)
@@ -59,20 +59,20 @@ translator:
   enable_completion: false
   enable_sentence: false
 __patch:
-  - rymcp_dlc/math/words.dict:/patch?
-  - rymcp_dlc/physics/words.dict:/patch?
-  - rymcp_dlc/computer/words.dict:/patch?
-  - rymcp_dlc/poetry/words.dict:/patch?
+  - stellae_dlc/math/words.dict:/patch?
+  - stellae_dlc/physics/words.dict:/patch?
+  - stellae_dlc/computer/words.dict:/patch?
+  - stellae_dlc/poetry/words.dict:/patch?
 '@
 Write-Text (Join-Path $user 'dlc_synthetic.schema.yaml') ($schema+"`n")
 if($Guarded){Write-Text (Join-Path $user 'dlc_synthetic.schema.yaml') ($schema.Replace('translators: [script_translator]','translators: [lua_translator@dlc_synthetic]')+"`n")}
 Write-Text (Join-Path $user 'dlc_synthetic.dict.yaml') "---`nname: dlc_synthetic`nversion: '1'`nsort: by_weight`nuse_preset_vocabulary: false`n...`n$([char]0x4e00)`ta`t100`n$([char]0x4e8c)`tba`t100`n$([char]0x4e09)`tca`t100`n$([char]0x56db)`tda`t100`n$([char]0x4e94)`tfa`t100`n"
-foreach($id in $ids){Write-Text (Join-Path $user ('rymcp_dlc_'+$id+'.dict.yaml')) "---`nname: rymcp_dlc_$id`nversion: '1'`nsort: by_weight`nuse_preset_vocabulary: false`nimport_tables:`n  - rymcp_dlc/$id/words`n...`n"}
+foreach($id in $ids){Write-Text (Join-Path $user ('stellae_dlc_'+$id+'.dict.yaml')) "---`nname: stellae_dlc_$id`nversion: '1'`nsort: by_weight`nuse_preset_vocabulary: false`nimport_tables:`n  - stellae_dlc/$id/words`n...`n"}
 function Module-Text([int]$index,[string]$text=''){
  $id=$ids[$index];if(-not $text){$text=$words[$index]}
  $rows="$text`t$($codes[$index])`t100`n"
  if($index -lt 2){$rows+="$overlapWord`tba ca`t100`n"}
- return "---`nname: rymcp_dlc/$id/words`nversion: '1'`nsort: by_weight`nuse_preset_vocabulary: false`npatch:`n  translator/packs/+:`n    - rymcp_dlc_$id`n...`n$rows"
+ return "---`nname: stellae_dlc/$id/words`nversion: '1'`nsort: by_weight`nuse_preset_vocabulary: false`npatch:`n  translator/packs/+:`n    - stellae_dlc_$id`n...`n$rows"
 }
 function Adler32([byte[]]$data){
  [long]$a=1;[long]$b=0
@@ -80,7 +80,7 @@ function Adler32([byte[]]$data){
  return ('{0:x8}' -f [long]($b*65536+$a))
 }
 function Write-Module([int]$index,[string]$text=''){
- $directory=Join-Path $user ('rymcp_dlc/'+$ids[$index])
+ $directory=Join-Path $user ('stellae_dlc/'+$ids[$index])
  $value=Module-Text $index $text
  Write-Text (Join-Path $directory 'words.dict.yaml') $value
  if($Guarded){$bytes=$utf8.GetBytes($value);Write-Text (Join-Path $directory 'manifest.tsv') "format`t1`nid`t$($ids[$index])`nrevision`t1`nlanguages`tcn`nfile`twords.dict.yaml`t$($bytes.Length)`t$(Adler32 $bytes)`n"}
@@ -106,12 +106,12 @@ $errorText=$null;$boundary=$null
 try{
  [RimeProbe]::RimeSetup([ref]$traits)
  if($BadPatchFirst){
-  Write-Text (Join-Path $user 'rymcp_dlc/math/words.dict.yaml') "---`nname: rymcp_dlc/math/words`nversion: '1'`nsort: by_weight`nuse_preset_vocabulary: false`npatch: []`n...`n$($words[0])`ta ba`t100`n"
+  Write-Text (Join-Path $user 'stellae_dlc/math/words.dict.yaml') "---`nname: stellae_dlc/math/words`nversion: '1'`nsort: by_weight`nuse_preset_vocabulary: false`npatch: []`n...`n$($words[0])`ta ba`t100`n"
   Start-Engine;[RimeProbe]::RimeDeployerInitialize([ref]$traits)
   $badResult=[RimeProbe]::RimeDeployWorkspace()
   $boundary=[ordered]@{BadPatchDeployApi=$badResult;CompiledSchemaExists=(Test-Path -LiteralPath (Join-Path $user 'build/dlc_synthetic.schema.yaml'));Expected='Malformed native patch may reject schema linking; remove the module and redeploy.'}
   Close-Engine
-  Remove-Item -LiteralPath (Join-Path $user 'rymcp_dlc/math/words.dict.yaml')
+  Remove-Item -LiteralPath (Join-Path $user 'stellae_dlc/math/words.dict.yaml')
  }
  Redeploy
  Check 'neutral-no-module' (@((Query 'a ba').Candidates) -notcontains $words[0])
@@ -133,13 +133,13 @@ try{
  $before=Join-Path $out 'synthetic-learning-before.tsv'
  Check 'learning-export-before' ([RimeProbe]::ExportUserDict('dlc_synthetic',$before) -gt 0)
  Close-Engine
- $math=Join-Path $user 'rymcp_dlc/math'
+ $math=Join-Path $user 'stellae_dlc/math'
  if(-not ([IO.Path]::GetFullPath($math)).StartsWith(($user+'\'),[StringComparison]::OrdinalIgnoreCase)){throw 'Invalid synthetic module path.'}
  Remove-Item -LiteralPath $math -Recurse
  Redeploy
- Check 'uninstall-cache-retained' (Test-Path -LiteralPath (Join-Path $user 'build/rymcp_dlc_math.table.bin'))
+ Check 'uninstall-cache-retained' (Test-Path -LiteralPath (Join-Path $user 'build/stellae_dlc_math.table.bin'))
  $compiled=[IO.File]::ReadAllText((Join-Path $user 'build/dlc_synthetic.schema.yaml'),$utf8)
- Check 'uninstall-schema-excludes-pack' (-not $compiled.Contains('- rymcp_dlc_math'))
+ Check 'uninstall-schema-excludes-pack' (-not $compiled.Contains('- stellae_dlc_math'))
  for($i=1;$i -lt 4;$i++){Check ('uninstall-others-'+$ids[$i]) (@((Query $codes[$i]).Candidates) -contains $words[$i])}
  Check 'uninstall-retains-overlapping-other-pack' (@((Query 'ba ca').Candidates) -contains $overlapWord)
  Close-Engine;Start-Engine;[RimeProbe]::RimeDeployerInitialize([ref]$traits)
@@ -155,39 +155,39 @@ try{
  # The same file supplies activation and data. Missing/malformed headers must
  # not leave a separately active pack with a missing imported source.
  Close-Engine
- Remove-Item -LiteralPath (Join-Path $user 'rymcp_dlc/math/words.dict.yaml')
+ Remove-Item -LiteralPath (Join-Path $user 'stellae_dlc/math/words.dict.yaml')
  Redeploy
  for($i=1;$i -lt 4;$i++){Check ('missing-others-'+$ids[$i]) (@((Query $codes[$i]).Candidates) -contains $words[$i])}
  Close-Engine
- Write-Text (Join-Path $user 'rymcp_dlc/math/words.dict.yaml') "---`nname: [`n"
+ Write-Text (Join-Path $user 'stellae_dlc/math/words.dict.yaml') "---`nname: [`n"
  Redeploy
  for($i=1;$i -lt 4;$i++){Check ('malformed-header-others-'+$ids[$i]) (@((Query $codes[$i]).Candidates) -contains $words[$i])}
  Close-Engine
- Write-Text (Join-Path $user 'rymcp_dlc/math/words.dict.yaml') "---`npatch:`n  translator/packs/+: [rymcp_dlc_math]`n...`n"
+ Write-Text (Join-Path $user 'stellae_dlc/math/words.dict.yaml') "---`npatch:`n  translator/packs/+: [stellae_dlc_math]`n...`n"
  Redeploy
  for($i=1;$i -lt 4;$i++){Check ('incomplete-header-others-'+$ids[$i]) (@((Query $codes[$i]).Candidates) -contains $words[$i])}
  if($Guarded){
   Close-Engine
   Write-Module 0
-  Remove-Item -LiteralPath (Join-Path $user 'rymcp_dlc/math/manifest.tsv')
+  Remove-Item -LiteralPath (Join-Path $user 'stellae_dlc/math/manifest.tsv')
   Redeploy
   Check 'missing-manifest-disables-whole-module' (@((Query $codes[0]).Candidates) -notcontains $words[0])
   Close-Engine
   Write-Module 0
-  [IO.File]::AppendAllText((Join-Path $user 'rymcp_dlc/math/words.dict.yaml'),"# corrupt checksum`n",$utf8)
+  [IO.File]::AppendAllText((Join-Path $user 'stellae_dlc/math/words.dict.yaml'),"# corrupt checksum`n",$utf8)
   Redeploy
   Check 'checksum-mismatch-disables-whole-module' (@((Query $codes[0]).Candidates) -notcontains $words[0])
   Close-Engine
   Write-Module 0
-  $manifest=Join-Path $user 'rymcp_dlc/math/manifest.tsv'
+  $manifest=Join-Path $user 'stellae_dlc/math/manifest.tsv'
   [IO.File]::AppendAllText($manifest,"file`trequired.txt`t1`t00000000`n",$utf8)
   Redeploy
   Check 'missing-required-file-disables-whole-module' (@((Query $codes[0]).Candidates) -notcontains $words[0])
   Close-Engine
   Write-Module 0
-  $manifest=Join-Path $user 'rymcp_dlc/math/manifest.tsv'
+  $manifest=Join-Path $user 'stellae_dlc/math/manifest.tsv'
   $english="format`t1`nword`tcnmixedenglish`tcnmixedenglish`tcnmixedenglish`t-`t100`t2`t-`t-`n"
-  Write-Text (Join-Path $user 'rymcp_dlc/math/english.tsv') $english
+  Write-Text (Join-Path $user 'stellae_dlc/math/english.tsv') $english
   $bytes=$utf8.GetBytes($english)
   $content=[IO.File]::ReadAllText($manifest,$utf8).Replace("languages`tcn`n","languages`tcn,en`n")+"file`tenglish.tsv`t$($bytes.Length)`t$(Adler32 $bytes)`n"
   Write-Text $manifest $content
@@ -195,7 +195,7 @@ try{
   Check 'bad-english-disables-cn-in-whole-module' (@((Query $codes[0]).Candidates) -notcontains $words[0])
   Close-Engine
   $english=$english.Replace("`t2`t-`t-`n","`t1`t-`t-`n")
-  Write-Text (Join-Path $user 'rymcp_dlc/math/english.tsv') $english
+  Write-Text (Join-Path $user 'stellae_dlc/math/english.tsv') $english
   $bytes=$utf8.GetBytes($english)
   $content=$content -replace '(?m)^file\tenglish.tsv\t[^\r\n]+',("file`tenglish.tsv`t$($bytes.Length)`t$(Adler32 $bytes)")
   Write-Text $manifest $content
@@ -203,7 +203,7 @@ try{
   Check 'valid-cn-and-english-module-activates' (@((Query $codes[0]).Candidates) -contains $words[0])
   Close-Engine
   Write-Module 0
-  $source=Join-Path $user 'rymcp_dlc/math';$target=Join-Path $shared 'rymcp_dlc/math'
+  $source=Join-Path $user 'stellae_dlc/math';$target=Join-Path $shared 'stellae_dlc/math'
   [IO.Directory]::CreateDirectory((Split-Path $target -Parent))|Out-Null
   Copy-Item -LiteralPath $source -Destination $target -Recurse
   if(-not ([IO.Path]::GetFullPath($source)).StartsWith(($user+'\'),[StringComparison]::OrdinalIgnoreCase)){throw 'Invalid synthetic module path.'}
@@ -212,7 +212,7 @@ try{
   Check 'shared-copy-does-not-reactivate-module' (@((Query $codes[0]).Candidates) -notcontains $words[0])
   for($i=1;$i -lt 4;$i++){Check ('shared-others-'+$ids[$i]) (@((Query $codes[$i]).Candidates) -contains $words[$i])}
  }
- Check 'flat-cache-layout' (Test-Path -LiteralPath (Join-Path $user 'build/rymcp_dlc_physics.table.bin'))
+ Check 'flat-cache-layout' (Test-Path -LiteralPath (Join-Path $user 'build/stellae_dlc_physics.table.bin'))
 }catch{$errorText=$_.Exception.Message}finally{Close-Engine;@{Format='cn-dlc-native-layout-v1';Guarded=[bool]$Guarded;Boundary=$boundary;Completed=($null -eq $errorText);Error=$errorText;Checks=@($checks)}|ConvertTo-Json -Depth 8|Set-Content -LiteralPath (Join-Path $out 'results.json') -Encoding UTF8}
 if($errorText){throw $errorText}
 Write-Output ('CN DLC native layout: '+$checks.Count+' checks passed.')

@@ -28,7 +28,7 @@ try {
     [RimeProbe]::RimeSetup([ref]$traits)
     [RimeProbe]::RimeInitialize([ref]$traits)
     $session = [RimeProbe]::RimeCreateSession()
-    if (-not [RimeProbe]::RimeSelectSchema($session, 'pc_research')) { throw 'Cannot reopen official profile.' }
+    if (-not [RimeProbe]::RimeSelectSchema($session, 'cn_stellae')) { throw 'Cannot reopen official profile.' }
     [RimeProbe]::RimeSetOption($session, 'simplification', 0)
     [RimeProbe]::RimeSetOption($session, 'research_english', 0)
     foreach ($case in @(@{Input='huangxia';Text='黃俠'},@{Input='xia';Text='俠'})) {

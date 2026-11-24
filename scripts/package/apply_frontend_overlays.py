@@ -14,6 +14,7 @@ PRODUCTS = {
     'x64': ('stellaex64.dll', 'stellaex64.ime', 'StellaeServer.exe', 'StellaeDeployer.exe'),
     'x86': ('stellae.dll', 'stellae.ime', 'Win32/StellaeServer.exe', 'Win32/StellaeDeployer.exe'),
 }
+CLIENT_PRODUCTS = {'x86': ('stellae.dll', 'stellae.ime')}
 MACHINES = {'x64': 0x8664, 'x86': 0x014c}
 ENGINES = {'x64': ('engine-n01', 'rime.dll'), 'x86': ('engine-r5', 'Win32/rime.dll')}
 
@@ -47,11 +48,22 @@ def unique(root, name):
     return files[0]
 
 
-def checked_products(product_root, source_root, arch, version, source_files):
+def frontend_products(specification):
+    clients = specification.get('clientOnlyArchitectures', [])
+    if not isinstance(clients, list) or clients not in ([], ['x86']):
+        raise ValueError('Only the x86 frontend may use the client-only build scope')
+    return {arch: CLIENT_PRODUCTS[arch] if arch in clients else paths
+            for arch, paths in PRODUCTS.items()}
+
+
+def checked_products(product_root, source_root, arch, version, source_files, client_only=False):
     record_path = unique(product_root, 'build-result.json')
     record = load(record_path)
     output = record_path.parent
-    if (not record['passed'] or record['architecture'] != arch
+    expected_paths = CLIENT_PRODUCTS.get(arch, ()) if client_only else PRODUCTS[arch]
+    scope = 'frontend-client-images' if client_only else 'frontend-images'
+    if (not expected_paths or record.get('buildScope', 'frontend-images') != scope
+            or not record['passed'] or record['architecture'] != arch
             or record['sourceVersion'] != version or record['symbolsBundled']
             or record['engineBundled'] or record['engineRebuilt']
             or record['optInNumericTraceCompiled']):
@@ -66,7 +78,7 @@ def checked_products(product_root, source_root, arch, version, source_files):
     checked = {}
     for product in record['products']:
         name = product['installedRelativePath']
-        if name not in PRODUCTS[arch] or name in checked:
+        if name not in expected_paths or name in checked:
             raise ValueError(f'Unexpected native installed path: {name}')
         path = output / Path(name).name
         if (product['version'] != version or product['machine'] != MACHINES[arch]
@@ -74,7 +86,7 @@ def checked_products(product_root, source_root, arch, version, source_files):
                 or image_machine(path) != MACHINES[arch]):
             raise ValueError(f'Native product bytes differ: {arch}/{name}')
         checked[name] = path, product['sha256']
-    if set(checked) != set(PRODUCTS[arch]):
+    if set(checked) != set(expected_paths):
         raise ValueError(f'Incomplete native artifact: {arch}')
     return checked
 
@@ -194,6 +206,7 @@ def apply(stage, products, sources, source_ref, engines=None, native_manifest=No
             or (engine_spec is not None and any(value is None for value in (engines, native_manifest, engine_sources)))):
         raise ValueError('Runtime engine artifacts and the exact nativeEngines declaration are required together')
     source_files = inputs['nativeFrontend']['sourceFiles']
+    frontend_spec = frontend_products(inputs['nativeFrontend'])
     if not source_files or any(not re.fullmatch('[a-f0-9]{64}', sha) for sha in source_files.values()):
         raise ValueError('Pin the frontend source changes')
     provenance_path = stage / 'bundle-provenance.json'
@@ -235,9 +248,10 @@ def apply(stage, products, sources, source_ref, engines=None, native_manifest=No
             path, details = checked_engine(engines / arch, arch, variant, native_manifest,
                                            engine_sources, previous_build)
             engine_inputs[arch] = (name, path, details)
-    for arch in PRODUCTS:
+    for arch, expected_products in frontend_spec.items():
         for name, (path, _) in checked_products(products / arch, sources / arch,
-                                                 arch, inputs['frontendVersion'], source_files).items():
+                arch, inputs['frontendVersion'], source_files,
+                client_only=expected_products != PRODUCTS[arch]).items():
             changes.append(replace(name, path, arch, 'rebuiltFrontend', {
                 'corresponding_source': 'bundle-project-source.zip',
                 'transformation': 'rebuild the frontend from the pinned sources and patch',

@@ -3,9 +3,9 @@ local M = {}
 
 function M.init(env)
   if env.engine.context:get_property('sharded_dlc_result') ~= '' then return end
-  local loader = require('rymcp_dlc')
+  local loader = require('stellae_dlc')
   local root = rime_api.get_user_data_dir()
-  local directory = root .. '/rymcp_dlc/poetry/'
+  local directory = root .. '/stellae_dlc/poetry/'
   local names = {'words.dict.yaml'}
   for index = 0, 31 do names[#names + 1] = string.format('words_%02d.dict.yaml', index) end
   local original, checks = {}, {}
@@ -67,7 +67,7 @@ function M.init(env)
     rejected('v2-rejects-english-language', function() write(directory .. 'manifest.tsv', manifest:gsub('languages\tcn\n', 'languages\tcn,en\n')) end)
     rejected('master-must-not-duplicate-data', function() write(directory .. names[1], original[names[1]] .. 'Extra\ta a\t100\n') end, true)
     rejected('bad-required-include', function() write(directory .. names[3], original[names[3]]:gsub('words_02.dict', 'words_09.dict')) end, true)
-    rejected('bad-final-pack-list', function() write(directory .. names[33], original[names[33]]:gsub('rymcp_dlc_poetry_17', 'rymcp_dlc_poetry_31')) end, true)
+    rejected('bad-final-pack-list', function() write(directory .. names[33], original[names[33]]:gsub('stellae_dlc_poetry_17', 'stellae_dlc_poetry_31')) end, true)
     rejected('wrong-dictionary-name', function() write(directory .. names[7], original[names[7]]:gsub('words_05', 'wrong_05')) end, true)
     rejected('wrong-dictionary-version', function() write(directory .. names[7], original[names[7]]:gsub("version: 'fixture'", "version: 'other'")) end, true)
     rejected('non-native-header-transform', function() write(directory .. names[7], original[names[7]]:gsub('%.%.%.\n', 'columns: [text, code]\n...\n')) end, true)

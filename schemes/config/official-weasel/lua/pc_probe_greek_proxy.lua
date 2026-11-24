@@ -46,7 +46,7 @@ M.distance = distance
 
 function M.init(env)
   env.unified = env.engine.schema.config:get_bool('probe/unified_memory') or false
-  local class = env.unified and 'script_translator@translator' or 'table_translator@research_greek'
+  local class = env.unified and 'script_translator@translator' or 'table_translator@stellae_symbols'
   env.native = Component.Translator(env.engine, '', class)
   assert(env.native, 'Installed binding lacks native translator proxy')
 end

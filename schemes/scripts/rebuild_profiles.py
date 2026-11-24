@@ -15,7 +15,7 @@ import re
 FORBIDDEN_PARTS = {'.git', '.codex', '.agents', 'build', 'sync', 'logs', 'backups', '__pycache__'}
 FORBIDDEN_NAMES = {'user.yaml', 'installation.yaml'}
 REQUIRED_INPUTS = {
-    'default.custom.yaml', 'pc_research.custom.yaml', 'jp_sela.schema.yaml', 'rime.lua', 'weasel.custom.yaml',
+    'default.custom.yaml', 'cn_stellae.custom.yaml', 'jp_stellae.schema.yaml', 'rime.lua', 'weasel.custom.yaml',
     'lua/pc_probe_global_mode.lua', 'lua/cn_translator.lua', 'lua/cn_normal_codec.lua',
     'lua/official_translator.lua', 'key_bindings.yaml', 'punctuation.yaml', 'symbols.yaml',
     'opencc/s2t.json', 'opencc/STCharacters.ocd2', 'opencc/STPhrases.ocd2',
@@ -39,7 +39,7 @@ def source_path(root, relative):
         raise ValueError(f'Invalid source path: {relative}')
     if name.name in FORBIDDEN_NAMES or any(
         part in FORBIDDEN_PARTS or part.endswith('.userdb') for part in name.parts
-    ) or relative.startswith('rymcp_dlc/'):
+    ) or relative.startswith('stellae_dlc/'):
         raise ValueError(f'Not a base scheme source: {relative}')
     path = root / relative
     if path.is_symlink() or not path.resolve().is_relative_to(root.resolve()) or not path.is_file():
@@ -103,11 +103,11 @@ def check_common_contract(inputs):
                 raise ValueError(f'Unexpected switch behavior: {relative} {key}, expected {value}')
     pc_keys = {'Shift_L': 'noop', 'Shift_R': 'noop', 'Caps_Lock': 'noop'}
     switch_keys('default.custom.yaml', '    switch_key:\n', pc_keys)
-    switch_keys('pc_research.custom.yaml', '  ascii_composer/switch_key:\n', pc_keys)
-    switch_keys('jp_sela.schema.yaml', '  switch_key:\n',
+    switch_keys('cn_stellae.custom.yaml', '  ascii_composer/switch_key:\n', pc_keys)
+    switch_keys('jp_stellae.schema.yaml', '  switch_key:\n',
                 {'Shift_L': 'noop', 'Shift_R': 'inline_ascii', 'Caps_Lock': 'noop'})
     schemas = re.findall(r'^    - schema: (\S+)\s*$', inputs['default.custom.yaml'].decode('utf-8'), re.MULTILINE)
-    if schemas != ['pc_research', 'jp_sela']:
+    if schemas != ['cn_stellae', 'jp_stellae']:
         raise ValueError('The shared preset must contain the two maintained schemas.')
 
 
@@ -133,7 +133,7 @@ def adapt_profile(inputs, name, specification):
     if name == 'official-weasel':
         if specification['stock_word_completion'] is not True or specification['ctrl_space_owner'] != 'official-client':
             raise ValueError('Unexpected official capability specification.')
-        result['pc_research.custom.yaml'] = edit_text(result['pc_research.custom.yaml'], official_pc_settings)
+        result['cn_stellae.custom.yaml'] = edit_text(result['cn_stellae.custom.yaml'], official_pc_settings)
         result['default.custom.yaml'] = edit_text(result['default.custom.yaml'],
             lambda text: replace_once(text, CTRL_SPACE_LINE, ''))
         style = result['weasel.custom.yaml'].decode('utf-8')
@@ -143,7 +143,7 @@ def adapt_profile(inputs, name, specification):
     elif name == 'stellae':
         if specification['stock_word_completion'] is not False:
             raise ValueError('Unexpected Stellae capability specification.')
-        text = result['pc_research.custom.yaml'].decode('utf-8').replace('\r\n', '\n')
+        text = result['cn_stellae.custom.yaml'].decode('utf-8').replace('\r\n', '\n')
         if text.count('  translator/use_stock_word_completion: false\n') != 1:
             raise ValueError('Stellae source must explicitly select its native completion capability.')
         default = result['default.custom.yaml'].decode('utf-8').replace('\r\n', '\n')

@@ -16,14 +16,14 @@ function Write-Text([string]$path,[string]$text){[void][IO.Directory]::CreateDir
 function Adler32([byte[]]$bytes){[long]$a=1;[long]$b=0;foreach($v in $bytes){$a=($a+$v)%65521;$b=($b+$a)%65521};return ('{0:x8}' -f ($b*65536+$a))}
 function Write-Catalog([string]$directory,[int]$rows){
  [void][IO.Directory]::CreateDirectory($directory)
- $master="---`nname: rymcp_dlc/poetry/words`nversion: 'fixture'`nsort: by_weight`nuse_preset_vocabulary: false`npatch:`n  __include: rymcp_dlc/poetry/words_00.dict:/activation`n...`n"
+ $master="---`nname: stellae_dlc/poetry/words`nversion: 'fixture'`nsort: by_weight`nuse_preset_vocabulary: false`npatch:`n  __include: stellae_dlc/poetry/words_00.dict:/activation`n...`n"
  Write-Text (Join-Path $directory 'words.dict.yaml') $master
  $names=@('words.dict.yaml')
  for($index=0;$index -lt 32;$index++){
   $suffix='{0:d2}' -f $index;$name='words_'+$suffix+'.dict.yaml';$names+=$name
-  $activation=if($index -lt 31){"activation:`n  __include: rymcp_dlc/poetry/words_$('{0:d2}' -f ($index+1)).dict:/activation`n"}else{"activation:`n  translator/packs/+:`n"+((0..31|ForEach-Object {'    - rymcp_dlc_poetry_{0:d2}' -f $_}) -join "`n")+"`n"}
+  $activation=if($index -lt 31){"activation:`n  __include: stellae_dlc/poetry/words_$('{0:d2}' -f ($index+1)).dict:/activation`n"}else{"activation:`n  translator/packs/+:`n"+((0..31|ForEach-Object {'    - stellae_dlc_poetry_{0:d2}' -f $_}) -join "`n")+"`n"}
   $builder=[Text.StringBuilder]::new()
-  [void]$builder.Append("---`nname: rymcp_dlc/poetry/words_$suffix`nversion: 'fixture'`nsort: by_weight`nuse_preset_vocabulary: false`n$activation...`n")
+  [void]$builder.Append("---`nname: stellae_dlc/poetry/words_$suffix`nversion: 'fixture'`nsort: by_weight`nuse_preset_vocabulary: false`n$activation...`n")
   $start=[int][Math]::Floor($rows*$index/32.0);$end=[int][Math]::Floor($rows*($index+1)/32.0)
   for($row=$start;$row -lt $end;$row++){[void]$builder.Append(('FixedFixture{0:d8}' -f $row)+"`ta a a`t100`n")}
   Write-Text (Join-Path $directory $name) $builder.ToString()
@@ -32,10 +32,10 @@ function Write-Catalog([string]$directory,[int]$rows){
  foreach($name in $names){$bytes=[IO.File]::ReadAllBytes((Join-Path $directory $name));$manifest+="file`t$name`t$($bytes.Length)`t$(Adler32 $bytes)`n"}
  Write-Text (Join-Path $directory 'manifest.tsv') $manifest
 }
-Write-Catalog (Join-Path $user 'rymcp_dlc/poetry') 32
+Write-Catalog (Join-Path $user 'stellae_dlc/poetry') 32
 Write-Catalog (Join-Path $user 'stress') $StressRows
 Write-Text (Join-Path $user 'stress-rows.txt') ([string]$StressRows)
-Copy-Item -LiteralPath (Join-Path $repo 'config/pc/lua/rymcp_dlc.lua') -Destination (Join-Path $user 'lua/rymcp_dlc.lua')
+Copy-Item -LiteralPath (Join-Path $repo 'config/pc/lua/stellae_dlc.lua') -Destination (Join-Path $user 'lua/stellae_dlc.lua')
 Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'fixtures/sharded_dlc_test.lua') -Destination (Join-Path $user 'lua/sharded_dlc_test.lua')
 Write-Text (Join-Path $user 'rime.lua') "sharded_dlc_test = require('sharded_dlc_test')`n"
 Write-Text (Join-Path $user 'default.yaml') "config_version: '1'`nschema_list:`n  - schema: sharded_dlc_test`n"

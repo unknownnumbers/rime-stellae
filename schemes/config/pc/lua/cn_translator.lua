@@ -556,7 +556,7 @@ function M.func(input, seg, env)
   if not seg:has_tag('abc') then return end
   local current_sc = not env.only_chinese and env.engine.context:get_option('simplification')
   local match_cache, learned_scores = {}, {}
-  if not env.only_chinese and env.engine.schema.schema_id == 'pc_research' then
+  if not env.only_chinese and env.engine.schema.schema_id == 'cn_stellae' then
     local suffix = env.engine.context.input:sub(seg.start + 1)
     if suffix:sub(1, #input) == input then match_cache.exact_plan = exact_spelling.parse(suffix) end
   end

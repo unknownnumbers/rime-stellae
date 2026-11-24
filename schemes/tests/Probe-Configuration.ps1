@@ -43,7 +43,7 @@ if($Phase -eq 'Compile'){
 $evidence=Join-Path $native ('results/'+$Revision)
 $report=Join-Path $evidence ($Phase.ToLower()+'-results.json')
 if(Test-Path -LiteralPath $report){throw 'Preserve previous finite results; choose a new Revision.'}
-if(-not(Test-Path -LiteralPath (Join-Path $user 'jp_sela.schema.yaml'))){throw 'Prepare the isolated publicuser profile first.'}
+if(-not(Test-Path -LiteralPath (Join-Path $user 'jp_stellae.schema.yaml'))){throw 'Prepare the isolated publicuser profile first.'}
 if(-not([IO.Path]::GetFullPath($user).StartsWith(([IO.Path]::GetFullPath($native)+'\'),[StringComparison]::OrdinalIgnoreCase))){throw 'Outside isolated native root.'}
 $logs=Join-Path $evidence ('logs-'+$Phase.ToLower())
 [IO.Directory]::CreateDirectory($logs)|Out-Null
@@ -82,7 +82,7 @@ function Close-Session{
 function New-Session{
  Close-Session
  $script:session=[RimeProbe]::RimeCreateSession()
- if(-not [RimeProbe]::RimeSelectSchema($script:session,'jp_sela')){throw 'JP schema unavailable'}
+ if(-not [RimeProbe]::RimeSelectSchema($script:session,'jp_stellae')){throw 'JP schema unavailable'}
  [RimeProbe]::RimeSetOption($script:session,'probe_options_ready',1)
  foreach($name in @('ascii_mode','research_english','simplification')){[RimeProbe]::RimeSetOption($script:session,$name,0)}
  [RimeProbe]::ReadCommit($script:session)|Out-Null
@@ -169,14 +169,14 @@ try{
  $result.EngineVersion=[RimeProbe]::Version()
  if($Phase -eq 'Compile'){
   [RimeProbe]::RimeDeployerInitialize([ref]$traits)
-  foreach($schema in @('stroke','english_full','project_radical','project_radical_parts','jp_small_lookup','jp_q_lookup','jp_v_lookup','jp_v_pc_lookup','jp_sela','pc_research')){
+  foreach($schema in @('stroke','english_full','project_radical','project_radical_parts','jp_small_lookup','jp_q_lookup','jp_v_lookup','jp_v_pc_lookup','jp_stellae','cn_stellae')){
    $ok=[bool][RimeProbe]::RimeDeploySchema((Join-Path $user ($schema+'.schema.yaml')))
    Check ('compile-'+$schema) $ok $ok
    if(-not $ok){throw ('Isolated compilation failed '+$schema)}
    $compiledSchema = Join-Path $build ($schema+'.schema.yaml')
    if(-not(Test-Path -LiteralPath $compiledSchema)){throw ('Missing compiled schema '+$schema)}
    $compiledText = [IO.File]::ReadAllText($compiledSchema,$utf8)
-   if($compiledText -notmatch '(?m)^schema:' -or ($schema -in @('stroke','pc_research','jp_sela') -and $compiledText -notmatch '(?m)^engine:')){
+   if($compiledText -notmatch '(?m)^schema:' -or ($schema -in @('stroke','cn_stellae','jp_stellae') -and $compiledText -notmatch '(?m)^engine:')){
     throw ('Incomplete compiled schema '+$schema)
    }
   }

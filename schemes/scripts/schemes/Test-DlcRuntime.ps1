@@ -16,7 +16,7 @@ $engine = Join-Path ([IO.Path]::GetFullPath($EngineDir)) 'rime.dll'
 if (-not (Test-Path -LiteralPath $engine)) { throw 'Missing engine DLL.' }
 $hostExe = (Get-Process -Id $PID).Path
 $results = @()
-if (-not $ModulesDirectory) { $ModulesDirectory = Join-Path $repo 'out/dlc/modules/rymcp_dlc' }
+if (-not $ModulesDirectory) { $ModulesDirectory = Join-Path $repo 'out/dlc/modules/stellae_dlc' }
 if (-not (Test-Path -LiteralPath (Join-Path $ModulesDirectory 'poetry/manifest.tsv'))) { throw 'Build the complete public DLC catalogs before runtime validation.' }
 
 function Run-Checks([string]$name, [string]$scriptName, [string[]]$arguments) {

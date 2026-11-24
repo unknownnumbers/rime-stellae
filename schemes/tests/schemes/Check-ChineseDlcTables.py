@@ -176,7 +176,7 @@ def check(build_dir, modules_dir):
         previous, total = None, 0
         for piece in pieces:
             suffix = "" if piece == catalog_path else "_" + piece.name[6:8]
-            name = "rymcp_dlc_" + module_id + suffix
+            name = "stellae_dlc_" + module_id + suffix
             binary = build_dir / (name + ".table.bin")
             data = binary.read_bytes()
             actual, syllables, image_size = native_entries(data)

@@ -43,7 +43,7 @@ try {
  [RimeProbe]::RimeSetup([ref]$traits);[RimeProbe]::RimeInitialize([ref]$traits)
  Write-Host 'Creating isolated session'
  $result.Engine=[RimeProbe]::Version();$script:s=[RimeProbe]::RimeCreateSession()
- if(-not [RimeProbe]::RimeSelectSchema($script:s,'pc_research')){throw 'Cannot select isolated backup schema'}
+ if(-not [RimeProbe]::RimeSelectSchema($script:s,'cn_stellae')){throw 'Cannot select isolated backup schema'}
  Write-Host 'Typing Answer'
  Reset-Draft;Type-Word 'Answer';$snap=Snap
  Check 'Answer-first' ($snap.Candidates[0] -ceq 'Answer') $snap
@@ -101,7 +101,7 @@ try {
  $learned=Get-Content -LiteralPath $export -Encoding UTF8
  Check 'english-native-learning' ([bool]($learned | Where-Object {$_ -cmatch '^form\t'})) @($learned | Where-Object {$_ -cmatch '^form\t'})
  $script:s=[RimeProbe]::RimeCreateSession()
- if(-not [RimeProbe]::RimeSelectSchema($script:s,'pc_research')){throw 'Cannot reopen backup schema'}
+ if(-not [RimeProbe]::RimeSelectSchema($script:s,'cn_stellae')){throw 'Cannot reopen backup schema'}
  Reset-Draft;Type-Word 'hello';$snap=Snap
  Check 'english-reopen-after-learning' ($snap.Candidates[0] -ceq 'hello') $snap
  $result.Completed=$true

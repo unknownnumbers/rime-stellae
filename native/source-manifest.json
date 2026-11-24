@@ -53,7 +53,7 @@
     {
       "id": "stellae61052",
       "path": "native/weasel/stellae-61052.patch",
-      "sha256": "66acb7a9342b2733525b371042251a4a0cff0c8800855805a0d157295fe37ff8",
+      "sha256": "77edffd043cf14f066c0f045bc68d05335789aa1025df2816395de378611e274",
       "source": "weasel"
     },
     {
@@ -304,6 +304,16 @@
       "path": "native/tests/shift/ShiftKeySnapshotTests.cpp",
       "sha256": "bedb6d25c5e7fd054e3730f42e13e7902d414fd3bc96aee220b974ea9d4eef41",
       "scope": "Fixed synthetic native and installer regression fixture"
+    },
+    {
+      "path": "native/tests/jp-comment/schema_alias.cpp",
+      "sha256": "1e9b658edba240101a87e2df1b7c8d895229465366766dbb02a581db8e257b82",
+      "scope": "Fixed synthetic JP schema naming compatibility fixture"
+    },
+    {
+      "path": "native/tests/jp-comment/Run-SchemaAliasTests.ps1",
+      "sha256": "43008c46d2bfb86ae87d5f4e0f5bf28f8d5205ec459640b2d97ff3726b626e7f",
+      "scope": "Fixed synthetic JP schema naming compatibility fixture"
     }
   ],
   "toolchain": {

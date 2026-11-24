@@ -49,16 +49,16 @@ try{
  $compiledDefault=Join-Path $build 'default.yaml'
  Check 'compiled-default' (Test-Path -LiteralPath $compiledDefault)
  $defaultText=[IO.File]::ReadAllText($compiledDefault)
- Check 'default-Chinese-entry' ($defaultText -match '(?m)^\s*-\s*schema:\s*pc_research\s*$')
- Check 'default-Japanese-entry' ($defaultText -match '(?m)^\s*-\s*schema:\s*jp_sela\s*$')
- foreach($schema in @('stroke','english_full','project_radical','project_radical_parts','jp_small_lookup','jp_q_lookup','jp_v_lookup','jp_v_pc_lookup','jp_sela','pc_research')){
+ Check 'default-Chinese-entry' ($defaultText -match '(?m)^\s*-\s*schema:\s*cn_stellae\s*$')
+ Check 'default-Japanese-entry' ($defaultText -match '(?m)^\s*-\s*schema:\s*jp_stellae\s*$')
+ foreach($schema in @('stroke','english_full','project_radical','project_radical_parts','jp_small_lookup','jp_q_lookup','jp_v_lookup','jp_v_pc_lookup','jp_stellae','cn_stellae')){
   [void][RimeProbe]::RimeDeploySchema((Join-Path $shared ($schema+'.schema.yaml')))
   Check ('compiled-'+$schema) (Test-Path -LiteralPath (Join-Path $build ($schema+'.schema.yaml')))
  }
  $s=[RimeProbe]::RimeCreateSession()
  $schemaBuffer=New-Object byte[] 256
- Check 'initial-Chinese-schema' ([bool][RimeProbe]::RimeGetCurrentSchema($s,$schemaBuffer,[UIntPtr]::new([uint32]256)) -and [Text.Encoding]::UTF8.GetString($schemaBuffer).Trim([char]0) -ceq 'pc_research')
- Check 'select-Chinese' ([bool][RimeProbe]::RimeSelectSchema($s,'pc_research'))
+ Check 'initial-Chinese-schema' ([bool][RimeProbe]::RimeGetCurrentSchema($s,$schemaBuffer,[UIntPtr]::new([uint32]256)) -and [Text.Encoding]::UTF8.GetString($schemaBuffer).Trim([char]0) -ceq 'cn_stellae')
+ Check 'select-Chinese' ([bool][RimeProbe]::RimeSelectSchema($s,'cn_stellae'))
  Check 'default-SC' ([RimeProbe]::RimeGetOption($s,'simplification') -eq 1)
  $state=Query 'nihao'
  Check 'Chinese-candidate' ($state.Candidates -ccontains '你好')
@@ -75,7 +75,7 @@ try{
  $state=Query 'hello'
  Check 'English-candidate' ($state.Candidates -ccontains 'hello')
  [RimeProbe]::RimeClearComposition($s)
- Check 'select-Japanese' ([bool][RimeProbe]::RimeSelectSchema($s,'jp_sela'))
+ Check 'select-Japanese' ([bool][RimeProbe]::RimeSelectSchema($s,'jp_stellae'))
  [RimeProbe]::RimeSetOption($s,'probe_options_ready',1)
  $state=Query 'qtaberu'
  Check 'Japanese-candidate' ($state.Candidates -ccontains '食べる')

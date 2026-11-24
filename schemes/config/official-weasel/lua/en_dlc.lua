@@ -60,7 +60,7 @@ local function suggest(indexes, query, budget)
 end
 
 function M.load(vocab, extensions)
-  local root = rime_api.get_user_data_dir() .. '/rymcp_dlc/'
+  local root = rime_api.get_user_data_dir() .. '/stellae_dlc/'
   if cached and cached.root == root and cached.vocab == vocab and cached.extensions == extensions then
     return cached.value
   end

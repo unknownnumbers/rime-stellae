@@ -4,8 +4,11 @@ param(
     [Parameter(Mandatory)][string]$SourcePath,
     [Parameter(Mandatory)][string]$CacheDirectory,
     [Parameter(Mandatory)][string]$OutputDirectory,
-    [switch]$DeployerOnly
+    [switch]$DeployerOnly,
+    [switch]$ClientOnly
 )
+if ($DeployerOnly -and $ClientOnly) { throw 'Select either the settings component or client images.' }
+if ($ClientOnly -and $Architecture -cne 'x86') { throw 'The compatibility client build targets x86.' }
 . (Join-Path $PSScriptRoot 'Common.ps1')
 if (-not $IsWindows) { throw 'Build the frontend with the Windows MSVC toolchain.' }
 $source = (Resolve-Path -LiteralPath $SourcePath).Path
@@ -18,6 +21,8 @@ $platform = $configuration.platform
 $paths = if ($DeployerOnly) {
     if ($Architecture -cne 'x64') { throw 'The settings component targets x64 Windows.' }
     @('StellaeDeployer.exe')
+} elseif ($ClientOnly) {
+    @('stellae.dll','stellae.ime')
 } elseif ($Architecture -ceq 'x64') {
     @('stellaex64.dll','stellaex64.ime','StellaeServer.exe','StellaeDeployer.exe')
 } else {
@@ -96,7 +101,7 @@ Run $boostTool @('-j2','--with-filesystem','--with-json','--with-locale','--with
 Run 'cscript.exe' @('//nologo','render.js','weasel.props','BOOST_ROOT','PLATFORM_TOOLSET','VERSION_MAJOR','VERSION_MINOR','VERSION_PATCH','WEASEL_BUILD','PRODUCT_VERSION','FILE_VERSION') $source 'properties.log'
 $archive = Join-Path $release 'candidate-source.zip'
 $null = Export-NativeAssemblySource $source 'stellae-61052' $archive
-$targets = if ($DeployerOnly) { @('WeaselDeployer') } else { @('WeaselTSF','WeaselIME','WeaselServer','WeaselDeployer') }
+$targets = if ($DeployerOnly) { @('WeaselDeployer') } elseif ($ClientOnly) { @('WeaselTSF','WeaselIME') } else { @('WeaselTSF','WeaselIME','WeaselServer','WeaselDeployer') }
 foreach ($target in $targets) {
     Run 'msbuild.exe' @('weasel.sln','/m',('/t:'+$target+':Rebuild'),'/p:Configuration=Release',('/p:Platform='+$platform),'/v:minimal') $source ($target+'.log')
 }
@@ -108,6 +113,6 @@ $records = foreach ($relative in $paths) {
     Copy-Item -LiteralPath $image -Destination (Join-Path $release $name)
     [ordered]@{name=$name;installedRelativePath=$relative;machine=$machine;version=$version;bytes=(Get-Item -LiteralPath $image).Length;sha256=(Hash $image)}
 }
-$scope = if ($DeployerOnly) { 'settings-component' } else { 'frontend-images' }
+$scope = if ($DeployerOnly) { 'settings-component' } elseif ($ClientOnly) { 'frontend-client-images' } else { 'frontend-images' }
 [ordered]@{passed=$true;buildScope=$scope;architecture=$Architecture;sourceVersion=$version;products=@($records);candidateSourceArchiveSha256=(Hash $archive);symbolsBundled=$false;engineBundled=$false;engineRebuilt=$false;optInNumericTraceCompiled=$false} |
     ConvertTo-Json -Depth 6 | Set-Content -LiteralPath (Join-Path $release 'build-result.json') -Encoding utf8

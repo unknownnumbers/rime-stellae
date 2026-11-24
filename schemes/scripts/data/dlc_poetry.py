@@ -150,7 +150,7 @@ def build_catalog(folder, work, syllables, progress=False):
 
 
 def header(name, version, activation):
-    return (f"---\nname: rymcp_dlc/poetry/{name}\nversion: '{version}'\nsort: by_weight\n"
+    return (f"---\nname: stellae_dlc/poetry/{name}\nversion: '{version}'\nsort: by_weight\n"
             + 'use_preset_vocabulary: false\n' + activation + '...\n')
 
 
@@ -158,13 +158,13 @@ def write_module(connection, report, sources, directory, version, weight):
     directory.mkdir(parents=True, exist_ok=True)
     if any(directory.iterdir()):
         raise ValueError('Use a fresh generated poetry module directory')
-    packs = [f'rymcp_dlc_poetry_{index:02d}' for index in range(32)]
-    master = header('words', version, 'patch:\n  __include: rymcp_dlc/poetry/words_00.dict:/activation\n')
+    packs = [f'stellae_dlc_poetry_{index:02d}' for index in range(32)]
+    master = header('words', version, 'patch:\n  __include: stellae_dlc/poetry/words_00.dict:/activation\n')
     (directory / 'words.dict.yaml').write_text(master, encoding='utf-8', newline='\n')
     cursor = iter(connection.execute('SELECT code,text FROM words ORDER BY code,text'))
     count = report['ChineseRows']
     for index in range(32):
-        activation = (f'activation:\n  __include: rymcp_dlc/poetry/words_{index+1:02d}.dict:/activation\n' if index < 31 else
+        activation = (f'activation:\n  __include: stellae_dlc/poetry/words_{index+1:02d}.dict:/activation\n' if index < 31 else
                       'activation:\n  translator/packs/+:\n' + ''.join('    - ' + pack + '\n' for pack in packs))
         with (directory / f'words_{index:02d}.dict.yaml').open('w', encoding='utf-8', newline='\n') as stream:
             stream.write(header(f'words_{index:02d}', version, activation))
@@ -206,7 +206,7 @@ def archive_module(directory, output, domain='poetry'):
     output.parent.mkdir(parents=True, exist_ok=True)
     with zipfile.ZipFile(output, 'w', compression=zipfile.ZIP_DEFLATED, compresslevel=6) as archive:
         for path in sorted(directory.iterdir(), key=lambda value: value.name):
-            info = zipfile.ZipInfo(f'rymcp_dlc/{domain}/{path.name}', (2026, 11, 14, 0, 0, 0))
+            info = zipfile.ZipInfo(f'stellae_dlc/{domain}/{path.name}', (2026, 11, 14, 0, 0, 0))
             info.create_system = 3
             info.external_attr = 0o100644 << 16
             info.compress_type = zipfile.ZIP_DEFLATED

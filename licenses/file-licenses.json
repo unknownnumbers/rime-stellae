@@ -616,7 +616,7 @@
       ]
     },
     "schemes:luna_config": {
-      "origin": "rime/rime-luna-pinyin, official Weasel 0.17.4 data/pinyin.yaml and luna_pinyin.schema.yaml",
+      "origin": "rime/rime-luna-pinyin, official Weasel 0.17.4 data/pinyin.yaml",
       "upstream_commit": null,
       "retained_terms": [
         "GNU LGPL version 3",
@@ -1632,6 +1632,24 @@
       ]
     },
     {
+      "path": "native/tests/jp-comment/Run-SchemaAliasTests.ps1",
+      "source_ids": [
+        "project-code"
+      ],
+      "references": [
+        "LICENSE"
+      ]
+    },
+    {
+      "path": "native/tests/jp-comment/schema_alias.cpp",
+      "source_ids": [
+        "project-code"
+      ],
+      "references": [
+        "LICENSE"
+      ]
+    },
+    {
       "path": "native/tests/key-pairing/ControlledReadGrant.inc",
       "source_ids": [
         "project-code"
@@ -2047,6 +2065,51 @@
       "source_ids": []
     },
     {
+      "path": "schemes/config/official-weasel/cn_stellae.custom.yaml",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "schemes/LICENSE",
+        "schemes/docs/sources/official-weasel-sources.md"
+      ],
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/official-weasel/cn_stellae.dict.yaml",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Project dictionary import configuration; imported dictionaries retain their own terms. Existing source reference comments remain in the file.",
+      "source_ids": [
+        "schemes:project",
+        "schemes:luna"
+      ],
+      "references": [
+        "schemes/LICENSE",
+        "schemes/docs/sources/official-weasel-sources.md"
+      ]
+    },
+    {
+      "path": "schemes/config/official-weasel/cn_stellae.schema.yaml",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [
+        "LGPL-3.0 as retained in Luna source notice"
+      ],
+      "references": [
+        "schemes/LICENSE",
+        "schemes/THIRD_PARTY_NOTICES.md",
+        "schemes/licenses/luna-pinyin-LGPL-3.0.txt",
+        "schemes/docs/sources/official-weasel-sources.md"
+      ],
+      "source_ids": [
+        "schemes:project",
+        "schemes:luna"
+      ]
+    },
+    {
       "kind": "program-or-configuration",
       "source_ids": [
         "schemes:prelude"
@@ -2055,7 +2118,7 @@
         "LGPL-3.0",
         "rime-prelude AUTHORS"
       ],
-      "license_scope": "Upstream default configuration under LGPL-3.0 with a project-specific schema list; original attribution retained.",
+      "license_scope": "Unmodified upstream default configuration under LGPL-3.0; original attribution retained.",
       "references": [
         "schemes/LICENSE",
         "schemes/licenses/shared-config/prelude-LICENSE.txt",
@@ -2328,35 +2391,7 @@
       "source_ids": []
     },
     {
-      "path": "schemes/config/official-weasel/jp_sela.custom.yaml",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms. Existing Rime spelling-rule source comments remain in the file.",
-      "retained_upstream_terms": [],
-      "references": [
-        "schemes/LICENSE",
-        "schemes/config/pc/JAPANESE.md",
-        "schemes/docs/sources/official-weasel-sources.md"
-      ],
-      "source_ids": []
-    },
-    {
-      "path": "schemes/config/official-weasel/jp_sela.schema.yaml",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
-      "retained_upstream_terms": [],
-      "references": [
-        "schemes/LICENSE",
-        "schemes/config/pc/JAPANESE.md",
-        "schemes/config/pc/japanese-q-canonical.json",
-        "schemes/config/pc/tools/generate-japanese-base.py",
-        "schemes/docs/sources/official-weasel-sources.md"
-      ],
-      "source_ids": []
-    },
-    {
-      "path": "schemes/config/official-weasel/jp_sela_custom.dict.yaml",
+      "path": "schemes/config/official-weasel/jp_romaji.dict.yaml",
       "kind": "data-or-generated-data",
       "source_group": "jp-independent-kana",
       "source_ids": [
@@ -2389,6 +2424,34 @@
       "retained_upstream_terms": [],
       "references": [
         "schemes/LICENSE",
+        "schemes/docs/sources/official-weasel-sources.md"
+      ],
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/official-weasel/jp_stellae.custom.yaml",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms. Existing Rime spelling-rule source comments remain in the file.",
+      "retained_upstream_terms": [],
+      "references": [
+        "schemes/LICENSE",
+        "schemes/config/pc/JAPANESE.md",
+        "schemes/docs/sources/official-weasel-sources.md"
+      ],
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/official-weasel/jp_stellae.schema.yaml",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "schemes/LICENSE",
+        "schemes/config/pc/JAPANESE.md",
+        "schemes/config/pc/japanese-q-canonical.json",
+        "schemes/config/pc/tools/generate-japanese-base.py",
         "schemes/docs/sources/official-weasel-sources.md"
       ],
       "source_ids": []
@@ -3223,16 +3286,6 @@
       "source_ids": []
     },
     {
-      "path": "schemes/config/official-weasel/lua/rymcp_dlc.lua",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "references": [
-        "schemes/LICENSE",
-        "schemes/docs/sources/official-weasel-sources.md"
-      ],
-      "source_ids": []
-    },
-    {
       "kind": "program-or-configuration",
       "project_license": "GPL-3.0-only",
       "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
@@ -3262,6 +3315,16 @@
         "schemes:project",
         "schemes:ice"
       ]
+    },
+    {
+      "path": "schemes/config/official-weasel/lua/stellae_dlc.lua",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "references": [
+        "schemes/LICENSE",
+        "schemes/docs/sources/official-weasel-sources.md"
+      ],
+      "source_ids": []
     },
     {
       "path": "schemes/config/official-weasel/lua/tool_calculator.lua",
@@ -3390,20 +3453,6 @@
       ]
     },
     {
-      "path": "schemes/config/official-weasel/luna_pinyin.research.dict.yaml",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "license_scope": "Project dictionary import configuration; imported dictionaries retain their own terms. Existing source reference comments remain in the file.",
-      "source_ids": [
-        "schemes:project",
-        "schemes:luna"
-      ],
-      "references": [
-        "schemes/LICENSE",
-        "schemes/docs/sources/official-weasel-sources.md"
-      ]
-    },
-    {
       "path": "schemes/config/official-weasel/luna_pinyin.schema.yaml",
       "kind": "program-or-configuration",
       "source_ids": [
@@ -3417,7 +3466,8 @@
       "references": [
         "schemes/LICENSE",
         "schemes/licenses/luna-pinyin-LGPL-3.0.txt",
-        "schemes/docs/sources/shared-config-sources.md"
+        "schemes/docs/sources/shared-config-sources.md",
+        "schemes/docs/sources/official-weasel-sources.md"
       ]
     },
     {
@@ -3538,37 +3588,6 @@
         "schemes/docs/sources/official-weasel-sources.md"
       ],
       "source_ids": []
-    },
-    {
-      "path": "schemes/config/official-weasel/pc_research.custom.yaml",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
-      "retained_upstream_terms": [],
-      "references": [
-        "schemes/LICENSE",
-        "schemes/docs/sources/official-weasel-sources.md"
-      ],
-      "source_ids": []
-    },
-    {
-      "path": "schemes/config/official-weasel/pc_research.schema.yaml",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
-      "retained_upstream_terms": [
-        "LGPL-3.0 as retained in Luna source notice"
-      ],
-      "references": [
-        "schemes/LICENSE",
-        "schemes/THIRD_PARTY_NOTICES.md",
-        "schemes/licenses/luna-pinyin-LGPL-3.0.txt",
-        "schemes/docs/sources/official-weasel-sources.md"
-      ],
-      "source_ids": [
-        "schemes:project",
-        "schemes:luna"
-      ]
     },
     {
       "kind": "program-or-configuration",
@@ -3828,378 +3847,6 @@
       ]
     },
     {
-      "path": "schemes/config/official-weasel/research_greek.dict.yaml",
-      "kind": "data-or-generated-data",
-      "source_group": "own-symbol-tables",
-      "source_ids": [
-        "schemes:project"
-      ],
-      "license_scope": "GPLv3 original mapping expression; no exclusive claim on symbols/names themselves",
-      "references": [
-        "schemes/docs/sources/official-weasel-sources.md"
-      ]
-    },
-    {
-      "path": "schemes/config/official-weasel/rymcp_dlc_computer.dict.yaml",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "references": [
-        "schemes/LICENSE",
-        "schemes/docs/sources/official-weasel-sources.md"
-      ],
-      "source_ids": []
-    },
-    {
-      "path": "schemes/config/official-weasel/rymcp_dlc_math.dict.yaml",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "references": [
-        "schemes/LICENSE",
-        "schemes/docs/sources/official-weasel-sources.md"
-      ],
-      "source_ids": []
-    },
-    {
-      "path": "schemes/config/official-weasel/rymcp_dlc_physics.dict.yaml",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "references": [
-        "schemes/LICENSE",
-        "schemes/docs/sources/official-weasel-sources.md"
-      ],
-      "source_ids": []
-    },
-    {
-      "path": "schemes/config/official-weasel/rymcp_dlc_poetry.dict.yaml",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "references": [
-        "schemes/LICENSE",
-        "schemes/docs/sources/official-weasel-sources.md"
-      ],
-      "source_ids": []
-    },
-    {
-      "path": "schemes/config/official-weasel/rymcp_dlc_poetry_00.dict.yaml",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "references": [
-        "schemes/LICENSE",
-        "schemes/docs/sources/official-weasel-sources.md"
-      ],
-      "source_ids": []
-    },
-    {
-      "path": "schemes/config/official-weasel/rymcp_dlc_poetry_01.dict.yaml",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "references": [
-        "schemes/LICENSE",
-        "schemes/docs/sources/official-weasel-sources.md"
-      ],
-      "source_ids": []
-    },
-    {
-      "path": "schemes/config/official-weasel/rymcp_dlc_poetry_02.dict.yaml",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "references": [
-        "schemes/LICENSE",
-        "schemes/docs/sources/official-weasel-sources.md"
-      ],
-      "source_ids": []
-    },
-    {
-      "path": "schemes/config/official-weasel/rymcp_dlc_poetry_03.dict.yaml",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "references": [
-        "schemes/LICENSE",
-        "schemes/docs/sources/official-weasel-sources.md"
-      ],
-      "source_ids": []
-    },
-    {
-      "path": "schemes/config/official-weasel/rymcp_dlc_poetry_04.dict.yaml",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "references": [
-        "schemes/LICENSE",
-        "schemes/docs/sources/official-weasel-sources.md"
-      ],
-      "source_ids": []
-    },
-    {
-      "path": "schemes/config/official-weasel/rymcp_dlc_poetry_05.dict.yaml",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "references": [
-        "schemes/LICENSE",
-        "schemes/docs/sources/official-weasel-sources.md"
-      ],
-      "source_ids": []
-    },
-    {
-      "path": "schemes/config/official-weasel/rymcp_dlc_poetry_06.dict.yaml",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "references": [
-        "schemes/LICENSE",
-        "schemes/docs/sources/official-weasel-sources.md"
-      ],
-      "source_ids": []
-    },
-    {
-      "path": "schemes/config/official-weasel/rymcp_dlc_poetry_07.dict.yaml",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "references": [
-        "schemes/LICENSE",
-        "schemes/docs/sources/official-weasel-sources.md"
-      ],
-      "source_ids": []
-    },
-    {
-      "path": "schemes/config/official-weasel/rymcp_dlc_poetry_08.dict.yaml",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "references": [
-        "schemes/LICENSE",
-        "schemes/docs/sources/official-weasel-sources.md"
-      ],
-      "source_ids": []
-    },
-    {
-      "path": "schemes/config/official-weasel/rymcp_dlc_poetry_09.dict.yaml",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "references": [
-        "schemes/LICENSE",
-        "schemes/docs/sources/official-weasel-sources.md"
-      ],
-      "source_ids": []
-    },
-    {
-      "path": "schemes/config/official-weasel/rymcp_dlc_poetry_10.dict.yaml",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "references": [
-        "schemes/LICENSE",
-        "schemes/docs/sources/official-weasel-sources.md"
-      ],
-      "source_ids": []
-    },
-    {
-      "path": "schemes/config/official-weasel/rymcp_dlc_poetry_11.dict.yaml",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "references": [
-        "schemes/LICENSE",
-        "schemes/docs/sources/official-weasel-sources.md"
-      ],
-      "source_ids": []
-    },
-    {
-      "path": "schemes/config/official-weasel/rymcp_dlc_poetry_12.dict.yaml",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "references": [
-        "schemes/LICENSE",
-        "schemes/docs/sources/official-weasel-sources.md"
-      ],
-      "source_ids": []
-    },
-    {
-      "path": "schemes/config/official-weasel/rymcp_dlc_poetry_13.dict.yaml",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "references": [
-        "schemes/LICENSE",
-        "schemes/docs/sources/official-weasel-sources.md"
-      ],
-      "source_ids": []
-    },
-    {
-      "path": "schemes/config/official-weasel/rymcp_dlc_poetry_14.dict.yaml",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "references": [
-        "schemes/LICENSE",
-        "schemes/docs/sources/official-weasel-sources.md"
-      ],
-      "source_ids": []
-    },
-    {
-      "path": "schemes/config/official-weasel/rymcp_dlc_poetry_15.dict.yaml",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "references": [
-        "schemes/LICENSE",
-        "schemes/docs/sources/official-weasel-sources.md"
-      ],
-      "source_ids": []
-    },
-    {
-      "path": "schemes/config/official-weasel/rymcp_dlc_poetry_16.dict.yaml",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "references": [
-        "schemes/LICENSE",
-        "schemes/docs/sources/official-weasel-sources.md"
-      ],
-      "source_ids": []
-    },
-    {
-      "path": "schemes/config/official-weasel/rymcp_dlc_poetry_17.dict.yaml",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "references": [
-        "schemes/LICENSE",
-        "schemes/docs/sources/official-weasel-sources.md"
-      ],
-      "source_ids": []
-    },
-    {
-      "path": "schemes/config/official-weasel/rymcp_dlc_poetry_18.dict.yaml",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "references": [
-        "schemes/LICENSE",
-        "schemes/docs/sources/official-weasel-sources.md"
-      ],
-      "source_ids": []
-    },
-    {
-      "path": "schemes/config/official-weasel/rymcp_dlc_poetry_19.dict.yaml",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "references": [
-        "schemes/LICENSE",
-        "schemes/docs/sources/official-weasel-sources.md"
-      ],
-      "source_ids": []
-    },
-    {
-      "path": "schemes/config/official-weasel/rymcp_dlc_poetry_20.dict.yaml",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "references": [
-        "schemes/LICENSE",
-        "schemes/docs/sources/official-weasel-sources.md"
-      ],
-      "source_ids": []
-    },
-    {
-      "path": "schemes/config/official-weasel/rymcp_dlc_poetry_21.dict.yaml",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "references": [
-        "schemes/LICENSE",
-        "schemes/docs/sources/official-weasel-sources.md"
-      ],
-      "source_ids": []
-    },
-    {
-      "path": "schemes/config/official-weasel/rymcp_dlc_poetry_22.dict.yaml",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "references": [
-        "schemes/LICENSE",
-        "schemes/docs/sources/official-weasel-sources.md"
-      ],
-      "source_ids": []
-    },
-    {
-      "path": "schemes/config/official-weasel/rymcp_dlc_poetry_23.dict.yaml",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "references": [
-        "schemes/LICENSE",
-        "schemes/docs/sources/official-weasel-sources.md"
-      ],
-      "source_ids": []
-    },
-    {
-      "path": "schemes/config/official-weasel/rymcp_dlc_poetry_24.dict.yaml",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "references": [
-        "schemes/LICENSE",
-        "schemes/docs/sources/official-weasel-sources.md"
-      ],
-      "source_ids": []
-    },
-    {
-      "path": "schemes/config/official-weasel/rymcp_dlc_poetry_25.dict.yaml",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "references": [
-        "schemes/LICENSE",
-        "schemes/docs/sources/official-weasel-sources.md"
-      ],
-      "source_ids": []
-    },
-    {
-      "path": "schemes/config/official-weasel/rymcp_dlc_poetry_26.dict.yaml",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "references": [
-        "schemes/LICENSE",
-        "schemes/docs/sources/official-weasel-sources.md"
-      ],
-      "source_ids": []
-    },
-    {
-      "path": "schemes/config/official-weasel/rymcp_dlc_poetry_27.dict.yaml",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "references": [
-        "schemes/LICENSE",
-        "schemes/docs/sources/official-weasel-sources.md"
-      ],
-      "source_ids": []
-    },
-    {
-      "path": "schemes/config/official-weasel/rymcp_dlc_poetry_28.dict.yaml",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "references": [
-        "schemes/LICENSE",
-        "schemes/docs/sources/official-weasel-sources.md"
-      ],
-      "source_ids": []
-    },
-    {
-      "path": "schemes/config/official-weasel/rymcp_dlc_poetry_29.dict.yaml",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "references": [
-        "schemes/LICENSE",
-        "schemes/docs/sources/official-weasel-sources.md"
-      ],
-      "source_ids": []
-    },
-    {
-      "path": "schemes/config/official-weasel/rymcp_dlc_poetry_30.dict.yaml",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "references": [
-        "schemes/LICENSE",
-        "schemes/docs/sources/official-weasel-sources.md"
-      ],
-      "source_ids": []
-    },
-    {
-      "path": "schemes/config/official-weasel/rymcp_dlc_poetry_31.dict.yaml",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "references": [
-        "schemes/LICENSE",
-        "schemes/docs/sources/official-weasel-sources.md"
-      ],
-      "source_ids": []
-    },
-    {
       "path": "schemes/config/official-weasel/samples/default.custom.yaml",
       "kind": "program-or-configuration",
       "project_license": "GPL-3.0-only",
@@ -4248,6 +3895,378 @@
       "source_ids": []
     },
     {
+      "path": "schemes/config/official-weasel/stellae_dlc_computer.dict.yaml",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "references": [
+        "schemes/LICENSE",
+        "schemes/docs/sources/official-weasel-sources.md"
+      ],
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/official-weasel/stellae_dlc_math.dict.yaml",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "references": [
+        "schemes/LICENSE",
+        "schemes/docs/sources/official-weasel-sources.md"
+      ],
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/official-weasel/stellae_dlc_physics.dict.yaml",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "references": [
+        "schemes/LICENSE",
+        "schemes/docs/sources/official-weasel-sources.md"
+      ],
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/official-weasel/stellae_dlc_poetry.dict.yaml",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "references": [
+        "schemes/LICENSE",
+        "schemes/docs/sources/official-weasel-sources.md"
+      ],
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/official-weasel/stellae_dlc_poetry_00.dict.yaml",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "references": [
+        "schemes/LICENSE",
+        "schemes/docs/sources/official-weasel-sources.md"
+      ],
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/official-weasel/stellae_dlc_poetry_01.dict.yaml",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "references": [
+        "schemes/LICENSE",
+        "schemes/docs/sources/official-weasel-sources.md"
+      ],
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/official-weasel/stellae_dlc_poetry_02.dict.yaml",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "references": [
+        "schemes/LICENSE",
+        "schemes/docs/sources/official-weasel-sources.md"
+      ],
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/official-weasel/stellae_dlc_poetry_03.dict.yaml",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "references": [
+        "schemes/LICENSE",
+        "schemes/docs/sources/official-weasel-sources.md"
+      ],
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/official-weasel/stellae_dlc_poetry_04.dict.yaml",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "references": [
+        "schemes/LICENSE",
+        "schemes/docs/sources/official-weasel-sources.md"
+      ],
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/official-weasel/stellae_dlc_poetry_05.dict.yaml",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "references": [
+        "schemes/LICENSE",
+        "schemes/docs/sources/official-weasel-sources.md"
+      ],
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/official-weasel/stellae_dlc_poetry_06.dict.yaml",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "references": [
+        "schemes/LICENSE",
+        "schemes/docs/sources/official-weasel-sources.md"
+      ],
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/official-weasel/stellae_dlc_poetry_07.dict.yaml",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "references": [
+        "schemes/LICENSE",
+        "schemes/docs/sources/official-weasel-sources.md"
+      ],
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/official-weasel/stellae_dlc_poetry_08.dict.yaml",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "references": [
+        "schemes/LICENSE",
+        "schemes/docs/sources/official-weasel-sources.md"
+      ],
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/official-weasel/stellae_dlc_poetry_09.dict.yaml",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "references": [
+        "schemes/LICENSE",
+        "schemes/docs/sources/official-weasel-sources.md"
+      ],
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/official-weasel/stellae_dlc_poetry_10.dict.yaml",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "references": [
+        "schemes/LICENSE",
+        "schemes/docs/sources/official-weasel-sources.md"
+      ],
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/official-weasel/stellae_dlc_poetry_11.dict.yaml",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "references": [
+        "schemes/LICENSE",
+        "schemes/docs/sources/official-weasel-sources.md"
+      ],
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/official-weasel/stellae_dlc_poetry_12.dict.yaml",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "references": [
+        "schemes/LICENSE",
+        "schemes/docs/sources/official-weasel-sources.md"
+      ],
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/official-weasel/stellae_dlc_poetry_13.dict.yaml",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "references": [
+        "schemes/LICENSE",
+        "schemes/docs/sources/official-weasel-sources.md"
+      ],
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/official-weasel/stellae_dlc_poetry_14.dict.yaml",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "references": [
+        "schemes/LICENSE",
+        "schemes/docs/sources/official-weasel-sources.md"
+      ],
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/official-weasel/stellae_dlc_poetry_15.dict.yaml",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "references": [
+        "schemes/LICENSE",
+        "schemes/docs/sources/official-weasel-sources.md"
+      ],
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/official-weasel/stellae_dlc_poetry_16.dict.yaml",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "references": [
+        "schemes/LICENSE",
+        "schemes/docs/sources/official-weasel-sources.md"
+      ],
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/official-weasel/stellae_dlc_poetry_17.dict.yaml",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "references": [
+        "schemes/LICENSE",
+        "schemes/docs/sources/official-weasel-sources.md"
+      ],
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/official-weasel/stellae_dlc_poetry_18.dict.yaml",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "references": [
+        "schemes/LICENSE",
+        "schemes/docs/sources/official-weasel-sources.md"
+      ],
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/official-weasel/stellae_dlc_poetry_19.dict.yaml",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "references": [
+        "schemes/LICENSE",
+        "schemes/docs/sources/official-weasel-sources.md"
+      ],
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/official-weasel/stellae_dlc_poetry_20.dict.yaml",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "references": [
+        "schemes/LICENSE",
+        "schemes/docs/sources/official-weasel-sources.md"
+      ],
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/official-weasel/stellae_dlc_poetry_21.dict.yaml",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "references": [
+        "schemes/LICENSE",
+        "schemes/docs/sources/official-weasel-sources.md"
+      ],
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/official-weasel/stellae_dlc_poetry_22.dict.yaml",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "references": [
+        "schemes/LICENSE",
+        "schemes/docs/sources/official-weasel-sources.md"
+      ],
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/official-weasel/stellae_dlc_poetry_23.dict.yaml",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "references": [
+        "schemes/LICENSE",
+        "schemes/docs/sources/official-weasel-sources.md"
+      ],
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/official-weasel/stellae_dlc_poetry_24.dict.yaml",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "references": [
+        "schemes/LICENSE",
+        "schemes/docs/sources/official-weasel-sources.md"
+      ],
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/official-weasel/stellae_dlc_poetry_25.dict.yaml",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "references": [
+        "schemes/LICENSE",
+        "schemes/docs/sources/official-weasel-sources.md"
+      ],
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/official-weasel/stellae_dlc_poetry_26.dict.yaml",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "references": [
+        "schemes/LICENSE",
+        "schemes/docs/sources/official-weasel-sources.md"
+      ],
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/official-weasel/stellae_dlc_poetry_27.dict.yaml",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "references": [
+        "schemes/LICENSE",
+        "schemes/docs/sources/official-weasel-sources.md"
+      ],
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/official-weasel/stellae_dlc_poetry_28.dict.yaml",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "references": [
+        "schemes/LICENSE",
+        "schemes/docs/sources/official-weasel-sources.md"
+      ],
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/official-weasel/stellae_dlc_poetry_29.dict.yaml",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "references": [
+        "schemes/LICENSE",
+        "schemes/docs/sources/official-weasel-sources.md"
+      ],
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/official-weasel/stellae_dlc_poetry_30.dict.yaml",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "references": [
+        "schemes/LICENSE",
+        "schemes/docs/sources/official-weasel-sources.md"
+      ],
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/official-weasel/stellae_dlc_poetry_31.dict.yaml",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "references": [
+        "schemes/LICENSE",
+        "schemes/docs/sources/official-weasel-sources.md"
+      ],
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/official-weasel/stellae_symbols.dict.yaml",
+      "kind": "data-or-generated-data",
+      "source_group": "own-symbol-tables",
+      "source_ids": [
+        "schemes:project"
+      ],
+      "license_scope": "GPLv3 original mapping expression; no exclusive claim on symbols/names themselves",
+      "references": [
+        "schemes/docs/sources/official-weasel-sources.md"
+      ]
+    },
+    {
       "kind": "data-or-generated-data",
       "source_ids": [
         "schemes:stroke"
@@ -4275,7 +4294,7 @@
         "LGPL-3.0",
         "CNS11643 and original AUTHORS attribution"
       ],
-      "license_scope": "Upstream stroke configuration under LGPL-3.0; only schema/name omitted for internal lookup use, with original authorship and behavior retained.",
+      "license_scope": "Unmodified upstream stroke configuration/data under LGPL-3.0; original CNS11643 and supplementary-table attribution retained.",
       "references": [
         "schemes/LICENSE",
         "schemes/licenses/radical-stroke/stroke-LGPL-3.0.txt",
@@ -4412,6 +4431,48 @@
       "source_ids": []
     },
     {
+      "path": "schemes/config/pc/cn_stellae.custom.yaml",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "schemes/LICENSE"
+      ],
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/pc/cn_stellae.dict.yaml",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Project dictionary import configuration; imported dictionaries retain their own terms. Existing source reference comments remain in the file.",
+      "source_ids": [
+        "schemes:project",
+        "schemes:luna"
+      ],
+      "references": [
+        "schemes/LICENSE"
+      ]
+    },
+    {
+      "path": "schemes/config/pc/cn_stellae.schema.yaml",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [
+        "LGPL-3.0 as retained in Luna source notice"
+      ],
+      "references": [
+        "schemes/LICENSE",
+        "schemes/THIRD_PARTY_NOTICES.md",
+        "schemes/licenses/luna-pinyin-LGPL-3.0.txt"
+      ],
+      "source_ids": [
+        "schemes:project",
+        "schemes:luna"
+      ]
+    },
+    {
       "path": "schemes/config/pc/config-source-manifest.json",
       "kind": "data-or-generated-data",
       "source_group": "data-build-metadata",
@@ -4441,7 +4502,7 @@
         "LGPL-3.0",
         "rime-prelude AUTHORS"
       ],
-      "license_scope": "Upstream default configuration under LGPL-3.0 with a project-specific schema list; original attribution retained.",
+      "license_scope": "Unmodified upstream default configuration under LGPL-3.0; original attribution retained.",
       "references": [
         "schemes/LICENSE",
         "schemes/licenses/shared-config/prelude-LICENSE.txt",
@@ -4693,33 +4754,7 @@
       "source_ids": []
     },
     {
-      "path": "schemes/config/pc/jp_sela.custom.yaml",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms. Existing Rime spelling-rule source comments remain in the file.",
-      "retained_upstream_terms": [],
-      "references": [
-        "schemes/LICENSE",
-        "schemes/config/pc/JAPANESE.md"
-      ],
-      "source_ids": []
-    },
-    {
-      "path": "schemes/config/pc/jp_sela.schema.yaml",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
-      "retained_upstream_terms": [],
-      "references": [
-        "schemes/LICENSE",
-        "schemes/config/pc/JAPANESE.md",
-        "schemes/config/pc/japanese-q-canonical.json",
-        "schemes/config/pc/tools/generate-japanese-base.py"
-      ],
-      "source_ids": []
-    },
-    {
-      "path": "schemes/config/pc/jp_sela_custom.dict.yaml",
+      "path": "schemes/config/pc/jp_romaji.dict.yaml",
       "kind": "data-or-generated-data",
       "source_group": "jp-independent-kana",
       "source_ids": [
@@ -4750,6 +4785,32 @@
       "retained_upstream_terms": [],
       "references": [
         "schemes/LICENSE"
+      ],
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/pc/jp_stellae.custom.yaml",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms. Existing Rime spelling-rule source comments remain in the file.",
+      "retained_upstream_terms": [],
+      "references": [
+        "schemes/LICENSE",
+        "schemes/config/pc/JAPANESE.md"
+      ],
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/pc/jp_stellae.schema.yaml",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "schemes/LICENSE",
+        "schemes/config/pc/JAPANESE.md",
+        "schemes/config/pc/japanese-q-canonical.json",
+        "schemes/config/pc/tools/generate-japanese-base.py"
       ],
       "source_ids": []
     },
@@ -5515,15 +5576,6 @@
       "source_ids": []
     },
     {
-      "path": "schemes/config/pc/lua/rymcp_dlc.lua",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "references": [
-        "schemes/LICENSE"
-      ],
-      "source_ids": []
-    },
-    {
       "kind": "program-or-configuration",
       "project_license": "GPL-3.0-only",
       "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
@@ -5551,6 +5603,15 @@
         "schemes:project",
         "schemes:ice"
       ]
+    },
+    {
+      "path": "schemes/config/pc/lua/stellae_dlc.lua",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "references": [
+        "schemes/LICENSE"
+      ],
+      "source_ids": []
     },
     {
       "path": "schemes/config/pc/lua/tool_calculator.lua",
@@ -5658,19 +5719,6 @@
     },
     {
       "path": "schemes/config/pc/luna_pinyin.extended.dict.yaml",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "license_scope": "Project dictionary import configuration; imported dictionaries retain their own terms. Existing source reference comments remain in the file.",
-      "source_ids": [
-        "schemes:project",
-        "schemes:luna"
-      ],
-      "references": [
-        "schemes/LICENSE"
-      ]
-    },
-    {
-      "path": "schemes/config/pc/luna_pinyin.research.dict.yaml",
       "kind": "program-or-configuration",
       "project_license": "GPL-3.0-only",
       "license_scope": "Project dictionary import configuration; imported dictionaries retain their own terms. Existing source reference comments remain in the file.",
@@ -5809,35 +5857,6 @@
         "schemes/licenses/CC-BY-SA-4.0.txt"
       ],
       "source_ids": []
-    },
-    {
-      "path": "schemes/config/pc/pc_research.custom.yaml",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
-      "retained_upstream_terms": [],
-      "references": [
-        "schemes/LICENSE"
-      ],
-      "source_ids": []
-    },
-    {
-      "path": "schemes/config/pc/pc_research.schema.yaml",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
-      "retained_upstream_terms": [
-        "LGPL-3.0 as retained in Luna source notice"
-      ],
-      "references": [
-        "schemes/LICENSE",
-        "schemes/THIRD_PARTY_NOTICES.md",
-        "schemes/licenses/luna-pinyin-LGPL-3.0.txt"
-      ],
-      "source_ids": [
-        "schemes:project",
-        "schemes:luna"
-      ]
     },
     {
       "kind": "program-or-configuration",
@@ -6066,345 +6085,11 @@
       ]
     },
     {
-      "path": "schemes/config/pc/research_greek.dict.yaml",
-      "kind": "data-or-generated-data",
-      "source_group": "own-symbol-tables",
-      "source_ids": [
-        "schemes:project"
-      ],
-      "license_scope": "GPLv3 original mapping expression; no exclusive claim on symbols/names themselves",
-      "references": []
-    },
-    {
       "path": "schemes/config/pc/rime.lua",
       "kind": "program-or-configuration",
       "project_license": "GPL-3.0-only",
       "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
       "retained_upstream_terms": [],
-      "references": [
-        "schemes/LICENSE"
-      ],
-      "source_ids": []
-    },
-    {
-      "path": "schemes/config/pc/rymcp_dlc_computer.dict.yaml",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "references": [
-        "schemes/LICENSE"
-      ],
-      "source_ids": []
-    },
-    {
-      "path": "schemes/config/pc/rymcp_dlc_math.dict.yaml",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "references": [
-        "schemes/LICENSE"
-      ],
-      "source_ids": []
-    },
-    {
-      "path": "schemes/config/pc/rymcp_dlc_physics.dict.yaml",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "references": [
-        "schemes/LICENSE"
-      ],
-      "source_ids": []
-    },
-    {
-      "path": "schemes/config/pc/rymcp_dlc_poetry.dict.yaml",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "references": [
-        "schemes/LICENSE"
-      ],
-      "source_ids": []
-    },
-    {
-      "path": "schemes/config/pc/rymcp_dlc_poetry_00.dict.yaml",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "references": [
-        "schemes/LICENSE"
-      ],
-      "source_ids": []
-    },
-    {
-      "path": "schemes/config/pc/rymcp_dlc_poetry_01.dict.yaml",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "references": [
-        "schemes/LICENSE"
-      ],
-      "source_ids": []
-    },
-    {
-      "path": "schemes/config/pc/rymcp_dlc_poetry_02.dict.yaml",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "references": [
-        "schemes/LICENSE"
-      ],
-      "source_ids": []
-    },
-    {
-      "path": "schemes/config/pc/rymcp_dlc_poetry_03.dict.yaml",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "references": [
-        "schemes/LICENSE"
-      ],
-      "source_ids": []
-    },
-    {
-      "path": "schemes/config/pc/rymcp_dlc_poetry_04.dict.yaml",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "references": [
-        "schemes/LICENSE"
-      ],
-      "source_ids": []
-    },
-    {
-      "path": "schemes/config/pc/rymcp_dlc_poetry_05.dict.yaml",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "references": [
-        "schemes/LICENSE"
-      ],
-      "source_ids": []
-    },
-    {
-      "path": "schemes/config/pc/rymcp_dlc_poetry_06.dict.yaml",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "references": [
-        "schemes/LICENSE"
-      ],
-      "source_ids": []
-    },
-    {
-      "path": "schemes/config/pc/rymcp_dlc_poetry_07.dict.yaml",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "references": [
-        "schemes/LICENSE"
-      ],
-      "source_ids": []
-    },
-    {
-      "path": "schemes/config/pc/rymcp_dlc_poetry_08.dict.yaml",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "references": [
-        "schemes/LICENSE"
-      ],
-      "source_ids": []
-    },
-    {
-      "path": "schemes/config/pc/rymcp_dlc_poetry_09.dict.yaml",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "references": [
-        "schemes/LICENSE"
-      ],
-      "source_ids": []
-    },
-    {
-      "path": "schemes/config/pc/rymcp_dlc_poetry_10.dict.yaml",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "references": [
-        "schemes/LICENSE"
-      ],
-      "source_ids": []
-    },
-    {
-      "path": "schemes/config/pc/rymcp_dlc_poetry_11.dict.yaml",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "references": [
-        "schemes/LICENSE"
-      ],
-      "source_ids": []
-    },
-    {
-      "path": "schemes/config/pc/rymcp_dlc_poetry_12.dict.yaml",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "references": [
-        "schemes/LICENSE"
-      ],
-      "source_ids": []
-    },
-    {
-      "path": "schemes/config/pc/rymcp_dlc_poetry_13.dict.yaml",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "references": [
-        "schemes/LICENSE"
-      ],
-      "source_ids": []
-    },
-    {
-      "path": "schemes/config/pc/rymcp_dlc_poetry_14.dict.yaml",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "references": [
-        "schemes/LICENSE"
-      ],
-      "source_ids": []
-    },
-    {
-      "path": "schemes/config/pc/rymcp_dlc_poetry_15.dict.yaml",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "references": [
-        "schemes/LICENSE"
-      ],
-      "source_ids": []
-    },
-    {
-      "path": "schemes/config/pc/rymcp_dlc_poetry_16.dict.yaml",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "references": [
-        "schemes/LICENSE"
-      ],
-      "source_ids": []
-    },
-    {
-      "path": "schemes/config/pc/rymcp_dlc_poetry_17.dict.yaml",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "references": [
-        "schemes/LICENSE"
-      ],
-      "source_ids": []
-    },
-    {
-      "path": "schemes/config/pc/rymcp_dlc_poetry_18.dict.yaml",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "references": [
-        "schemes/LICENSE"
-      ],
-      "source_ids": []
-    },
-    {
-      "path": "schemes/config/pc/rymcp_dlc_poetry_19.dict.yaml",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "references": [
-        "schemes/LICENSE"
-      ],
-      "source_ids": []
-    },
-    {
-      "path": "schemes/config/pc/rymcp_dlc_poetry_20.dict.yaml",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "references": [
-        "schemes/LICENSE"
-      ],
-      "source_ids": []
-    },
-    {
-      "path": "schemes/config/pc/rymcp_dlc_poetry_21.dict.yaml",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "references": [
-        "schemes/LICENSE"
-      ],
-      "source_ids": []
-    },
-    {
-      "path": "schemes/config/pc/rymcp_dlc_poetry_22.dict.yaml",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "references": [
-        "schemes/LICENSE"
-      ],
-      "source_ids": []
-    },
-    {
-      "path": "schemes/config/pc/rymcp_dlc_poetry_23.dict.yaml",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "references": [
-        "schemes/LICENSE"
-      ],
-      "source_ids": []
-    },
-    {
-      "path": "schemes/config/pc/rymcp_dlc_poetry_24.dict.yaml",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "references": [
-        "schemes/LICENSE"
-      ],
-      "source_ids": []
-    },
-    {
-      "path": "schemes/config/pc/rymcp_dlc_poetry_25.dict.yaml",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "references": [
-        "schemes/LICENSE"
-      ],
-      "source_ids": []
-    },
-    {
-      "path": "schemes/config/pc/rymcp_dlc_poetry_26.dict.yaml",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "references": [
-        "schemes/LICENSE"
-      ],
-      "source_ids": []
-    },
-    {
-      "path": "schemes/config/pc/rymcp_dlc_poetry_27.dict.yaml",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "references": [
-        "schemes/LICENSE"
-      ],
-      "source_ids": []
-    },
-    {
-      "path": "schemes/config/pc/rymcp_dlc_poetry_28.dict.yaml",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "references": [
-        "schemes/LICENSE"
-      ],
-      "source_ids": []
-    },
-    {
-      "path": "schemes/config/pc/rymcp_dlc_poetry_29.dict.yaml",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "references": [
-        "schemes/LICENSE"
-      ],
-      "source_ids": []
-    },
-    {
-      "path": "schemes/config/pc/rymcp_dlc_poetry_30.dict.yaml",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "references": [
-        "schemes/LICENSE"
-      ],
-      "source_ids": []
-    },
-    {
-      "path": "schemes/config/pc/rymcp_dlc_poetry_31.dict.yaml",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
       "references": [
         "schemes/LICENSE"
       ],
@@ -6420,6 +6105,340 @@
       ],
       "path": "schemes/config/pc/source-dependencies.json",
       "source_ids": []
+    },
+    {
+      "path": "schemes/config/pc/stellae_dlc_computer.dict.yaml",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "references": [
+        "schemes/LICENSE"
+      ],
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/pc/stellae_dlc_math.dict.yaml",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "references": [
+        "schemes/LICENSE"
+      ],
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/pc/stellae_dlc_physics.dict.yaml",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "references": [
+        "schemes/LICENSE"
+      ],
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/pc/stellae_dlc_poetry.dict.yaml",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "references": [
+        "schemes/LICENSE"
+      ],
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/pc/stellae_dlc_poetry_00.dict.yaml",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "references": [
+        "schemes/LICENSE"
+      ],
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/pc/stellae_dlc_poetry_01.dict.yaml",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "references": [
+        "schemes/LICENSE"
+      ],
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/pc/stellae_dlc_poetry_02.dict.yaml",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "references": [
+        "schemes/LICENSE"
+      ],
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/pc/stellae_dlc_poetry_03.dict.yaml",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "references": [
+        "schemes/LICENSE"
+      ],
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/pc/stellae_dlc_poetry_04.dict.yaml",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "references": [
+        "schemes/LICENSE"
+      ],
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/pc/stellae_dlc_poetry_05.dict.yaml",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "references": [
+        "schemes/LICENSE"
+      ],
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/pc/stellae_dlc_poetry_06.dict.yaml",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "references": [
+        "schemes/LICENSE"
+      ],
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/pc/stellae_dlc_poetry_07.dict.yaml",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "references": [
+        "schemes/LICENSE"
+      ],
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/pc/stellae_dlc_poetry_08.dict.yaml",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "references": [
+        "schemes/LICENSE"
+      ],
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/pc/stellae_dlc_poetry_09.dict.yaml",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "references": [
+        "schemes/LICENSE"
+      ],
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/pc/stellae_dlc_poetry_10.dict.yaml",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "references": [
+        "schemes/LICENSE"
+      ],
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/pc/stellae_dlc_poetry_11.dict.yaml",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "references": [
+        "schemes/LICENSE"
+      ],
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/pc/stellae_dlc_poetry_12.dict.yaml",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "references": [
+        "schemes/LICENSE"
+      ],
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/pc/stellae_dlc_poetry_13.dict.yaml",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "references": [
+        "schemes/LICENSE"
+      ],
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/pc/stellae_dlc_poetry_14.dict.yaml",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "references": [
+        "schemes/LICENSE"
+      ],
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/pc/stellae_dlc_poetry_15.dict.yaml",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "references": [
+        "schemes/LICENSE"
+      ],
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/pc/stellae_dlc_poetry_16.dict.yaml",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "references": [
+        "schemes/LICENSE"
+      ],
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/pc/stellae_dlc_poetry_17.dict.yaml",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "references": [
+        "schemes/LICENSE"
+      ],
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/pc/stellae_dlc_poetry_18.dict.yaml",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "references": [
+        "schemes/LICENSE"
+      ],
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/pc/stellae_dlc_poetry_19.dict.yaml",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "references": [
+        "schemes/LICENSE"
+      ],
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/pc/stellae_dlc_poetry_20.dict.yaml",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "references": [
+        "schemes/LICENSE"
+      ],
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/pc/stellae_dlc_poetry_21.dict.yaml",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "references": [
+        "schemes/LICENSE"
+      ],
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/pc/stellae_dlc_poetry_22.dict.yaml",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "references": [
+        "schemes/LICENSE"
+      ],
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/pc/stellae_dlc_poetry_23.dict.yaml",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "references": [
+        "schemes/LICENSE"
+      ],
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/pc/stellae_dlc_poetry_24.dict.yaml",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "references": [
+        "schemes/LICENSE"
+      ],
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/pc/stellae_dlc_poetry_25.dict.yaml",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "references": [
+        "schemes/LICENSE"
+      ],
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/pc/stellae_dlc_poetry_26.dict.yaml",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "references": [
+        "schemes/LICENSE"
+      ],
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/pc/stellae_dlc_poetry_27.dict.yaml",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "references": [
+        "schemes/LICENSE"
+      ],
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/pc/stellae_dlc_poetry_28.dict.yaml",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "references": [
+        "schemes/LICENSE"
+      ],
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/pc/stellae_dlc_poetry_29.dict.yaml",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "references": [
+        "schemes/LICENSE"
+      ],
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/pc/stellae_dlc_poetry_30.dict.yaml",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "references": [
+        "schemes/LICENSE"
+      ],
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/pc/stellae_dlc_poetry_31.dict.yaml",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "references": [
+        "schemes/LICENSE"
+      ],
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/pc/stellae_symbols.dict.yaml",
+      "kind": "data-or-generated-data",
+      "source_group": "own-symbol-tables",
+      "source_ids": [
+        "schemes:project"
+      ],
+      "license_scope": "GPLv3 original mapping expression; no exclusive claim on symbols/names themselves",
+      "references": []
     },
     {
       "kind": "data-or-generated-data",
@@ -6448,7 +6467,7 @@
         "LGPL-3.0",
         "CNS11643 and original AUTHORS attribution"
       ],
-      "license_scope": "Upstream stroke configuration under LGPL-3.0; only schema/name omitted for internal lookup use, with original authorship and behavior retained.",
+      "license_scope": "Unmodified upstream stroke configuration/data under LGPL-3.0; original CNS11643 and supplementary-table attribution retained.",
       "references": [
         "schemes/LICENSE",
         "schemes/licenses/radical-stroke/stroke-LGPL-3.0.txt",
@@ -9094,7 +9113,25 @@
       ]
     },
     {
+      "path": "scripts/package/stage_frontend_update.py",
+      "source_ids": [
+        "project-code"
+      ],
+      "references": [
+        "LICENSE"
+      ]
+    },
+    {
       "path": "scripts/package/stage_settings_update.py",
+      "source_ids": [
+        "project-code"
+      ],
+      "references": [
+        "LICENSE"
+      ]
+    },
+    {
+      "path": "scripts/package/Update-Frontend.ps1",
       "source_ids": [
         "project-code"
       ],

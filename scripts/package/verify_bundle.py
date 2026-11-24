@@ -7,7 +7,7 @@ from pathlib import Path
 import re
 from zipfile import ZipFile
 
-from apply_frontend_overlays import ENGINES, MACHINES, PRODUCTS, image_machine
+from apply_frontend_overlays import ENGINES, MACHINES, frontend_products, image_machine
 from prepare_bundle import DEFAULT_FONT_NAME, FONT_INSTALLER_HELPERS, check_scheme_archive
 
 
@@ -123,7 +123,7 @@ staged_images = {path.relative_to(a.stage).as_posix() for path in a.stage.rglob(
                  and not path.relative_to(a.stage).as_posix().startswith('archives/')}
 if len(base_images) != 14 or set(current) != set(base_images) or staged_images != set(base_images):
     raise SystemExit('The complete native image set differs')
-expected = ({name: arch for arch, products in PRODUCTS.items() for name in products}
+expected = ({name: arch for arch, products in frontend_products(inputs['nativeFrontend']).items() for name in products}
             if full_frontend else {'StellaeServer.exe': 'x64', 'Win32/StellaeServer.exe': 'x86'})
 specs = {} if full_frontend else inputs['serverOverlays']['architectures']
 proof_rows = overlay['rebuiltImages' if full_frontend else 'rebuiltServers']

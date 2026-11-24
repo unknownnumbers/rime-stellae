@@ -10,7 +10,7 @@ function M.shape(raw, schema_id, english, limits, confirmed)
   local pending = raw:sub(confirmed + 1)
   local mode, prefix, suffix = 'chinese', 0, 0
   if english then mode = 'english'
-  elseif schema_id == 'jp_sela' then
+  elseif schema_id == 'jp_stellae' then
     mode = 'japanese'
     if raw:sub(1, 2) == 'vV' or raw:sub(1, 2) == 'qQ' or raw:sub(1, 2) == 'xX' then
       prefix = math.max(0, 2 - confirmed)
@@ -74,8 +74,8 @@ function M.func(key, env)
   -- literal branch applies allow_context. JP retains its existing page keys.
   if character == '-' and shape.mode ~= 'calculator' then
     local schema_id = env.engine.schema.schema_id
-    if schema_id == 'pc_research' then return 2 end
-    if schema_id == 'jp_sela' and not key:shift()
+    if schema_id == 'cn_stellae' then return 2 end
+    if schema_id == 'jp_stellae' and not key:shift()
         and ctx:has_menu() then return 2 end
   end
   local spelling = env.spelling:find(character, 1, true) ~= nil

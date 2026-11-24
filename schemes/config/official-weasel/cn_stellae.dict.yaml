@@ -1,0 +1,10 @@
+---
+name: cn_stellae
+version: "2026.11.14.base"
+sort: by_weight
+use_preset_vocabulary: true
+import_tables:
+  - luna_pinyin
+  - stellae_symbols
+  - project_symbols
+...

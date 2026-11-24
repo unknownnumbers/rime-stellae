@@ -33,7 +33,7 @@ def build_dlc_index(catalog, output):
 
 def add_module_index(files):
     """Return a catalog with its prepared files and extended manifest."""
-    with TemporaryDirectory(prefix='rymcp-english-index-') as temp:
+    with TemporaryDirectory(prefix='stellae-english-index-') as temp:
         index_dir = Path(temp) / 'index'
         report = build_dlc_index(files['english.tsv'], index_dir)
         additions = {f'english_index/{name}': (index_dir / name).read_bytes() for name in INDEX_FILES}

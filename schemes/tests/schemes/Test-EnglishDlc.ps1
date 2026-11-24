@@ -14,7 +14,7 @@ $utf8=[Text.UTF8Encoding]::new($false)
 foreach($directory in @($user,$shared,$logs,(Join-Path $user 'build'),(Join-Path $user 'lua'))){[IO.Directory]::CreateDirectory($directory)|Out-Null}
 function Write-Text([string]$path,[string]$text){[IO.Directory]::CreateDirectory((Split-Path $path))|Out-Null;[IO.File]::WriteAllText($path,$text,$utf8)}
 Write-Text (Join-Path $user '.synthetic-profile.json') '{"Synthetic":true,"Fixture":"english-dlc"}'
-foreach($name in @('en_dlc.lua','en_dlc_format.lua','en_index.lua','en_indexed_translator.lua','rymcp_dlc.lua','scheme_data.lua','pc_probe_greek_proxy.lua','en_distance.lua')){
+foreach($name in @('en_dlc.lua','en_dlc_format.lua','en_index.lua','en_indexed_translator.lua','stellae_dlc.lua','scheme_data.lua','pc_probe_greek_proxy.lua','en_distance.lua')){
  $source=Join-Path $repo ('config/'+$Profile+'/lua/'+$name)
  if(Test-Path -LiteralPath $source){Copy-Item -LiteralPath $source -Destination (Join-Path $user ('lua/'+$name))}
 }
@@ -71,7 +71,7 @@ Write-Text (Join-Path $user 'english_extensions/entries.tsv') ''
 Write-Text (Join-Path $user 'english_extensions/case_forms.tsv') ''
 function Adler([byte[]]$bytes){[long]$a=1;[long]$b=0;foreach($value in $bytes){$a=($a+$value)%65521;$b=($b+$a)%65521};return ('{0:x8}' -f (($b -shl 16)+$a))}
 function Install-Pack([string]$id,[string]$content,[string]$revision='1',[string]$root=$user){
- $dir=Join-Path $root ('rymcp_dlc/'+$id)
+ $dir=Join-Path $root ('stellae_dlc/'+$id)
  Write-Text (Join-Path $dir 'english.tsv') $content
  $bytes=$utf8.GetBytes($content)
  Write-Text (Join-Path $dir 'manifest.tsv') "format`t1`nid`t$id`nrevision`t$revision`nlanguages`ten`nfile`tenglish.tsv`t$($bytes.Length)`t$(Adler $bytes)`n"
@@ -79,7 +79,7 @@ function Install-Pack([string]$id,[string]$content,[string]$revision='1',[string
  Write-Index (Join-Path $dir 'english_index') $aliases
 }
 function Remove-Pack([string]$id){
- $path=[IO.Path]::GetFullPath((Join-Path $user ('rymcp_dlc/'+$id)))
+ $path=[IO.Path]::GetFullPath((Join-Path $user ('stellae_dlc/'+$id)))
  if(-not $path.StartsWith(($user+'\'),[StringComparison]::OrdinalIgnoreCase)){throw 'Invalid synthetic package path.'}
  if(Test-Path -LiteralPath $path){Remove-Item -LiteralPath $path -Recurse}
 }
@@ -139,7 +139,7 @@ try{
  Check 'new-word-title-case' (@((Query 'Catalogdlc').Candidates) -ccontains 'Catalogdlc')
  Check 'new-word-upper-case' (@((Query 'CATALOGDLC').Candidates) -ccontains 'CATALOGDLC')
  Check 'new-word-correction' (@((Query 'catalogdcl').Candidates) -ccontains 'catalogdlc')
- Remove-Item -LiteralPath (Join-Path $user 'rymcp_dlc/math/english_index/keys.bin')
+ Remove-Item -LiteralPath (Join-Path $user 'stellae_dlc/math/english_index/keys.bin')
  Redeploy
  Check 'old-english-module-keeps-exact-match' (@((Query 'catalogdlc').Candidates) -ccontains 'catalogdlc')
  Check 'missing-index-skips-only-english-correction' (@((Query 'catalogdcl').Candidates) -cnotcontains 'catalogdlc')
@@ -171,19 +171,19 @@ try{
  Check 'same-path-update-new' (@((Query 'catalog').Candidates) -ccontains 'catalognew')
  Check 'same-path-update-old-gone' (@((Query 'catalog').Candidates) -cnotcontains 'catalogdlc')
  Install-Pack 'math' $math
- Write-Text (Join-Path $user 'rymcp_dlc/math/english.tsv') ($math+'incomplete')
+ Write-Text (Join-Path $user 'stellae_dlc/math/english.tsv') ($math+'incomplete')
  Redeploy
  Check 'malformed-data-whole-english-module-disabled' (@((Query 'dlcp').Candidates) -cnotcontains 'DlcProper')
  Check 'bad-module-base-survives' (@((Query 'catalog').Candidates) -ccontains 'catalogbase')
  Install-Pack 'math' ($math.Replace("`t10`t1", "`t0`t1"));Redeploy
  Check 'bad-row-whole-module-disabled' (@((Query 'dlcp').Candidates) -cnotcontains 'DlcProper')
  Install-Pack 'math' $math
- $partial=Join-Path $user 'rymcp_dlc/math/manifest.tsv'
+ $partial=Join-Path $user 'stellae_dlc/math/manifest.tsv'
  Remove-Item -LiteralPath $partial
  Redeploy
  Check 'missing-manifest-whole-module-disabled' (@((Query 'dlcp').Candidates) -cnotcontains 'DlcProper')
  Install-Pack 'math' $math
- Remove-Item -LiteralPath (Join-Path $user 'rymcp_dlc/math/english.tsv')
+ Remove-Item -LiteralPath (Join-Path $user 'stellae_dlc/math/english.tsv')
  Redeploy
  Check 'missing-data-whole-module-disabled' (@((Query 'dlcp').Candidates) -cnotcontains 'DlcProper')
  Remove-Pack 'math';Install-Pack 'math' $math '1' $shared;Redeploy

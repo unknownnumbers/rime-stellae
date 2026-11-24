@@ -51,7 +51,7 @@ local function check(name, specification)
   allowed = spec.allowed ~= false
   local prior_calls = limit_calls
   local result = processor.func(key, {engine={context=ctx,
-    schema={schema_id=spec.schema_id or 'pc_research'}}})
+    schema={schema_id=spec.schema_id or 'cn_stellae'}}})
   local expected = spec.result or 1
   assert(result == expected, name .. ': result')
   local deleting = key.keycode == 0xffff and expected == 1
@@ -82,7 +82,7 @@ check('uppercase tool input', {input='cC12', result=2})
 check('reverse lookup input', {input='uUabc', result=2})
 check('ASCII mode', {ascii_mode=true, result=2})
 check('English mode', {research_english=true, result=2})
-check('Japanese schema', {schema_id='jp_sela', result=2})
+check('Japanese schema', {schema_id='jp_stellae', result=2})
 check('empty composition', {empty=true, result=2})
 for _, tag in ipairs({'reverse_lookup', 'u_lookup', 'tool_calculator', 'tool_unicode'}) do
   local tags = {abc=true}
@@ -116,7 +116,7 @@ check('Ctrl Delete remains native',
 check('forward Delete in English remains native',
   {keycode=0xffff, input='xiao"', caret=2, research_english=true, result=2})
 check('forward Delete in Japanese remains native',
-  {keycode=0xffff, input='xiao"', caret=2, schema_id='jp_sela', result=2})
+  {keycode=0xffff, input='xiao"', caret=2, schema_id='jp_stellae', result=2})
 check('forward Delete in tools remains native',
   {keycode=0xffff, input='xiao"', caret=2, tags={abc=true, tool_calculator=true}, result=2})
 
@@ -138,7 +138,7 @@ local function check_segment(name, spec)
   local ctx = {input=spec.context_input or raw}
   function ctx:get_option(option) return spec[option] or false end
   local result = processor.segmentor.func(segmentation, {engine={context=ctx,
-    schema={schema_id=spec.schema_id or 'pc_research'}}})
+    schema={schema_id=spec.schema_id or 'cn_stellae'}}})
   local claim = spec.word ~= nil
   assert(result == not claim, name .. ': segmentor result')
   assert(segmentation.input == original, name .. ': segmentation input unchanged')
@@ -168,6 +168,6 @@ check_segment('reverse lookup unchanged', {input='uUabc"'})
 check_segment('Unicode tool unchanged', {input='U4E2D"'})
 check_segment('English segmentation unchanged', {research_english=true})
 check_segment('ASCII segmentation unchanged', {ascii_mode=true})
-check_segment('Japanese segmentation unchanged', {schema_id='jp_sela'})
+check_segment('Japanese segmentation unchanged', {schema_id='jp_stellae'})
 print('cn_exact_processor: ' .. checked .. ' synthetic checks passed')
 return checked

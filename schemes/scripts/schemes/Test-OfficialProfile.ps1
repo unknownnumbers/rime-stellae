@@ -24,7 +24,7 @@ $cn = Get-Content -LiteralPath (Join-Path $cnOutput 'results.json') -Raw -Encodi
 if (-not $cn.Completed -or $cn.Failed -ne 0 -or $cn.Engine -ne '1.13.1') { throw 'Official Chinese validation is incomplete.' }
 
 # The deploy API can succeed while an imported configuration is incomplete.
-$compiledSchema = Join-Path $user 'build/pc_research.schema.yaml'
+$compiledSchema = Join-Path $user 'build/cn_stellae.schema.yaml'
 if (-not (Test-Path -LiteralPath $compiledSchema)) { throw 'Compiled official schema is missing.' }
 $schemaText = [IO.File]::ReadAllText($compiledSchema)
 if ($schemaText -notmatch '(?m)^speller:' -or $schemaText -notmatch '(?m)^engine:') { throw 'Compiled official schema is incomplete.' }

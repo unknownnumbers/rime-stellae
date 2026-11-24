@@ -17616,7 +17616,7 @@ index 0000000..be1fe39
 +}  // namespace weasel
 diff --git a/WeaselUI/JpCommentStyle.h b/WeaselUI/JpCommentStyle.h
 new file mode 100644
-index 0000000..958db3e
+index 0000000..6b3edb6
 --- /dev/null
 +++ b/WeaselUI/JpCommentStyle.h
 @@ -0,0 +1,130 @@
@@ -17702,7 +17702,7 @@ index 0000000..958db3e
 +inline std::vector<CandidateLabel> ParseCandidate(
 +    const std::wstring& schema, const std::wstring& text, const std::wstring& comment) {
 +  std::vector<CandidateLabel> labels;
-+  if (schema != L"jp_sela") return labels;
++  if (schema != L"jp_sela" && schema != L"jp_stellae") return labels;
 +  const auto header = ParseVariantHeader(comment);
 +  if (!header.valid) return labels;
 +  size_t point = 0, next = 0;
@@ -17726,7 +17726,7 @@ index 0000000..958db3e
 +// underscore in the two exact, schema-scoped label tokens.
 +inline Parsed Parse(const std::wstring& schema, const std::wstring& raw) {
 +  Parsed result;
-+  if (schema != L"jp_sela") {
++  if (schema != L"jp_sela" && schema != L"jp_stellae") {
 +    result.text = raw;
 +    return result;
 +  }

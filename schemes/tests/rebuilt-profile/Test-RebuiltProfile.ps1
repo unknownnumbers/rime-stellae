@@ -25,7 +25,7 @@ foreach($privateRoot in @($env:APPDATA,$env:LOCALAPPDATA)|Where-Object {$_}){
 if((Contains-Path $user $out) -or (Contains-Path $out $user)){
   throw 'The generated profile and report directory must be separate trees.'
 }
-foreach($required in @('pc_research.schema.yaml','pc_research.custom.yaml','jp_sela.schema.yaml','default.yaml','default.custom.yaml','rime.lua')){
+foreach($required in @('cn_stellae.schema.yaml','cn_stellae.custom.yaml','jp_stellae.schema.yaml','default.yaml','default.custom.yaml','rime.lua')){
   if(-not (Test-Path -LiteralPath (Join-Path $user $required) -PathType Leaf)){
     throw ('The fresh generated profile is missing '+$required)
   }
@@ -108,7 +108,7 @@ function Current-Schema {
 }
 function Open-PC {
   $script:session=[RimeProbe]::RimeCreateSession()
-  if(-not $session -or -not [RimeProbe]::RimeSelectSchema($session,'pc_research')){throw 'The rebuilt PC schema could not open.'}
+  if(-not $session -or -not [RimeProbe]::RimeSelectSchema($session,'cn_stellae')){throw 'The rebuilt PC schema could not open.'}
   [RimeProbe]::RimeSetOption($session,'probe_options_ready',1)
   [RimeProbe]::RimeSetOption($session,'ascii_mode',0)
   [RimeProbe]::RimeSetOption($session,'research_english',0)
@@ -170,9 +170,9 @@ try{
   Write-Utf8 (Join-Path $out 'rebuilt-binaries.json') ($binaryRows|ConvertTo-Json -Depth 4)
   $report.RebuiltBinaryCount=$binaryRows.Count
   Record 'native dictionaries built from empty workspace' ($binaryRows.Count -gt 0) $binaryRows.Count
-  $compiled=[IO.File]::ReadAllText((Join-Path $build 'pc_research.schema.yaml'))
+  $compiled=[IO.File]::ReadAllText((Join-Path $build 'cn_stellae.schema.yaml'))
   $defaultCompiled=[IO.File]::ReadAllText((Join-Path $build 'default.yaml'))
-  $jpCompiled=[IO.File]::ReadAllText((Join-Path $build 'jp_sela.schema.yaml'))
+  $jpCompiled=[IO.File]::ReadAllText((Join-Path $build 'jp_stellae.schema.yaml'))
   $bindingCount=[regex]::Matches($compiled,'(?m)^    - .*accept: "Control\+space".*$').Count
   $expectedBinding=if($Kind -eq 'pc'){1}else{0}
   Record 'rebuilt Ctrl+Space policy' ($bindingCount -eq $expectedBinding) ([pscustomobject]@{Bindings=$bindingCount;Expected=$expectedBinding})
@@ -201,7 +201,7 @@ try{
   Record 'red A ignores both Shift taps and remembers En' ([RimeProbe]::RimeGetOption($session,'ascii_mode') -eq 1 -and [RimeProbe]::RimeGetOption($session,'research_english') -eq 1) @([RimeProbe]::RimeGetOption($session,'ascii_mode'),[RimeProbe]::RimeGetOption($session,'research_english'))
   [RimeProbe]::RimeSetOption($session,'ascii_mode',0)
   [RimeProbe]::RimeSetOption($session,'research_english',0)
-  foreach($route in @(@('pc_research',0x65,'jp_sela'),@('jp_sela',0x65,'pc_research'),@('jp_sela',0x72,'pc_research'))){
+  foreach($route in @(@('cn_stellae',0x65,'jp_stellae'),@('jp_stellae',0x65,'cn_stellae'),@('jp_stellae',0x72,'cn_stellae'))){
     [void][RimeProbe]::RimeSelectSchema($session,$route[0]);[RimeProbe]::RimeSetOption($session,'ascii_mode',0)
     [void](Press $route[1] 4)
     $actual=Current-Schema
@@ -257,7 +257,7 @@ try{
   Compose 'haodeba';Select-Text '好的';[void](Press 0xff09)
   $state=Snapshot
   Record 'selected prefix Tab boundary' ($state.Caret -eq 5 -and $state.Preedit -ceq '好的ba' -and -not $state.EarlyCommit) $state
-  [void][RimeProbe]::RimeSelectSchema($session,'jp_sela');[RimeProbe]::RimeSetOption($session,'ascii_mode',0)
+  [void][RimeProbe]::RimeSelectSchema($session,'jp_stellae');[RimeProbe]::RimeSetOption($session,'ascii_mode',0)
   foreach($case in @(@('kana',@('かな')),@('KANA',@('カナ')),@('qnihon',@('日本')),@('vwo',@('我')),@('vwoni',@('我に')))){
     Candidate-Case $case[0] $case[1]
   }
@@ -276,7 +276,7 @@ try{
   Record 'removed mixed learning store is not created' (-not (Test-Path -LiteralPath (Join-Path $user 'pc_mixed.userdb'))) $null
   Record 'disabled romaji learning store is not created' (-not (Test-Path -LiteralPath (Join-Path $user 'jp_sela_custom.userdb'))) $null
   Open-PC
-  [void][RimeProbe]::RimeSelectSchema($session,'pc_research')
+  [void][RimeProbe]::RimeSelectSchema($session,'cn_stellae')
   [RimeProbe]::RimeSetOption($session,'probe_options_ready',1);[RimeProbe]::RimeSetOption($session,'ascii_mode',0);[RimeProbe]::RimeSetOption($session,'research_english',0);[RimeProbe]::RimeSetOption($session,'simplification',1)
   $before=@(Export-Poem 'learning-before');$old=@($before|Measure-Object Count -Sum).Sum;if(-not $old){$old=0}
   foreach($code in 'jin;zhaoyoujiujin','jinzhaoyoujiujinzhaozui'){

@@ -212,12 +212,12 @@ def source_records(domain: str) -> list[dict]:
 
 def module_files(domain: str, cn: set[tuple[str, str]], en: set[str], report: dict,
                  sources: dict[str, bytes], english_records=None) -> dict[str, bytes]:
-    packs = ([f"rymcp_dlc_poetry_{i:02d}" for i in range(32)] if domain == "poetry"
-             else ["rymcp_dlc_" + domain])
-    activation = ("patch:\n  __include: rymcp_dlc/poetry/words_00.dict:/activation\n"
+    packs = ([f"stellae_dlc_poetry_{i:02d}" for i in range(32)] if domain == "poetry"
+             else ["stellae_dlc_" + domain])
+    activation = ("patch:\n  __include: stellae_dlc/poetry/words_00.dict:/activation\n"
                   if domain == "poetry" else "patch:\n  translator/packs/+:\n"
                   + "".join("    - " + pack + "\n" for pack in packs))
-    header = ("---\nname: rymcp_dlc/" + domain + "/words\nversion: '" + REVISION
+    header = ("---\nname: stellae_dlc/" + domain + "/words\nversion: '" + REVISION
               + "'\nsort: by_weight\nuse_preset_vocabulary: false\n" + activation + "...\n")
     dictionary = header + "".join(f"{text}\t{code}\t{WEIGHT}\n" for text, code in sorted(cn))
     files = {"words.dict.yaml": dictionary.encode("utf-8"),
@@ -226,10 +226,10 @@ def module_files(domain: str, cn: set[tuple[str, str]], en: set[str], report: di
         ordered = sorted(cn, key=lambda item: (item[1], item[0]))
         for i in range(32):
             name = f"words_{i:02d}"
-            activation = (f"activation:\n  __include: rymcp_dlc/poetry/words_{i + 1:02d}.dict:/activation\n"
+            activation = (f"activation:\n  __include: stellae_dlc/poetry/words_{i + 1:02d}.dict:/activation\n"
                           if i < 31 else "activation:\n  translator/packs/+:\n"
                           + "".join("    - " + pack + "\n" for pack in packs))
-            shard_header = (f"---\nname: rymcp_dlc/poetry/{name}\nversion: '{REVISION}'\n"
+            shard_header = (f"---\nname: stellae_dlc/poetry/{name}\nversion: '{REVISION}'\n"
                             "sort: by_weight\nuse_preset_vocabulary: false\n" + activation + "...\n")
             rows = ordered[len(ordered) * i // 32:len(ordered) * (i + 1) // 32]
             files[name + ".dict.yaml"] = (shard_header + "".join(
@@ -298,7 +298,7 @@ def archive(files: dict[str, bytes], domain: str, path: Path) -> bytes:
     path.parent.mkdir(parents=True, exist_ok=True)
     with zipfile.ZipFile(path, "w", compression=zipfile.ZIP_DEFLATED, compresslevel=6) as target:
         for relative, data in sorted(files.items()):
-            info = zipfile.ZipInfo("rymcp_dlc/" + domain + "/" + relative, (2026, 11, 14, 0, 0, 0))
+            info = zipfile.ZipInfo("stellae_dlc/" + domain + "/" + relative, (2026, 11, 14, 0, 0, 0))
             info.create_system = 3
             info.external_attr = 0o100644 << 16
             info.compress_type = zipfile.ZIP_DEFLATED
@@ -332,7 +332,7 @@ def main() -> None:
             connection, report = build_catalog(SOURCES, args.output.parent / 'work' / 'poetry', syllables, progress=True)
             if report['ChineseRows'] < 2800000 or report['Readings'].get('UnsupportedReading', 0) > report['Readings']['InputClauses'] * 0.005:
                 raise ValueError('Full poetry coverage and reading checks failed')
-            directory = args.output / 'rymcp_dlc' / domain
+            directory = args.output / 'stellae_dlc' / domain
             write_module(connection, report, SOURCES, directory, REVISION, WEIGHT)
             archive_version = args.version or REVISION
             artifact = archive_module(directory, args.archives / f'stellae-dlc-{domain}-{archive_version}.zip')
@@ -359,7 +359,7 @@ def main() -> None:
             raise ValueError("Empty Chinese catalog: " + domain)
         files = module_files(domain, cn, en, report, sources, english_records)
         files, english_index = add_module_index(files)
-        directory = args.output / "rymcp_dlc" / domain
+        directory = args.output / "stellae_dlc" / domain
         existing = {str(p.relative_to(directory)).replace("\\", "/") for p in directory.rglob("*") if p.is_file()}
         if existing - files.keys():
             raise ValueError("Unexpected files in output catalog; choose a clean output directory")

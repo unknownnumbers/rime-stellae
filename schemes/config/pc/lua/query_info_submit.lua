@@ -44,7 +44,7 @@ function M.init(env)
   env.query_info_dir = rime_api.get_user_data_dir()
   -- The ordinary Chinese scheme need not load the Japanese dictionaries.
   local schema = env.engine.schema
-  if schema.schema_id == 'jp_sela' or schema.config:get_bool('query_info/japanese_v') then
+  if schema.schema_id == 'jp_stellae' or schema.config:get_bool('query_info/japanese_v') then
     env.query_info_jp = require('jp_v')
   end
 end

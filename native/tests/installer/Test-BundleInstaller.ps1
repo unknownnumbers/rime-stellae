@@ -23,7 +23,7 @@ function Run([string]$File,[string]$Arguments){
     if(-not $process.WaitForExit(900000)){throw 'Installer fixture timed out'}
     if($process.ExitCode -notin @(0,3010)){
       $program=Join-Path $env:ProgramFiles 'RimeStellae'
-      $expected=@('BundleData.ps1','data/default.yaml','data/rime.lua','data/pc_research.schema.yaml','data/jp_sela.schema.yaml','data/stellae-managed-files.json','scheme-status.json')
+      $expected=@('BundleData.ps1','data/default.yaml','data/rime.lua','data/cn_stellae.schema.yaml','data/jp_stellae.schema.yaml','data/stellae-managed-files.json','scheme-status.json')
       $files=@(foreach($name in $expected){
         $path=Join-Path $program $name
         $present=Test-Path -LiteralPath $path -PathType Leaf
@@ -100,7 +100,7 @@ $null=New-Item -ItemType Directory -Path (Join-Path $shared 'unmanaged') -Force
 Run $installer '/S'
 $after=Snapshot 'after-bundle'
 Check 'Existing official input profiles preserved' (@($foreign|Where-Object {$_ -notin @($after.Enabled.Id)}).Count -eq 0)
-Check 'Bundled schemas installed in shared data' ((Test-Path -LiteralPath (Join-Path $shared 'pc_research.schema.yaml')) -and (Test-Path -LiteralPath (Join-Path $shared 'jp_sela.schema.yaml')))
+Check 'Bundled schemas installed in shared data' ((Test-Path -LiteralPath (Join-Path $shared 'cn_stellae.schema.yaml')) -and (Test-Path -LiteralPath (Join-Path $shared 'jp_stellae.schema.yaml')))
 Check 'Bare empty shared default replaced by full bundle default' ((Get-FileHash -LiteralPath (Join-Path $shared 'default.yaml')).Hash -cne $bareDefaultHash -and (Get-FileHash -LiteralPath (Join-Path $shared 'default.yaml')).Hash -ceq (Get-FileHash -LiteralPath (Join-Path $package 'stage/output/shared-payload/data/default.yaml')).Hash)
 Check 'Bare user sentinel preserved by migration' ((Get-Content -LiteralPath $bareUser -Raw) -ceq 'synthetic user file retained from bare installation')
 Check 'Bare user UI customization preserved by migration' ((Get-FileHash -LiteralPath (Join-Path $user 'weasel.custom.yaml')).Hash -ceq $bareUserConfigHash)

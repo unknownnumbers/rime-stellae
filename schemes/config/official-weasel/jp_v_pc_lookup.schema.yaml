@@ -3,7 +3,7 @@ schema:
   schema_id: jp_v_pc_lookup
   version: '2026.10.19'
 translator:
-  dictionary: luna_pinyin.research
+  dictionary: cn_stellae
   prism: jp_v_pc_lookup
   user_dict: luna_pinyin
   enable_user_dict: true
@@ -16,7 +16,7 @@ translator:
     - 'xform/([nl])ue/$1üe/'
     - 'xform/([jqxy])v/$1u/'
 cn_decoder:
-  dictionary: luna_pinyin.research
+  dictionary: cn_stellae
   prism: jp_v_pc_lookup
   enable_user_dict: false
 cn_tolerance:

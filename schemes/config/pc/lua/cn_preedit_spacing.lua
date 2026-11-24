@@ -63,7 +63,7 @@ function M.publish(env)
   if not state then return end
   local raw = ctx.input
   if raw == '' or ctx:get_option('ascii_mode') or ctx:get_option('research_english')
-      or env.only_chinese or env.engine.schema.schema_id == 'jp_sela'
+      or env.only_chinese or env.engine.schema.schema_id == 'jp_stellae'
       or ctx.composition:empty() or not ctx:has_menu() then
     set(ctx, '')
     return

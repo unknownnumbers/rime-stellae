@@ -59,8 +59,8 @@ if($Case -eq 'Empty'){
   $custom=@'
 patch:
   schema_list:
-    - schema: jp_sela
-    - schema: pc_research
+    - schema: jp_stellae
+    - schema: cn_stellae
   switcher/hotkeys: [F4]
   key_binder/bindings/+:
     - {when: always, accept: F9, toggle: ascii_punct}
@@ -144,14 +144,14 @@ try{
   [RimeProbe]::RimeDeployerInitialize([ref]$traits)
   Check 'workspace-deploy-returned' ([bool][RimeProbe]::RimeDeployWorkspace())
   Check 'weasel-config-deploy-returned' ([BundlePresetConfigApi]::DeployConfig('weasel.yaml'))
-  foreach($name in @('default.yaml','weasel.yaml','pc_research.schema.yaml','jp_sela.schema.yaml')){
+  foreach($name in @('default.yaml','weasel.yaml','cn_stellae.schema.yaml','jp_stellae.schema.yaml')){
     $file=Join-Path $build $name
     Check ('compiled-'+$name) (Test-Path -LiteralPath $file)
     $text=[IO.File]::ReadAllText($file)
     Check ('nonempty-'+$name) ($text.Length -gt 100)
   }
-  $first=if($Case -eq 'Override'){'jp_sela'}else{'pc_research'}
-  $second=if($Case -eq 'Override'){'pc_research'}else{'jp_sela'}
+  $first=if($Case -eq 'Override'){'jp_stellae'}else{'cn_stellae'}
+  $second=if($Case -eq 'Override'){'cn_stellae'}else{'jp_stellae'}
   Check 'exactly-two-schemas' ([BundlePresetConfigApi]::Count('default','schema_list') -eq 2)
   Check 'first-schema' ([BundlePresetConfigApi]::Text('default','schema_list/@0/schema') -ceq $first)
   Check 'second-schema' ([BundlePresetConfigApi]::Text('default','schema_list/@1/schema') -ceq $second)
@@ -172,7 +172,7 @@ try{
   $session=[RimeProbe]::RimeCreateSession()
   $buffer=New-Object byte[] 256
   Check 'actual-initial-schema' ([bool][RimeProbe]::RimeGetCurrentSchema($session,$buffer,[UIntPtr]::new([uint32]256)) -and [Text.Encoding]::UTF8.GetString($buffer).Trim([char]0) -ceq $first)
-  Check 'select-Chinese' ([bool][RimeProbe]::RimeSelectSchema($session,'pc_research'))
+  Check 'select-Chinese' ([bool][RimeProbe]::RimeSelectSchema($session,'cn_stellae'))
   Check 'Chinese-default-SC' ([RimeProbe]::RimeGetOption($session,'simplification') -eq 1)
   Check 'actual-Chinese-candidate' ((Query 'nihao').Candidates -ccontains '你好')
   Check 'actual-default-SC-mixed-candidate' ((Query 'wifimima').Candidates -ccontains 'Wi-Fi 密码')
@@ -186,7 +186,7 @@ try{
     Check 'user-binding-key-release-no-second-toggle' ([RimeProbe]::RimeGetOption($session,'ascii_punct') -eq $after)
   }
   [RimeProbe]::RimeClearComposition($session)
-  Check 'select-Japanese' ([bool][RimeProbe]::RimeSelectSchema($session,'jp_sela'))
+  Check 'select-Japanese' ([bool][RimeProbe]::RimeSelectSchema($session,'jp_stellae'))
   [RimeProbe]::RimeSetOption($session,'probe_options_ready',1)
   Check 'actual-Japanese-candidate' ((Query 'qtaberu').Candidates -ccontains '食べる')
   if($Case -eq 'Empty'){
