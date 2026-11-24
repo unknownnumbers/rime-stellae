@@ -60,6 +60,7 @@ function Download($fixed, [string]$directory) {
     $file
 }
 
+if (-not $ClientOnly) {
 $installer = Download $inputs.baselineInstaller $cache
 $engineDirectory = Join-Path $out 'engine'
 Run '7z.exe' @('x',$installer,('-o'+$engineDirectory),'-aou','-y','-bso0','-bsp0','rime.dll') $out 'engine.log'
@@ -76,6 +77,7 @@ $definition = Join-Path $out 'rime.def'
 $library = Join-Path $source $configuration.libraryDirectory
 $null = New-Item -ItemType Directory -Path $library -Force
 Run 'lib.exe' @('/nologo',('/def:'+$definition),('/machine:'+$Architecture),('/out:'+(Join-Path $library 'rime.lib'))) $source 'import-library.log'
+}
 foreach ($header in $inputs.apiHeaders) {
     Copy-Item -LiteralPath (Download $header (Join-Path $cache 'api-headers')) -Destination (Join-Path $source ('include/'+$header.name))
 }

@@ -3787,8 +3787,8 @@
     },
     {
       "path": "scripts/native/Build-FrontendOverlay.ps1",
-      "bytes": 7634,
-      "sha256": "8117f78908404b2e8496b733d485961afc618b7a74cb530a2aa60ee4f4b26a00"
+      "bytes": 7660,
+      "sha256": "d2f1b72d897728df2560f53f711ab010e25f0b38c075b2a452fbc389e06413be"
     },
     {
       "path": "scripts/native/Build-ServerNotification.ps1",
