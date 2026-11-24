@@ -2,7 +2,6 @@
 # Dictionary and reading metadata remain Japanese; no local aliases are added.
 schema:
   schema_id: jp_v_lookup
-  name: Japanese Kanji lookup with shared PC matching
   version: '2026.10.19'
 translator:
   dictionary: jp_v

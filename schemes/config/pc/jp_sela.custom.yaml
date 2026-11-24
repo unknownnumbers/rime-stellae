@@ -1,4 +1,4 @@
-# RymCp Japanese integration; jp_sela is the current RymCp module interface ID.
+# Stellae Japanese integration; jp_sela is the current module interface ID.
 patch:
 #  - jp_sela.custom:/patch?
 patch:
@@ -22,6 +22,9 @@ patch:
   translator:
     dictionary: jp_sela_custom
     strict_spelling: true
+    enable_user_dict: false
+    enable_encoder: false
+    encode_commit_history: false
     disable_user_dict_for_patterns:
       - '^[^qQ]*(nn|NN)[^qQ]*$'
   speller/algebra:

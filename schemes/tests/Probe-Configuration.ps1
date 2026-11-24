@@ -169,7 +169,7 @@ try{
  $result.EngineVersion=[RimeProbe]::Version()
  if($Phase -eq 'Compile'){
   [RimeProbe]::RimeDeployerInitialize([ref]$traits)
-  foreach($schema in @('stroke','english_full','mixed_full','project_radical','project_radical_parts','jp_small_lookup','jp_q_lookup','jp_v_lookup','jp_v_pc_lookup','jp_sela','pc_research')){
+  foreach($schema in @('stroke','english_full','project_radical','project_radical_parts','jp_small_lookup','jp_q_lookup','jp_v_lookup','jp_v_pc_lookup','jp_sela','pc_research')){
    $ok=[bool][RimeProbe]::RimeDeploySchema((Join-Path $user ($schema+'.schema.yaml')))
    Check ('compile-'+$schema) $ok $ok
    if(-not $ok){throw ('Isolated compilation failed '+$schema)}
@@ -294,7 +294,7 @@ try{
   Add-Row 'partial-bracket' 'qQtaberuhana' $before
  }else{
   $familyBefore=Export-Learning 'jp_family' 'before'
-  $legacyBefore=Export-Learning 'jp_sela_custom' 'before'
+  $kanaStoreBefore=Test-Path -LiteralPath (Join-Path $user 'jp_sela_custom.userdb')
   $cnBefore=Export-Learning 'luna_pinyin' 'before'
   Select-Target 'vVshen' '生'
   $qBefore=Query 'qsei';Check 'v-learning-promotes-qsei' ($qBefore.Snapshot.Candidates[0] -ceq '生') $qBefore.Snapshot.Candidates;Add-Row 'shared-qsei' 'qsei' $qBefore
@@ -305,16 +305,18 @@ try{
   Select-Target 'qtaberu' '食べる'
   Select-Target 'qQTaBeRu' '食べる'
   $familyAfter=Export-Learning 'jp_family' 'after-JP'
-  $legacyAfter=Export-Learning 'jp_sela_custom' 'after-JP'
   $cnAfter=Export-Learning 'luna_pinyin' 'after-JP'
   Check 'shared-sei-exact-three-native-selections' ((Word-Count $familyAfter '生') -eq ((Word-Count $familyBefore '生')+3)) @{Before=(Word-Count $familyBefore '生');After=(Word-Count $familyAfter '生')}
   Check 'mixed-form-exact-two-native-selections' ((Word-Count $familyAfter '食べる') -eq ((Word-Count $familyBefore '食べる')+2)) @{Before=(Word-Count $familyBefore '食べる');After=(Word-Count $familyAfter '食べる')}
   Check 'mixed-form-one-canonical-family-row' (@($familyAfter.Lines|Where-Object {$_.StartsWith("食べる`t")}).Count -eq 1) @($familyAfter.Lines|Where-Object {$_.StartsWith("食べる`t")})
-  Check 'mixed-does-not-double-learn-legacy' ((Word-Count $legacyAfter '食べる') -eq (Word-Count $legacyBefore '食べる') -and (Word-Count $legacyAfter '生') -eq (Word-Count $legacyBefore '生')) $legacyAfter.Lines
+  Check 'JP-selections-do-not-create-kana-learning' (-not $kanaStoreBefore -and -not (Test-Path -LiteralPath (Join-Path $user 'jp_sela_custom.userdb'))) $null
   Check 'JP-selections-preserve-CN-export' (($cnBefore.Lines -join "`n") -ceq ($cnAfter.Lines -join "`n")) @{Before=$cnBefore.Lines;After=$cnAfter.Lines}
-  Select-Target 'ka' 'か'
-  $kanaAfter=Export-Learning 'jp_sela_custom' 'after-kana'
-  Check 'ordinary-kana-still-learns-once-in-legacy' ((Word-Count $kanaAfter 'か') -eq ((Word-Count $legacyAfter 'か')+1)) @{Before=(Word-Count $legacyAfter 'か');After=(Word-Count $kanaAfter 'か')}
+  $beforeKana=Query 'wa';$beforeOrder=@($beforeKana.Snapshot.Candidates)
+  for($i=0;$i -lt 3;$i++){Select-Target 'wa' 'うぁ'}
+  $afterKana=Query 'wa';$afterOrder=@($afterKana.Snapshot.Candidates)
+  Check 'ordinary-kana-retains-fixed-order' (($beforeOrder -join '|') -ceq ($afterOrder -join '|') -and $afterOrder[0] -ceq 'わ') $afterOrder
+  Close-Session
+  Check 'ordinary-kana-does-not-create-learning-store' (-not (Test-Path -LiteralPath (Join-Path $user 'jp_sela_custom.userdb'))) $null
  }
  $result.Completed=$true
 }catch{$result.Error=$_.Exception.ToString()}

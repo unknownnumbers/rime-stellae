@@ -1,5 +1,4 @@
 -- Normal suffix boundaries are display data, never new input or candidates.
-local mixed = require('mixed_translator')
 local M = {}
 local exact = require('cn_exact_spelling')
 local property = 'cn_preedit_spacing'
@@ -7,16 +6,13 @@ local owner_property, next_owner, owners = 'cn_preedit_spacing_owner', 0, {}
 local chinese = {cn_full=true,phrase=true,user_phrase=true,sentence=true,completion=true}
 
 -- Same cost recurrence as cn_translator. A successor is recorded only when a
--- complete normal path exists; mixed-word costs alone supply no such path.
+-- complete normal path exists.
 function M.normal_tail_cost(input, env, cache)
   if cache.tail_cost then return cache.tail_cost end
   local plan = cache.exact_plan or exact.parse(input)
   local costs, following, counts = {[#input + 1]=0}, {}, {[#input + 1]=0}
   for position = #input, 1, -1 do
     local best
-    if not plan or exact.unmarked(plan, position, #input) then
-      best = mixed.continuation_cost(input, position, costs)
-    end
     local best_next, best_count
     for length = 1, math.min(env.normal_max_length, #input - position + 1) do
       local kind = env.normal_spellings[input:sub(position, position + length - 1)]

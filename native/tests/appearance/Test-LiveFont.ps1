@@ -10,8 +10,7 @@ param(
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 if (-not $IsWindows -or -not [Environment]::Is64BitProcess -or
-    $env:GITHUB_ACTIONS -ne 'true' -or $env:RUNNER_ENVIRONMENT -ne 'github-hosted' -or
-    $env:GITHUB_REPOSITORY -cne 'unknownnumbers/rime-stellae') {
+    $env:GITHUB_ACTIONS -ne 'true' -or $env:RUNNER_ENVIRONMENT -ne 'github-hosted') {
   throw 'Use the disposable GitHub-hosted x64 Windows CI job.'
 }
 $reportRoot = [IO.Path]::GetFullPath($OutputDirectory)

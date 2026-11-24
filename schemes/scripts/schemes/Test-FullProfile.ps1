@@ -23,12 +23,12 @@ if ($LASTEXITCODE -ne 0) { throw 'Exact syllable checks failed.' }
 $exact = Get-Content -LiteralPath (Join-Path $exactOutput 'results.json') -Raw -Encoding UTF8 | ConvertFrom-Json
 if (-not $exact.Completed -or -not $exact.Passed -or -not @($exact.Checks).Count -or @($exact.Checks | Where-Object { -not $_.Passed }).Count) { throw 'Exact syllable validation is incomplete.' }
 $results += [pscustomobject]@{Scenario='Exact';Checks=@($exact.Checks).Count;Passed=$true}
-foreach ($scenario in @('Bracket','Mixed')) {
+foreach ($scenario in @('BracketLearning','RemovedMixed')) {
     $user = Join-Path $work ($scenario.ToLowerInvariant() + '-user')
     Copy-Item -LiteralPath (Join-Path $compiled 'publicuser') -Destination $user -Recurse
     '{"kind":"fixed-synthetic-profile","format":1}' | Set-Content -LiteralPath (Join-Path $user '.synthetic-profile.json') -Encoding UTF8
     $out = Join-Path $work ($scenario.ToLowerInvariant() + '-results')
-    $scriptName = 'Test-' + $scenario + 'Learning.ps1'
+    $scriptName = 'Test-' + $scenario + '.ps1'
     & $hostExe -NoProfile -ExecutionPolicy Bypass -File (Join-Path $repo ('tests/schemes/' + $scriptName)) -EngineDll $engine -SharedData $SharedDir -UserData $user -OutputDirectory $out
     if ($LASTEXITCODE -ne 0) { throw ($scenario + ' learning checks failed.') }
     $rows = Get-Content -LiteralPath (Join-Path $out 'results.json') -Raw | ConvertFrom-Json

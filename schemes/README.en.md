@@ -12,7 +12,7 @@ Stellae provides Chinese, English and Japanese input schemes for the Stellae fro
 - From key 8, both profiles use ordinary sentence composition when the caret is at the end of a draft that can only be split into single-letter initials.
 - English words, completion, correction, case handling and existing acronym expansions.
 - Character lookup, Unicode input and calculation run on demand.
-- Both profiles provide hiragana, katakana, kanji, romaji, q/x/v queries and fixed mixed phrases.
+- Both profiles provide hiragana, katakana, kanji, romaji, q/x/v queries.
 - The official Weasel profile uses native word completion, six vertical candidates and non-inline composition.
 - The default uses general vocabulary. Separate DLC modules provide broad math and physics vocabulary, computing terms, and the complete Tang poetry, Song poetry and Song ci collections in the pinned source snapshot, together with companion anthologies.
 

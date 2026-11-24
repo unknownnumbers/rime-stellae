@@ -1,6 +1,6 @@
 {
   "format": "stellae-bundle-inputs-v2",
-  "bundleVersion": "2026.11.24.1",
+  "bundleVersion": "2026.11.24.2",
   "frontendVersion": "0.17.4.61052",
   "frontendInstaller": {
     "url": "https://github.com/unknownnumbers/rime-stellae/releases/download/v0.17.4.61052/stellae-0.17.4.61052-installer.exe",
@@ -17,7 +17,7 @@
   "schemes": {
     "sourceDirectory": "schemes",
     "profile": "stellae",
-    "version": "2026.11.24.1"
+    "version": "2026.11.24.2"
   },
   "nativeEngines": {
     "x64": "engine-n01",
@@ -34,9 +34,21 @@
   "nativeFrontend": {
     "sourceFiles": {
       "RimeWithWeasel/RimeWithWeasel.cpp": "e254f6c792dac9d486340e3c82ca3e8842cffc81147d6789583161b76d7eece9",
+      "WeaselDeployer/Configurator.cpp": "3609bac39e0634c49b3510b216ec2a79c7b458794c932e12580e2c0bbf912178",
+      "WeaselDeployer/Configurator.h": "9ba9f1fb5e2b9adb3aa32ab6f347c3bb4f30c2a34e01abf11aaacbdf2d290d5b",
+      "WeaselDeployer/DictManagementDialog.cpp": "735a8d49ccf566bf1687e262802346853a165823fce1d7c431978fc3c629685b",
+      "WeaselDeployer/DictManagementDialog.h": "3005dec5922cc0c4ece408b7c3e1387d28f467d5c11e7cb904b932fcf4da677b",
+      "WeaselDeployer/UIStyleSettings.cpp": "e6958efbdb7cfe83c80275c0e7483e9c8d6c08a742a7d2e2dc6faec2820f7347",
+      "WeaselDeployer/UIStyleSettings.h": "a7e1d72627afecd844f0ed991906b039da33d7b0eb9b013993f5df9ffc3ca3bb",
+      "WeaselDeployer/UIStyleSettingsDialog.cpp": "3d6c447b4d552ce66de4c2bec61699016ea4a8bc460da4010bf5dc3910955fe4",
+      "WeaselDeployer/UIStyleSettingsDialog.h": "d886244653d91351574d1287ab452019831de0f4a2cbe498a70767bf1ed022c5",
+      "WeaselDeployer/WeaselDeployer.cpp": "09bcffb1d43e0798e69dd991c00a9b9e81b31cd3380761656c25bb00c73368f3",
+      "WeaselDeployer/WeaselDeployer.rc": "1d7efb0e362e1aa278f924dc026a37064c4b41ae5990413132abb4dca3b1bafe",
+      "WeaselDeployer/resource.h": "89d35b9d5b538acdf4826da70261aabd3a48ee79da21b4d3f75bbec907474c72",
       "WeaselIPC/WeaselClientImpl.cpp": "4a1e156b954449870e95d7d4f59da8cc846763863a0c770bb4e1b0c8370036cf",
       "WeaselIPC/WeaselClientImpl.h": "4c9657f380d5016e8189706f2d7657eb4ced41eeb86eb15a51d861239fedd0ac",
       "WeaselIPCServer/WeaselServerImpl.cpp": "517ffa04a508673c76ba57d13321d1f2e363365b1f02b43b318fb2283fd2806d",
+      "WeaselIPCServer/WeaselServerImpl.h": "1c6a3f395ceb9a379ff5fdd89886422da39fca39975b58e49468fc984a096196",
       "WeaselTSF/Compartment.cpp": "b26ac7542825d0c0981500f1db32f5e9901baa20b59fb0bda66aca53ea300492",
       "WeaselTSF/Composition.cpp": "57369f3bf7cf1894b11e8cc490562ae7cbb36dfc76bb0dc90a1b5aacf2ebbbc1",
       "WeaselTSF/EditSession.cpp": "91655df1522781c824d02cf3a1b2561f0c5dd74f033af495e77eeac59b0844d2",
@@ -55,16 +67,7 @@
       "include/ShiftKeySnapshotWin.h": "827ba6411731876d4d6f28a6724aae55243ed989ef93dce9a000a76d09369a9e",
       "include/StellaeIdentity.h": "665df00b74dfa51219d3d9b53b8fc749e6377ef6185bd27a750fb81aa841a2ab",
       "include/WeaselIPC.h": "ff81fbbcc0a8c52e6ad0df99a8a9e39b92d88a7760dd5cdf8beaa36bb0278e16",
-      "include/WeaselUI.h": "13662010d99f7204e5d484882fc5ecaa81624b01359512a5c5fcdaa219d8a7d7",
-      "WeaselDeployer/Configurator.h": "9ba9f1fb5e2b9adb3aa32ab6f347c3bb4f30c2a34e01abf11aaacbdf2d290d5b",
-      "WeaselDeployer/Configurator.cpp": "3609bac39e0634c49b3510b216ec2a79c7b458794c932e12580e2c0bbf912178",
-      "WeaselDeployer/WeaselDeployer.cpp": "09bcffb1d43e0798e69dd991c00a9b9e81b31cd3380761656c25bb00c73368f3",
-      "WeaselIPCServer/WeaselServerImpl.h": "1c6a3f395ceb9a379ff5fdd89886422da39fca39975b58e49468fc984a096196",
-      "WeaselDeployer/UIStyleSettings.cpp": "e6958efbdb7cfe83c80275c0e7483e9c8d6c08a742a7d2e2dc6faec2820f7347",
-      "WeaselDeployer/UIStyleSettings.h": "a7e1d72627afecd844f0ed991906b039da33d7b0eb9b013993f5df9ffc3ca3bb",
-      "WeaselDeployer/UIStyleSettingsDialog.cpp": "3d6c447b4d552ce66de4c2bec61699016ea4a8bc460da4010bf5dc3910955fe4",
-      "WeaselDeployer/UIStyleSettingsDialog.h": "d886244653d91351574d1287ab452019831de0f4a2cbe498a70767bf1ed022c5",
-      "WeaselDeployer/WeaselDeployer.rc": "e395cfd405798f5f7526a58e8073820546b296b393da613c92af52f0b8fba0a8"
+      "include/WeaselUI.h": "13662010d99f7204e5d484882fc5ecaa81624b01359512a5c5fcdaa219d8a7d7"
     }
   },
   "indexedMath": {

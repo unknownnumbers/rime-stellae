@@ -177,6 +177,13 @@ def main():
             if len(data) < 6 or struct.unpack_from('<HHH', data) != (0, 1, 8):
                 raise SystemExit('Invalid En status icon container')
             continue
+        if path.suffix == '.png':
+            if path.relative_to(ROOT).as_posix() not in {
+                'config/pc/preview/color_scheme_reference_gray.png',
+                'config/official-weasel/preview/color_scheme_reference_gray.png',
+            } or not path.read_bytes().startswith(b'\x89PNG\r\n\x1a\n'):
+                raise SystemExit('Unexpected theme preview resource')
+            continue
         if path.suffix in {'.bin', '.gram', '.ocd2', '.gz', '.xz'}:
             continue
         try:

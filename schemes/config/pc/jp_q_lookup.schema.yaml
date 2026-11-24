@@ -2,7 +2,6 @@
 # Each code is a sourced word; native sentences may combine those words.
 schema:
   schema_id: jp_q_lookup
-  name: Japanese romaji sourced form lookup
   version: '2026.10.21'
 translator:
   dictionary: jp_q_lookup

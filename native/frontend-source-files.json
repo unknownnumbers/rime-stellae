@@ -1,7 +1,7 @@
 {
   "schema": "stellae-frontend-source-files/1",
   "upstreamCommit": "9cc96e20dc71b80876b12f689bb5863c76c2a7ed",
-  "patchSha256": "92b298b8182a0422e9ebd416c82d0e0f4a485379c6ba56c754a4ee370dae61e3",
+  "patchSha256": "2acfc1340b9989c62f5e73d2e8284e6eb2cc073310b25eb0eaa3282569181125",
   "files": [
     {
       "path": "RimeWithWeasel/RimeWithWeasel.cpp",
@@ -26,6 +26,16 @@
       "sha256": "9ba9f1fb5e2b9adb3aa32ab6f347c3bb4f30c2a34e01abf11aaacbdf2d290d5b",
       "bytes": 317,
       "replayMatchesFrozen": true
+    },
+    {
+      "path": "WeaselDeployer/DictManagementDialog.cpp",
+      "bytes": 12085,
+      "sha256": "735a8d49ccf566bf1687e262802346853a165823fce1d7c431978fc3c629685b"
+    },
+    {
+      "path": "WeaselDeployer/DictManagementDialog.h",
+      "bytes": 1522,
+      "sha256": "3005dec5922cc0c4ece408b7c3e1387d28f467d5c11e7cb904b932fcf4da677b"
     },
     {
       "path": "WeaselDeployer/SwitcherSettingsDialog.cpp",
@@ -65,8 +75,8 @@
     },
     {
       "path": "WeaselDeployer/WeaselDeployer.rc",
-      "sha256": "e395cfd405798f5f7526a58e8073820546b296b393da613c92af52f0b8fba0a8",
-      "bytes": 42400,
+      "sha256": "1d7efb0e362e1aa278f924dc026a37064c4b41ae5990413132abb4dca3b1bafe",
+      "bytes": 46302,
       "replayMatchesFrozen": true
     },
     {
@@ -74,6 +84,11 @@
       "sha256": "be873b346ebf6ff3c41ef6bd93641321d9a950aed0d17c90949e4906e7fc18fd",
       "bytes": 13219,
       "replayMatchesFrozen": true
+    },
+    {
+      "path": "WeaselDeployer/resource.h",
+      "bytes": 3254,
+      "sha256": "89d35b9d5b538acdf4826da70261aabd3a48ee79da21b4d3f75bbec907474c72"
     },
     {
       "path": "WeaselDeployer/xmake.lua",

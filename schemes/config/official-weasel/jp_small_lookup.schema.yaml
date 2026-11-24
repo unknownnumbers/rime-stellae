@@ -1,6 +1,5 @@
 schema:
   schema_id: jp_small_lookup
-  name: Small kana native composition
   version: '2026.10.22'
 translator:
   dictionary: jp_small_lookup

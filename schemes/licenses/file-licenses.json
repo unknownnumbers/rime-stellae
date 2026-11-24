@@ -1620,31 +1620,6 @@
       ]
     },
     {
-      "path": "config/official-weasel/lua/mixed_data.lua",
-      "kind": "data-or-generated-data",
-      "source_group": "mixed-phrases",
-      "source_ids": [
-        "ice",
-        "project"
-      ],
-      "license_scope": "GPLv3-derived curated subset",
-      "references": [
-        "docs/sources/mixed-phrases-sources.md",
-        "docs/sources/official-weasel-sources.md"
-      ]
-    },
-    {
-      "path": "config/official-weasel/lua/mixed_translator.lua",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
-      "retained_upstream_terms": [],
-      "references": [
-        "LICENSE",
-        "docs/sources/official-weasel-sources.md"
-      ]
-    },
-    {
       "path": "config/official-weasel/lua/official_translator.lua",
       "kind": "program-or-configuration",
       "project_license": "GPL-3.0-only",
@@ -1864,31 +1839,6 @@
       ]
     },
     {
-      "path": "config/official-weasel/mixed_full.dict.yaml",
-      "kind": "data-or-generated-data",
-      "source_group": "mixed-phrases",
-      "source_ids": [
-        "ice",
-        "project"
-      ],
-      "license_scope": "GPLv3-derived curated subset",
-      "references": [
-        "docs/sources/mixed-phrases-sources.md",
-        "docs/sources/official-weasel-sources.md"
-      ]
-    },
-    {
-      "path": "config/official-weasel/mixed_full.schema.yaml",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
-      "retained_upstream_terms": [],
-      "references": [
-        "LICENSE",
-        "docs/sources/official-weasel-sources.md"
-      ]
-    },
-    {
       "path": "config/official-weasel/opencc/mdx_t2s.json",
       "kind": "program-or-configuration",
       "project_license": "GPL-3.0-only",
@@ -2052,6 +2002,17 @@
         "docs/sources/official-weasel-sources.md"
       ],
       "path": "config/official-weasel/pinyin.yaml"
+    },
+    {
+      "kind": "original-status-asset-or-generator",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "LICENSE",
+        "docs/sources/official-weasel-sources.md"
+      ],
+      "path": "config/official-weasel/preview/color_scheme_reference_gray.png"
     },
     {
       "kind": "project-metadata",
@@ -3697,29 +3658,6 @@
       ]
     },
     {
-      "path": "config/pc/lua/mixed_data.lua",
-      "kind": "data-or-generated-data",
-      "source_group": "mixed-phrases",
-      "source_ids": [
-        "ice",
-        "project"
-      ],
-      "license_scope": "GPLv3-derived curated subset",
-      "references": [
-        "docs/sources/mixed-phrases-sources.md"
-      ]
-    },
-    {
-      "path": "config/pc/lua/mixed_translator.lua",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
-      "retained_upstream_terms": [],
-      "references": [
-        "LICENSE"
-      ]
-    },
-    {
       "path": "config/pc/lua/official_translator.lua",
       "kind": "program-or-configuration",
       "project_license": "GPL-3.0-only",
@@ -3922,29 +3860,6 @@
       ]
     },
     {
-      "path": "config/pc/mixed_full.dict.yaml",
-      "kind": "data-or-generated-data",
-      "source_group": "mixed-phrases",
-      "source_ids": [
-        "ice",
-        "project"
-      ],
-      "license_scope": "GPLv3-derived curated subset",
-      "references": [
-        "docs/sources/mixed-phrases-sources.md"
-      ]
-    },
-    {
-      "path": "config/pc/mixed_full.schema.yaml",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
-      "retained_upstream_terms": [],
-      "references": [
-        "LICENSE"
-      ]
-    },
-    {
       "path": "config/pc/opencc/mdx_t2s.json",
       "kind": "program-or-configuration",
       "project_license": "GPL-3.0-only",
@@ -4097,6 +4012,16 @@
         "docs/sources/shared-config-sources.md"
       ],
       "path": "config/pc/pinyin.yaml"
+    },
+    {
+      "kind": "original-status-asset-or-generator",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "LICENSE"
+      ],
+      "path": "config/pc/preview/color_scheme_reference_gray.png"
     },
     {
       "path": "config/pc/project_radical.dict.yaml",
@@ -6763,16 +6688,6 @@
       "references": [
         "LICENSE"
       ],
-      "path": "tests/schemes/Test-MixedLearning.ps1"
-    },
-    {
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
-      "retained_upstream_terms": [],
-      "references": [
-        "LICENSE"
-      ],
       "path": "tests/schemes/Test-OfficialChinese.ps1"
     },
     {
@@ -6794,6 +6709,16 @@
         "LICENSE"
       ],
       "path": "tests/schemes/Test-OfficialPersistence.ps1"
+    },
+    {
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "LICENSE"
+      ],
+      "path": "tests/schemes/Test-RemovedMixed.ps1"
     },
     {
       "path": "tests/schemes/Test-ShardedDlc.ps1",

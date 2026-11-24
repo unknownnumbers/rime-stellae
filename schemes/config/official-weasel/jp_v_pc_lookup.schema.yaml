@@ -1,7 +1,6 @@
 # Generated from the current effective public PC spelling settings.
 schema:
   schema_id: jp_v_pc_lookup
-  name: PC Chinese word lookup helper
   version: '2026.10.19'
 translator:
   dictionary: luna_pinyin.research

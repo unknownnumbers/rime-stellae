@@ -6,7 +6,6 @@ local tolerance = require('cn_tolerance')
 local normal_codec = require('cn_normal_codec')
 local exact_spelling = require('cn_exact_spelling')
 local english = require('en_indexed_translator')
-local mixed = require('mixed_translator')
 local M = {}
 local native_boundary = require('cn_native_boundary')
 local spacing = require('cn_preedit_spacing')
@@ -456,14 +455,12 @@ function M.init(env)
     code_prefix=env.engine.schema.config:get_string('probe/greek_code_prefix') or ''}
   env.english_env = {engine=env.engine}
   english.init(env.english_env)
-  env.mixed_env = {engine=env.engine}
-  mixed.init(env.mixed_env)
   spacing.init(env)
 end
 
 -- Reuse this module's Chinese matching, merging and boundary logic in another
 -- schema. This owns one isolated native translator; it does not initialize
--- symbol, English or mixed-word candidate streams or their learning owners.
+-- symbol or English candidate streams or their learning owners.
 function M.init_chinese(env, schema)
   env.lookup_schema = schema
   env.only_chinese = true
@@ -484,8 +481,6 @@ end
 
 function M.fini(env)
   spacing.fini(env)
-  mixed.fini(env.mixed_env)
-  env.mixed_env = nil
   english.fini(env.english_env)
   env.english_env = nil
   env.decoder, env.symbol_env = nil, nil
@@ -583,16 +578,14 @@ function M.func(input, seg, env)
   local _, letter_count = input:gsub('[a-z]', '')
   local extended_results = not whole and not normal_only and letter_count >= 3 and
     Translation(chinese_query, input, seg, env, false, match_cache) or nil
-  local greek_results, english_results, mixed_results
+  local greek_results, english_results
   if not whole and not env.only_chinese then
     if match_cache.exact_plan then
       greek_results = Translation(unmarked_query, greek.func, input, seg, env.symbol_env, match_cache.exact_plan)
       english_results = Translation(unmarked_query, english.func, input, seg, env.english_env, match_cache.exact_plan, true)
-      mixed_results = Translation(unmarked_query, mixed.func, input, seg, env.mixed_env, match_cache.exact_plan)
     else
       greek_results = Translation(greek.func, input, seg, env.symbol_env)
       english_results = Translation(english.func, input, seg, env.english_env, true)
-      mixed_results = Translation(mixed.func, input, seg, env.mixed_env)
     end
   end
   local fi, fs
@@ -601,12 +594,11 @@ function M.func(input, seg, env)
   if normal_results then ni, ns = normal_results:iter() end
   local xi, xs
   if extended_results then xi, xs = extended_results:iter() end
-  local gi, gs, ei, es, mi, ms
+  local gi, gs, ei, es
   if greek_results then gi, gs = greek_results:iter() end
   if english_results then ei, es = english_results:iter() end
-  if mixed_results then mi, ms = mixed_results:iter() end
-  local f, n, x, g, e, m = fi and fi(fs), ni and ni(ns), xi and xi(xs),
-    gi and gi(gs), ei and ei(es), mi and mi(ms)
+  local f, n, x, g, e = fi and fi(fs), ni and ni(ns), xi and xi(xs),
+    gi and gi(gs), ei and ei(es)
   spacing.record(env,input,seg.start,match_cache)
   local complete_end = seg.start + #input
   local function normal_whole(value)
@@ -666,14 +658,13 @@ function M.func(input, seg, env)
     return a._end > b._end or (a._end == b._end and a_score > b_score)
   end
 
-  while f or n or x or g or e or m do
+  while f or n or x or g or e do
     local candidate,source,score
     local normal_score=n and learned_score(n,input,seg,env,learned_scores)
     local extended_score=x and learned_score(x,input,seg,env,learned_scores)
     local full_score=f and f.quality
     if f and not is_completion(f) and classify(f,input,seg,env,match_cache)==0 then
       if e and f._end==e._end then full_score=math.max(full_score,e.quality) end
-      if m and f._end==m._end then full_score=math.max(full_score,m.quality) end
     end
     local heads={{f,'full',full_score},{n,'normal',normal_score},{x,'extended',extended_score}}
     -- Elect the normal anchor first. Each correction must beat this same
@@ -704,20 +695,16 @@ function M.func(input, seg, env)
           or (n._end == candidate._end and normal_score > score)) then
       candidate,source,score=n,'normal',normal_score
     end
-    -- Preserve the current symbol/English/mixed comparison outside this fix.
+    -- Preserve the current symbol/English comparison outside this fix.
     if candidate and not is_completion(candidate)
         and classify(candidate, input, seg, env, match_cache) == 0 then
       if e and e._end == candidate._end then score = math.max(score, e.quality) end
-      if m and m._end == candidate._end then score = math.max(score, m.quality) end
     end
     if g and (not candidate or g._end > candidate._end or (g._end == candidate._end and g.quality > score)) then
       candidate, source, score = g, 'symbol', g.quality
     end
     if e and (not candidate or e._end > candidate._end or (e._end == candidate._end and e.quality > score)) then
       candidate, source, score = e, 'english', e.quality
-    end
-    if m and (not candidate or m._end > candidate._end or (m._end == candidate._end and m.quality > score)) then
-      candidate, source, score = m, 'mixed', m.quality
     end
     local duplicate_key, canonical_code
     if source == 'full' or source == 'normal' or source == 'extended' then
@@ -731,7 +718,7 @@ function M.func(input, seg, env)
       duplicate_key = candidate.text
       candidate.comment = ''
       -- Only an ordinary whole normal result reaching final output/dedup
-      -- releases the gate; an intervening symbol/English/mixed result cannot.
+      -- releases the gate; an intervening symbol/English result cannot.
       if normal_whole(candidate) then
         completion_waits_for_normal = false
         correction_waits_for_normal = false
@@ -769,8 +756,7 @@ function M.func(input, seg, env)
     elseif source == 'normal' then n = ni(ns)
     elseif source == 'extended' then x = xi(xs)
     elseif source == 'symbol' then g = gi(gs)
-    elseif source == 'english' then e = ei(es)
-    else m = mi(ms) end
+    elseif source == 'english' then e = ei(es) end
   end
 end
 

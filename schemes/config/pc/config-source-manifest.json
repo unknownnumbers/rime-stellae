@@ -1,7 +1,7 @@
 {
   "format": "rymcp-public-config-v2",
-  "scheme_version": "2026.11.24.1",
-  "allowlisted_source_files": 182,
+  "scheme_version": "2026.11.24.2",
+  "allowlisted_source_files": 179,
   "source_files": [
     {
       "path": "JAPANESE.md",
@@ -30,8 +30,8 @@
     },
     {
       "path": "default.custom.yaml",
-      "bytes": 1379,
-      "sha256": "7965aa0a546f5771fc53d3a35f4d9670d4fb5f6a1fbd2af994726143ec62027c"
+      "bytes": 1381,
+      "sha256": "94c4a927c82bec5fe61b5d9d35d83e385322feb276f8bf163bb3fcddcb5823cc"
     },
     {
       "path": "default.yaml",
@@ -80,8 +80,8 @@
     },
     {
       "path": "english_full.schema.yaml",
-      "bytes": 226,
-      "sha256": "14ebc72115f968697ccbe67ed8e446eb7a0ea42dfead668475ece7548daa8af4"
+      "bytes": 180,
+      "sha256": "47f7d2ae2f6595697457d676957c518439f0304105b6e00442f819bb9f81252f"
     },
     {
       "path": "english_index/build-report.json",
@@ -120,8 +120,8 @@
     },
     {
       "path": "jp-v-compatibility.json",
-      "bytes": 7241,
-      "sha256": "5ed36001793a6da45209799f5f06d66f092332869b16d09289f6211367d8a2f9"
+      "bytes": 7223,
+      "sha256": "7df4da2750b361fdcfcd0c9c14597f391ad4f056f65bcb5ceb78c3f55b17ef0a"
     },
     {
       "path": "jp_q_lookup.dict.yaml",
@@ -130,23 +130,23 @@
     },
     {
       "path": "jp_q_lookup.schema.yaml",
-      "bytes": 618,
-      "sha256": "27006ea326d599ac5eb550dc0a86bdacd00f2009465b34bdc16f091876e8c233"
+      "bytes": 574,
+      "sha256": "e0c3f3b2118212d69e5b720d711522f53627e4f39f0f8bc600ef69ddb82e11f4"
     },
     {
       "path": "jp_sela.custom.yaml",
-      "bytes": 3840,
-      "sha256": "657084d0f0290e091056cb6ecadd120ea4261584daea6289d31dcacfd24624d9"
+      "bytes": 3923,
+      "sha256": "a290a8d76157463eebd2e32b065ec164f529e1eb84453e2bc623e1cace4c4636"
     },
     {
       "path": "jp_sela.schema.yaml",
-      "bytes": 1341,
-      "sha256": "d594e133a08d23d81fc798106684c085ed2d301d9399fde350e921592fec8471"
+      "bytes": 1294,
+      "sha256": "f678745a6340ac444fb17403a58dccf19aa5333cb29dacad2df1081e330b5549"
     },
     {
       "path": "jp_sela_custom.dict.yaml",
-      "bytes": 7632,
-      "sha256": "941578997bc9c43bd31e2f4d1f890cf8fe3737051dfe432f3928440bf1146ec1"
+      "bytes": 7636,
+      "sha256": "21d517b17e3eb6597494d7ec44d58343aaa6918c86f73dc83df1027bc6ad6932"
     },
     {
       "path": "jp_small_lookup.dict.yaml",
@@ -155,8 +155,8 @@
     },
     {
       "path": "jp_small_lookup.schema.yaml",
-      "bytes": 436,
-      "sha256": "354ac0bc82543164eadb2c1b73e305009e5aa3fbfa61f73f36caf0fa7a0275bf"
+      "bytes": 398,
+      "sha256": "bf00022bf2dcb0b06821c1e254e712ba61d5667fd73da6f8b1a6c5f6a0a95c4c"
     },
     {
       "path": "jp_v.dict.yaml",
@@ -165,13 +165,13 @@
     },
     {
       "path": "jp_v_lookup.schema.yaml",
-      "bytes": 221521,
-      "sha256": "150596b849e530b22996258abdc5eb23e942b8dd32765d6a653817e114a853f1"
+      "bytes": 221466,
+      "sha256": "5f077ddfc2df825e23f9c33716263ac972e71ad2080f749bcb8afef9d9f42b20"
     },
     {
       "path": "jp_v_pc_lookup.schema.yaml",
-      "bytes": 275102,
-      "sha256": "8a047af8bcecd8042aa0e222b3a530608c6da5f4e1914dfa0ae7a6b2f5611aa9"
+      "bytes": 275063,
+      "sha256": "437f9dea58c19ce80abf2437b6000d7b7ddffa1e33f8effcbe2cb231f54a6c26"
     },
     {
       "path": "jp_v_words.tsv",
@@ -365,8 +365,8 @@
     },
     {
       "path": "lua/cn_preedit_spacing.lua",
-      "bytes": 6285,
-      "sha256": "61f27ff248e9b9930e2a289d87f35d096ec774e1d9c73c4fff17860e73bc105d"
+      "bytes": 6067,
+      "sha256": "9a0561b67ef5630528ea6ee79fb5a8a469c5cc123f4a6af6c303ae3338555a70"
     },
     {
       "path": "lua/cn_tolerance.lua",
@@ -375,8 +375,8 @@
     },
     {
       "path": "lua/cn_translator.lua",
-      "bytes": 36225,
-      "sha256": "b147a8ec40aaebdc0c1e3c80c58e9a79cd497f00ca336e0506aa83d064d1bbac"
+      "bytes": 35392,
+      "sha256": "bb8ea87b4b0c2497249e8e27283d121f6f5ba1ad0e6b40cede309828e4819af6"
     },
     {
       "path": "lua/draft_limit.lua",
@@ -479,16 +479,6 @@
       "sha256": "a08f35e07c34815135c41a96b17d0758af962aa595a13f804d9d4ce22f791f00"
     },
     {
-      "path": "lua/mixed_data.lua",
-      "bytes": 475,
-      "sha256": "198cbd6676a00bc5e6b96dfe7b65d0210ec4ca8386dd8ad5e0bcacedddca0d51"
-    },
-    {
-      "path": "lua/mixed_translator.lua",
-      "bytes": 3511,
-      "sha256": "f878f62589653baf0d9a37b45114a7307ba9304fe7754f97b8890726426bafed"
-    },
-    {
       "path": "lua/official_translator.lua",
       "bytes": 1058,
       "sha256": "1ce06c18cd2121ca1ee0b81c10dccc4f10b2531de4b34fc1414ed1ed40c11da9"
@@ -520,8 +510,8 @@
     },
     {
       "path": "lua/select_hanzi.lua",
-      "bytes": 4481,
-      "sha256": "ea01f3c98142b281167ff4f898d5b3a9b82f0c1e8fc58123036c5474e2e86a11"
+      "bytes": 4228,
+      "sha256": "02d84356f88819f9fc8455e59d58b6243981a4ed9212260a53092c43953d2baa"
     },
     {
       "path": "lua/tool_calculator.lua",
@@ -574,16 +564,6 @@
       "sha256": "79467679c0eac919afc7d18b84dd7d375522ab4c11133b01c9cb29bdb7ff2c53"
     },
     {
-      "path": "mixed_full.dict.yaml",
-      "bytes": 349,
-      "sha256": "e5af1476aae799206e9fe20920b121e617021d079f001d94720f4a7c4da80f9a"
-    },
-    {
-      "path": "mixed_full.schema.yaml",
-      "bytes": 224,
-      "sha256": "e74e7ed78acd17bfcd5b528f90930dbf3414ecc6e794d0fe85fb1a25abf534ef"
-    },
-    {
       "path": "opencc/STCharacters.ocd2",
       "bytes": 45310,
       "sha256": "4c7398b4ceedf9b58b5ea77cdd911bc7807c50c7491111dc9b4073c68ad5a2bb"
@@ -620,18 +600,23 @@
     },
     {
       "path": "pc_research.custom.yaml",
-      "bytes": 295810,
-      "sha256": "6230c7d728b386a64b4999e15910db8d31e486c4d3ce26316b8177777d98057a"
+      "bytes": 295505,
+      "sha256": "6775c10e7cc78118c008f27c54407b855e0be136b2101182628b2c740ae7552b"
     },
     {
       "path": "pc_research.schema.yaml",
-      "bytes": 2388,
-      "sha256": "a64f83793e94c3d52b021d84fc847406749e30cfe76e4c20ca414dd83de61548"
+      "bytes": 2394,
+      "sha256": "94d5295d540d9822a53f45c5be5540db7d338b454641f54cf2092808e43d0273"
     },
     {
       "path": "pinyin.yaml",
       "bytes": 4965,
       "sha256": "f2d291166946a848fd88e541844567415f1ed3d9c5a7477757b88aeb3a69c0ca"
+    },
+    {
+      "path": "preview/color_scheme_reference_gray.png",
+      "bytes": 4249,
+      "sha256": "1e20193c0ce46c15bc0743e702bbd84b862a69af97096782ce8eaa4f605d8233"
     },
     {
       "path": "project_radical.dict.yaml",
@@ -640,8 +625,8 @@
     },
     {
       "path": "project_radical.schema.yaml",
-      "bytes": 602,
-      "sha256": "8e97d1b19e7f4a7a54bcaa5066410e9dc96c0d815bdd463080a3ad7192b599b1"
+      "bytes": 564,
+      "sha256": "01af910694d8f254b6d491b3b532c8b5c09d6370fab1938f386407b2b28d1846"
     },
     {
       "path": "project_radical_parts.dict.yaml",
@@ -650,8 +635,8 @@
     },
     {
       "path": "project_radical_parts.schema.yaml",
-      "bytes": 1033,
-      "sha256": "5d3bc1bccc3a948385c5242d37385f6ab623a80c63ced2c4b46b6cfcee8219a2"
+      "bytes": 1000,
+      "sha256": "5d923577a4d360bd90bc87eb21ce8ee044045694768ecf9e7d835a408abf3232"
     },
     {
       "path": "project_symbols.dict.yaml",
@@ -885,8 +870,8 @@
     },
     {
       "path": "tools/generate-japanese-base.py",
-      "bytes": 7985,
-      "sha256": "1cb285b074d5a0c125ae4fea3f02289c29b799c6090300dcd470f316564ef992"
+      "bytes": 7944,
+      "sha256": "3ae981d2e8bb9f6b1930ed0b1c82a1fe39d34d5fc963c6f6aa3d2281c81dc383"
     },
     {
       "path": "tools/make-opencc-config.py",
@@ -905,8 +890,8 @@
     },
     {
       "path": "weasel.custom.yaml",
-      "bytes": 2372,
-      "sha256": "abe796e1edb78ae11cfdb75c6d96315b2820baacb3f9f20715461e276a229593"
+      "bytes": 2369,
+      "sha256": "c173290394cfcfe5c79555d999b4d518595d6d018fda3d9a1e95400c703f6210"
     },
     {
       "path": "zh-hant-t-essay-bgw-compact.gram",

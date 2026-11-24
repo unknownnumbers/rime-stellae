@@ -1,4 +1,4 @@
-# Shared RymCp preset. PC Shift behavior is owned by probe_global_mode.
+# Shared Stellae preset. PC Shift behavior is owned by probe_global_mode.
 patch:
   schema_list:
     - schema: pc_research

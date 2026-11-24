@@ -32,16 +32,8 @@ end
 local function learned_character(ctx, candidate, text, index)
   local original = candidate:get_genuine():to_phrase()
   local decoder = require('cn_preedit_spacing').decoder(ctx)
-  if not original or not decoder then return end
-  local mixed = original.type == 'research_mixed'
-  local syllables
-  if mixed then
-    for _, item in ipairs(require('mixed_data')) do
-      if item.text == original.text then syllables = item.syllables; break end
-    end
-  elseif original.lang_name == decoder.lang_name then
-    syllables = decoder:decode(original.code)
-  end
+  if not original or not decoder or original.lang_name ~= decoder.lang_name then return end
+  local syllables = decoder:decode(original.code)
   if not syllables or utf8.len(original.text) ~= utf8.len(candidate.text) then return end
   local characters = {}
   local position, selected = 0, nil
@@ -50,7 +42,7 @@ local function learned_character(ctx, candidate, text, index)
     if han(cp) then
       characters[#characters + 1] = utf8.char(cp)
       if position == index then selected = #characters end
-    elseif not mixed then return end
+    else return end
   end
   if not selected or #syllables ~= #characters then return end
   local syllable = syllables[selected]

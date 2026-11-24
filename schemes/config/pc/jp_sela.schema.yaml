@@ -1,12 +1,12 @@
-# RymCp Japanese base; newly written from the RymCp mode specification.
+# Stellae Japanese base.
 # GPL-3.0-only. Copyright 2026 RymCp contributors.
-# jp_sela is RymCp's current module interface ID.
+# jp_sela is the current module interface ID.
 schema:
   schema_id: jp_sela
   name: "日 / 墨芯"
-  version: "2026.10.26.rymcp.1"
+  version: "2026.11.24.stellae.1"
   author:
-    - RymCp contributors
+    - Stellae contributors
   description: |
     Independent hiragana/katakana input with x small-kana and sourced q/v lookup.
     Kanji candidates come from the separately attributed JMdict/KANJIDIC/Unihan data.

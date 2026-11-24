@@ -15,14 +15,17 @@ import subprocess
 import time
 
 
-REPO = 'unknownnumbers/rime-stellae'
 ECHO, START, END, KEY = range(0x8001, 0x8005)
 FOCUS_IN, MOVE_CARET = 0x8006, 0x8008
 FRAME_BYTES = 64 * 1024  # PipeChannel default, including the native header.
-SCHEMA_LIST, FONT_COMBO = 1000, 1005
+SCHEMA_LIST, THEME_LIST, FONT_COMBO, PREVIEW = 1000, 1004, 1005, 1006
+LB_GETCURSEL, LB_GETTEXT, LB_GETTEXTLEN = 0x0188, 0x0189, 0x018A
+STM_GETIMAGE, IMAGE_BITMAP = 0x0173, 0
 WM_COMMAND, IDOK = 0x0111, 1
-CB_GETCOUNT, CB_GETCURSEL, CB_GETLBTEXT, CB_GETLBTEXTLEN, CB_SETCURSEL = (
-    0x0146, 0x0147, 0x0148, 0x0149, 0x014E,
+WM_KEYDOWN, WM_KEYUP, WM_NEXTDLGCTL = 0x0100, 0x0101, 0x0028
+VK_HOME, VK_DOWN = 0x24, 0x28
+CB_GETCOUNT, CB_GETCURSEL, CB_GETLBTEXT, CB_GETLBTEXTLEN = (
+    0x0146, 0x0147, 0x0148, 0x0149,
 )
 
 
@@ -151,6 +154,7 @@ class SettingsDialog:
         self.enum_windows = api('EnumWindows', w.BOOL, self.callback, w.LPARAM)
         self.get_pid = api('GetWindowThreadProcessId', w.DWORD, w.HWND, c.POINTER(w.DWORD))
         self.is_visible = api('IsWindowVisible', w.BOOL, w.HWND)
+        self.is_enabled = api('IsWindowEnabled', w.BOOL, w.HWND)
         self.get_child = api('GetDlgItem', w.HWND, w.HWND, c.c_int)
         self.post_message = api('PostMessageW', w.BOOL, w.HWND, w.UINT, w.WPARAM, w.LPARAM)
         self.send_message = api('SendMessageTimeoutW', w.LPARAM, w.HWND, w.UINT,
@@ -204,6 +208,36 @@ class SettingsDialog:
             items.append(text.value)
         return items
 
+    def select_font_by_keyboard(self, appearance, combo, index):
+        require(self.is_visible(combo), 'The native candidate font control is hidden')
+        require(self.is_enabled(combo), 'The native candidate font control is disabled')
+        # Let the dialog set its own keyboard focus, then exercise the standard
+        # combo-box key handler. CB_SETCURSEL bypasses disabled UI controls.
+        self.send(appearance, WM_NEXTDLGCTL, combo, 1)
+        for key in [VK_HOME] + [VK_DOWN] * index:
+            self.send(combo, WM_KEYDOWN, key)
+            self.send(combo, WM_KEYUP, key)
+        require(self.send(combo, CB_GETCURSEL) == index,
+                'Keyboard input did not select the replacement candidate font')
+
+    def verify_theme_preview(self, appearance, report):
+        themes = self.get_child(appearance, THEME_LIST)
+        selected = self.send(themes, LB_GETCURSEL)
+        require(selected >= 0, 'The native appearance settings have no current theme')
+        length = self.send(themes, LB_GETTEXTLEN, selected)
+        require(0 < length <= 512, 'Unexpected native theme name length')
+        text = c.create_unicode_buffer(length + 1)
+        require(self.send(themes, LB_GETTEXT, selected, c.addressof(text)) == length,
+                'Could not read the current native theme name')
+        require(text.value == '墨芯 / Rime Stellae',
+                'The current native theme did not use the expected project name')
+        preview = self.get_child(appearance, PREVIEW)
+        require(preview and self.is_visible(preview) and
+                self.send(preview, STM_GETIMAGE, IMAGE_BITMAP) != 0,
+                'The current native theme did not load a preview bitmap')
+        report['nativeSettingsThemeName'] = text.value
+        report['nativeSettingsPreviewBitmapPresent'] = True
+
 
 def apply_through_settings(installation, initial_font, replacement_font, report):
     deployer = installation / 'StellaeDeployer.exe'
@@ -214,6 +248,11 @@ def apply_through_settings(installation, initial_font, replacement_font, report)
             switcher, _ = settings.wait_for(SCHEMA_LIST)
             settings.accept(switcher)
             appearance, combo = settings.wait_for(FONT_COMBO)
+            settings.verify_theme_preview(appearance, report)
+            require(settings.is_visible(combo) and settings.is_enabled(combo),
+                    'The native candidate font control is not visible and enabled')
+            report['nativeSettingsFontControlVisible'] = True
+            report['nativeSettingsFontControlEnabled'] = True
             items = settings.combo_items(combo)
             require(all(f'Noto Sans CJK {style}' in items for style in ('SC', 'TC', 'HK')),
                     'The native appearance settings did not offer all three installed families')
@@ -222,8 +261,8 @@ def apply_through_settings(installation, initial_font, replacement_font, report)
                     'The native appearance settings did not display the current candidate font')
             report['nativeSettingsInitialFont'] = items[current]
             replacement = items.index(replacement_font)
-            require(settings.send(combo, CB_SETCURSEL, replacement) == replacement,
-                    'Could not select the replacement font in native settings')
+            settings.select_font_by_keyboard(appearance, combo, replacement)
+            report['nativeSettingsSelectionMethod'] = 'keyboard-home-down'
             start = time.monotonic()
             settings.accept(appearance)
             require(process.wait(timeout=90) == 0, 'Native settings did not apply the replacement font')
@@ -328,8 +367,7 @@ def validate(args, report):
 
 def main():
     require(os.name == 'nt' and os.environ.get('GITHUB_ACTIONS') == 'true' and
-            os.environ.get('RUNNER_ENVIRONMENT') == 'github-hosted' and
-            os.environ.get('GITHUB_REPOSITORY') == REPO,
+            os.environ.get('RUNNER_ENVIRONMENT') == 'github-hosted',
             'Run only on the disposable GitHub-hosted Windows CI runner')
     parser = argparse.ArgumentParser()
     for option in ('installation', 'profile', 'trace', 'report'):

@@ -198,7 +198,7 @@ def main():
     shutil.copyfile(a.schemes, stage/'scheme-notices'/a.schemes.name)
     # The frontend creates empty user default/weasel custom files. Keep bundle
     # presets separate so those empty user files do not hide the base defaults.
-    for config, alias in [('default', 'rymcp_bundle_default'), ('weasel', 'rymcp_bundle_weasel')]:
+    for config, alias in [('default', 'stellae_bundle_default'), ('weasel', 'stellae_bundle_weasel')]:
         custom = payload/(config+'.custom.yaml')
         renamed = payload/(alias+'.yaml')
         if renamed.exists() or not custom.is_file():
@@ -215,7 +215,7 @@ def main():
         text = raw.decode('utf-8-sig')
         if any(line.startswith('__patch:') or line.strip() == '...' for line in text.splitlines()):
             raise SystemExit('The fixed shared base needs a reviewed patch layout.')
-        font_layer = ('  - rymcp_candidate_font:/patch?\n'
+        font_layer = ('  - rymcp_candidate_font:/patch?\n  - stellae_candidate_font:/patch?\n'
                       if config == 'weasel' and a.default_font_directory is not None else '')
         extension = ('\n# Stellae defaults followed by optional user overrides.\n__patch:\n'
                      f'  - {alias}:/patch\n{font_layer}  - {config}.custom:/patch?\n').encode('utf-8')
@@ -232,8 +232,8 @@ def main():
     source_profile = stage/'scheme-notices/archive-profile-manifest.json'
     source_profile.write_bytes(profile_raw)
     profile = json.loads(profile_raw)
-    renames = {'default.custom.yaml': 'rymcp_bundle_default.yaml',
-               'weasel.custom.yaml': 'rymcp_bundle_weasel.yaml'}
+    renames = {'default.custom.yaml': 'stellae_bundle_default.yaml',
+               'weasel.custom.yaml': 'stellae_bundle_weasel.yaml'}
     for group in ['source_files', 'generated_files']:
         for entry in profile[group]:
             original_name = entry['path']

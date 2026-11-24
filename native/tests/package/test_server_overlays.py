@@ -216,7 +216,7 @@ class ServerOverlayTests(unittest.TestCase):
         self.assertEqual(row['installed_path'], report)
         self.assertEqual(row['sha256'], digest((self.stage / report).read_bytes()))
         recipe = (REPOSITORY / 'installer/install.nsi').read_text('utf-8-sig')
-        first = recipe.index('  SetOutPath "$INSTDIR\\scheme-notices"')
+        first = recipe.index('  SetOutPath "$PLUGINSDIR\\scheme-notices"')
         last = recipe.index('  SetOutPath "$PLUGINSDIR\\shared-payload"', first)
         guard = recipe.rfind('!ifndef STELLAE_BUNDLE', 0, first)
         self.assertGreaterEqual(guard, 0)

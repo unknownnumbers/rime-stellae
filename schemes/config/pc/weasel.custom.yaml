@@ -34,8 +34,8 @@ patch:
 
   # Reference Gray; ABGR color format.
   preset_color_schemes/reference_gray:
-    name: "截图灰 / Reference Gray"
-    author: "RymCp contributors"
+    name: "墨芯 / Rime Stellae"
+    author: "Stellae contributors"
     color_format: abgr
     back_color: 0x85000000 # 52.16% opaque: #7A7A7A over pure white
     border_color: 0xffa3a3a3

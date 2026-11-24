@@ -1082,6 +1082,247 @@ index 15023226746b715a55935d8d043762348b3acc42..7d1fa01da71c3cb1bc57bef9c9bf871e
      client.StartMaintenance();
    }
  
+diff --git a/WeaselDeployer/Configurator.h b/WeaselDeployer/Configurator.h
+index ac14091d600f8662d45df5f1f09d5e03babfb45e..73bac69c566724bbef269301c880137adb3abb41 100644
+--- a/WeaselDeployer/Configurator.h
++++ b/WeaselDeployer/Configurator.h
+@@ -4,11 +4,12 @@ class UIStyleSettings;
+ 
+ class Configurator {
+  public:
+-  explicit Configurator();
++  explicit Configurator(bool create_custom_files = true);
+ 
+   void Initialize();
+   int Run(bool installing);
+   int UpdateWorkspace(bool report_errors = false);
++  int UpdateAppearance();
+   int DictManagement();
+   int SyncUserData();
+ };
+diff --git a/WeaselDeployer/DictManagementDialog.cpp b/WeaselDeployer/DictManagementDialog.cpp
+index 078dbb06850dd0f305e6d9b6014f0e62d8c756d0..691003877f484b44210881efe617db190d32861d 100644
+--- a/WeaselDeployer/DictManagementDialog.cpp
++++ b/WeaselDeployer/DictManagementDialog.cpp
+@@ -4,6 +4,25 @@
+ #include <WeaselUtility.h>
+ #include <rime_api.h>
+ #include "WeaselDeployer.h"
++#include <algorithm>
++
++namespace {
++
++UserDictionaryInfo DescribeDictionary(const std::string& id) {
++  if (id == "luna_pinyin")
++    return {id, "cn_stellae", 0, IDS_DICT_DESC_CN};
++  if (id == "pc_english")
++    return {id, "en_intelligence", 0, IDS_DICT_DESC_EN};
++  if (id == "jp_family")
++    return {id, "jp_kanji", 0, IDS_DICT_DESC_JP};
++  if (id == "jp_sela_custom")
++    return {id, "jp_romaji", 1, IDS_DICT_DESC_KANA_HISTORY};
++  if (id == "pc_mixed")
++    return {id, id, 1, IDS_DICT_DESC_MIXED_HISTORY};
++  return {id, id, 2, IDS_DICT_DESC_OTHER};
++}
++
++}  // namespace
+ 
+ void static OpenFolderAndSelectItem(std::wstring filepath) {
+   filepath = std::filesystem::path(filepath).make_preferred().wstring();
+@@ -64,18 +83,63 @@ DictManagementDialog::DictManagementDialog() {
+ DictManagementDialog::~DictManagementDialog() {}
+ 
+ void DictManagementDialog::Populate() {
++  user_dict_list_.ResetContent();
++  user_dicts_.clear();
+   RimeUserDictIterator iter = {0};
+   api_->user_dict_iterator_init(&iter);
+   while (const char* dict = api_->next_user_dict(&iter)) {
+-    std::wstring txt = u8tow(dict);
+-    user_dict_list_.AddString(txt.c_str());
++    user_dicts_.push_back(DescribeDictionary(dict));
+   }
+   api_->user_dict_iterator_destroy(&iter);
++  std::sort(user_dicts_.begin(), user_dicts_.end(),
++            [](const UserDictionaryInfo& a, const UserDictionaryInfo& b) {
++              return a.group != b.group ? a.group < b.group
++                                        : a.display_name < b.display_name;
++            });
++  const UINT groups[] = {IDS_DICT_GROUP_ACTIVE, IDS_DICT_GROUP_HISTORY,
++                         IDS_DICT_GROUP_OTHER};
++  for (size_t index = 0; index < user_dicts_.size(); ++index) {
++    const auto& info = user_dicts_[index];
++    CString group;
++    group.LoadStringW(groups[info.group]);
++    const auto label = std::wstring(group.GetString()) + L": " +
++                       u8tow(info.display_name);
++    const int item = user_dict_list_.AddString(label.c_str());
++    if (item >= 0)
++      user_dict_list_.SetItemData(item, static_cast<DWORD_PTR>(index));
++  }
+   user_dict_list_.SetCurSel(-1);
++  UpdateSelection();
++}
++
++const UserDictionaryInfo* DictManagementDialog::SelectedDictionary() const {
++  const int selected = user_dict_list_.GetCurSel();
++  if (selected < 0)
++    return nullptr;
++  const DWORD_PTR index = user_dict_list_.GetItemData(selected);
++  return index < user_dicts_.size() ? &user_dicts_[index] : nullptr;
++}
++
++void DictManagementDialog::UpdateSelection() {
++  const auto* info = SelectedDictionary();
++  const BOOL enabled = info != nullptr;
++  backup_.EnableWindow(enabled);
++  export_.EnableWindow(enabled);
++  import_.EnableWindow(enabled);
++  CString description;
++  description.LoadStringW(info ? info->description_id : IDS_DICT_SELECT_DESCRIPTION);
++  std::wstring text(description.GetString());
++  if (info) {
++    CString storage;
++    storage.LoadStringW(IDS_DICT_STORAGE_ID);
++    text += L"\r\n" + std::wstring(storage.GetString()) + L": " + u8tow(info->id);
++  }
++  description_.SetWindowText(text.c_str());
+ }
+ 
+ LRESULT DictManagementDialog::OnInitDialog(UINT, WPARAM, LPARAM, BOOL&) {
+   user_dict_list_.Attach(GetDlgItem(IDC_USER_DICT_LIST));
++  description_.Attach(GetDlgItem(IDC_USER_DICT_DESCRIPTION));
+   backup_.Attach(GetDlgItem(IDC_BACKUP));
+   backup_.EnableWindow(FALSE);
+   restore_.Attach(GetDlgItem(IDC_RESTORE));
+@@ -98,8 +162,8 @@ LRESULT DictManagementDialog::OnClose(UINT, WPARAM, LPARAM, BOOL&) {
+ }
+ 
+ LRESULT DictManagementDialog::OnBackup(WORD, WORD code, HWND, BOOL&) {
+-  int sel = user_dict_list_.GetCurSel();
+-  if (sel < 0 || sel >= user_dict_list_.GetCount()) {
++  const auto* dictionary = SelectedDictionary();
++  if (!dictionary) {
+     MSG_BY_IDS(IDS_STR_SEL_EXPORT_DICT_NAME, IDS_STR_SAD,
+                MB_OK | MB_ICONINFORMATION);
+     return 0;
+@@ -118,11 +182,8 @@ LRESULT DictManagementDialog::OnBackup(WORD, WORD code, HWND, BOOL&) {
+     MSG_BY_IDS(IDS_STR_ERREXPORT_SYNC_UV, IDS_STR_SAD, MB_OK | MB_ICONERROR);
+     return 0;
+   }
+-  WCHAR dict_name[100] = {0};
+-  user_dict_list_.GetText(sel, dict_name);
+-  path += std::wstring(L"\\") + dict_name + L".userdb.txt";
+-  std::string dict_name_str = wtou8(dict_name);
+-  if (!api_->backup_user_dict(dict_name_str.c_str())) {
++  path += L"\\" + u8tow(dictionary->id) + L".userdb.txt";
++  if (!api_->backup_user_dict(dictionary->id.c_str())) {
+     MSG_BY_IDS(IDS_STR_ERR_EXPORT_UNKNOWN, IDS_STR_SAD, MB_OK | MB_ICONERROR);
+     return 0;
+   } else if (_waccess(path.c_str(), 0) != 0) {
+@@ -178,15 +239,13 @@ LRESULT DictManagementDialog::OnExport(WORD, WORD code, HWND, BOOL&) {
+   const std::wstring txt_files_name = txt_files_str + L" (*.txt)";
+   const std::wstring all_files_name = all_files_str;
+ 
+-  int sel = user_dict_list_.GetCurSel();
+-  if (sel < 0 || sel >= user_dict_list_.GetCount()) {
++  const auto* dictionary = SelectedDictionary();
++  if (!dictionary) {
+     MSG_BY_IDS(IDS_STR_SEL_EXPORT_DICT_NAME, IDS_STR_SAD,
+                MB_OK | MB_ICONINFORMATION);
+     return 0;
+   }
+-  WCHAR dict_name[MAX_PATH] = {0};
+-  user_dict_list_.GetText(sel, dict_name);
+-  std::wstring file_name(dict_name);
++  std::wstring file_name(u8tow(dictionary->id));
+   file_name += L"_export.txt";
+ 
+   COMDLG_FILTERSPEC filter[2] = {{txt_files_name.c_str(), L"*.txt"},
+@@ -200,8 +259,7 @@ LRESULT DictManagementDialog::OnExport(WORD, WORD code, HWND, BOOL&) {
+     char path[MAX_PATH] = {0};
+     WideCharToMultiByte(CP_UTF8, 0, selected_path.c_str(), -1, path,
+                         _countof(path), NULL, NULL);
+-    std::string dict_name_str = wtou8(dict_name);
+-    int result = api_->export_user_dict(dict_name_str.c_str(), path);
++    int result = api_->export_user_dict(dictionary->id.c_str(), path);
+     if (result < 0) {
+       MSG_BY_IDS(IDS_STR_ERR_UNKNOWN, IDS_STR_SAD, MB_OK | MB_ICONERROR);
+     } else if (_waccess(selected_path.c_str(), 0) != 0) {
+@@ -229,15 +287,13 @@ LRESULT DictManagementDialog::OnImport(WORD, WORD code, HWND, BOOL&) {
+   const std::wstring txt_files_name = txt_files_str + L" (*.txt)";
+   const std::wstring all_files_name = all_files_str;
+ 
+-  int sel = user_dict_list_.GetCurSel();
+-  if (sel < 0 || sel >= user_dict_list_.GetCount()) {
++  const auto* dictionary = SelectedDictionary();
++  if (!dictionary) {
+     MSG_BY_IDS(IDS_STR_SEL_IMPORT_DICT_NAME, IDS_STR_SAD,
+                MB_OK | MB_ICONINFORMATION);
+     return 0;
+   }
+-  WCHAR dict_name[MAX_PATH] = {0};
+-  user_dict_list_.GetText(sel, dict_name);
+-  std::wstring file_name(dict_name);
++  std::wstring file_name(u8tow(dictionary->id));
+   file_name += L"_export.txt";
+ 
+   COMDLG_FILTERSPEC filter[2] = {{txt_files_name.c_str(), L"*.txt"},
+@@ -250,7 +306,7 @@ LRESULT DictManagementDialog::OnImport(WORD, WORD code, HWND, BOOL&) {
+     char path[MAX_PATH] = {0};
+     WideCharToMultiByte(CP_UTF8, 0, selected_path.c_str(), -1, path,
+                         _countof(path), NULL, NULL);
+-    int result = api_->import_user_dict(wtou8(dict_name).c_str(), path);
++    int result = api_->import_user_dict(dictionary->id.c_str(), path);
+     if (result < 0) {
+       MSG_BY_IDS(IDS_STR_ERR_UNKNOWN, IDS_STR_SAD, MB_OK | MB_ICONERROR);
+     } else {
+@@ -264,10 +320,6 @@ LRESULT DictManagementDialog::OnImport(WORD, WORD code, HWND, BOOL&) {
+ }
+ 
+ LRESULT DictManagementDialog::OnUserDictListSelChange(WORD, WORD, HWND, BOOL&) {
+-  int index = user_dict_list_.GetCurSel();
+-  BOOL enabled = index < 0 ? FALSE : TRUE;
+-  backup_.EnableWindow(enabled);
+-  export_.EnableWindow(enabled);
+-  import_.EnableWindow(enabled);
++  UpdateSelection();
+   return 0;
+ }
+diff --git a/WeaselDeployer/DictManagementDialog.h b/WeaselDeployer/DictManagementDialog.h
+index edb8786564b62007157c0b45c9ecd01c6a625224..2da1c74a994183f8c843081d5aab0b2874dd87e6 100644
+--- a/WeaselDeployer/DictManagementDialog.h
++++ b/WeaselDeployer/DictManagementDialog.h
+@@ -3,6 +3,15 @@
+ #include "resource.h"
+ 
+ #include <rime_levers_api.h>
++#include <string>
++#include <vector>
++
++struct UserDictionaryInfo {
++  std::string id;
++  std::string display_name;
++  unsigned group;
++  UINT description_id;
++};
+ 
+ class DictManagementDialog : public CDialogImpl<DictManagementDialog> {
+  public:
+@@ -31,8 +40,12 @@ class DictManagementDialog : public CDialogImpl<DictManagementDialog> {
+   LRESULT OnUserDictListSelChange(WORD, WORD, HWND, BOOL&);
+ 
+   void Populate();
++  const UserDictionaryInfo* SelectedDictionary() const;
++  void UpdateSelection();
+ 
+   CListBox user_dict_list_;
++  CStatic description_;
++  std::vector<UserDictionaryInfo> user_dicts_;
+   CButton backup_;
+   CButton restore_;
+   CButton export_;
 diff --git a/WeaselDeployer/SwitcherSettingsDialog.cpp b/WeaselDeployer/SwitcherSettingsDialog.cpp
 index 587cbc714149302897dfebe179804fba7131f1bc..48cbd11eb79476e04cb445f40667902bddb9cd9c 100644
 --- a/WeaselDeployer/SwitcherSettingsDialog.cpp
@@ -1104,6 +1345,193 @@ index 587cbc714149302897dfebe179804fba7131f1bc..48cbd11eb79476e04cb445f40667902b
    LSTATUS ret = RegOpenKey(HKEY_LOCAL_MACHINE, hPath.c_str(), &hKey);
    if (ret == ERROR_SUCCESS) {
      WCHAR value[MAX_PATH];
+diff --git a/WeaselDeployer/UIStyleSettings.cpp b/WeaselDeployer/UIStyleSettings.cpp
+index 22e7380a70240b15fbf0406243d8daa5fc5b0064..1e05404ce1c401c5d1f985600344cb8cdcf41784 100644
+--- a/WeaselDeployer/UIStyleSettings.cpp
++++ b/WeaselDeployer/UIStyleSettings.cpp
+@@ -1,7 +1,38 @@
+ #include "stdafx.h"
+ #include <WeaselUtility.h>
++#include <dwrite.h>
++#include <wrl/client.h>
+ #include "UIStyleSettings.h"
+ 
++#pragma comment(lib, "dwrite.lib")
++
++namespace {
++
++constexpr const char* kCandidateFontFamilies[] = {
++    "Noto Sans CJK TC", "Noto Sans CJK HK", "Noto Sans CJK SC"};
++constexpr const char* kCandidateFont = "style/font_face";
++
++std::string FontSetting(RimeConfig* config, const char* key) {
++  const char* value = rime_get_api()->config_get_cstring(config, key);
++  return value ? value : "";
++}
++
++std::string PrimaryFontFamily(const std::string& stack) {
++  auto name = stack.substr(0, stack.find_first_of(",:"));
++  auto begin = name.find_first_not_of(" \t");
++  return begin == std::string::npos
++             ? std::string()
++             : name.substr(begin, name.find_last_not_of(" \t") - begin + 1);
++}
++
++std::string ReplacePrimaryFont(const std::string& stack,
++                               const std::string& family) {
++  auto suffix = stack.find_first_of(",:");
++  return suffix == std::string::npos ? family : family + stack.substr(suffix);
++}
++
++}  // namespace
++
+ UIStyleSettings::UIStyleSettings() {
+   api_ = (RimeLeversApi*)rime_get_api()->find_module("levers")->get_api();
+   settings_ = api_->custom_settings_init("weasel", "Weasel::UIStyleSettings");
+@@ -73,3 +104,57 @@ bool UIStyleSettings::SelectColorScheme(const std::string& color_scheme_id) {
+                          color_scheme_id.c_str());
+   return true;
+ }
++
++std::vector<std::string> UIStyleSettings::GetInstalledCandidateFonts() const {
++  std::vector<std::string> fonts;
++  Microsoft::WRL::ComPtr<IDWriteFactory> factory;
++  if (FAILED(DWriteCreateFactory(
++          DWRITE_FACTORY_TYPE_SHARED, __uuidof(IDWriteFactory),
++          reinterpret_cast<IUnknown**>(factory.GetAddressOf()))))
++    return fonts;
++
++  Microsoft::WRL::ComPtr<IDWriteFontCollection> collection;
++  if (FAILED(factory->GetSystemFontCollection(collection.GetAddressOf(), TRUE)))
++    return fonts;
++
++  for (const char* family : kCandidateFontFamilies) {
++    UINT32 index = 0;
++    BOOL exists = FALSE;
++    if (SUCCEEDED(collection->FindFamilyName(
++            u8tow(family).c_str(), &index, &exists)) &&
++        exists) {
++      fonts.emplace_back(family);
++    }
++  }
++  return fonts;
++}
++
++std::string UIStyleSettings::GetActiveCandidateFont() {
++  RimeConfig config = {0};
++  api_->settings_get_config(settings_, &config);
++  return PrimaryFontFamily(FontSetting(&config, kCandidateFont));
++}
++
++bool UIStyleSettings::SelectCandidateFont(const std::string& family) {
++  RimeConfig config = {0};
++  api_->settings_get_config(settings_, &config);
++  const auto active_stack = FontSetting(&config, kCandidateFont);
++  const auto active_family = PrimaryFontFamily(active_stack);
++  if (family.empty() || family == active_family)
++    return true;
++
++  const auto replacement = ReplacePrimaryFont(active_stack, family);
++  if (!api_->customize_string(settings_, kCandidateFont, replacement.c_str()))
++    return false;
++
++  // Inherited labels follow the main face. Preserve distinct custom fonts.
++  for (const char* key : {"style/label_font_face", "style/comment_font_face"}) {
++    const auto stack = FontSetting(&config, key);
++    if (!stack.empty() && PrimaryFontFamily(stack) == active_family) {
++      const auto adjusted = ReplacePrimaryFont(stack, family);
++      if (!api_->customize_string(settings_, key, adjusted.c_str()))
++        return false;
++    }
++  }
++  return true;
++}
+diff --git a/WeaselDeployer/UIStyleSettings.h b/WeaselDeployer/UIStyleSettings.h
+index f229eecb3e03de91bca682f82aa4c7ac25d8258a..e512226cfb1bc5a2457f61df3022abc3399da2f1 100644
+--- a/WeaselDeployer/UIStyleSettings.h
++++ b/WeaselDeployer/UIStyleSettings.h
+@@ -18,6 +18,9 @@ class UIStyleSettings {
+   std::string GetColorSchemePreview(const std::string& color_scheme_id);
+   std::string GetActiveColorScheme();
+   bool SelectColorScheme(const std::string& color_scheme_id);
++  std::vector<std::string> GetInstalledCandidateFonts() const;
++  std::string GetActiveCandidateFont();
++  bool SelectCandidateFont(const std::string& family);
+ 
+   RimeCustomSettings* settings() { return settings_; }
+ 
+diff --git a/WeaselDeployer/UIStyleSettingsDialog.cpp b/WeaselDeployer/UIStyleSettingsDialog.cpp
+index b00e82de96f97cabeecd35e9f2c7e03a84c46503..9bab42f6ba031a27560f38b54752f9b99b4554b7 100644
+--- a/WeaselDeployer/UIStyleSettingsDialog.cpp
++++ b/WeaselDeployer/UIStyleSettingsDialog.cpp
+@@ -2,7 +2,9 @@
+ #include "UIStyleSettingsDialog.h"
+ #include "UIStyleSettings.h"
+ #include "Configurator.h"
++#include "WeaselDeployer.h"
+ #include <WeaselUtility.h>
++#include <algorithm>
+ 
+ UIStyleSettingsDialog::UIStyleSettingsDialog(UIStyleSettings* settings)
+     : settings_(settings), loaded_(false) {}
+@@ -28,6 +30,20 @@ void UIStyleSettingsDialog::Populate() {
+     color_schemes_.SetCurSel(active_index);
+     Preview(active_index);
+   }
++  auto active_font = settings_->GetActiveCandidateFont();
++  fonts_ = settings_->GetInstalledCandidateFonts();
++  if (!active_font.empty() &&
++      std::find(fonts_.begin(), fonts_.end(), active_font) == fonts_.end())
++    fonts_.insert(fonts_.begin(), active_font);
++  int active_font_index = -1;
++  for (size_t i = 0; i < fonts_.size(); ++i) {
++    select_font_.AddString(u8tow(fonts_[i]).c_str());
++    if (fonts_[i] == active_font)
++      active_font_index = static_cast<int>(i);
++  }
++  select_font_.SetCurSel(active_font_index);
++  select_font_.EnableWindow(fonts_.size() > 1 ||
++                            (!fonts_.empty() && active_font.empty()));
+   loaded_ = true;
+ }
+ 
+@@ -35,7 +51,6 @@ LRESULT UIStyleSettingsDialog::OnInitDialog(UINT, WPARAM, LPARAM, BOOL&) {
+   color_schemes_.Attach(GetDlgItem(IDC_COLOR_SCHEME));
+   preview_.Attach(GetDlgItem(IDC_PREVIEW));
+   select_font_.Attach(GetDlgItem(IDC_SELECT_FONT));
+-  select_font_.EnableWindow(FALSE);
+ 
+   Populate();
+ 
+@@ -50,6 +65,12 @@ LRESULT UIStyleSettingsDialog::OnClose(UINT, WPARAM, LPARAM, BOOL&) {
+ }
+ 
+ LRESULT UIStyleSettingsDialog::OnOK(WORD, WORD code, HWND, BOOL&) {
++  int index = select_font_.GetCurSel();
++  if (index >= 0 && index < static_cast<int>(fonts_.size()) &&
++      !settings_->SelectCandidateFont(fonts_[index])) {
++    MSG_BY_IDS(IDS_STR_ERR_UNKNOWN, IDS_STR_WEASEL, MB_OK | MB_ICONEXCLAMATION);
++    return 0;
++  }
+   EndDialog(code);
+   return 0;
+ }
+diff --git a/WeaselDeployer/UIStyleSettingsDialog.h b/WeaselDeployer/UIStyleSettingsDialog.h
+index e81aad77b5e2fdd662a7281e9bcf4a8677a0b9c8..644364ffa7fb85221693ea93127ca2e71fc33fab 100644
+--- a/WeaselDeployer/UIStyleSettingsDialog.h
++++ b/WeaselDeployer/UIStyleSettingsDialog.h
+@@ -29,9 +29,10 @@ class UIStyleSettingsDialog : public CDialogImpl<UIStyleSettingsDialog> {
+   UIStyleSettings* settings_;
+   bool loaded_;
+   std::vector<ColorSchemeInfo> preset_;
++  std::vector<std::string> fonts_;
+ 
+   CListBox color_schemes_;
+   CStatic preview_;
+   CImage image_;
+-  CButton select_font_;
++  CComboBox select_font_;
+ };
 diff --git a/WeaselDeployer/WeaselDeployer.cpp b/WeaselDeployer/WeaselDeployer.cpp
 index a57801435a7cd33247884614f650a230e7b9f0a3..dc18c3b83e4c069a38889df86c1bf9dff888818c 100644
 --- a/WeaselDeployer/WeaselDeployer.cpp
@@ -1158,29 +1586,53 @@ index a57801435a7cd33247884614f650a230e7b9f0a3..dc18c3b83e4c069a38889df86c1bf9df
      return 0;
    }
 diff --git a/WeaselDeployer/WeaselDeployer.rc b/WeaselDeployer/WeaselDeployer.rc
-index d8b9e1769bd38aeb087a695fae53d90e5eb6a02b..5bd7a144e41ebf87d02a6f1a46f527ee249ae47a 100644
+index d8b9e1769bd38aeb087a695fae53d90e5eb6a02b..1c308203c68773e0588c49ca829e23523d1cc306 100644
 GIT binary patch
-delta 1166
-zcmZ2;lxe|frVW$WSyx1?ZxWo$$SFVhT+ccd5N~r1$1Zj-YqE~O9SCDWlF#NS!44LP
-zf)}FGm>{eciDyt&fpi$t<bC2wT#^Bt6Q);%M+f^)J|Ll_Y0hB8pu=FsU<xEH7<d`D
-z7!;t;nZcjIm%#~0f^fv-zzoUBKQg7vK`IS_IxL~IIgmC7>vsmK3}%RDaA61n>IeYR
-z{tV#^ehfYgo(#d04_Z4<wvjWMoR(#>S;|>}5#quf@*nsns{{&gIx&O-mH9BZOkSy1
-zi7K)=HgG!Q=3NGEjJ%)#crl@<eoCB1snTS{VC~6PMlzFY!nh_+2$7g<*CjUDpu>ze
-zn4yFrl_3WR6B$w`7j`60jtk|QtY;jBCX?714Gv(iNt+c+EZ889in9uV1y%((u&&G+
-zn84bcmgU08CSU-L_hoidppog|_zKE0aM{Fz8dz9^?=D37WQULdq5><0KtM4uZjK4x
-zz=$n%K8rjAO`Yo!A*plogd`PqP}-Ar2F6DoLkdGC5GR7;NP!`ZAs;AKGFh=ycJc->
-z7HvadVxn)7RN5SpbwrYgP}Bw{ina%mK|uHC0@IfQLosqXV^9F5G+Uz5<5SGw6~|%f
-s<ibwt$$BPVfZ@H45vQVulfmT!F8R&vy}Ud)CFjp<#A)(o?b(g&09H6WwEzGB
+delta 4190
+zcmc&%Yiv_x82&nkV}r(F#%_q5)!TGqY;!Q~VRU5-N4NHLtlOZqqi0)pzp!po$b>9h
+z+9}hIfQVs#jKN@V=KL}IFk+%4#0fEmUuwi;1Wdq4Odv5DpZ7cM+HNfjP|R|AF5mk;
+z-+MdHdG_&FaX(#;8-FKZ&MEsR`xbCr;u8Mt$eDP$Q`_dAO%PW+H~9zcVzi+`ty^#~
+zUNgA1@MxTNHJpAmaMiVFTO9v9&5)E)l{k9rwVHall7EqIc(IrjvRt-;EywRlre{e^
+z3j7&aCELn2;+GCPw=`$)JD$v9vMhkds=&Dz=VIY+gr&@!tdv>dQH66Qt6^qV!OEG;
+z&#f`?wNDrF#+D*A)0nK&BK&Mgk#5c^0^@s4ett7`J})w*@Z64c3jr4(Jnfv1@N%(D
+z0e)q%jR_l+GaI8o%{bGh6$pMe4$Z<W!mu(E+XPEH|1@oxdL%1F&!4p<CvIfbcv!(o
+z`A2z!kx$eemSZ~gZ2l&lo+^HAv}fpuBfHPQv*aAUy6`E!ds`A8wWag*zEqxnaD`rG
+zyO_e-@aJL*?>^|_j_M?y_j28|71yD9(NTe<N=05Bzf=>?PuW-IP%cJf;bdhZlWG*u
+z$x6hta<&aQNX)=w=T@tMTM`y7jc&ggC^Aqgfl(_w_RF_q;qgLrk4ji?2D(*Pdo7pw
+z6@A+BkZmc}WJKY_VHP$^%?FeT{|)~Id5=wRd;ay?^02qD{#A1xzrxejMe{U;d5+kA
+z-*-UCYI(xhZOQH%_R`&izpQNvp(Gl@7F2`s?`F%G7gv)_zxXx(N#%yWysf7Gf;{2B
+zs7#^ML_>K6^)%yfBID_Gx~?o~l2{MxWbJ5T3-e&7vMRkTarAnFmfyI)+9`6BqhW6a
+zq8+s=jf#G2$Df1lqr=|ecRPk|x6idr_{Xe&y)g~f6b*Mqf6SC)m(sD5J91G8nuzSa
+zl+n!XFExGb&#{UKEg>WsF;(EuW-HiDE26DJ=gY;rLzSgG37I>7lP8<z^%LfZ&0c@1
+zN`h4>fBSGo*o+2etOV0)LdLKV{R!Ehdw(GxZ^-3!3sU%<C$rVRm)8a8$+6lNq@n>q
+zMc=>o|4@<I*ix!{JUL&m>WAx(1gLUD$*+N{{L)8EPV+ZiPKu<WsO0pc79ZbWtC|%R
+zx$i+kaXNK-&A2Yw$L4D7mw}JX8Q0XuM&ea_?uWH*dheID`dj}C)^hkx`hu+G+&}Cc
+zsQ+&0!CA}Ut94Ex%#yVld_mSa=`(Z^YdL%ul_`{ejkN|w&%3q!7&`T^td$&KEr(BI
+zEsA#vcb2S0KIcb{E2jl((L@AU%kF>ffmw_4B;?Z(tW{{S*WV9oh3vsv>UcwZ0!gJs
+zMtlf5m>Zu0H?HUlFR?~^AUfDCp4GRQkEh1x6hNLlS_NfLZ7rAPCKNym<;PS_#X>C=
+zz(P|^B-S2AHGR`tkvt1x$^o(O|2e~olC_I+^@a;0CP5mlo0Wi?oXJ>eF;IE;p*1|O
+z=nqiX8C^`HD_kh(SnKM6H}&&lE{+}F8xvX0IZ+nRKd`SY2z_(!rr=80PSnH$6{C<|
+z3R7C)UNiN{X82GwJE2hq$uoumjMNL2@MuOSddQ<T6k$*YgjAgob{>qjf?a6P`^8Rf
+z+)07gK*Fj^^wo`Ly=)NI4X|osy`&C?qM-+sp9#KAu%sNCr=imm7qU|Dnn^$$#P9TI
+zv=>o=)`-Mu$Np{+a~|i1)1t-@)Q(%QOP9zcm}9HBBdsT)E6u?2;7qHO-^{3j>az`&
+zovfAh0WS~QY3ko5K6ZFs)EMrjJgvYAX-+LB*R+TvL=)D3tTqO;s)Tr{dQ@BVnMuhA
+zT|wJv$f#Jcn{#)`8ZmGY8)_p(Vp&1poixg#bzS0#w!4HC4;v6GOId#^%zA`TBOVc%
+z_K|VSxrv<O5_l2~Q%Xd?E@Ug=&@%4`Br3s%kX@J|mncFWtc+qO3Kg`C`#!NE!H2rs
+z!8%jKW8!$t#Dmg$_{FytKNA}0m?D~=XkF}~X5Bj&3Hx-ylIlY*7^OoYbcq1Fu%^9u
+k!BG#s>@M_>>;ob^j4)z}aQbhQ${p^h$?;5eWK4SOABscTQ~&?~
 
-delta 779
-zcmZ2*nrY2ZrVW$W+4*Ds6ur(CoSew1IC(+;8a4=ja|XvQb|`zYn!p{HFq_~N78v`U
-z=rkr6yF%g_oSh^c#x(gsrIO&j?pe{{(ZT+D3?Qh)pfg#}PMKGS!H~g>!ID9T!IZ&x
-zGNX#{<aKsNtcDE642F}h=jd;q<08NaGd4`&10SQo<aqr`MuW{C_3twAL7ewuLQ(yc
-zIE~WD4JJC1Cv?e7)-jft{G~%{a)Ge|cQ`{TLn1>lkj$B!Z(=+7mT?D~STxjppmwXx
-z9Hv@qF#F7`Lm*Dq?E*Rd$}FOtzWI8NJtK#J0W|ou9Hzj-<B-!UID3QZCLSaYO=p~Z
-ztYgY#i_lFl7rhG&AmACj$tvMdcsw+j!}QDMUA^lVIbp8Bh}?P6hv1Q$k_?O7$!vl?
-zn<u2)U;{;-WH2!NN*ELv(irj?@_;M?A+dR0&NE3ApKU(YQNoDg&cLo{0)A7O+|k{F
-yq9@-Z8il_xM0``kF(wqTg)_iO7g=m`@&sNUWP!<nUBa7Z&B;S?(PsI1jqCuKvIv9#
+delta 917
+zcmccjl4;FRrVW$W+4*Ds6ur(CoSew1I4NNb8-%+#gJTyvls#EZ;0{cfP4Ef}jD1gZ
+z8WW6NA@K~(PLd8|nw%r4B)G48R&;oDu)iJy2r4n?OtzO(p1h}2V)7alj>!wEl_v8^
+zi7*;Y-d(D{na@*z5oTDJf(fInA%iIp>M-~)I57k>!~?NELl8p<g91YhgTmy6GMSV8
+zBvdwEQ4->1G?@Hfzmm~l^F)KYOneacznD-|KP671bh3h}&g5mrGLz33OH6(esWn-^
+zM1eb;A(bJKp%_T!Oy)PWom^$ofhHCWbqY|s)nuP(Unb8nE1A4%wbWz>LAA*rgfuoc
+z2*xmOUS{(T?&%fwArMdNc7Z&7WflQXZ{A&M&&VNQ01fUrE>qw}nYh1#c|*`Zqtq-Z
+zu4{6f!i34Yyyg%UDoUH@`CQ{d3YF=MlYJ&lnd}v{3F@s$(E$VkL~pWLOcb6#+3YiI
+z5fdlO`RIvfL&70=;wj63C7#J_f<BX%**E|L&x>*MzdS!yP%7aM2F61PFj~_X@)`0N
+zN+t(Z3s3ftlR`=-8Jk~~c5%oWF&HwK5J(Y9oA=fG2%z|Vv(KawMqZ>i2PPj-tP@HV
+zucoX(4*+ETX2EH9nUDo0Ut9pnK*&OyU(V#^K@s3x*2st=uynaQ3n*o6-nUVK8319A
+BGco`G
 
 diff --git a/WeaselDeployer/WeaselDeployer.vcxproj b/WeaselDeployer/WeaselDeployer.vcxproj
 index 88fbaa2fecc2c2db12ea51784657527cfc5d6651..02e9d401539bc04e8fdd42fed9a18162479e028e 100644
@@ -1647,6 +2099,45 @@ index 88fbaa2fecc2c2db12ea51784657527cfc5d6651..02e9d401539bc04e8fdd42fed9a18162
 +  <ImportGroup Label="ExtensionTargets">
 +  </ImportGroup>
 +</Project>
+diff --git a/WeaselDeployer/resource.h b/WeaselDeployer/resource.h
+index 25bc31ab5d44218ea0ade8aa9448d49826ba7d01..4582bbd99452c06ce7e42ce72414e5fb410e3311 100644
+--- a/WeaselDeployer/resource.h
++++ b/WeaselDeployer/resource.h
+@@ -38,6 +38,17 @@
+ #define IDS_STR_DICT_SNAPSHOT           156
+ #define IDS_STR_KCSS_DICT_SNAPSHOT      157
+ #define IDS_STR_HELP                    158
++#define IDS_DICT_GROUP_ACTIVE               159
++#define IDS_DICT_GROUP_HISTORY              160
++#define IDS_DICT_GROUP_OTHER                161
++#define IDS_DICT_DESC_CN                    162
++#define IDS_DICT_DESC_EN                    163
++#define IDS_DICT_DESC_JP                    164
++#define IDS_DICT_DESC_KANA_HISTORY          165
++#define IDS_DICT_DESC_MIXED_HISTORY         166
++#define IDS_DICT_DESC_OTHER                 167
++#define IDS_DICT_SELECT_DESCRIPTION         168
++#define IDS_DICT_STORAGE_ID                 169
+ #define IDC_SCHEMA_LIST                 1000
+ #define IDC_SCHEMA_DESCRIPTION          1001
+ #define IDC_GET_SCHEMATA                1002
+@@ -50,6 +61,7 @@
+ #define IDC_RESTORE                     1009
+ #define IDC_EXPORT                      1010
+ #define IDC_IMPORT                      1011
++#define IDC_USER_DICT_DESCRIPTION       1012
+ #define IDC_STATIC1                     -1
+ 
+ // Next default values for new objects
+@@ -59,7 +71,7 @@
+ #define _APS_NO_MFC                     1
+ #define _APS_NEXT_RESOURCE_VALUE        135
+ #define _APS_NEXT_COMMAND_VALUE         32771
+-#define _APS_NEXT_CONTROL_VALUE         1012
++#define _APS_NEXT_CONTROL_VALUE         1013
+ #define _APS_NEXT_SYMED_VALUE           110
+ #endif
+ #endif
 diff --git a/WeaselDeployer/xmake.lua b/WeaselDeployer/xmake.lua
 index 61823d48d3d05d783f99ccaab86175efdd56ed55..471eb07e565b25fc40494667433c9f37015112e8 100644
 --- a/WeaselDeployer/xmake.lua
@@ -8379,6 +8870,7 @@ index d030666acb67376d5a1e929c5f5891856a88aedb..886e8722aef632bc986ccfce44a59b34
 +  LONG _refCount;
 +};
 diff --git a/WeaselTSF/Composition.cpp b/WeaselTSF/Composition.cpp
+index e94cea0a57575bf0f9fbe9742a7eaaf6d7b6fd3b..862dfd7cd40c34378ecdd836e354da4b946e6531 100644
 --- a/WeaselTSF/Composition.cpp
 +++ b/WeaselTSF/Composition.cpp
 @@ -1,421 +1,990 @@
@@ -10189,6 +10681,7 @@ index a18bdb4f0e0af10853d76dd290cf970d67c93999..2eb40b8e4f2c0eccbfde3f3903cf5c9d
 +  return SetAttributeInfo(_pDisplayAttribute);
 +}
 diff --git a/WeaselTSF/EditSession.cpp b/WeaselTSF/EditSession.cpp
+index 8f4d503676f507f4728ac31c64a7bda4b6046136..199990e31c80f6fec7857b65729649b837ca5514 100644
 --- a/WeaselTSF/EditSession.cpp
 +++ b/WeaselTSF/EditSession.cpp
 @@ -1,47 +1,899 @@
@@ -11816,6 +12309,7 @@ index 8eb062e99f6d33add5650be7b53680a27650b1d5..98f87dd74fbeba4b5765f5f36a84aee3
 + };
 +*/
 diff --git a/WeaselTSF/KeyEventSink.cpp b/WeaselTSF/KeyEventSink.cpp
+index c885dddf9479c98c2df29edab086feacc84653df..cc5dc1b126a1d5d5efa416d59f3eff2a8f167aba 100644
 --- a/WeaselTSF/KeyEventSink.cpp
 +++ b/WeaselTSF/KeyEventSink.cpp
 @@ -1,201 +1,385 @@
@@ -12406,6 +12900,7 @@ diff --git a/WeaselTSF/KeyEventSink.cpp b/WeaselTSF/KeyEventSink.cpp
 +  // It cannot process a fresh key after this activation has been retired.
 +}
 diff --git a/WeaselTSF/LanguageBar.cpp b/WeaselTSF/LanguageBar.cpp
+index a03b6159c980e3bb4108de8850299f8e6a9e3423..1da4da547a4bca864116c5c058525e89b2e6c4d7 100644
 --- a/WeaselTSF/LanguageBar.cpp
 +++ b/WeaselTSF/LanguageBar.cpp
 @@ -1,4 +1,4 @@
@@ -12414,7 +12909,7 @@ diff --git a/WeaselTSF/LanguageBar.cpp b/WeaselTSF/LanguageBar.cpp
  #include <resource.h>
  #include <thread>
  #include <shellapi.h>
-@@ -34,16 +34,6 @@
+@@ -34,16 +34,6 @@ static void HMENU2ITfMenu(HMENU hMenu, ITfMenu* pTfMenu) {
    }
  }
  
@@ -12431,7 +12926,7 @@ diff --git a/WeaselTSF/LanguageBar.cpp b/WeaselTSF/LanguageBar.cpp
  static bool open(const std::wstring& path) {
    return (uintptr_t)ShellExecuteW(NULL, L"open", path.c_str(), NULL, NULL,
                                    SW_SHOWNORMAL) > 32;
-@@ -57,9 +47,10 @@
+@@ -57,9 +47,10 @@ static bool explore(const std::wstring& path) {
  
  CLangBarItemButton::CLangBarItemButton(com_ptr<WeaselTSF> pTextService,
                                         REFGUID guid,
@@ -12444,7 +12939,7 @@ diff --git a/WeaselTSF/LanguageBar.cpp b/WeaselTSF/LanguageBar.cpp
        _current_schema_zhung_icon(),
        _current_schema_ascii_icon() {
    DllAddRef();
-@@ -111,7 +102,7 @@
+@@ -111,7 +102,7 @@ STDAPI CLangBarItemButton::GetInfo(TF_LANGBARITEMINFO* pInfo) {
    pInfo->dwStyle = TF_LBI_STYLE_BTN_BUTTON | TF_LBI_STYLE_BTN_MENU |
                     TF_LBI_STYLE_SHOWNINTRAY;
    pInfo->ulSort = 1;
@@ -12453,7 +12948,7 @@ diff --git a/WeaselTSF/LanguageBar.cpp b/WeaselTSF/LanguageBar.cpp
    return S_OK;
  }
  
-@@ -157,12 +148,17 @@
+@@ -157,12 +148,17 @@ STDAPI CLangBarItemButton::GetTooltipString(BSTR* pbstrToolTip) {
  STDAPI CLangBarItemButton::OnClick(TfLBIClick click,
                                     POINT pt,
                                     const RECT* prcArea) {
@@ -12473,7 +12968,7 @@ diff --git a/WeaselTSF/LanguageBar.cpp b/WeaselTSF/LanguageBar.cpp
      }
    } else if (click == TF_LBI_CLK_RIGHT) {
      /* Open menu */
-@@ -182,7 +178,7 @@
+@@ -182,7 +178,7 @@ STDAPI CLangBarItemButton::OnClick(TfLBIClick click,
            popupMenu, TPM_NONOTIFY | TPM_RETURNCMD | TPM_HORPOSANIMATION, pt.x,
            pt.y, hwnd, NULL);
        DestroyMenu(menu);
@@ -12482,7 +12977,7 @@ diff --git a/WeaselTSF/LanguageBar.cpp b/WeaselTSF/LanguageBar.cpp
      }
    }
    return S_OK;
-@@ -197,7 +193,9 @@
+@@ -197,7 +193,9 @@ STDAPI CLangBarItemButton::InitMenu(ITfMenu* pMenu) {
  }
  
  STDAPI CLangBarItemButton::OnMenuSelect(UINT wID) {
@@ -12493,7 +12988,7 @@ diff --git a/WeaselTSF/LanguageBar.cpp b/WeaselTSF/LanguageBar.cpp
    return S_OK;
  }
  
-@@ -206,7 +204,7 @@
+@@ -206,7 +204,7 @@ STDAPI CLangBarItemButton::GetIcon(HICON* phIcon) {
      if (_style.current_ascii_icon.empty())
        *phIcon = (HICON)LoadImageW(g_hInst, MAKEINTRESOURCEW(IDI_EN), IMAGE_ICON,
                                    GetSystemMetrics(SM_CXSMICON),
@@ -12502,7 +12997,7 @@ diff --git a/WeaselTSF/LanguageBar.cpp b/WeaselTSF/LanguageBar.cpp
      else
        *phIcon =
            (HICON)LoadImageW(NULL, _style.current_ascii_icon.c_str(), IMAGE_ICON,
-@@ -216,7 +214,7 @@
+@@ -216,7 +214,7 @@ STDAPI CLangBarItemButton::GetIcon(HICON* phIcon) {
      if (_style.current_zhung_icon.empty())
        *phIcon = (HICON)LoadImageW(g_hInst, MAKEINTRESOURCEW(IDI_ZH), IMAGE_ICON,
                                    GetSystemMetrics(SM_CXSMICON),
@@ -12511,7 +13006,7 @@ diff --git a/WeaselTSF/LanguageBar.cpp b/WeaselTSF/LanguageBar.cpp
      else
        *phIcon =
            (HICON)LoadImageW(NULL, _style.current_zhung_icon.c_str(), IMAGE_ICON,
-@@ -227,35 +225,40 @@
+@@ -227,35 +225,40 @@ STDAPI CLangBarItemButton::GetIcon(HICON* phIcon) {
  }
  
  STDAPI CLangBarItemButton::GetText(BSTR* pbstrText) {
@@ -12558,7 +13053,7 @@ diff --git a/WeaselTSF/LanguageBar.cpp b/WeaselTSF/LanguageBar.cpp
    if (stat.ascii_mode != ascii_mode) {
      ascii_mode = stat.ascii_mode;
    }
-@@ -265,12 +268,14 @@
+@@ -265,12 +268,14 @@ void CLangBarItemButton::UpdateWeaselStatus(weasel::Status stat) {
    if (_current_schema_ascii_icon != _style.current_ascii_icon) {
      _current_schema_ascii_icon = _style.current_ascii_icon;
    }
@@ -12575,7 +13070,7 @@ diff --git a/WeaselTSF/LanguageBar.cpp b/WeaselTSF/LanguageBar.cpp
    BOOL isChange = FALSE;
  
    if (fSet) {
-@@ -285,17 +290,31 @@
+@@ -285,17 +290,31 @@ void CLangBarItemButton::SetLangbarStatus(DWORD dwStatus, BOOL fSet) {
      }
    }
  
@@ -12613,7 +13108,7 @@ diff --git a/WeaselTSF/LanguageBar.cpp b/WeaselTSF/LanguageBar.cpp
  }
  
  void WeaselTSF::_HandleLangBarMenuSelect(UINT wID) {
-@@ -303,8 +322,7 @@
+@@ -303,8 +322,7 @@ void WeaselTSF::_HandleLangBarMenuSelect(UINT wID) {
    switch (wID) {
      case ID_WEASELTRAY_RERUN_SERVICE:
      case ID_WEASELTRAY_INSTALLDIR:
@@ -12623,7 +13118,7 @@ diff --git a/WeaselTSF/LanguageBar.cpp b/WeaselTSF/LanguageBar.cpp
          if (wID == ID_WEASELTRAY_RERUN_SERVICE) {
            std::thread th([dir]() {
              ShellExecuteW(NULL, L"open", (dir + L"\\start_service.bat").c_str(),
-@@ -316,11 +334,11 @@
+@@ -316,11 +334,11 @@ void WeaselTSF::_HandleLangBarMenuSelect(UINT wID) {
        }
        break;
      case ID_WEASELTRAY_USERCONFIG:
@@ -12637,7 +13132,7 @@ diff --git a/WeaselTSF/LanguageBar.cpp b/WeaselTSF/LanguageBar.cpp
          dir = std::wstring(_path);
        }
        if (!dir.empty() && fs::exists(dir))
-@@ -345,92 +363,101 @@
+@@ -345,92 +363,101 @@ void WeaselTSF::_HandleLangBarMenuSelect(UINT wID) {
  }
  
  HWND WeaselTSF::_GetFocusedContextWindow() {
@@ -12671,12 +13166,11 @@ diff --git a/WeaselTSF/LanguageBar.cpp b/WeaselTSF/LanguageBar.cpp
 -    HWND hwndForeground = GetForegroundWindow();
 -    if (GetWindowThreadProcessId(hwndForeground, NULL) == GetCurrentThreadId())
 -      hwnd = hwndForeground;
--  }
--
 +    HWND foreground = GetForegroundWindow();
 +    if (GetWindowThreadProcessId(foreground, NULL) == GetCurrentThreadId())
 +      hwnd = foreground;
-+  }
+   }
+-
    return hwnd;
  }
  
@@ -12685,6 +13179,14 @@ diff --git a/WeaselTSF/LanguageBar.cpp b/WeaselTSF/LanguageBar.cpp
 -  BOOL fRet = FALSE;
 -
 -  if (_pThreadMgr->QueryInterface(&pLangBarItemMgr) != S_OK)
+-    return FALSE;
+-
+-  if ((_pLangBarButton = new CLangBarItemButton(this, GUID_LBI_INPUTMODE,
+-                                                _cand->style())) == NULL)
+-    return FALSE;
+-
+-  if (pLangBarItemMgr->AddItem(_pLangBarButton) != S_OK) {
+-    _pLangBarButton = NULL;
 +BOOL WeaselTSF::_InitLanguageBar(const Activation& activation) {
 +  const com_ptr<CCandidateList> candidate = _cand;
 +  const com_ptr<ITfThreadMgr> thread = activation->thread;
@@ -12702,22 +13204,18 @@ diff --git a/WeaselTSF/LanguageBar.cpp b/WeaselTSF/LanguageBar.cpp
 +  if (!current()) {
 +    activation->RecordCleanup(manager->RemoveItem(button));
      return FALSE;
--
--  if ((_pLangBarButton = new CLangBarItemButton(this, GUID_LBI_INPUTMODE,
--                                                _cand->style())) == NULL)
--    return FALSE;
--
--  if (pLangBarItemMgr->AddItem(_pLangBarButton) != S_OK) {
--    _pLangBarButton = NULL;
--    return FALSE;
--  }
+   }
 -
 -  _pLangBarButton->Show(TRUE);
 -  fRet = TRUE;
 -
 -  return fRet;
--}
--
++  activation->languageManager = manager;
++  activation->languageButton = button;
++  button->Show(TRUE);
++  return current();
+ }
+ 
 -void WeaselTSF::_UninitLanguageBar() {
 -  com_ptr<ITfLangBarItemMgr> pLangBarItemMgr;
 -
@@ -12729,13 +13227,6 @@ diff --git a/WeaselTSF/LanguageBar.cpp b/WeaselTSF/LanguageBar.cpp
 -  }
 -
 -  _pLangBarButton = NULL;
-+  }
-+  activation->languageManager = manager;
-+  activation->languageButton = button;
-+  button->Show(TRUE);
-+  return current();
-+}
-+
 +void WeaselTSF::_UninitLanguageBar(ActivationBindings& activation) {
 +  com_ptr<ITfLangBarItemMgr> manager;
 +  com_ptr<CLangBarItemButton> button;
@@ -12802,19 +13293,17 @@ diff --git a/WeaselTSF/LanguageBar.cpp b/WeaselTSF/LanguageBar.cpp
 -  if (!_pLangBarButton)
 -    return;
 -  _pLangBarButton->Show(show);
--}
--
++  const Activation activation = _activation;
++  const com_ptr<CLangBarItemButton> button =
++      activation ? activation->languageButton : nullptr;
++  if (_CurrentActivation(activation) && button) button->Show(show);
+ }
+ 
 -void WeaselTSF::_EnableLanguageBar(BOOL enable) {
 -  if (!_pLangBarButton)
 -    return;
 -  _pLangBarButton->SetLangbarStatus(TF_LBI_STATUS_DISABLED, !enable);
 -}
-+  const Activation activation = _activation;
-+  const com_ptr<CLangBarItemButton> button =
-+      activation ? activation->languageButton : nullptr;
-+  if (_CurrentActivation(activation) && button) button->Show(show);
-+}
-+
 +// end-of-file
 diff --git a/WeaselTSF/LanguageBar.h b/WeaselTSF/LanguageBar.h
 index 2c0513ab3054ac5d61041e27a798421ab2040f8c..6ae46a9260b871da1693ea4aa28b022ff2f11638 100644
@@ -12924,6 +13413,7 @@ index 2c0513ab3054ac5d61041e27a798421ab2040f8c..6ae46a9260b871da1693ea4aa28b022f
 +};
 diff --git a/WeaselTSF/PromptTrace.h b/WeaselTSF/PromptTrace.h
 new file mode 100644
+index 0000000000000000000000000000000000000000..119a633e87642649585767a210b3896177bea06f
 --- /dev/null
 +++ b/WeaselTSF/PromptTrace.h
 @@ -0,0 +1,376 @@
@@ -14010,29 +14500,19 @@ index 0000000000000000000000000000000000000000..6ab46ee736c8ee6134675ef88c059b0a
 +
 +}  // namespace response_owner
 diff --git a/WeaselTSF/TextEditSink.cpp b/WeaselTSF/TextEditSink.cpp
+index a6bc1f02d6202f2cd8670039f86478f9fa9447fc..b0a3227522d9058377c959f140f759ef3d0e05fb 100644
 --- a/WeaselTSF/TextEditSink.cpp
 +++ b/WeaselTSF/TextEditSink.cpp
 @@ -1,118 +1,279 @@
  #include "stdafx.h"
  #include "WeaselTSF.h"
--
++#include "CandidateList.h"
++#include "ResponseParser.h"
+ 
 -static BOOL IsRangeCovered(TfEditCookie ec,
 -                           ITfRange* pRangeTest,
 -                           ITfRange* pRangeCover) {
 -  LONG lResult;
--
--  if (pRangeCover->CompareStart(ec, pRangeTest, TF_ANCHOR_START, &lResult) !=
--          S_OK ||
--      lResult > 0)
--    return FALSE;
--  if (pRangeCover->CompareEnd(ec, pRangeTest, TF_ANCHOR_END, &lResult) !=
--          S_OK ||
--      lResult < 0)
--    return FALSE;
--  return TRUE;
-+#include "CandidateList.h"
-+#include "ResponseParser.h"
-+
 +// A registration forwards only while its exact cell is current. The weak cell
 +// prevents a service/binding/proxy cycle; the locked cell's candidate retains
 +// the service throughout a forwarded call.
@@ -14080,7 +14560,16 @@ diff --git a/WeaselTSF/TextEditSink.cpp b/WeaselTSF/TextEditSink.cpp
 +  WeaselTSF* service_;
 +  std::weak_ptr<WeaselTSF::TextEditBinding> binding_;
 +};
-+
+ 
+-  if (pRangeCover->CompareStart(ec, pRangeTest, TF_ANCHOR_START, &lResult) !=
+-          S_OK ||
+-      lResult > 0)
+-    return FALSE;
+-  if (pRangeCover->CompareEnd(ec, pRangeTest, TF_ANCHOR_END, &lResult) !=
+-          S_OK ||
+-      lResult < 0)
+-    return FALSE;
+-  return TRUE;
 +static HRESULT IsRangeCovered(TfEditCookie ec,
 +                              ITfRange* pRangeTest,
 +                              ITfRange* pRangeCover,
@@ -14140,6 +14629,7 @@ diff --git a/WeaselTSF/TextEditSink.cpp b/WeaselTSF/TextEditSink.cpp
 -          pRangeComposition->Release();
 -        }
 -      }
+-    }
 +  const HRESULT selection_status = pEditRecord->GetSelectionStatus(&fSelectionChanged);
 +  _PromptTrace(prompt_trace::EndEdit, context, composition,
 +      fSelectionChanged ? prompt_trace::SelectionChanged : 0, selection_status);
@@ -14153,7 +14643,13 @@ diff --git a/WeaselTSF/TextEditSink.cpp b/WeaselTSF/TextEditSink.cpp
 +  if (selection_status == S_OK && fSelectionChanged && !_status.composing) {
 +    _RefreshIdleModePosition(context);
 +    if (!current()) return S_OK;
-+  }
+   }
+-
+-  /* text modification? */
+-  if (pEditRecord->GetTextAndPropertyUpdates(TF_GTP_INCL_TEXT, NULL, 0,
+-                                             &pEnumTextChanges) == S_OK) {
+-    if (pEnumTextChanges->Next(1, &pRange, NULL) == S_OK) {
+-      pRange->Release();
 +  const bool targetMatches = intent && response_owner::SameIdentity(intent->owner, context);
 +  if (!current()) return S_OK;
 +  const bool editContextMatches = response_owner::SameIdentity(context, editContext);
@@ -14175,13 +14671,7 @@ diff --git a/WeaselTSF/TextEditSink.cpp b/WeaselTSF/TextEditSink.cpp
 +      // Use its captured range, never this notification's new selection.
 +      range = intent->range ? intent->range : intent->initialPoint;
      }
--  }
--
--  /* text modification? */
--  if (pEditRecord->GetTextAndPropertyUpdates(TF_GTP_INCL_TEXT, NULL, 0,
--                                             &pEnumTextChanges) == S_OK) {
--    if (pEnumTextChanges->Next(1, &pRange, NULL) == S_OK) {
--      pRange->Release();
+-    pEnumTextChanges->Release();
 +    const auto rangeCurrent = [&]() {
 +      return current() && (!selectionState ||
 +          (intent->selection == selectionState &&
@@ -14198,9 +14688,7 @@ diff --git a/WeaselTSF/TextEditSink.cpp b/WeaselTSF/TextEditSink.cpp
 +      // observer's loss of its grant-time selection option.
 +      _AbortComposition(true, intent);
 +      return S_OK;
-     }
--    pEnumTextChanges->Release();
--  }
++    }
 +    if (range_result != S_OK || !range) return S_OK;
 +
 +    TF_SELECTION tfSelection = {};
@@ -14232,7 +14720,7 @@ diff --git a/WeaselTSF/TextEditSink.cpp b/WeaselTSF/TextEditSink.cpp
 +    if (!rangeCurrent()) return S_OK;
 +    if (sameOwner && compare_result == S_OK && !covered && targetMatches)
 +      _AbortComposition(true, intent);
-+  }
+   }
 +
    return S_OK;
  }
@@ -14276,7 +14764,8 @@ diff --git a/WeaselTSF/TextEditSink.cpp b/WeaselTSF/TextEditSink.cpp
 -BOOL WeaselTSF::_InitTextEditSink(com_ptr<ITfDocumentMgr> pDocMgr) {
 -  com_ptr<ITfSource> pSource;
 -  BOOL fRet;
--
++WeaselTSF::TextEditBinding::~TextEditBinding() { Disconnect(); }
+ 
 -  /* clear out any previous sink first */
 -  if (_dwTextEditSinkCookie != TF_INVALID_COOKIE) {
 -    _pTextEditSinkContext->QueryInterface(&pSource);
@@ -14289,10 +14778,6 @@ diff --git a/WeaselTSF/TextEditSink.cpp b/WeaselTSF/TextEditSink.cpp
 -  }
 -  if (pDocMgr == NULL)
 -    return TRUE;
--
--  if (pDocMgr->GetTop(&_pTextEditSinkContext) != S_OK)
-+WeaselTSF::TextEditBinding::~TextEditBinding() { Disconnect(); }
-+
 +void WeaselTSF::TextEditBinding::Disconnect() {
 +  // Revoke our two exact cookies before a host callback can retire us again.
 +  // A nested focus owns another cell, never these out parameters or cookies.
@@ -14302,7 +14787,8 @@ diff --git a/WeaselTSF/TextEditSink.cpp b/WeaselTSF/TextEditSink.cpp
 +  if (edit != TF_INVALID_COOKIE) source->UnadviseSink(edit);
 +  if (layout != TF_INVALID_COOKIE) source->UnadviseSink(layout);
 +}
-+
+ 
+-  if (pDocMgr->GetTop(&_pTextEditSinkContext) != S_OK)
 +BOOL WeaselTSF::_InitTextEditSink(ITfDocumentMgr* documentSource,
 +    std::shared_ptr<TextEditBinding>* issued) {
 +  auto request = std::make_shared<TextEditBinding>();
@@ -14327,12 +14813,29 @@ diff --git a/WeaselTSF/TextEditSink.cpp b/WeaselTSF/TextEditSink.cpp
 +  const auto stale = [&]() {
 +    request->Disconnect();
      return FALSE;
--
++  };
++  if (!current()) return stale();
++  if (!document) return TRUE;
++  if (!request->candidate) return FALSE;  // No active candidate/activation.
++  request->document = document;
++  if (!current()) return stale();
+ 
 -  if (_pTextEditSinkContext == NULL)
 -    return TRUE;
--
++  HRESULT result = document->GetTop(&request->context);
++  if (!current()) return stale();
++  if (result != S_OK) return FALSE;
++  if (!request->context) return TRUE;
++  result = request->context->QueryInterface(IID_ITfSource,
++      reinterpret_cast<void**>(&request->source));
++  if (!current()) return stale();
++  if (result != S_OK || !request->source) return FALSE;
+ 
 -  fRet = FALSE;
--
++  com_ptr<CTextEditEventSink> observer;
++  observer.Attach(new CTextEditEventSink(this, request));
++  request->observer = static_cast<ITfTextEditSink*>(observer.p);
+ 
 -  pSource.Release();
 -
 -  if (_pTextEditSinkContext->QueryInterface(IID_ITfSource, (void**)&pSource) ==
@@ -14351,29 +14854,6 @@ diff --git a/WeaselTSF/TextEditSink.cpp b/WeaselTSF/TextEditSink.cpp
 -  if (fRet == FALSE) {
 -    _pTextEditSinkContext = nullptr;
 -  }
--
--  return fRet;
--}
-+  };
-+  if (!current()) return stale();
-+  if (!document) return TRUE;
-+  if (!request->candidate) return FALSE;  // No active candidate/activation.
-+  request->document = document;
-+  if (!current()) return stale();
-+
-+  HRESULT result = document->GetTop(&request->context);
-+  if (!current()) return stale();
-+  if (result != S_OK) return FALSE;
-+  if (!request->context) return TRUE;
-+  result = request->context->QueryInterface(IID_ITfSource,
-+      reinterpret_cast<void**>(&request->source));
-+  if (!current()) return stale();
-+  if (result != S_OK || !request->source) return FALSE;
-+
-+  com_ptr<CTextEditEventSink> observer;
-+  observer.Attach(new CTextEditEventSink(this, request));
-+  request->observer = static_cast<ITfTextEditSink*>(observer.p);
-+
 +  // Cookies are first returned to this call's stack. Advise may reenter and
 +  // retire the cell before writing the out value; that late value is still
 +  // recorded here and disconnected from this exact ITfSource, not B's.
@@ -14382,7 +14862,8 @@ diff --git a/WeaselTSF/TextEditSink.cpp b/WeaselTSF/TextEditSink.cpp
 +      request->observer, &cookie);
 +  if (result == S_OK) request->editCookie = cookie;
 +  if (!current()) return stale();
-+
+ 
+-  return fRet;
 +  cookie = TF_INVALID_COOKIE;
 +  result = request->source->AdviseSink(IID_ITfTextLayoutSink,
 +      request->observer, &cookie);
@@ -14390,8 +14871,9 @@ diff --git a/WeaselTSF/TextEditSink.cpp b/WeaselTSF/TextEditSink.cpp
 +  if (!current()) return stale();
 +  return request->editCookie != TF_INVALID_COOKIE ||
 +      request->layoutCookie != TF_INVALID_COOKIE;
-+}
+ }
 diff --git a/WeaselTSF/ThreadMgrEventSink.cpp b/WeaselTSF/ThreadMgrEventSink.cpp
+index a46ca37868c73124f8f7c91ec1bf2604995030d2..4cc6697a55395891653e577113855fd29353906e 100644
 --- a/WeaselTSF/ThreadMgrEventSink.cpp
 +++ b/WeaselTSF/ThreadMgrEventSink.cpp
 @@ -1,62 +1,195 @@
@@ -14653,6 +15135,7 @@ diff --git a/WeaselTSF/ThreadMgrEventSink.cpp b/WeaselTSF/ThreadMgrEventSink.cpp
 +  activation.RecordCleanup(activation.threadEvents.Disconnect());
 +}
 diff --git a/WeaselTSF/WeaselTSF.cpp b/WeaselTSF/WeaselTSF.cpp
+index 590d3b8f2b91a9220688ec21414140810b98f966..8c283ca276c212a2e55aaca74097e684dcf8b9bc 100644
 --- a/WeaselTSF/WeaselTSF.cpp
 +++ b/WeaselTSF/WeaselTSF.cpp
 @@ -1,263 +1,418 @@
@@ -15338,6 +15821,7 @@ diff --git a/WeaselTSF/WeaselTSF.cpp b/WeaselTSF/WeaselTSF.cpp
 +  return false;
 +}
 diff --git a/WeaselTSF/WeaselTSF.h b/WeaselTSF/WeaselTSF.h
+index 696d3cce4b9c394d2420ff1cae7cbbdbcb527a49..fa8998e0bab7cd252dbc44c6d3bc08d466bbc394 100644
 --- a/WeaselTSF/WeaselTSF.h
 +++ b/WeaselTSF/WeaselTSF.h
 @@ -3,10 +3,18 @@
@@ -15359,7 +15843,7 @@ diff --git a/WeaselTSF/WeaselTSF.h b/WeaselTSF/WeaselTSF.h
  
  class WeaselTSF : public ITfTextInputProcessorEx,
                    public ITfThreadMgrEventSink,
-@@ -18,8 +26,36 @@
+@@ -18,8 +26,36 @@ class WeaselTSF : public ITfTextInputProcessorEx,
                    public ITfActiveLanguageProfileNotifySink,
                    public ITfEditSession,
                    public ITfDisplayAttributeProvider {
@@ -15396,7 +15880,7 @@ diff --git a/WeaselTSF/WeaselTSF.h b/WeaselTSF/WeaselTSF.h
    ~WeaselTSF();
  
    /* IUnknown */
-@@ -103,25 +139,57 @@
+@@ -103,25 +139,57 @@ class WeaselTSF : public ITfTextInputProcessorEx,
    // STDMETHODIMP OnChange(_In_ REFGUID guid);
  
    /* Compartments */
@@ -15463,7 +15947,7 @@ diff --git a/WeaselTSF/WeaselTSF.h b/WeaselTSF/WeaselTSF.h
  
    /* Language bar */
    HWND _GetFocusedContextWindow();
-@@ -131,22 +199,18 @@
+@@ -131,22 +199,18 @@ class WeaselTSF : public ITfTextInputProcessorEx,
    bool _EnsureServerConnected();
  
    /* UI */
@@ -15490,7 +15974,7 @@ diff --git a/WeaselTSF/WeaselTSF.h b/WeaselTSF/WeaselTSF.h
    void HandleUICallback(size_t* const sel,
                          size_t* const hov,
                          bool* const next,
-@@ -154,65 +218,220 @@
+@@ -154,66 +218,221 @@ class WeaselTSF : public ITfTextInputProcessorEx,
  
   private:
    /* ui callback functions private */
@@ -15579,9 +16063,8 @@ diff --git a/WeaselTSF/WeaselTSF.h b/WeaselTSF/WeaselTSF.h
    void _UpdateLanguageBar(weasel::Status stat);
    void _ShowLanguageBar(BOOL show);
 -  void _EnableLanguageBar(BOOL enable);
--
+ 
 -  BOOL _InsertText(com_ptr<ITfContext> pContext, const std::wstring& ext);
-+
  
    void _DeleteCandidateList();
  
@@ -15750,12 +16233,13 @@ diff --git a/WeaselTSF/WeaselTSF.h b/WeaselTSF/WeaselTSF.h
 -  com_ptr<CCompartmentEventSink> _pConvertionCompartmentSink;
 -
    com_ptr<ITfComposition> _pComposition;
--
--  com_ptr<CLangBarItemButton> _pLangBarButton;
  
+-  com_ptr<CLangBarItemButton> _pLangBarButton;
+-
    com_ptr<CCandidateList> _cand;
  
-@@ -223,14 +442,20 @@
+   LONG _cRef;  // COM ref count
+@@ -223,14 +442,20 @@ class WeaselTSF : public ITfTextInputProcessorEx,
  
    /* Weasel Related */
    weasel::Client m_client;
@@ -17691,9 +18175,10 @@ index fee38f6c3f939a75ceb931859e49058ba976eef6..1128727ed1d46128b158fdc58f010869
                                     height + size.cy);
      _candidateTextRects[i].OffsetRect(offsetX, offsetY);
 diff --git a/WeaselUI/WeaselPanel.cpp b/WeaselUI/WeaselPanel.cpp
+index 18964a0f8907121ef3ad49ac39a139b7e21a2eae..cf3a309400d8c881b0f753e4593f39efd74e27c8 100644
 --- a/WeaselUI/WeaselPanel.cpp
 +++ b/WeaselUI/WeaselPanel.cpp
-@@ -64,6 +64,7 @@
+@@ -64,6 +64,7 @@ WeaselPanel::WeaselPanel(weasel::UI& ui)
        hide_candidates(false),
        pDWR(ui.pdwr()),
        _UICallback(ui.uiCallback()),
@@ -17701,7 +18186,7 @@ diff --git a/WeaselUI/WeaselPanel.cpp b/WeaselUI/WeaselPanel.cpp
        _m_gdiplusToken(0) {
    m_iconDisabled.LoadIconW(IDI_RELOAD, STATUS_ICON_SIZE, STATUS_ICON_SIZE,
                             LR_DEFAULTCOLOR);
-@@ -96,6 +97,30 @@
+@@ -96,6 +97,30 @@ WeaselPanel::~WeaselPanel() {
    // pDWR.reset();
  }
  
@@ -17732,7 +18217,7 @@ diff --git a/WeaselUI/WeaselPanel.cpp b/WeaselUI/WeaselPanel.cpp
  void WeaselPanel::_ResizeWindow() {
    CDCHandle dc = GetDC();
    CSize m_size = m_layout->GetContentSize();
-@@ -130,9 +155,16 @@
+@@ -130,9 +155,16 @@ void WeaselPanel::_CreateLayout() {
  
  // 更新界面
  void WeaselPanel::Refresh() {
@@ -17749,7 +18234,7 @@ diff --git a/WeaselUI/WeaselPanel.cpp b/WeaselUI/WeaselPanel.cpp
    // check if to hide candidates window
    // show tips status, two kind of situation: 1) only aux strings, don't care
    // icon status; 2)only icon(ascii mode switching)
-@@ -163,8 +195,10 @@
+@@ -163,8 +195,10 @@ void WeaselPanel::Refresh() {
      ReleaseDC(dc);
      _ResizeWindow();
      _RepositionWindow();
@@ -17761,7 +18246,7 @@ diff --git a/WeaselUI/WeaselPanel.cpp b/WeaselUI/WeaselPanel.cpp
        RedrawWindow();
      }
    }
-@@ -268,7 +302,6 @@
+@@ -268,7 +302,6 @@ LRESULT WeaselPanel::OnLeftClickedUp(UINT uMsg,
  
    ::KillTimer(m_hWnd, AUTOREV_TIMER);
    bar_scale_ = 1.0;
@@ -17769,7 +18254,7 @@ diff --git a/WeaselUI/WeaselPanel.cpp b/WeaselUI/WeaselPanel.cpp
    {
      // select by click
      CRect rect = m_layout->GetCandidateRect((int)m_ctx.cinfo.highlighted);
-@@ -281,6 +314,7 @@
+@@ -281,6 +314,7 @@ LRESULT WeaselPanel::OnLeftClickedUp(UINT uMsg,
        if (_UICallback) {
          m_mouse_entry = false;
          _UICallback(&i, NULL, NULL, NULL);
@@ -17777,7 +18262,7 @@ diff --git a/WeaselUI/WeaselPanel.cpp b/WeaselUI/WeaselPanel.cpp
          if (!m_status.composing)
            DestroyWindow();
        }
-@@ -394,8 +428,9 @@
+@@ -394,8 +428,9 @@ LRESULT WeaselPanel::OnLeftClickedDown(UINT uMsg,
          } else {
            RedrawWindow();
          }
@@ -17789,7 +18274,7 @@ diff --git a/WeaselUI/WeaselPanel.cpp b/WeaselUI/WeaselPanel.cpp
          bHandled = true;
          return 0;
        }
-@@ -405,18 +440,13 @@
+@@ -405,18 +440,13 @@ LRESULT WeaselPanel::OnLeftClickedDown(UINT uMsg,
    return 0;
  }
  
@@ -17815,7 +18300,7 @@ diff --git a/WeaselUI/WeaselPanel.cpp b/WeaselUI/WeaselPanel.cpp
  }
  
  LRESULT WeaselPanel::OnMouseMove(UINT uMsg,
-@@ -450,6 +480,7 @@
+@@ -450,6 +480,7 @@ LRESULT WeaselPanel::OnMouseMove(UINT uMsg,
          if (m_style.hover_type == UIStyle::HoverType::HILITE) {
            if (_UICallback)
              _UICallback(NULL, &i, NULL, NULL);
@@ -17823,7 +18308,7 @@ diff --git a/WeaselUI/WeaselPanel.cpp b/WeaselUI/WeaselPanel.cpp
          } else if (m_hoverIndex != i) {
            m_hoverIndex = static_cast<int>(i);
            InvalidateRect(&rcw, true);
-@@ -582,18 +613,25 @@
+@@ -582,18 +613,25 @@ bool WeaselPanel::_DrawPreedit(const Text& text,
                                 const CRect& rc) {
    bool drawn = false;
    std::wstring const& t = text.str;
@@ -17855,7 +18340,7 @@ diff --git a/WeaselUI/WeaselPanel.cpp b/WeaselUI/WeaselPanel.cpp
  
        int x = rc.left;
        int y = rc.top;
-@@ -607,7 +645,7 @@
+@@ -607,7 +645,7 @@ bool WeaselPanel::_DrawPreedit(const Text& text,
          else
            rc_before = CRect(x, rc.top, rc.left + beforeSz.cx, rc.bottom);
          _TextOut(rc_before, str_before.c_str(), str_before.length(),
@@ -17864,7 +18349,7 @@ diff --git a/WeaselUI/WeaselPanel.cpp b/WeaselUI/WeaselPanel.cpp
          if (m_style.layout_type == UIStyle::LAYOUT_VERTICAL_TEXT)
            y += beforeSz.cy + DPI_SCALE(m_style.hilite_spacing);
          else
-@@ -624,7 +662,7 @@
+@@ -624,7 +662,7 @@ bool WeaselPanel::_DrawPreedit(const Text& text,
          else
            rc_hi = CRect(x, rc.top, x + hilitedSz.cx, rc.bottom);
          _TextOut(rc_hi, str_highlight.c_str(), str_highlight.length(),
@@ -17873,7 +18358,7 @@ diff --git a/WeaselUI/WeaselPanel.cpp b/WeaselUI/WeaselPanel.cpp
          if (m_style.layout_type == UIStyle::LAYOUT_VERTICAL_TEXT)
            y += rc_hi.Height() + DPI_SCALE(m_style.hilite_spacing);
          else
-@@ -639,14 +677,14 @@
+@@ -639,14 +677,14 @@ bool WeaselPanel::_DrawPreedit(const Text& text,
          else
            rc_after = CRect(x, rc.top, x + afterSz.cx, rc.bottom);
          _TextOut(rc_after, str_after.c_str(), str_after.length(),
@@ -17891,7 +18376,7 @@ diff --git a/WeaselUI/WeaselPanel.cpp b/WeaselUI/WeaselPanel.cpp
          COLORNOTTRANSPARENT(m_style.prevpage_color) &&
          COLORNOTTRANSPARENT(m_style.nextpage_color)) {
        const std::wstring pre = L"<";
-@@ -654,14 +692,14 @@
+@@ -654,14 +692,14 @@ bool WeaselPanel::_DrawPreedit(const Text& text,
        CRect prc = m_layout->GetPrepageRect();
        // clickable color / disabled color
        int color =
@@ -17908,7 +18393,7 @@ diff --git a/WeaselUI/WeaselPanel.cpp b/WeaselUI/WeaselPanel.cpp
                                         : m_style.nextpage_color;
        if (m_istorepos)
          nrc.OffsetRect(0, m_offsety_preedit);
-@@ -681,11 +719,12 @@
+@@ -681,11 +719,12 @@ bool WeaselPanel::_DrawPreeditBack(const Text& text,
    IDWriteTextFormat1* txtFormat = pDWR->pPreeditTextFormat.Get();
  
    if (!t.empty()) {
@@ -17924,7 +18409,7 @@ diff --git a/WeaselUI/WeaselPanel.cpp b/WeaselUI/WeaselPanel.cpp
  
        int x = rc.left;
        int y = rc.top;
-@@ -885,7 +924,7 @@
+@@ -885,7 +924,7 @@ bool WeaselPanel::_DrawCandidates(CDCHandle& dc, bool back) {
          if (m_istorepos)
            rect.OffsetRect(0, m_offsetys[i]);
          _TextOut(rect, text.c_str(), text.length(), candidate_text_color,
@@ -17933,7 +18418,7 @@ diff --git a/WeaselUI/WeaselPanel.cpp b/WeaselUI/WeaselPanel.cpp
        }
        // Draw comment
        std::wstring comment = comments.at(i).str;
-@@ -1005,27 +1044,33 @@
+@@ -1005,27 +1044,33 @@ void WeaselPanel::DoPaint(CDCHandle dc) {
        drawn |= _DrawCandidates(memDC, true);
      // background and candidates back, hilite back drawing end
  
@@ -17956,8 +18441,6 @@ diff --git a/WeaselUI/WeaselPanel.cpp b/WeaselUI/WeaselPanel.cpp
 -    if (FAILED(pDWR->pRenderTarget->EndDraw())) {
 -      _InitFontRes(true);
 -      Refresh();
--    }
--    // end texts drawing
 +    // A GDI-only status icon has no DirectWrite work to submit.
 +    const bool draw_text = !m_ctx.aux.str.empty() ||
 +        (!m_layout->IsInlinePreedit() && !m_ctx.preedit.str.empty()) ||
@@ -17984,11 +18467,12 @@ diff --git a/WeaselUI/WeaselPanel.cpp b/WeaselUI/WeaselPanel.cpp
 +        Refresh();
 +      }
 +      // end texts drawing
-+    }
+     }
+-    // end texts drawing
  
      // status icon (I guess Metro IME stole my idea :)
      if (m_layout->ShouldDisplayStatusIcon()) {
-@@ -1094,6 +1139,7 @@
+@@ -1094,6 +1139,7 @@ LRESULT WeaselPanel::OnCreate(UINT uMsg,
                                BOOL& bHandled) {
    m_mouse_entry = false;
    m_hoverIndex = -1;
@@ -17996,7 +18480,7 @@ diff --git a/WeaselUI/WeaselPanel.cpp b/WeaselUI/WeaselPanel.cpp
    Refresh();
    return TRUE;
  }
-@@ -1104,8 +1150,12 @@
+@@ -1104,8 +1150,12 @@ LRESULT WeaselPanel::OnDestroy(UINT uMsg,
                                 BOOL& bHandled) {
    m_hoverIndex = -1;
    m_sticky = false;
@@ -18011,7 +18495,7 @@ diff --git a/WeaselUI/WeaselPanel.cpp b/WeaselUI/WeaselPanel.cpp
    return 0;
  }
  
-@@ -1121,6 +1171,11 @@
+@@ -1121,6 +1171,11 @@ void WeaselPanel::MoveTo(RECT const& rc) {
    if (!m_layout)
      return;  // avoid handling nullptr in _RepositionWindow
    m_redraw_by_monitor_change = false;
@@ -18023,7 +18507,7 @@ diff --git a/WeaselUI/WeaselPanel.cpp b/WeaselUI/WeaselPanel.cpp
    // if ascii_tip_follow_cursor set, move tip icon to mouse cursor
    if (m_style.ascii_tip_follow_cursor && m_ctx.empty() &&
        (!m_status.composing) && m_layout->ShouldDisplayStatusIcon()) {
-@@ -1226,7 +1281,8 @@
+@@ -1226,7 +1281,8 @@ void WeaselPanel::_TextOut(const CRect& rc,
                             const std::wstring& psz,
                             const size_t& cch,
                             const int& inColor,
@@ -18033,7 +18517,7 @@ diff --git a/WeaselUI/WeaselPanel.cpp b/WeaselUI/WeaselPanel.cpp
    if (pTextFormat == NULL)
      return;
    float r = (float)(GetRValue(inColor)) / 255.0f;
-@@ -1239,8 +1295,17 @@
+@@ -1239,8 +1295,17 @@ void WeaselPanel::_TextOut(const CRect& rc,
    } else
      pDWR->SetBrushColor(D2D1::ColorF(r, g, b, alpha));
  
@@ -18054,9 +18538,10 @@ diff --git a/WeaselUI/WeaselPanel.cpp b/WeaselUI/WeaselPanel.cpp
      DWRITE_FLOW_DIRECTION flow = m_style.vertical_text_left_to_right
                                       ? DWRITE_FLOW_DIRECTION_LEFT_TO_RIGHT
 diff --git a/WeaselUI/WeaselPanel.h b/WeaselUI/WeaselPanel.h
+index 478e79863ae4f1752a53b54715841b106f0ecf61..92cd0b4ed7633c77c6ec07d6ad61850bb2296aaf 100644
 --- a/WeaselUI/WeaselPanel.h
 +++ b/WeaselUI/WeaselPanel.h
-@@ -35,6 +35,7 @@
+@@ -35,6 +35,7 @@ class WeaselPanel
    MESSAGE_HANDLER(WM_MOUSEWHEEL, OnMouseWheel)
    MESSAGE_HANDLER(WM_MOUSEMOVE, OnMouseMove)
    MESSAGE_HANDLER(WM_MOUSELEAVE, OnMouseLeave)
@@ -18064,7 +18549,7 @@ diff --git a/WeaselUI/WeaselPanel.h b/WeaselUI/WeaselPanel.h
    CHAIN_MSG_MAP(CDoubleBufferImpl<WeaselPanel>)
    END_MSG_MAP()
  
-@@ -59,6 +60,9 @@
+@@ -59,6 +60,9 @@ class WeaselPanel
  
    WeaselPanel(weasel::UI& ui);
    ~WeaselPanel();
@@ -18074,7 +18559,7 @@ diff --git a/WeaselUI/WeaselPanel.h b/WeaselUI/WeaselPanel.h
  
    void MoveTo(RECT const& rc);
    void Refresh();
-@@ -66,12 +70,8 @@
+@@ -66,12 +70,8 @@ class WeaselPanel
    bool GetIsReposition() { return m_istorepos; }
    void RedrawWindow();
  
@@ -18088,7 +18573,7 @@ diff --git a/WeaselUI/WeaselPanel.h b/WeaselUI/WeaselPanel.h
  
   private:
    template <typename T>
-@@ -99,7 +99,8 @@
+@@ -99,7 +99,8 @@ class WeaselPanel
                  const std::wstring& psz,
                  const size_t& cch,
                  const int& inColor,
@@ -18098,7 +18583,7 @@ diff --git a/WeaselUI/WeaselPanel.h b/WeaselUI/WeaselPanel.h
  
    void _LayerUpdate(const CRect& rc, CDCHandle dc);
  
-@@ -107,6 +108,8 @@
+@@ -107,6 +108,8 @@ class WeaselPanel
    weasel::Context& m_ctx;
    weasel::Context& m_octx;
    weasel::Status& m_status;
@@ -18107,7 +18592,7 @@ diff --git a/WeaselUI/WeaselPanel.h b/WeaselUI/WeaselPanel.h
    weasel::UIStyle& m_style;
    weasel::UIStyle& m_ostyle;
  
-@@ -134,6 +137,7 @@
+@@ -134,6 +137,7 @@ class WeaselPanel
  
    CRect rcw;
    BYTE m_candidateCount;
@@ -18115,7 +18600,7 @@ diff --git a/WeaselUI/WeaselPanel.h b/WeaselUI/WeaselPanel.h
  
    bool hide_candidates;
    bool m_sticky;
-@@ -141,6 +145,7 @@
+@@ -141,6 +145,7 @@ class WeaselPanel
    PDWR pDWR;
    std::function<void(size_t* const, size_t* const, bool* const, bool* const)>&
        _UICallback;
@@ -18124,9 +18609,10 @@ diff --git a/WeaselUI/WeaselPanel.h b/WeaselUI/WeaselPanel.h
    float dpiScaleLayout = 1.0f;
    int m_hoverIndex = -1;
 diff --git a/WeaselUI/WeaselUI.cpp b/WeaselUI/WeaselUI.cpp
+index 53a9b92fe20752ac1500a7149cf582bbc6ca95fd..7ba61d3efb3c0989a3e3a12c9c40a17e71e16f9a 100644
 --- a/WeaselUI/WeaselUI.cpp
 +++ b/WeaselUI/WeaselUI.cpp
-@@ -8,102 +8,112 @@
+@@ -8,102 +8,112 @@ class weasel::UIImpl {
   public:
    WeaselPanel panel;
  
@@ -18274,7 +18760,7 @@ diff --git a/WeaselUI/WeaselUI.cpp b/WeaselUI/WeaselUI.cpp
      // destroy panel
      if (pimpl_->panel.IsWindow()) {
        pimpl_->panel.DestroyWindow();
-@@ -149,6 +159,10 @@
+@@ -149,6 +159,10 @@ bool UI::IsShown() const {
    return pimpl_ && pimpl_->IsShown();
  }
  
@@ -18285,7 +18771,7 @@ diff --git a/WeaselUI/WeaselUI.cpp b/WeaselUI/WeaselUI.cpp
  void UI::Refresh() {
    if (pimpl_) {
      pimpl_->Refresh();
-@@ -162,10 +176,13 @@
+@@ -162,10 +176,13 @@ void UI::UpdateInputPosition(RECT const& rc) {
  }
  
  void UI::Update(const Context& ctx, const Status& status) {
@@ -18590,7 +19076,7 @@ index 6cdb23e72d3f423ffe3c2a3a150de8f7cb26a1ed..fc653ffe899d81b72b7c0b5b13b45865
  :end
  cd %WEASEL_ROOT%
 diff --git a/get-rime.ps1 b/get-rime.ps1
-index dd394b22c06b937efb4261722df33eebe0296891..01b29a7ce08d9d7d70a830076065ed1b8dd6f4b7 100755
+index dd394b22c06b937efb4261722df33eebe0296891..01b29a7ce08d9d7d70a830076065ed1b8dd6f4b7 100644
 --- a/get-rime.ps1
 +++ b/get-rime.ps1
 @@ -1,389 +1,392 @@
@@ -19395,6 +19881,7 @@ index 6fe8adef669b79cf9b644a6ab885afd81d0cf453..6154d3215c147f619bb3758b38b77d86
    KeyEvent(UINT _keycode, UINT _mask) : keycode(_keycode), mask(_mask) {}
    KeyEvent(UINT x) { *reinterpret_cast<UINT*>(this) = x; }
 diff --git a/include/PipeChannel.h b/include/PipeChannel.h
+index bebc73a087ac2bf917b20751ed8a48a1e2fa6c45..de5ff7d3c389ff6b45f0ca6bd48538851190fb56 100644
 --- a/include/PipeChannel.h
 +++ b/include/PipeChannel.h
 @@ -1,163 +1,235 @@
@@ -19948,6 +20435,7 @@ index 0000000000000000000000000000000000000000..a3424e4b1b6261eb6b00c5d9c8e4919f
 +}  // namespace weasel
 diff --git a/include/ShiftKeySnapshotWin.h b/include/ShiftKeySnapshotWin.h
 new file mode 100644
+index 0000000000000000000000000000000000000000..00b92be4034b571d0d04dd2ed1d8d8c9259b0eeb
 --- /dev/null
 +++ b/include/ShiftKeySnapshotWin.h
 @@ -0,0 +1,41 @@
@@ -19994,6 +20482,7 @@ new file mode 100644
 +}  // namespace weasel
 diff --git a/include/StellaeIdentity.h b/include/StellaeIdentity.h
 new file mode 100644
+index 0000000000000000000000000000000000000000..125470d62aa9dc1688d8ad80c4e6613d2db320d9
 --- /dev/null
 +++ b/include/StellaeIdentity.h
 @@ -0,0 +1,46 @@
@@ -20165,6 +20654,7 @@ index 3065cb57d49095eefbc04eddbe5ec2801216f8b4..1a174463d1f933ba5dbfd72ef293542e
   private:
    ClientImpl* m_pImpl;
 diff --git a/include/WeaselUI.h b/include/WeaselUI.h
+index da17956a275d73a1c67d3a6e070403b007376b94..652bdf1a6a83e0cadc81ce6638f4cabbf9c9cdd4 100644
 --- a/include/WeaselUI.h
 +++ b/include/WeaselUI.h
 @@ -1,4 +1,4 @@
@@ -20173,7 +20663,7 @@ diff --git a/include/WeaselUI.h b/include/WeaselUI.h
  
  #include <WeaselIPCData.h>
  #include <vector>
-@@ -49,6 +49,7 @@
+@@ -49,6 +49,7 @@ class UI {
    void ShowWithTimeout(size_t millisec);
    bool IsCountingDown() const;
    bool IsShown() const;
@@ -20181,7 +20671,7 @@ diff --git a/include/WeaselUI.h b/include/WeaselUI.h
  
    // 重绘界面
    void Refresh();
-@@ -78,6 +79,13 @@
+@@ -78,6 +79,13 @@ class UI {
      _UICallback = func;
    }
  
@@ -20195,7 +20685,7 @@ diff --git a/include/WeaselUI.h b/include/WeaselUI.h
   private:
    UIImpl* pimpl_;
    PDWR pDWR;
-@@ -85,10 +93,13 @@
+@@ -85,10 +93,13 @@ class UI {
    Context ctx_;
    Context octx_;
    Status status_;
@@ -20209,7 +20699,7 @@ diff --git a/include/WeaselUI.h b/include/WeaselUI.h
  };
  
  class DirectWriteResources {
-@@ -115,6 +126,19 @@
+@@ -115,6 +126,19 @@ class DirectWriteResources {
          reinterpret_cast<IDWriteTextLayout**>(
              pTextLayout.ReleaseAndGetAddressOf()));
    }
@@ -20229,7 +20719,7 @@ diff --git a/include/WeaselUI.h b/include/WeaselUI.h
    void DrawRect(D2D1_RECT_F* const rect,
                  const float& strokeWidth = 1.0f,
                  ID2D1StrokeStyle* const sstyle = (ID2D1StrokeStyle*)0) {
-@@ -149,6 +173,7 @@
+@@ -149,6 +173,7 @@ class DirectWriteResources {
    ComPtr<IDWriteFactory2> pDWFactory;
    ComPtr<ID2D1DCRenderTarget> pRenderTarget;
    ComPtr<IDWriteTextFormat1> pPreeditTextFormat;
@@ -20238,7 +20728,7 @@ diff --git a/include/WeaselUI.h b/include/WeaselUI.h
    ComPtr<IDWriteTextFormat1> pLabelTextFormat;
    ComPtr<IDWriteTextFormat1> pCommentTextFormat;
 diff --git a/include/WeaselUtility.h b/include/WeaselUtility.h
-index 54f840f48b3afef2fe3c5b490dc83f0bd441fae0..323abbd2f2ef21822d12fbc31d01fca59604e2b3 100755
+index 54f840f48b3afef2fe3c5b490dc83f0bd441fae0..323abbd2f2ef21822d12fbc31d01fca59604e2b3 100644
 --- a/include/WeaselUtility.h
 +++ b/include/WeaselUtility.h
 @@ -1,4 +1,5 @@
@@ -21845,7 +22335,7 @@ index 7b43460f45422e8e8c6d3fd92bbd49a503d465d6..e6a94c11959f4661e432e3f46e5cf3f0
 +  <description>No independent update channel is configured.</description>
 +</channel></rss>
 diff --git a/update/bump-version.ps1 b/update/bump-version.ps1
-index 8cbc333f1cfc7e8458bbcf3c70e695187e033c20..3b8c8c52e86d7dbe699e9e2a7e8f2b6ec618b609 100755
+index 8cbc333f1cfc7e8458bbcf3c70e695187e033c20..3b8c8c52e86d7dbe699e9e2a7e8f2b6ec618b609 100644
 --- a/update/bump-version.ps1
 +++ b/update/bump-version.ps1
 @@ -1,207 +1,208 @@
@@ -22265,7 +22755,7 @@ index 8cbc333f1cfc7e8458bbcf3c70e695187e033c20..3b8c8c52e86d7dbe699e9e2a7e8f2b6e
 +& git commit --message $release_message
 +& git tag --annotate $release_tag --message $release_message
 diff --git a/update/bump-version.sh b/update/bump-version.sh
-index dd57fe49f537103b7906b1bbb863d19852dd0152..e97ee595226af2b0cdd9da28ffcdfdb0ada0ca2d 100755
+index dd57fe49f537103b7906b1bbb863d19852dd0152..e97ee595226af2b0cdd9da28ffcdfdb0ada0ca2d 100644
 --- a/update/bump-version.sh
 +++ b/update/bump-version.sh
 @@ -1,227 +1,229 @@
@@ -23023,208 +23513,3 @@ index 3a61b7fe17c3b19ded625fec32b75426055e67a3..1fbc0b2f9489e37776127867765abdb8
 +    })
 +    end
 +  end)
-diff --git a/WeaselDeployer/Configurator.h b/WeaselDeployer/Configurator.h
-index ac14091d600f8662d45df5f1f09d5e03babfb45e..73bac69c566724bbef269301c880137adb3abb41 100644
---- a/WeaselDeployer/Configurator.h
-+++ b/WeaselDeployer/Configurator.h
-@@ -4,11 +4,12 @@ class UIStyleSettings;
- 
- class Configurator {
-  public:
--  explicit Configurator();
-+  explicit Configurator(bool create_custom_files = true);
- 
-   void Initialize();
-   int Run(bool installing);
-   int UpdateWorkspace(bool report_errors = false);
-+  int UpdateAppearance();
-   int DictManagement();
-   int SyncUserData();
- };
-diff --git a/WeaselDeployer/UIStyleSettings.cpp b/WeaselDeployer/UIStyleSettings.cpp
-index 22e7380a70240b15fbf0406243d8daa5fc5b0064..1e05404ce1c401c5d1f985600344cb8cdcf41784 100644
---- a/WeaselDeployer/UIStyleSettings.cpp
-+++ b/WeaselDeployer/UIStyleSettings.cpp
-@@ -1,7 +1,38 @@
- #include "stdafx.h"
- #include <WeaselUtility.h>
-+#include <dwrite.h>
-+#include <wrl/client.h>
- #include "UIStyleSettings.h"
- 
-+#pragma comment(lib, "dwrite.lib")
-+
-+namespace {
-+
-+constexpr const char* kCandidateFontFamilies[] = {
-+    "Noto Sans CJK TC", "Noto Sans CJK HK", "Noto Sans CJK SC"};
-+constexpr const char* kCandidateFont = "style/font_face";
-+
-+std::string FontSetting(RimeConfig* config, const char* key) {
-+  const char* value = rime_get_api()->config_get_cstring(config, key);
-+  return value ? value : "";
-+}
-+
-+std::string PrimaryFontFamily(const std::string& stack) {
-+  auto name = stack.substr(0, stack.find_first_of(",:"));
-+  auto begin = name.find_first_not_of(" \t");
-+  return begin == std::string::npos
-+             ? std::string()
-+             : name.substr(begin, name.find_last_not_of(" \t") - begin + 1);
-+}
-+
-+std::string ReplacePrimaryFont(const std::string& stack,
-+                               const std::string& family) {
-+  auto suffix = stack.find_first_of(",:");
-+  return suffix == std::string::npos ? family : family + stack.substr(suffix);
-+}
-+
-+}  // namespace
-+
- UIStyleSettings::UIStyleSettings() {
-   api_ = (RimeLeversApi*)rime_get_api()->find_module("levers")->get_api();
-   settings_ = api_->custom_settings_init("weasel", "Weasel::UIStyleSettings");
-@@ -73,3 +104,57 @@ bool UIStyleSettings::SelectColorScheme(const std::string& color_scheme_id) {
-                          color_scheme_id.c_str());
-   return true;
- }
-+
-+std::vector<std::string> UIStyleSettings::GetInstalledCandidateFonts() const {
-+  std::vector<std::string> fonts;
-+  Microsoft::WRL::ComPtr<IDWriteFactory> factory;
-+  if (FAILED(DWriteCreateFactory(
-+          DWRITE_FACTORY_TYPE_SHARED, __uuidof(IDWriteFactory),
-+          reinterpret_cast<IUnknown**>(factory.GetAddressOf()))))
-+    return fonts;
-+
-+  Microsoft::WRL::ComPtr<IDWriteFontCollection> collection;
-+  if (FAILED(factory->GetSystemFontCollection(collection.GetAddressOf(), TRUE)))
-+    return fonts;
-+
-+  for (const char* family : kCandidateFontFamilies) {
-+    UINT32 index = 0;
-+    BOOL exists = FALSE;
-+    if (SUCCEEDED(collection->FindFamilyName(
-+            u8tow(family).c_str(), &index, &exists)) &&
-+        exists) {
-+      fonts.emplace_back(family);
-+    }
-+  }
-+  return fonts;
-+}
-+
-+std::string UIStyleSettings::GetActiveCandidateFont() {
-+  RimeConfig config = {0};
-+  api_->settings_get_config(settings_, &config);
-+  return PrimaryFontFamily(FontSetting(&config, kCandidateFont));
-+}
-+
-+bool UIStyleSettings::SelectCandidateFont(const std::string& family) {
-+  RimeConfig config = {0};
-+  api_->settings_get_config(settings_, &config);
-+  const auto active_stack = FontSetting(&config, kCandidateFont);
-+  const auto active_family = PrimaryFontFamily(active_stack);
-+  if (family.empty() || family == active_family)
-+    return true;
-+
-+  const auto replacement = ReplacePrimaryFont(active_stack, family);
-+  if (!api_->customize_string(settings_, kCandidateFont, replacement.c_str()))
-+    return false;
-+
-+  // Inherited labels follow the main face. Preserve distinct custom fonts.
-+  for (const char* key : {"style/label_font_face", "style/comment_font_face"}) {
-+    const auto stack = FontSetting(&config, key);
-+    if (!stack.empty() && PrimaryFontFamily(stack) == active_family) {
-+      const auto adjusted = ReplacePrimaryFont(stack, family);
-+      if (!api_->customize_string(settings_, key, adjusted.c_str()))
-+        return false;
-+    }
-+  }
-+  return true;
-+}
-diff --git a/WeaselDeployer/UIStyleSettings.h b/WeaselDeployer/UIStyleSettings.h
-index f229eecb3e03de91bca682f82aa4c7ac25d8258a..e512226cfb1bc5a2457f61df3022abc3399da2f1 100644
---- a/WeaselDeployer/UIStyleSettings.h
-+++ b/WeaselDeployer/UIStyleSettings.h
-@@ -18,6 +18,9 @@ class UIStyleSettings {
-   std::string GetColorSchemePreview(const std::string& color_scheme_id);
-   std::string GetActiveColorScheme();
-   bool SelectColorScheme(const std::string& color_scheme_id);
-+  std::vector<std::string> GetInstalledCandidateFonts() const;
-+  std::string GetActiveCandidateFont();
-+  bool SelectCandidateFont(const std::string& family);
- 
-   RimeCustomSettings* settings() { return settings_; }
- 
-diff --git a/WeaselDeployer/UIStyleSettingsDialog.cpp b/WeaselDeployer/UIStyleSettingsDialog.cpp
-index b00e82de96f97cabeecd35e9f2c7e03a84c46503..9bab42f6ba031a27560f38b54752f9b99b4554b7 100644
---- a/WeaselDeployer/UIStyleSettingsDialog.cpp
-+++ b/WeaselDeployer/UIStyleSettingsDialog.cpp
-@@ -2,7 +2,9 @@
- #include "UIStyleSettingsDialog.h"
- #include "UIStyleSettings.h"
- #include "Configurator.h"
-+#include "WeaselDeployer.h"
- #include <WeaselUtility.h>
-+#include <algorithm>
- 
- UIStyleSettingsDialog::UIStyleSettingsDialog(UIStyleSettings* settings)
-     : settings_(settings), loaded_(false) {}
-@@ -28,6 +30,20 @@ void UIStyleSettingsDialog::Populate() {
-     color_schemes_.SetCurSel(active_index);
-     Preview(active_index);
-   }
-+  auto active_font = settings_->GetActiveCandidateFont();
-+  fonts_ = settings_->GetInstalledCandidateFonts();
-+  if (!active_font.empty() &&
-+      std::find(fonts_.begin(), fonts_.end(), active_font) == fonts_.end())
-+    fonts_.insert(fonts_.begin(), active_font);
-+  int active_font_index = -1;
-+  for (size_t i = 0; i < fonts_.size(); ++i) {
-+    select_font_.AddString(u8tow(fonts_[i]).c_str());
-+    if (fonts_[i] == active_font)
-+      active_font_index = static_cast<int>(i);
-+  }
-+  select_font_.SetCurSel(active_font_index);
-+  select_font_.EnableWindow(fonts_.size() > 1 ||
-+                            (!fonts_.empty() && active_font.empty()));
-   loaded_ = true;
- }
- 
-@@ -35,7 +51,6 @@ LRESULT UIStyleSettingsDialog::OnInitDialog(UINT, WPARAM, LPARAM, BOOL&) {
-   color_schemes_.Attach(GetDlgItem(IDC_COLOR_SCHEME));
-   preview_.Attach(GetDlgItem(IDC_PREVIEW));
-   select_font_.Attach(GetDlgItem(IDC_SELECT_FONT));
--  select_font_.EnableWindow(FALSE);
- 
-   Populate();
- 
-@@ -50,6 +65,12 @@ LRESULT UIStyleSettingsDialog::OnClose(UINT, WPARAM, LPARAM, BOOL&) {
- }
- 
- LRESULT UIStyleSettingsDialog::OnOK(WORD, WORD code, HWND, BOOL&) {
-+  int index = select_font_.GetCurSel();
-+  if (index >= 0 && index < static_cast<int>(fonts_.size()) &&
-+      !settings_->SelectCandidateFont(fonts_[index])) {
-+    MSG_BY_IDS(IDS_STR_ERR_UNKNOWN, IDS_STR_WEASEL, MB_OK | MB_ICONEXCLAMATION);
-+    return 0;
-+  }
-   EndDialog(code);
-   return 0;
- }
-diff --git a/WeaselDeployer/UIStyleSettingsDialog.h b/WeaselDeployer/UIStyleSettingsDialog.h
-index e81aad77b5e2fdd662a7281e9bcf4a8677a0b9c8..644364ffa7fb85221693ea93127ca2e71fc33fab 100644
---- a/WeaselDeployer/UIStyleSettingsDialog.h
-+++ b/WeaselDeployer/UIStyleSettingsDialog.h
-@@ -29,9 +29,10 @@ class UIStyleSettingsDialog : public CDialogImpl<UIStyleSettingsDialog> {
-   UIStyleSettings* settings_;
-   bool loaded_;
-   std::vector<ColorSchemeInfo> preset_;
-+  std::vector<std::string> fonts_;
- 
-   CListBox color_schemes_;
-   CStatic preview_;
-   CImage image_;
--  CButton select_font_;
-+  CComboBox select_font_;
- };

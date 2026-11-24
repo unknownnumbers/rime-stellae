@@ -1,5 +1,6 @@
 # Public PC baseline: matching patched Weasel and librime-lua builds are required.
 patch:
+  schema/name: 墨芯基底
   menu/page_size: 5
   menu/chinese_page_size: 5
   menu/english_page_size: 6
@@ -9057,7 +9058,7 @@ patch:
   translator/use_stock_word_completion: false
   probe/greek_code_prefix: "~g~"
 
-  schema/dependencies: [stroke, project_radical, project_radical_parts, english_full, mixed_full]
+  schema/dependencies: [stroke, project_radical, project_radical_parts, english_full]
   engine/segmentors:
     - lua_segmentor@en_segmentor
     - lua_segmentor@tool_segmentor
@@ -9128,20 +9129,6 @@ patch:
 
   simplifier/excluded_types: [tool_unicode, tool_calc, u_stroke, u_stroke_completion, u_radical, u_radical_completion, u_radical_abbreviation, mdx_sc_original]
   simplifier/opencc_config: mdx_t2s.json
-
-  mixed_native:
-    dictionary: mixed_full
-    prism: mixed_full
-    user_dict: pc_mixed
-    tag: abc
-    delimiter: " "
-    enable_user_dict: true
-    enable_sentence: false
-    enable_completion: false
-    contextual_suggestions: false
-    enable_encoder: false
-    encode_commit_history: false
-    initial_quality: 0
 
   # R06-R08; change here and redeploy. Existing typo paths remain.
   cn_tolerance:

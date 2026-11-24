@@ -1,6 +1,6 @@
 {
   "format": "rymcp-jp-v-compatibility-v1",
-  "description": "RymCp explicitly selected Japanese character set. Every listed character has independent Unihan Japanese-source evidence. Readings use the separately attributed official sources.",
+  "description": "Stellae Japanese character set. Every listed character has independent Unihan Japanese-source evidence. Readings use the separately attributed official sources.",
   "sources": {
     "Unihan": "https://www.unicode.org/Public/17.0.0/ucd/Unihan.zip",
     "Bunka": "https://www.bunka.go.jp/kokugo_nihongo/sisaku/joho/joho/kijun/naikaku/kanji/joyokanjisakuin/index.html",

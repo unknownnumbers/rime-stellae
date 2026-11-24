@@ -1,6 +1,5 @@
 schema:
   schema_id: english_full
-  name: Isolated English dictionary compiler
   version: "1"
 translator:
   dictionary: english_full

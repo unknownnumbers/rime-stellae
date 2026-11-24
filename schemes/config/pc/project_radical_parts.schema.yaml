@@ -1,7 +1,6 @@
 # Native component syllables, compiled separately from literal lookup.
 schema:
   schema_id: project_radical_parts
-  name: Component prefix lookup
   version: '2026.10.15.1'
 engine:
   processors: [speller, selector, navigator, express_editor]

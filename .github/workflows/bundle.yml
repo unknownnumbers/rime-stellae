@@ -2,7 +2,7 @@ name: Build and validate Stellae
 
 on:
   push:
-    branches: ['release/stellae-*']
+    branches: ['release/stellae-*', 'ci/settings-*']
   workflow_dispatch:
 
 permissions:
@@ -150,7 +150,7 @@ jobs:
           & $hostExe -NoProfile -ExecutionPolicy Bypass -File schemes/tests/rebuilt-profile/Test-RebuiltProfile.ps1 -Kind official-weasel -GeneratedProfile $official -EnginePath (Join-Path $runtime 'official-x64/rime.dll') -OutputPath (Join-Path $env:RUNNER_TEMP 'official-profile-tests')
           if($LASTEXITCODE){throw 'Official engine scheme checks failed'}
           $proof=Get-Content -LiteralPath (Join-Path $env:RUNNER_TEMP 'official-profile-tests/proof.json') -Raw|ConvertFrom-Json
-          if(-not $proof.Passed -or @($proof.Checks).Count -ne 63){throw 'Official engine evidence is incomplete'}
+          if(-not $proof.Passed -or @($proof.Checks).Count -ne 76){throw 'Official engine evidence is incomplete'}
       - name: Retain the official scheme checks
         if: always()
         uses: actions/upload-artifact@v4
@@ -221,9 +221,11 @@ jobs:
           & $hostExe -NoProfile -ExecutionPolicy Bypass -File schemes/tests/rebuilt-profile/Test-RebuiltProfile.ps1 -Kind pc -GeneratedProfile $profile -EnginePath $engine -OutputPath $reports
           if($LASTEXITCODE){throw 'Fresh N01 scheme checks failed'}
           $proof=Get-Content -LiteralPath (Join-Path $reports 'proof.json') -Raw|ConvertFrom-Json
-          if(-not $proof.Passed -or @($proof.Checks).Count -ne 63){throw 'Fresh N01 scheme evidence is incomplete'}
+          if(-not $proof.Passed -or @($proof.Checks).Count -ne 76){throw 'Fresh N01 scheme evidence is incomplete'}
       - name: Test shared file preservation with synthetic sources
         run: ./native/tests/installer/Test-BundleData.ps1 -OutputDirectory (Join-Path $env:RUNNER_TEMP 'shared-policy')
+      - name: Test scheme notice upgrade ownership
+        run: ./native/tests/installer/Test-BundleNotices.ps1 -OutputDirectory (Join-Path $env:RUNNER_TEMP 'notices-policy')
       - name: Provision the pinned NSIS compiler
         run: |
           $root=Join-Path ${env:ProgramFiles(x86)} 'NSIS'
@@ -298,10 +300,12 @@ jobs:
           compression-level: 0
 
       - name: Test actual installation, shared-only input, upgrades and uninstall
+        if: ${{ !startsWith(github.ref_name, 'ci/settings-') }}
         env:
           STELLAE_INSTALLER_POLICY_TRACE: '1'
         run: ./native/tests/installer/Test-BundleInstaller.ps1 -PackageDirectory (Join-Path $env:RUNNER_TEMP 'bundle') -SchemeSource (Join-Path $env:GITHUB_WORKSPACE 'frontend/schemes') -OutputDirectory (Join-Path $env:RUNNER_TEMP 'installer-validation')
       - name: Record finite release validation
+        if: ${{ !startsWith(github.ref_name, 'ci/settings-') }}
         run: |
           $checks=@((Join-Path $env:RUNNER_TEMP 'shared-policy/result.json'),(Join-Path $env:RUNNER_TEMP 'installer-validation/result.json'),(Join-Path $env:RUNNER_TEMP 'installer-validation/installed-ready/result.json'),(Join-Path $env:RUNNER_TEMP 'profile-policy/win11-equivalent-policy-result.json'),(Join-Path $env:RUNNER_TEMP 'bundle/stage/output/server-overlay-verification.json'),(Join-Path $env:RUNNER_TEMP 'source-profile-tests/proof.json'))
           foreach($path in $checks){$report=Get-Content -LiteralPath $path -Raw|ConvertFrom-Json;if(-not $report.passed){throw 'A required validation failed'}}
@@ -309,7 +313,17 @@ jobs:
           $overlay=Get-Content -LiteralPath (Join-Path $release 'frontend-overlay-verification.json') -Raw|ConvertFrom-Json
           if ($overlay.runtimeEnginesPreserved -ne $false -or $overlay.rebuiltRuntimeEngines.Count -ne 2) { throw 'The installer must contain both rebuilt engines.' }
           $spec=Get-Content -LiteralPath installer/bundle-inputs.json -Raw|ConvertFrom-Json
-          [ordered]@{passed=$true;bundleVersion=$spec.bundleVersion;frontendVersion=$spec.frontendVersion;sourceRef=$env:GITHUB_SHA;rebuiltImages=$overlay.rebuiltImages.Count;rebuiltRuntimeEngines=$overlay.rebuiltRuntimeEngines.Count;unchangedNativeImages=$overlay.unchangedNativeImages;sourceDerivedN01Checks=63;sharedOnlyN01AndR5InputTested=$true;bundlePresetAndUserPriorityTested=$true;actualInstalledProfileReadyWithoutTestRedeploy=$true;bare61052UpgradeTested=$true;installedUpgradeAndUninstallTested=$true;physicalKeyboardTested=$false;actualWindows11Tested=$false}|ConvertTo-Json|Set-Content -LiteralPath (Join-Path $release 'validation.json') -Encoding UTF8
+          [ordered]@{passed=$true;bundleVersion=$spec.bundleVersion;frontendVersion=$spec.frontendVersion;sourceRef=$env:GITHUB_SHA;rebuiltImages=$overlay.rebuiltImages.Count;rebuiltRuntimeEngines=$overlay.rebuiltRuntimeEngines.Count;unchangedNativeImages=$overlay.unchangedNativeImages;sourceDerivedN01Checks=76;sharedOnlyN01AndR5InputTested=$true;bundlePresetAndUserPriorityTested=$true;actualInstalledProfileReadyWithoutTestRedeploy=$true;bare61052UpgradeTested=$true;installedUpgradeAndUninstallTested=$true;physicalKeyboardTested=$false;actualWindows11Tested=$false}|ConvertTo-Json|Set-Content -LiteralPath (Join-Path $release 'validation.json') -Encoding UTF8
+          Get-ChildItem -LiteralPath $release -File|Where-Object {$_.Name -ne 'SHA256SUMS.txt'}|Sort-Object Name|ForEach-Object{(Get-FileHash -LiteralPath $_.FullName).Hash.ToLowerInvariant()+'  '+$_.Name}|Set-Content -LiteralPath (Join-Path $release 'SHA256SUMS.txt') -Encoding ASCII
+      - name: Record settings trial validation
+        if: startsWith(github.ref_name, 'ci/settings-')
+        run: |
+          foreach($relative in @('shared-policy/result.json','notices-policy/result.json','source-profile-tests/proof.json')) {
+            $result=Get-Content -LiteralPath (Join-Path $env:RUNNER_TEMP $relative) -Raw|ConvertFrom-Json
+            if(-not $result.passed){throw 'A required settings trial check failed'}
+          }
+          $release=Join-Path $env:RUNNER_TEMP 'bundle/release'
+          [ordered]@{passed=$true;validationScope='settings-trial';sourceRef=$env:GITHUB_SHA;sourceDerivedN01Checks=76;fullInstallerMatrixTested=$false;appearanceAndDraftCheckedInSeparateJobs=$true}|ConvertTo-Json|Set-Content -LiteralPath (Join-Path $release 'validation.json') -Encoding utf8NoBOM
           Get-ChildItem -LiteralPath $release -File|Where-Object {$_.Name -ne 'SHA256SUMS.txt'}|Sort-Object Name|ForEach-Object{(Get-FileHash -LiteralPath $_.FullName).Hash.ToLowerInvariant()+'  '+$_.Name}|Set-Content -LiteralPath (Join-Path $release 'SHA256SUMS.txt') -Encoding ASCII
       - uses: actions/upload-artifact@v4
         with:
@@ -326,6 +340,7 @@ jobs:
             ${{ runner.temp }}/bundle/*.json
             ${{ runner.temp }}/bundle/*.log
             ${{ runner.temp }}/shared-policy/*.json
+            ${{ runner.temp }}/notices-policy/*.json
             ${{ runner.temp }}/installer-validation/*.json
             ${{ runner.temp }}/installer-validation/*.log
             ${{ runner.temp }}/installer-validation/installed-ready/*.json
@@ -379,6 +394,19 @@ jobs:
         run: |
           $inputRoot=Join-Path $env:RUNNER_TEMP 'appearance-test-input'
           ./native/tests/appearance/Test-LiveFont.ps1 -Installer (Join-Path $inputRoot 'stellae-installer.exe') -Profile $env:STELLAE_TEST_PROFILE -InstrumentedServer (Join-Path $inputRoot 'StellaeServer.AppearanceTrace.exe') -OutputDirectory (Join-Path $env:RUNNER_TEMP 'appearance-evidence')
+      - name: Verify dictionary labels and snapshot identity
+        run: |
+          $headers=Join-Path $env:RUNNER_TEMP 'dictionary-api-headers'
+          $null=New-Item -ItemType Directory -Path $headers
+          $inputs=Get-Content -LiteralPath native/notification-inputs.json -Raw|ConvertFrom-Json
+          foreach($header in $inputs.apiHeaders){
+            $file=Join-Path $headers $header.name
+            Invoke-WebRequest -Uri $header.url -OutFile $file -TimeoutSec 60
+            if((Get-FileHash -LiteralPath $file).Hash -ine $header.sha256){throw 'Dictionary API header differs'}
+          }
+          $program=Join-Path $env:ProgramFiles 'RimeStellae'
+          python native/tests/settings/Probe-DictionaryManager.py --engine (Join-Path $program 'rime.dll') --header (Join-Path $headers 'rime_api.h') --shared (Join-Path $program 'data') --user (Join-Path $env:RUNNER_TEMP 'dictionary-user') --deployer (Join-Path $program 'StellaeDeployer.exe') --report (Join-Path $env:RUNNER_TEMP 'appearance-evidence/dictionaries.json')
+          if($LASTEXITCODE){throw 'Native dictionary manager checks failed'}
       - name: Upload bounded synthetic evidence
         if: always()
         uses: actions/upload-artifact@v4

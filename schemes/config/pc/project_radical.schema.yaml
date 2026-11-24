@@ -1,7 +1,6 @@
 # Isolated component dictionary compiler and lookup schema.
 schema:
   schema_id: project_radical
-  name: Project component pinyin data
   version: "2026.10.15"
 engine:
   processors: [speller, selector, navigator, express_editor]

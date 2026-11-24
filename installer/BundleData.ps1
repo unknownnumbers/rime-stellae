@@ -1,10 +1,12 @@
 # SPDX-License-Identifier: GPL-3.0-only
 param(
-  [Parameter(Mandatory)][ValidateSet('Install','Uninstall')][string]$Action,
+  [Parameter(Mandatory)][ValidateSet('Install','Uninstall','InstallNotices','UninstallNotices')][string]$Action,
   [Parameter(Mandatory)][string]$SharedDirectory,
   [string]$PayloadDirectory,
   [string]$UserDirectory,
-  [string]$ReportFile
+  [string]$ReportFile,
+  [string]$CurrentPackageManifest,
+  [string]$PreviousPackageManifest
 )
 Set-StrictMode -Version Latest
 $ErrorActionPreference='Stop'
@@ -16,9 +18,11 @@ trap {
 }
 $shared=[IO.Path]::GetFullPath($SharedDirectory)
 if(-not (Test-Path -LiteralPath $shared)){$null=New-Item -ItemType Directory -Path $shared -Force}
+$notices=$Action -in @('InstallNotices','UninstallNotices')
+$operation=if($Action -in @('Uninstall','UninstallNotices')){'Uninstall'}else{'Install'}
 $manifestPath=Join-Path $shared 'stellae-managed-files.json'
 $previous=@{}
-$hadManagedManifest=Test-Path -LiteralPath $manifestPath
+$hadManagedManifest=(-not $notices) -and (Test-Path -LiteralPath $manifestPath)
 if($hadManagedManifest){
   $old=Get-Content -LiteralPath $manifestPath -Raw|ConvertFrom-Json
   foreach($entry in $old.files){$previous[$entry.path]=$entry}
@@ -45,6 +49,28 @@ function Hash([string]$Path){
     $stream=[IO.File]::OpenRead($Path)
     return ([BitConverter]::ToString($algorithm.ComputeHash($stream))).Replace('-','').ToLowerInvariant()
   }finally{if($stream){$stream.Dispose()};$algorithm.Dispose()}
+}
+function Read-NoticesPackage([string]$Path){
+  if(-not $Path -or -not (Test-Path -LiteralPath $Path -PathType Leaf)){return $null}
+  $package=Get-Content -LiteralPath $Path -Raw|ConvertFrom-Json
+  if($package.format -cnotin @('stellae-package-v2','stellae-rymcp-package-v1') -or
+     -not $package.inputSchemesBundled){throw 'Unexpected installed package ownership manifest'}
+  $records=@()
+  $names=@{}
+  foreach($entry in $package.files){
+    $name=if($entry.PSObject.Properties['installed_path']){[string]$entry.installed_path}else{[string]$entry.path}
+    if(-not $name.StartsWith('scheme-notices/',[StringComparison]::Ordinal)){continue}
+    $relative=$name.Substring('scheme-notices/'.Length)
+    $null=Resolve-Child $shared $relative
+    if($names.ContainsKey($relative) -or $entry.sha256 -cnotmatch '^[0-9a-f]{64}$'){throw 'Invalid notice ownership record'}
+    $names[$relative]=$true
+    $records+=@([pscustomobject]@{path=$relative;sha256=[string]$entry.sha256})
+  }
+  return [pscustomobject]@{bundleVersion=$package.bundleVersion;files=$records}
+}
+if($notices -and $PreviousPackageManifest){
+  $priorNotices=Read-NoticesPackage $PreviousPackageManifest
+  if($priorNotices){foreach($entry in $priorNotices.files){$previous[$entry.path]=$entry}}
 }
 function Add-LegacyMathIndex($Migration,$MigrationDirectory,[string]$UserRoot){
   $math=Resolve-Child $UserRoot 'rymcp_dlc/math'
@@ -108,8 +134,8 @@ function Add-LegacyMathIndex($Migration,$MigrationDirectory,[string]$UserRoot){
   }
   return 'installed'
 }
-$report=[ordered]@{format='stellae-shared-update-v1';action=$Action;passed=$false;sharedConflicts=@();userOverrides=@();removed=@();installed=@();upgradedUserLua=@();mathIndex='not-requested'}
-if($Action -eq 'Uninstall'){
+$report=[ordered]@{format=$(if($notices){'stellae-notices-update-v1'}else{'stellae-shared-update-v1'});action=$Action;passed=$false;sharedConflicts=@();userOverrides=@();removed=@();installed=@();upgradedUserLua=@();mathIndex='not-requested'}
+if($operation -eq 'Uninstall'){
   foreach($entry in $previous.Values){
     $path=Resolve-Child $shared $entry.path
     if(Test-Path -LiteralPath $path -PathType Leaf){
@@ -117,14 +143,18 @@ if($Action -eq 'Uninstall'){
       else{$report.sharedConflicts+=@($entry.path)}
     }
   }
-  if(Test-Path -LiteralPath $manifestPath){Remove-Item -LiteralPath $manifestPath}
+  if(-not $notices -and (Test-Path -LiteralPath $manifestPath)){Remove-Item -LiteralPath $manifestPath}
 }else{
   if(-not $PayloadDirectory){throw 'A shared payload is required'}
   $payload=[IO.Path]::GetFullPath($PayloadDirectory)
-  $spec=Get-Content -LiteralPath (Join-Path $payload 'shared-manifest.json') -Raw|ConvertFrom-Json
+  $sourceRoot=if($notices){$payload}else{Join-Path $payload 'data'}
+  if($notices){
+    $spec=Read-NoticesPackage $CurrentPackageManifest
+    if(-not $spec -or -not @($spec.files).Count){throw 'The new package has no notices ownership records'}
+  }else{$spec=Get-Content -LiteralPath (Join-Path $payload 'shared-manifest.json') -Raw|ConvertFrom-Json}
   # Adopt only unchanged files from the hash-pinned public bare distribution.
   # Existing bundle ownership always takes precedence over predecessor hints.
-  if(-not $hadManagedManifest -and $null -ne $spec.PSObject.Properties['predecessors']){
+  if(-not $notices -and -not $hadManagedManifest -and $null -ne $spec.PSObject.Properties['predecessors']){
     foreach($entry in $spec.predecessors){
       $path=Resolve-Child $shared $entry.path
       if((Test-Path -LiteralPath $path -PathType Leaf) -and (Hash $path) -ceq $entry.sha256){$previous[$entry.path]=$entry}
@@ -135,7 +165,7 @@ if($Action -eq 'Uninstall'){
   foreach($entry in $spec.files){
     if($declared.ContainsKey($entry.path)){throw 'Duplicate shared path'}
     $declared[$entry.path]=$entry
-    $origin=Resolve-Child (Join-Path $payload 'data') $entry.path
+    $origin=Resolve-Child $sourceRoot $entry.path
     if(-not (Test-Path -LiteralPath $origin -PathType Leaf) -or (Hash $origin) -cne $entry.sha256){throw 'Shared payload bytes differ from the manifest'}
     $target=Resolve-Child $shared $entry.path
     if(Test-Path -LiteralPath $target){
@@ -161,6 +191,7 @@ if($Action -eq 'Uninstall'){
       else{$report.sharedConflicts+=@($entry.path);$retained[$entry.path]=$entry}
     }
   }
+  if(-not $notices){
   [ordered]@{format='stellae-managed-shared-v1';bundleVersion=$spec.bundleVersion;files=@($retained.Values|Sort-Object path)}|ConvertTo-Json -Depth 10|Set-Content -LiteralPath $manifestPath -Encoding UTF8
   if(-not $UserDirectory){
     $base=[Microsoft.Win32.RegistryKey]::OpenBaseKey([Microsoft.Win32.RegistryHive]::CurrentUser,[Microsoft.Win32.RegistryView]::Registry32)
@@ -197,12 +228,13 @@ if($Action -eq 'Uninstall'){
     $path=Resolve-Child $UserDirectory $relative
     if(Test-Path -LiteralPath $path -PathType Leaf){$report.userOverrides+=@($relative)}
   }
+  }
   $report.bundleVersion=$spec.bundleVersion
 }
 # Visit only parents of declared managed paths, never unknown directory trees.
 $parents=@{}
 $entries=@($previous.Values)
-if($Action -eq 'Install'){$entries+=@($spec.files)}
+if($operation -eq 'Install'){$entries+=@($spec.files)}
 foreach($entry in $entries){
   $path=Split-Path (Resolve-Child $shared $entry.path) -Parent
   while($path -and $path.Length -gt $shared.Length){$parents[$path]=$true;$path=Split-Path $path -Parent}
@@ -212,4 +244,5 @@ foreach($directory in @($parents.Keys|Sort-Object Length -Descending)){
 }
 $report.passed=$true
 if($ReportFile){$report|ConvertTo-Json -Depth 10|Set-Content -LiteralPath $ReportFile -Encoding UTF8}
-Write-Output ('Shared update completed; preserved conflicts: '+$report.sharedConflicts.Count+'; user overrides: '+$report.userOverrides.Count)
+$scope=if($notices){'Scheme notices'}else{'Shared'}
+Write-Output ($scope+' update completed; preserved conflicts: '+$report.sharedConflicts.Count+'; user overrides: '+$report.userOverrides.Count)

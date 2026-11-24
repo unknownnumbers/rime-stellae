@@ -14,7 +14,7 @@ New-Item -ItemType Directory -Path $out | Out-Null
 $dll=[IO.Path]::GetFullPath($EngineDll)
 $shared=[IO.Path]::GetFullPath($SharedData)
 $scheme=[IO.Path]::GetFullPath($SchemeSource)
-foreach($name in @('rymcp_bundle_default.yaml','rymcp_bundle_weasel.yaml')){
+foreach($name in @('stellae_bundle_default.yaml','stellae_bundle_weasel.yaml')){
   if(-not(Test-Path -LiteralPath (Join-Path $shared $name))){throw 'Missing namespaced bundle preset.'}
 }
 if($Case -eq 'All'){

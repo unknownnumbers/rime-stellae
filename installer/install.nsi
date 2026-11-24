@@ -271,6 +271,11 @@ uninst:
   Abort "The registered directory also contains Weasel. Its files have been preserved."
 upgrade_own_directory:
   !insertmacro BundleTrace "old-installation-removal"
+!ifdef STELLAE_BUNDLE
+  ; Retain the previous package's ownership before replacing root metadata.
+  IfFileExists "$R1\package-manifest.json" 0 +2
+  CopyFiles /SILENT "$R1\package-manifest.json" "$PLUGINSDIR\previous-package-manifest.json"
+!endif
 !ifndef STELLAE_BUNDLE
   IfFileExists $R1\data\*.* 0 call_uninstaller
   CreateDirectory $TEMP\${STELLAE_BINARY_BASE}-backup
@@ -443,7 +448,7 @@ program_files:
   SetOutPath $INSTDIR\data\preview
   File "data\preview\*.png"
 !else
-  SetOutPath "$INSTDIR\scheme-notices"
+  SetOutPath "$PLUGINSDIR\scheme-notices"
   File /r "scheme-notices\*"
   SetOutPath "$INSTDIR"
   File "BundleData.ps1"
@@ -532,6 +537,15 @@ profile_placement_ready:
   WriteUninstaller "$INSTDIR\uninstall.exe"
 
 !ifdef STELLAE_BUNDLE
+  ClearErrors
+  ExecWait '"$ProfilePolicyPowerShell" -NoProfile -NonInteractive -ExecutionPolicy Bypass -File "$INSTDIR\BundleData.ps1" -Action InstallNotices -SharedDirectory "$INSTDIR\scheme-notices" -PayloadDirectory "$PLUGINSDIR\scheme-notices" -CurrentPackageManifest "$INSTDIR\package-manifest.json" -PreviousPackageManifest "$PLUGINSDIR\previous-package-manifest.json" -ReportFile "$INSTDIR\notices-status.json"' $R4
+  IfErrors notices_install_failed
+  IntCmp $R4 0 notices_install_ready
+notices_install_failed:
+  !insertmacro BundleTrace "notices-helper-failed exit=$R4"
+  Abort "Scheme notice installation failed. Existing modified files were preserved."
+notices_install_ready:
+  !insertmacro BundleTrace "notices-helper-ready"
   ClearErrors
   ExecWait '"$ProfilePolicyPowerShell" -NoProfile -NonInteractive -ExecutionPolicy Bypass -File "$INSTDIR\BundleData.ps1" -Action Install -SharedDirectory "$INSTDIR\data" -PayloadDirectory "$PLUGINSDIR\shared-payload" -ReportFile "$INSTDIR\scheme-status.json"' $R4
   IfErrors bundle_install_failed
@@ -678,7 +692,14 @@ uninstall_own_directory:
   IntCmp $R4 0 bundle_uninstall_ready
   Abort "Could not safely remove managed shared resources. The files were preserved."
 bundle_uninstall_ready:
-  RMDir /r "$INSTDIR\scheme-notices"
+  ClearErrors
+  ExecWait '"$ProfilePolicyPowerShell" -NoProfile -NonInteractive -ExecutionPolicy Bypass -File "$INSTDIR\BundleData.ps1" -Action UninstallNotices -SharedDirectory "$INSTDIR\scheme-notices" -PreviousPackageManifest "$INSTDIR\package-manifest.json"' $R4
+  IfErrors notices_uninstall_failed
+  IntCmp $R4 0 notices_uninstall_ready
+notices_uninstall_failed:
+  Abort "Could not safely remove managed scheme notices. The files were preserved."
+notices_uninstall_ready:
+  RMDir "$INSTDIR\scheme-notices"
 !else
   Delete  "$INSTDIR\data\opencc\*.*"
   Delete  "$INSTDIR\data\preview\*.*"

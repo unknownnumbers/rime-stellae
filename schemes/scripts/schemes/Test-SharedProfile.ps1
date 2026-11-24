@@ -51,7 +51,7 @@ try{
  $defaultText=[IO.File]::ReadAllText($compiledDefault)
  Check 'default-Chinese-entry' ($defaultText -match '(?m)^\s*-\s*schema:\s*pc_research\s*$')
  Check 'default-Japanese-entry' ($defaultText -match '(?m)^\s*-\s*schema:\s*jp_sela\s*$')
- foreach($schema in @('stroke','english_full','mixed_full','project_radical','project_radical_parts','jp_small_lookup','jp_q_lookup','jp_v_lookup','jp_v_pc_lookup','jp_sela','pc_research')){
+ foreach($schema in @('stroke','english_full','project_radical','project_radical_parts','jp_small_lookup','jp_q_lookup','jp_v_lookup','jp_v_pc_lookup','jp_sela','pc_research')){
   [void][RimeProbe]::RimeDeploySchema((Join-Path $shared ($schema+'.schema.yaml')))
   Check ('compiled-'+$schema) (Test-Path -LiteralPath (Join-Path $build ($schema+'.schema.yaml')))
  }
@@ -62,11 +62,11 @@ try{
  Check 'default-SC' ([RimeProbe]::RimeGetOption($s,'simplification') -eq 1)
  $state=Query 'nihao'
  Check 'Chinese-candidate' ($state.Candidates -ccontains '你好')
- $state=Query 'wifimima'
- Check 'SC-mixed-candidate' ($state.Candidates -ccontains 'Wi-Fi 密码')
+ $state=Query 'wenti'
+ Check 'SC-Chinese-candidate' ($state.Candidates -ccontains '问题')
  [RimeProbe]::RimeSetOption($s,'simplification',0)
- $state=Query 'wifimima'
- Check 'TC-mixed-candidate' ($state.Candidates -ccontains 'Wi-Fi 密碼')
+ $state=Query 'wenti'
+ Check 'TC-Chinese-candidate' ($state.Candidates -ccontains '問題')
  $state=Query 'uUhU'
  $readingIndex=[Array]::IndexOf([string[]]$state.Candidates,'一')
  Check 'stroke-query-candidate' ($readingIndex -ge 0)
@@ -89,11 +89,11 @@ try{
 }
 $hostExe=(Get-Process -Id $PID).Path
 $learning=@()
-foreach($scenario in @('Bracket','Mixed')){
+foreach($scenario in @('BracketLearning','RemovedMixed')){
  $testUser=Join-Path $work ($scenario.ToLowerInvariant()+'-user')
  Copy-Item -LiteralPath $user -Destination $testUser -Recurse
  $out=Join-Path $work ($scenario.ToLowerInvariant()+'-results')
- & $hostExe -NoProfile -ExecutionPolicy Bypass -File (Join-Path $repo ('tests/schemes/Test-'+$scenario+'Learning.ps1')) -EngineDll $dll -SharedData $shared -UserData $testUser -OutputDirectory $out
+ & $hostExe -NoProfile -ExecutionPolicy Bypass -File (Join-Path $repo ('tests/schemes/Test-'+$scenario+'.ps1')) -EngineDll $dll -SharedData $shared -UserData $testUser -OutputDirectory $out
  if($LASTEXITCODE -ne 0){throw ($scenario+' learning failed with installed shared resources.')}
  $items=Get-Content -LiteralPath (Join-Path $out 'results.json') -Raw | ConvertFrom-Json
  $learning += [pscustomobject]@{Scenario=$scenario;Checks=$items.Count;Passed=$true}

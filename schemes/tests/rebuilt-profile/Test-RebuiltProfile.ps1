@@ -180,6 +180,8 @@ try{
     $caps=[regex]::Match($entry[1],'(?m)^    Caps_Lock: (\S+)').Groups[1].Value
     Record ('rebuilt Caps Lock '+$entry[0]) ($caps -ceq 'noop') $caps
   }
+  Record 'main schema display name' ([regex]::IsMatch($compiled,'(?m)^  name: "?墨芯基底"?\r?$')) '墨芯基底'
+  Record 'removed mixed schema dependency and configuration' (-not $compiled.Contains('mixed_full') -and -not $compiled.Contains('mixed_native:')) $null
   [RimeProbe]::RimeInitialize([ref]$traits);$initialized=$true
   Open-PC
   [RimeProbe]::RimeClearComposition($session)
@@ -234,6 +236,15 @@ try{
     @('in',@('∈','∞','∫'),@()),@('int',@('∫'),@()),@('alpha',@('α'),@()),
     @('U68B6',@('梶'),@()),@('uUmuwei',@('梶'),@()),@('cC1+1',@('2'),@())
   )){Candidate-Case $case[0] $case[1] $case[2]}
+  foreach($case in @(
+    @('upan',@('U 盘','U 盤')),@('asizhi',@('A4 纸','A4 紙')),
+    @('sanddayin',@('3D 打印')),@('windowsban',@('Windows 版')),
+    @('wifimima',@('Wi-Fi 密码','Wi-Fi 密碼'))
+  )){Candidate-Case $case[0] @() $case[1]}
+  foreach($bracket in @(@(0x5b,'你'),@(0x5d,'好'))){
+    Compose 'nihao';[void](Press $bracket[0]);$picked=[RimeProbe]::ReadCommit($session)
+    Record ('ordinary Chinese bracket pick '+[char]$bracket[0]) ($picked -ceq $bracket[1]) $picked
+  }
   Compose 'nihao';$chinesePage=[RebuildProbe]::PageSize($session)
   [RimeProbe]::RimeSetOption($session,'research_english',1)
   Candidate-Case 'hepl' @('help')
@@ -250,6 +261,21 @@ try{
   foreach($case in @(@('kana',@('かな')),@('KANA',@('カナ')),@('qnihon',@('日本')),@('vwo',@('我')),@('vwoni',@('我に')))){
     Candidate-Case $case[0] $case[1]
   }
+  Compose 'wa';$beforeKana=@((Snapshot).Candidates)
+  for($i=0;$i -lt 3;$i++){Compose 'wa';Select-Text 'うぁ';[void][RimeProbe]::ReadCommit($session)}
+  Compose 'wa';$afterKana=@((Snapshot).Candidates)
+  Record 'romaji alternatives retain fixed order after picks' (($beforeKana -join '|') -ceq ($afterKana -join '|') -and $afterKana[0] -ceq 'わ') $afterKana
+  for($i=0;$i -lt 3;$i++){Compose 'vwo';Select-Text '我';[void][RimeProbe]::ReadCommit($session)}
+  [RimeProbe]::RimeClearComposition($session)
+  [void][RimeProbe]::RimeDestroySession($session);$session=[UIntPtr]::Zero
+  $jpLearning=Join-Path $out 'jp-family-learning.tsv'
+  $exported=[RimeProbe]::ExportUserDict('jp_family',$jpLearning)
+  $ownRows=@(if($exported -ge 0){[IO.File]::ReadLines($jpLearning)|Where-Object {$_ -and -not $_.StartsWith('#')} })
+  $ownHan=@($ownRows|Where-Object {($_ -split "`t")[0] -ceq '我' -and [int](($_ -split "`t")[2]) -gt 0})
+  Record 'Kanji learning remains active' ($ownHan.Count -gt 0) $ownHan
+  Record 'removed mixed learning store is not created' (-not (Test-Path -LiteralPath (Join-Path $user 'pc_mixed.userdb'))) $null
+  Record 'disabled romaji learning store is not created' (-not (Test-Path -LiteralPath (Join-Path $user 'jp_sela_custom.userdb'))) $null
+  Open-PC
   [void][RimeProbe]::RimeSelectSchema($session,'pc_research')
   [RimeProbe]::RimeSetOption($session,'probe_options_ready',1);[RimeProbe]::RimeSetOption($session,'ascii_mode',0);[RimeProbe]::RimeSetOption($session,'research_english',0);[RimeProbe]::RimeSetOption($session,'simplification',1)
   $before=@(Export-Poem 'learning-before');$old=@($before|Measure-Object Count -Sum).Sum;if(-not $old){$old=0}
