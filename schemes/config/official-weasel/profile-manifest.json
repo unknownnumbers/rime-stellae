@@ -1,7 +1,7 @@
 {
   "format": "rymcp-official-profile-v2",
   "version": "2026.11.24.3",
-  "maintenance_source_manifest_sha256": "07a09d1ac563e2a987ca6529c3b74d8ea514a0e90aadef41e48a8671a89f6b6a",
+  "maintenance_source_manifest_sha256": "c02953cf0136902d26cb054642b41076ee3c0c6271ddee7b740d0a6eae40089d",
   "files": [
     {
       "path": "JAPANESE.md",
@@ -30,8 +30,8 @@
     },
     {
       "path": "default.yaml",
-      "bytes": 1431,
-      "sha256": "5a438c92aa7ddd749644c7c799967074634d41ace924859be2a371f29565c892"
+      "bytes": 1358,
+      "sha256": "60f61ef0d3ed0f0314af634955022ff4d4c192f9e6df9875ec31cb5a69626f7e"
     },
     {
       "path": "english_extensions.dict.yaml",

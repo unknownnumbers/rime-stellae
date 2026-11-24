@@ -797,8 +797,8 @@
     },
     {
       "path": "schemes/config/official-weasel/default.yaml",
-      "bytes": 1431,
-      "sha256": "5a438c92aa7ddd749644c7c799967074634d41ace924859be2a371f29565c892"
+      "bytes": 1358,
+      "sha256": "60f61ef0d3ed0f0314af634955022ff4d4c192f9e6df9875ec31cb5a69626f7e"
     },
     {
       "path": "schemes/config/official-weasel/english_extensions.dict.yaml",
@@ -1403,7 +1403,7 @@
     {
       "path": "schemes/config/official-weasel/profile-manifest.json",
       "bytes": 29611,
-      "sha256": "8fbac26825ba88193af57640b437a9e08b1c89b0f283c270a2eb9dc46b51c4bf"
+      "sha256": "ac026bd24092b7a64b3ebf7ea7faf096c8e86898273deaad0604d623f2d410c5"
     },
     {
       "path": "schemes/config/official-weasel/project_radical.dict.yaml",
@@ -1718,7 +1718,7 @@
     {
       "path": "schemes/config/pc/config-source-manifest.json",
       "bytes": 29673,
-      "sha256": "07a09d1ac563e2a987ca6529c3b74d8ea514a0e90aadef41e48a8671a89f6b6a"
+      "sha256": "c02953cf0136902d26cb054642b41076ee3c0c6271ddee7b740d0a6eae40089d"
     },
     {
       "path": "schemes/config/pc/default.custom.yaml",
@@ -1727,8 +1727,8 @@
     },
     {
       "path": "schemes/config/pc/default.yaml",
-      "bytes": 1431,
-      "sha256": "5a438c92aa7ddd749644c7c799967074634d41ace924859be2a371f29565c892"
+      "bytes": 1358,
+      "sha256": "60f61ef0d3ed0f0314af634955022ff4d4c192f9e6df9875ec31cb5a69626f7e"
     },
     {
       "path": "schemes/config/pc/english_extensions.dict.yaml",
@@ -2882,8 +2882,8 @@
     },
     {
       "path": "schemes/docs/sources/shared-config-sources.md",
-      "bytes": 3327,
-      "sha256": "dff4a589b94fa50cccb7da2ab53079d55a5b2f81cc12d2d72a675aa3e67d304e"
+      "bytes": 3392,
+      "sha256": "3b429682e5d4a8eda234e0115014067f558f4f30a06893493b6dd7156b5f3f1d"
     },
     {
       "path": "schemes/docs/sources/tools-sources.md",
@@ -3403,7 +3403,7 @@
     {
       "path": "schemes/release-manifest.json",
       "bytes": 103413,
-      "sha256": "ebcd8009d2a04dadd357e713c906aa5782e71f9f4c7981a1666e6151bbfe33b6"
+      "sha256": "5fb1f6ca04d4eb7c9893fd70fd2fda2fe3f8c32583dc0a342f5097f08b16373e"
     },
     {
       "path": "schemes/scripts/build_dlc.py",

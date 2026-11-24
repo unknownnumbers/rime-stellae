@@ -35,8 +35,8 @@
     },
     {
       "path": "default.yaml",
-      "bytes": 1431,
-      "sha256": "5a438c92aa7ddd749644c7c799967074634d41ace924859be2a371f29565c892"
+      "bytes": 1358,
+      "sha256": "60f61ef0d3ed0f0314af634955022ff4d4c192f9e6df9875ec31cb5a69626f7e"
     },
     {
       "path": "english_extensions.dict.yaml",

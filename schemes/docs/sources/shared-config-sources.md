@@ -1,10 +1,10 @@
 # 共用配置與筆畫依賴
 
-兩套方案共用以下配置與資料, 來自官方 [Weasel 0.17.4](https://github.com/rime/weasel/releases/tag/0.17.4) 資料包. 它們支援預設配置、拼音規則、筆畫反查及字形轉換, 正文與原始署名保持原樣.
+兩套方案共用以下配置與資料, 來自官方 [Weasel 0.17.4](https://github.com/rime/weasel/releases/tag/0.17.4) 資料包. 它們支援預設配置、拼音規則、筆畫反查及字形轉換, 原始署名保留. `default.yaml` 的方案清單已移除未提供的注音與聲調拼音入口.
 
 | 檔案 | SHA256 |
 | --- | --- |
-| `config/pc/default.yaml` | `5a438c92aa7ddd749644c7c799967074634d41ace924859be2a371f29565c892` |
+| `config/pc/default.yaml` | `60f61ef0d3ed0f0314af634955022ff4d4c192f9e6df9875ec31cb5a69626f7e` |
 | `config/pc/pinyin.yaml` | `f2d291166946a848fd88e541844567415f1ed3d9c5a7477757b88aeb3a69c0ca` |
 | `config/pc/stroke.schema.yaml` | `f541d4c7450370b2652ae5e4190396803504edc987f74f16718458811312f303` |
 | `config/pc/stroke.dict.yaml` | `0fe1c1c0673f3564f16deb1f659a75f3ad6a43e5308165dccfb63fd94864f631` |
