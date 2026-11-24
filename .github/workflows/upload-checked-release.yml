@@ -1,0 +1,104 @@
+name: Upload checked release assets
+on:
+  push:
+    branches: [ci/upload-release-20261124]
+permissions:
+  actions: read
+  contents: write
+jobs:
+  upload:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          repository: unknownnumbers/rime-stellae
+          run-id: 45314416908
+          artifact-ids: 14886582945
+          github-token: ${{ github.token }}
+          merge-multiple: true
+          path: ${{ runner.temp }}/frontend-release
+      - uses: actions/download-artifact@v4
+        with:
+          repository: unknownnumbers/rime-stellae
+          run-id: 45314416937
+          artifact-ids: 14884857698
+          github-token: ${{ github.token }}
+          merge-multiple: true
+          path: ${{ runner.temp }}/vocabulary-release
+      - name: Verify and upload the checked draft assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: python
+        run: |
+          import hashlib
+          import json
+          import os
+          from pathlib import Path
+          import shutil
+          import urllib.parse
+          import urllib.request
+          
+          expected = [{"name": "7z2405-src.tar.xz", "bytes": 1486772, "sha256": "63f341cf80b8d287c6e945519b3da0fa75553c85572a471b7fa6e68f9a90b790"}, {"name": "bundle-provenance.json", "bytes": 129018, "sha256": "eeea30860bfe75ffb4dc16070dd8030debf101de1d3cfea242c5742ebf36f128"}, {"name": "frontend-overlay-verification.json", "bytes": 6521, "sha256": "b26d6cfa03a89cac09bf8c4b230dc71f0622b15e5348c8c021defb1848b49835"}, {"name": "package-license-index.json", "bytes": 580540, "sha256": "b872282eb4308302da7acc9279039638cdb45036b71817d7ef8e9a123659f7eb"}, {"name": "package-manifest.json", "bytes": 117661, "sha256": "09edfa047069f0eae8fb5f4ee655db478dc5ba2a2bdb89f2896cbd05283a7eaa"}, {"name": "payload-verification.json", "bytes": 4494, "sha256": "73afac47efc46fddbd4da3b57d01cedcc2d6b4aee6550523630218f5ae67f6ab"}, {"name": "pe-verification.json", "bytes": 8170, "sha256": "b5a9c3763b0ff5dd02966b916d62dbe11fa2cc65b95fc7ee1c4ce8f5926586e2"}, {"name": "stellae-2026.11.24.1-installer.exe", "bytes": 122917728, "sha256": "42667a7853929f24bea3b7d3b0b8d9405ddadea83d068d454a50b89400dfaf45"}, {"name": "stellae-2026.11.24.1-official-weasel-schemes.zip", "bytes": 115518964, "sha256": "ef84df90bb6d672a2f9afea78246eed5fada1d2459f190c571f832041218e2e7"}, {"name": "stellae-2026.11.24.1-schemes.zip", "bytes": 58101653, "sha256": "f3ac62bb3d1696d6fd60dd442174dbb976f6afb9c26e7b1b550eff297636f1b3"}, {"name": "stellae-2026.11.24.1-source.zip", "bytes": 291389199, "sha256": "6385bdd1c2a8745ff2715f7bde0b126c8c57aed77b3c7072675d30ef57c2275b"}, {"name": "stellae-dlc-computer-2026.11.24.1.zip", "bytes": 55604, "sha256": "f9d281fb4a206e1c2d0c851b5301ed1a59b9d577db81cae52ff695ae55dd4c6f"}, {"name": "stellae-dlc-math-2026.11.24.1.zip", "bytes": 2592627, "sha256": "e6b568f0292a62a667bfcf43ec35f18c53219e4883dffc383c09b242437ba922"}, {"name": "stellae-dlc-physics-2026.11.24.1.zip", "bytes": 2647906, "sha256": "5928a20258cea4e24ca7f227522e9e0d93b352c3b7d92898bee4d3a8eb26f08b"}, {"name": "stellae-dlc-poetry-2026.11.24.1.zip", "bytes": 50619272, "sha256": "d2408e5696fc0a08e6ca2a3a519753cd8d897a2d2e43dd5ebc11cb9238a717f9"}, {"name": "validation.json", "bytes": 576, "sha256": "2c0c50eacb71dda8fdb1c5c2b8304303c868c48114b0c6faf535b6d145bb5826"}, {"name": "SHA256SUMS.txt", "bytes": 1538, "sha256": "e4347fade880ffc2da2c2bcf2249baed477d216180ad79f8250cd5137531acee"}]
+          release_dir = Path(os.environ['RUNNER_TEMP']) / 'frontend-release'
+          vocabulary = Path(os.environ['RUNNER_TEMP']) / 'vocabulary-release'
+          for row in expected:
+              name = row['name']
+              assert name == Path(name).name and '/' not in name and '\\' not in name
+              if name.startswith('stellae-dlc-'):
+                  shutil.copyfile(vocabulary / name, release_dir / name)
+          checksum_rows = sorted((row for row in expected if row['name'] != 'SHA256SUMS.txt'), key=lambda row: row['name'])
+          checksums = ''.join(row['sha256'] + '  ' + row['name'] + '\n' for row in checksum_rows)
+          (release_dir / 'SHA256SUMS.txt').write_bytes(checksums.encode('ascii'))
+          files = {path.name: path for path in release_dir.iterdir() if path.is_file()}
+          assert set(files) == {row['name'] for row in expected} and len(files) == 17
+          for row in expected:
+              path = files[row['name']]
+              assert not path.is_symlink() and path.stat().st_size == row['bytes'], row['name']
+              with path.open('rb') as stream:
+                  assert hashlib.file_digest(stream, 'sha256').hexdigest() == row['sha256'], row['name']
+          print('All 17 release files match the reviewed inventory.', flush=True)
+          
+          api = 'https://api.github.com/repos/unknownnumbers/rime-stellae'
+          def request(url, method='GET', data=None, kind='application/json'):
+              headers = {'Authorization': 'Bearer ' + os.environ['GH_TOKEN'],
+                         'Accept': 'application/vnd.github+json',
+                         'X-GitHub-Api-Version': '2022-11-28',
+                         'User-Agent': 'stellae-checked-release-upload',
+                         'Content-Type': kind}
+              req = urllib.request.Request(url, method=method, data=data, headers=headers)
+              with urllib.request.urlopen(req, timeout=600) as response:
+                  return None if response.status == 204 else json.load(response)
+          
+          release = request(api + '/releases/456270969')
+          assert release['id'] == 456270969 and release['draft'] is True
+          assert release['tag_name'] == 'v2026.11.24.1'
+          assert release['target_commitish'] == 'd5230f72ef5c09b14bbdc3247d372e2497811b79'
+          assets = {asset['name']: asset for asset in release['assets']}
+          assert len(assets) == len(release['assets'])
+          assert set(assets).issubset(files)
+          upload_url = release['upload_url'].split('{', 1)[0]
+          assert upload_url == 'https://uploads.github.com/repos/unknownnumbers/rime-stellae/releases/456270969/assets'
+          for row in expected:
+              name, size, digest = row['name'], row['bytes'], 'sha256:' + row['sha256']
+              existing = assets.get(name)
+              if existing and existing['state'] == 'starter' and existing['size'] == 0 and not existing.get('digest'):
+                  request(api + '/releases/assets/' + str(existing['id']), 'DELETE')
+                  existing = None
+              if existing:
+                  assert existing['state'] == 'uploaded' and existing['size'] == size and existing.get('digest') == digest, name
+                  print('Verified existing ' + name, flush=True)
+                  continue
+              print('Uploading ' + name, flush=True)
+              result = request(upload_url + '?name=' + urllib.parse.quote(name, safe=''),
+                               'POST', files[name].read_bytes(), 'application/octet-stream')
+              assert result['state'] == 'uploaded' and result['size'] == size and result.get('digest') == digest, name
+          release = request(api + '/releases/456270969')
+          assert release['draft'] is True and len(release['assets']) == 17
+          assets = {asset['name']: asset for asset in release['assets']}
+          assert set(assets) == set(files)
+          for row in expected:
+              asset = assets[row['name']]
+              assert asset['state'] == 'uploaded' and asset['size'] == row['bytes']
+              assert asset.get('digest') == 'sha256:' + row['sha256']
+          print('All 17 assets are verified in the draft release. Publication remains separate.', flush=True)
