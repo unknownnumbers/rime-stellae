@@ -180,7 +180,15 @@ def main():
         if path.suffix == '.png':
             if path.relative_to(ROOT).as_posix() not in {
                 'config/pc/preview/color_scheme_reference_gray.png',
+                'config/pc/preview/color_scheme_reference_gray_default.png',
+                'config/pc/preview/color_scheme_reference_gray_sc.png',
+                'config/pc/preview/color_scheme_reference_gray_tc.png',
+                'config/pc/preview/color_scheme_reference_gray_hk.png',
                 'config/official-weasel/preview/color_scheme_reference_gray.png',
+                'config/official-weasel/preview/color_scheme_reference_gray_default.png',
+                'config/official-weasel/preview/color_scheme_reference_gray_sc.png',
+                'config/official-weasel/preview/color_scheme_reference_gray_tc.png',
+                'config/official-weasel/preview/color_scheme_reference_gray_hk.png',
             } or not path.read_bytes().startswith(b'\x89PNG\r\n\x1a\n'):
                 raise SystemExit('Unexpected theme preview resource')
             continue

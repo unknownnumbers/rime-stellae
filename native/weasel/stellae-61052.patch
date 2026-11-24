@@ -1101,7 +1101,7 @@ index ac14091d600f8662d45df5f1f09d5e03babfb45e..73bac69c566724bbef269301c880137a
    int SyncUserData();
  };
 diff --git a/WeaselDeployer/DictManagementDialog.cpp b/WeaselDeployer/DictManagementDialog.cpp
-index 078dbb06850dd0f305e6d9b6014f0e62d8c756d0..691003877f484b44210881efe617db190d32861d 100644
+index 078dbb06850dd0f305e6d9b6014f0e62d8c756d0..eddbd6730edea2355a73e756788220d12e8ac74d 100644
 --- a/WeaselDeployer/DictManagementDialog.cpp
 +++ b/WeaselDeployer/DictManagementDialog.cpp
 @@ -4,6 +4,25 @@
@@ -1119,10 +1119,10 @@ index 078dbb06850dd0f305e6d9b6014f0e62d8c756d0..691003877f484b44210881efe617db19
 +    return {id, "en_intelligence", 0, IDS_DICT_DESC_EN};
 +  if (id == "jp_family")
 +    return {id, "jp_kanji", 0, IDS_DICT_DESC_JP};
-+  if (id == "jp_sela_custom")
-+    return {id, "jp_romaji", 1, IDS_DICT_DESC_KANA_HISTORY};
 +  if (id == "pc_mixed")
 +    return {id, id, 1, IDS_DICT_DESC_MIXED_HISTORY};
++  if (id == "terra_pinyin")
++    return {id, id, 2, IDS_DICT_DESC_TERRA, IDS_DICT_NAME_TERRA};
 +  return {id, id, 2, IDS_DICT_DESC_OTHER};
 +}
 +
@@ -1130,7 +1130,7 @@ index 078dbb06850dd0f305e6d9b6014f0e62d8c756d0..691003877f484b44210881efe617db19
  
  void static OpenFolderAndSelectItem(std::wstring filepath) {
    filepath = std::filesystem::path(filepath).make_preferred().wstring();
-@@ -64,18 +83,63 @@ DictManagementDialog::DictManagementDialog() {
+@@ -64,18 +83,71 @@ DictManagementDialog::DictManagementDialog() {
  DictManagementDialog::~DictManagementDialog() {}
  
  void DictManagementDialog::Populate() {
@@ -1141,6 +1141,9 @@ index 078dbb06850dd0f305e6d9b6014f0e62d8c756d0..691003877f484b44210881efe617db19
    while (const char* dict = api_->next_user_dict(&iter)) {
 -    std::wstring txt = u8tow(dict);
 -    user_dict_list_.AddString(txt.c_str());
++    // Keep inactive kana learning on disk without listing it in this dialog.
++    if (std::string(dict) == "jp_sela_custom")
++      continue;
 +    user_dicts_.push_back(DescribeDictionary(dict));
    }
    api_->user_dict_iterator_destroy(&iter);
@@ -1155,8 +1158,13 @@ index 078dbb06850dd0f305e6d9b6014f0e62d8c756d0..691003877f484b44210881efe617db19
 +    const auto& info = user_dicts_[index];
 +    CString group;
 +    group.LoadStringW(groups[info.group]);
++    CString name;
++    if (info.display_name_id)
++      name.LoadStringW(info.display_name_id);
++    else
++      name = u8tow(info.display_name).c_str();
 +    const auto label = std::wstring(group.GetString()) + L": " +
-+                       u8tow(info.display_name);
++                       name.GetString();
 +    const int item = user_dict_list_.AddString(label.c_str());
 +    if (item >= 0)
 +      user_dict_list_.SetItemData(item, static_cast<DWORD_PTR>(index));
@@ -1196,7 +1204,7 @@ index 078dbb06850dd0f305e6d9b6014f0e62d8c756d0..691003877f484b44210881efe617db19
    backup_.Attach(GetDlgItem(IDC_BACKUP));
    backup_.EnableWindow(FALSE);
    restore_.Attach(GetDlgItem(IDC_RESTORE));
-@@ -98,8 +162,8 @@ LRESULT DictManagementDialog::OnClose(UINT, WPARAM, LPARAM, BOOL&) {
+@@ -98,8 +170,8 @@ LRESULT DictManagementDialog::OnClose(UINT, WPARAM, LPARAM, BOOL&) {
  }
  
  LRESULT DictManagementDialog::OnBackup(WORD, WORD code, HWND, BOOL&) {
@@ -1207,7 +1215,7 @@ index 078dbb06850dd0f305e6d9b6014f0e62d8c756d0..691003877f484b44210881efe617db19
      MSG_BY_IDS(IDS_STR_SEL_EXPORT_DICT_NAME, IDS_STR_SAD,
                 MB_OK | MB_ICONINFORMATION);
      return 0;
-@@ -118,11 +182,8 @@ LRESULT DictManagementDialog::OnBackup(WORD, WORD code, HWND, BOOL&) {
+@@ -118,11 +190,8 @@ LRESULT DictManagementDialog::OnBackup(WORD, WORD code, HWND, BOOL&) {
      MSG_BY_IDS(IDS_STR_ERREXPORT_SYNC_UV, IDS_STR_SAD, MB_OK | MB_ICONERROR);
      return 0;
    }
@@ -1221,7 +1229,7 @@ index 078dbb06850dd0f305e6d9b6014f0e62d8c756d0..691003877f484b44210881efe617db19
      MSG_BY_IDS(IDS_STR_ERR_EXPORT_UNKNOWN, IDS_STR_SAD, MB_OK | MB_ICONERROR);
      return 0;
    } else if (_waccess(path.c_str(), 0) != 0) {
-@@ -178,15 +239,13 @@ LRESULT DictManagementDialog::OnExport(WORD, WORD code, HWND, BOOL&) {
+@@ -178,15 +247,13 @@ LRESULT DictManagementDialog::OnExport(WORD, WORD code, HWND, BOOL&) {
    const std::wstring txt_files_name = txt_files_str + L" (*.txt)";
    const std::wstring all_files_name = all_files_str;
  
@@ -1240,7 +1248,7 @@ index 078dbb06850dd0f305e6d9b6014f0e62d8c756d0..691003877f484b44210881efe617db19
    file_name += L"_export.txt";
  
    COMDLG_FILTERSPEC filter[2] = {{txt_files_name.c_str(), L"*.txt"},
-@@ -200,8 +259,7 @@ LRESULT DictManagementDialog::OnExport(WORD, WORD code, HWND, BOOL&) {
+@@ -200,8 +267,7 @@ LRESULT DictManagementDialog::OnExport(WORD, WORD code, HWND, BOOL&) {
      char path[MAX_PATH] = {0};
      WideCharToMultiByte(CP_UTF8, 0, selected_path.c_str(), -1, path,
                          _countof(path), NULL, NULL);
@@ -1250,7 +1258,7 @@ index 078dbb06850dd0f305e6d9b6014f0e62d8c756d0..691003877f484b44210881efe617db19
      if (result < 0) {
        MSG_BY_IDS(IDS_STR_ERR_UNKNOWN, IDS_STR_SAD, MB_OK | MB_ICONERROR);
      } else if (_waccess(selected_path.c_str(), 0) != 0) {
-@@ -229,15 +287,13 @@ LRESULT DictManagementDialog::OnImport(WORD, WORD code, HWND, BOOL&) {
+@@ -229,15 +295,13 @@ LRESULT DictManagementDialog::OnImport(WORD, WORD code, HWND, BOOL&) {
    const std::wstring txt_files_name = txt_files_str + L" (*.txt)";
    const std::wstring all_files_name = all_files_str;
  
@@ -1269,7 +1277,7 @@ index 078dbb06850dd0f305e6d9b6014f0e62d8c756d0..691003877f484b44210881efe617db19
    file_name += L"_export.txt";
  
    COMDLG_FILTERSPEC filter[2] = {{txt_files_name.c_str(), L"*.txt"},
-@@ -250,7 +306,7 @@ LRESULT DictManagementDialog::OnImport(WORD, WORD code, HWND, BOOL&) {
+@@ -250,7 +314,7 @@ LRESULT DictManagementDialog::OnImport(WORD, WORD code, HWND, BOOL&) {
      char path[MAX_PATH] = {0};
      WideCharToMultiByte(CP_UTF8, 0, selected_path.c_str(), -1, path,
                          _countof(path), NULL, NULL);
@@ -1278,7 +1286,7 @@ index 078dbb06850dd0f305e6d9b6014f0e62d8c756d0..691003877f484b44210881efe617db19
      if (result < 0) {
        MSG_BY_IDS(IDS_STR_ERR_UNKNOWN, IDS_STR_SAD, MB_OK | MB_ICONERROR);
      } else {
-@@ -264,10 +320,6 @@ LRESULT DictManagementDialog::OnImport(WORD, WORD code, HWND, BOOL&) {
+@@ -264,10 +328,6 @@ LRESULT DictManagementDialog::OnImport(WORD, WORD code, HWND, BOOL&) {
  }
  
  LRESULT DictManagementDialog::OnUserDictListSelChange(WORD, WORD, HWND, BOOL&) {
@@ -1291,10 +1299,10 @@ index 078dbb06850dd0f305e6d9b6014f0e62d8c756d0..691003877f484b44210881efe617db19
    return 0;
  }
 diff --git a/WeaselDeployer/DictManagementDialog.h b/WeaselDeployer/DictManagementDialog.h
-index edb8786564b62007157c0b45c9ecd01c6a625224..2da1c74a994183f8c843081d5aab0b2874dd87e6 100644
+index edb8786564b62007157c0b45c9ecd01c6a625224..8369285d12afe2146a6458f83847ab521d511660 100644
 --- a/WeaselDeployer/DictManagementDialog.h
 +++ b/WeaselDeployer/DictManagementDialog.h
-@@ -3,6 +3,15 @@
+@@ -3,6 +3,16 @@
  #include "resource.h"
  
  #include <rime_levers_api.h>
@@ -1306,11 +1314,12 @@ index edb8786564b62007157c0b45c9ecd01c6a625224..2da1c74a994183f8c843081d5aab0b28
 +  std::string display_name;
 +  unsigned group;
 +  UINT description_id;
++  UINT display_name_id = 0;
 +};
  
  class DictManagementDialog : public CDialogImpl<DictManagementDialog> {
   public:
-@@ -31,8 +40,12 @@ class DictManagementDialog : public CDialogImpl<DictManagementDialog> {
+@@ -31,8 +41,12 @@ class DictManagementDialog : public CDialogImpl<DictManagementDialog> {
    LRESULT OnUserDictListSelChange(WORD, WORD, HWND, BOOL&);
  
    void Populate();
@@ -1346,10 +1355,10 @@ index 587cbc714149302897dfebe179804fba7131f1bc..48cbd11eb79476e04cb445f40667902b
    if (ret == ERROR_SUCCESS) {
      WCHAR value[MAX_PATH];
 diff --git a/WeaselDeployer/UIStyleSettings.cpp b/WeaselDeployer/UIStyleSettings.cpp
-index 22e7380a70240b15fbf0406243d8daa5fc5b0064..1e05404ce1c401c5d1f985600344cb8cdcf41784 100644
+index 22e7380a70240b15fbf0406243d8daa5fc5b0064..6a8adf774d1c024c7a962360035c82d434e5b740 100644
 --- a/WeaselDeployer/UIStyleSettings.cpp
 +++ b/WeaselDeployer/UIStyleSettings.cpp
-@@ -1,7 +1,38 @@
+@@ -1,7 +1,39 @@
  #include "stdafx.h"
  #include <WeaselUtility.h>
 +#include <dwrite.h>
@@ -1363,6 +1372,7 @@ index 22e7380a70240b15fbf0406243d8daa5fc5b0064..1e05404ce1c401c5d1f985600344cb8c
 +constexpr const char* kCandidateFontFamilies[] = {
 +    "Noto Sans CJK TC", "Noto Sans CJK HK", "Noto Sans CJK SC"};
 +constexpr const char* kCandidateFont = "style/font_face";
++constexpr const char* kDefaultCandidateFont = "Microsoft YaHei";
 +
 +std::string FontSetting(RimeConfig* config, const char* key) {
 +  const char* value = rime_get_api()->config_get_cstring(config, key);
@@ -1388,7 +1398,43 @@ index 22e7380a70240b15fbf0406243d8daa5fc5b0064..1e05404ce1c401c5d1f985600344cb8c
  UIStyleSettings::UIStyleSettings() {
    api_ = (RimeLeversApi*)rime_get_api()->find_module("levers")->get_api();
    settings_ = api_->custom_settings_init("weasel", "Weasel::UIStyleSettings");
-@@ -73,3 +104,57 @@ bool UIStyleSettings::SelectColorScheme(const std::string& color_scheme_id) {
+@@ -47,15 +79,28 @@ static inline bool IfFileExist(std::string filename) {
+ 
+ // get preview image from user dir first, then shared_dir
+ std::string UIStyleSettings::GetColorSchemePreview(
+-    const std::string& color_scheme_id) {
++    const std::string& color_scheme_id,
++    const std::string& candidate_font) {
+   std::string shared_dir = rime_get_api()->get_shared_data_dir();
+   std::string user_dir = rime_get_api()->get_user_data_dir();
+-  std::string filename =
+-      user_dir + "\\preview\\color_scheme_" + color_scheme_id + ".png";
+-  if (IfFileExist(filename))
+-    return filename;
+-  else
+-    return (shared_dir + "\\preview\\color_scheme_" + color_scheme_id + ".png");
++  std::string suffix;
++  const auto family = PrimaryFontFamily(candidate_font);
++  if (candidate_font.empty())
++    suffix = "_default";
++  else if (family == "Noto Sans CJK SC")
++    suffix = "_sc";
++  else if (family == "Noto Sans CJK TC")
++    suffix = "_tc";
++  else if (family == "Noto Sans CJK HK")
++    suffix = "_hk";
++  const std::string stem = "\\preview\\color_scheme_" + color_scheme_id;
++  for (const auto& directory : {user_dir, shared_dir}) {
++    if (!suffix.empty() && IfFileExist(directory + stem + suffix + ".png"))
++      return directory + stem + suffix + ".png";
++    if (IfFileExist(directory + stem + ".png"))
++      return directory + stem + ".png";
++  }
++  return shared_dir + stem + ".png";
+ }
+ 
+ std::string UIStyleSettings::GetActiveColorScheme() {
+@@ -73,3 +118,64 @@ bool UIStyleSettings::SelectColorScheme(const std::string& color_scheme_id) {
                           color_scheme_id.c_str());
    return true;
  }
@@ -1420,7 +1466,11 @@ index 22e7380a70240b15fbf0406243d8daa5fc5b0064..1e05404ce1c401c5d1f985600344cb8c
 +std::string UIStyleSettings::GetActiveCandidateFont() {
 +  RimeConfig config = {0};
 +  api_->settings_get_config(settings_, &config);
-+  return PrimaryFontFamily(FontSetting(&config, kCandidateFont));
++  const auto stack = FontSetting(&config, kCandidateFont);
++  if (stack == kDefaultCandidateFont)
++    return std::string();
++  const auto primary = PrimaryFontFamily(stack);
++  return primary == kDefaultCandidateFont ? stack : primary;
 +}
 +
 +bool UIStyleSettings::SelectCandidateFont(const std::string& family) {
@@ -1428,10 +1478,11 @@ index 22e7380a70240b15fbf0406243d8daa5fc5b0064..1e05404ce1c401c5d1f985600344cb8c
 +  api_->settings_get_config(settings_, &config);
 +  const auto active_stack = FontSetting(&config, kCandidateFont);
 +  const auto active_family = PrimaryFontFamily(active_stack);
-+  if (family.empty() || family == active_family)
++  const auto replacement = family.empty()
++                               ? std::string(kDefaultCandidateFont)
++                               : ReplacePrimaryFont(active_stack, family);
++  if (replacement == active_stack)
 +    return true;
-+
-+  const auto replacement = ReplacePrimaryFont(active_stack, family);
 +  if (!api_->customize_string(settings_, kCandidateFont, replacement.c_str()))
 +    return false;
 +
@@ -1439,7 +1490,9 @@ index 22e7380a70240b15fbf0406243d8daa5fc5b0064..1e05404ce1c401c5d1f985600344cb8c
 +  for (const char* key : {"style/label_font_face", "style/comment_font_face"}) {
 +    const auto stack = FontSetting(&config, key);
 +    if (!stack.empty() && PrimaryFontFamily(stack) == active_family) {
-+      const auto adjusted = ReplacePrimaryFont(stack, family);
++    const auto adjusted = family.empty()
++                              ? std::string(kDefaultCandidateFont)
++                              : ReplacePrimaryFont(stack, family);
 +      if (!api_->customize_string(settings_, key, adjusted.c_str()))
 +        return false;
 +    }
@@ -1447,11 +1500,16 @@ index 22e7380a70240b15fbf0406243d8daa5fc5b0064..1e05404ce1c401c5d1f985600344cb8c
 +  return true;
 +}
 diff --git a/WeaselDeployer/UIStyleSettings.h b/WeaselDeployer/UIStyleSettings.h
-index f229eecb3e03de91bca682f82aa4c7ac25d8258a..e512226cfb1bc5a2457f61df3022abc3399da2f1 100644
+index f229eecb3e03de91bca682f82aa4c7ac25d8258a..81c806a216a1dd63cb3db3bdafb1aaa5ad33b2b5 100644
 --- a/WeaselDeployer/UIStyleSettings.h
 +++ b/WeaselDeployer/UIStyleSettings.h
-@@ -18,6 +18,9 @@ class UIStyleSettings {
-   std::string GetColorSchemePreview(const std::string& color_scheme_id);
+@@ -15,9 +15,13 @@ class UIStyleSettings {
+   UIStyleSettings();
+ 
+   bool GetPresetColorSchemes(std::vector<ColorSchemeInfo>* result);
+-  std::string GetColorSchemePreview(const std::string& color_scheme_id);
++  std::string GetColorSchemePreview(const std::string& color_scheme_id,
++                                   const std::string& candidate_font = "");
    std::string GetActiveColorScheme();
    bool SelectColorScheme(const std::string& color_scheme_id);
 +  std::vector<std::string> GetInstalledCandidateFonts() const;
@@ -1461,10 +1519,10 @@ index f229eecb3e03de91bca682f82aa4c7ac25d8258a..e512226cfb1bc5a2457f61df3022abc3
    RimeCustomSettings* settings() { return settings_; }
  
 diff --git a/WeaselDeployer/UIStyleSettingsDialog.cpp b/WeaselDeployer/UIStyleSettingsDialog.cpp
-index b00e82de96f97cabeecd35e9f2c7e03a84c46503..9bab42f6ba031a27560f38b54752f9b99b4554b7 100644
+index b00e82de96f97cabeecd35e9f2c7e03a84c46503..4bdc90a2e4d53edab079d0883107aa596739c905 100644
 --- a/WeaselDeployer/UIStyleSettingsDialog.cpp
 +++ b/WeaselDeployer/UIStyleSettingsDialog.cpp
-@@ -2,7 +2,9 @@
+@@ -2,10 +2,15 @@
  #include "UIStyleSettingsDialog.h"
  #include "UIStyleSettings.h"
  #include "Configurator.h"
@@ -1473,29 +1531,46 @@ index b00e82de96f97cabeecd35e9f2c7e03a84c46503..9bab42f6ba031a27560f38b54752f9b9
 +#include <algorithm>
  
  UIStyleSettingsDialog::UIStyleSettingsDialog(UIStyleSettings* settings)
-     : settings_(settings), loaded_(false) {}
-@@ -28,6 +30,20 @@ void UIStyleSettingsDialog::Populate() {
+-    : settings_(settings), loaded_(false) {}
++    : settings_(settings),
++      loaded_(false),
++      font_changed_(false),
++      initial_font_index_(-1) {}
+ 
+ UIStyleSettingsDialog::~UIStyleSettingsDialog() {
+   image_.Destroy();
+@@ -26,16 +31,36 @@ void UIStyleSettingsDialog::Populate() {
+   }
+   if (active_index >= 0) {
      color_schemes_.SetCurSel(active_index);
-     Preview(active_index);
+-    Preview(active_index);
    }
 +  auto active_font = settings_->GetActiveCandidateFont();
 +  fonts_ = settings_->GetInstalledCandidateFonts();
++  fonts_.insert(fonts_.begin(), std::string());
 +  if (!active_font.empty() &&
 +      std::find(fonts_.begin(), fonts_.end(), active_font) == fonts_.end())
-+    fonts_.insert(fonts_.begin(), active_font);
++    fonts_.insert(fonts_.begin() + 1, active_font);
 +  int active_font_index = -1;
 +  for (size_t i = 0; i < fonts_.size(); ++i) {
-+    select_font_.AddString(u8tow(fonts_[i]).c_str());
++    CString label;
++    if (fonts_[i].empty())
++      label.LoadStringW(IDS_FONT_DEFAULT);
++    else
++      label = u8tow(fonts_[i]).c_str();
++    select_font_.AddString(label);
 +    if (fonts_[i] == active_font)
 +      active_font_index = static_cast<int>(i);
 +  }
 +  select_font_.SetCurSel(active_font_index);
-+  select_font_.EnableWindow(fonts_.size() > 1 ||
-+                            (!fonts_.empty() && active_font.empty()));
++  initial_font_index_ = active_font_index;
++  select_font_.EnableWindow(fonts_.size() > 1);
    loaded_ = true;
++  if (active_index >= 0)
++    Preview(active_index);
  }
  
-@@ -35,7 +51,6 @@ LRESULT UIStyleSettingsDialog::OnInitDialog(UINT, WPARAM, LPARAM, BOOL&) {
+ LRESULT UIStyleSettingsDialog::OnInitDialog(UINT, WPARAM, LPARAM, BOOL&) {
    color_schemes_.Attach(GetDlgItem(IDC_COLOR_SCHEME));
    preview_.Attach(GetDlgItem(IDC_PREVIEW));
    select_font_.Attach(GetDlgItem(IDC_SELECT_FONT));
@@ -1503,12 +1578,21 @@ index b00e82de96f97cabeecd35e9f2c7e03a84c46503..9bab42f6ba031a27560f38b54752f9b9
  
    Populate();
  
-@@ -50,6 +65,12 @@ LRESULT UIStyleSettingsDialog::OnClose(UINT, WPARAM, LPARAM, BOOL&) {
+@@ -49,7 +74,21 @@ LRESULT UIStyleSettingsDialog::OnClose(UINT, WPARAM, LPARAM, BOOL&) {
+   return 0;
  }
  
++LRESULT UIStyleSettingsDialog::OnDestroy(UINT, WPARAM, LPARAM, BOOL&) {
++  const HBITMAP previous = preview_.SetBitmap(NULL);
++  if (previous && previous != static_cast<HBITMAP>(image_))
++    DeleteObject(previous);
++  image_.Destroy();
++  return 0;
++}
++
  LRESULT UIStyleSettingsDialog::OnOK(WORD, WORD code, HWND, BOOL&) {
 +  int index = select_font_.GetCurSel();
-+  if (index >= 0 && index < static_cast<int>(fonts_.size()) &&
++  if (font_changed_ && index >= 0 && index < static_cast<int>(fonts_.size()) &&
 +      !settings_->SelectCandidateFont(fonts_[index])) {
 +    MSG_BY_IDS(IDS_STR_ERR_UNKNOWN, IDS_STR_WEASEL, MB_OK | MB_ICONEXCLAMATION);
 +    return 0;
@@ -1516,13 +1600,76 @@ index b00e82de96f97cabeecd35e9f2c7e03a84c46503..9bab42f6ba031a27560f38b54752f9b9
    EndDialog(code);
    return 0;
  }
+@@ -63,17 +102,34 @@ LRESULT UIStyleSettingsDialog::OnColorSchemeSelChange(WORD, WORD, HWND, BOOL&) {
+   return 0;
+ }
+ 
++LRESULT UIStyleSettingsDialog::OnCandidateFontSelChange(WORD, WORD, HWND, BOOL&) {
++  if (loaded_) {
++    font_changed_ = select_font_.GetCurSel() != initial_font_index_;
++    Preview(color_schemes_.GetCurSel());
++  }
++  return 0;
++}
++
+ void UIStyleSettingsDialog::Preview(int index) {
+   if (index < 0 || index >= (int)preset_.size())
+     return;
+-  const std::string file_path(
+-      settings_->GetColorSchemePreview(preset_[index].color_scheme_id));
++  const int font_index = select_font_.GetCurSel();
++  const std::string family =
++      font_index >= 0 && font_index < static_cast<int>(fonts_.size())
++          ? fonts_[font_index]
++          : std::string();
++  const std::string file_path(settings_->GetColorSchemePreview(
++      preset_[index].color_scheme_id, family));
+   if (file_path.empty())
+     return;
+-  image_.Destroy();
++  CImage next_image;
+   // it is from ansi coding, not utf8
+-  image_.Load(acptow(file_path).c_str());
+-  if (!image_.IsNull()) {
+-    preview_.SetBitmap(image_);
++  next_image.Load(acptow(file_path).c_str());
++  if (!next_image.IsNull()) {
++    const HBITMAP previous = preview_.SetBitmap(next_image);
++    if (previous && previous != static_cast<HBITMAP>(image_))
++      DeleteObject(previous);
++    image_.Destroy();
++    image_.Attach(next_image.Detach());
+   }
+ }
 diff --git a/WeaselDeployer/UIStyleSettingsDialog.h b/WeaselDeployer/UIStyleSettingsDialog.h
-index e81aad77b5e2fdd662a7281e9bcf4a8677a0b9c8..644364ffa7fb85221693ea93127ca2e71fc33fab 100644
+index e81aad77b5e2fdd662a7281e9bcf4a8677a0b9c8..99152a10ff742f186d95fb8db45c608563d8a6c5 100644
 --- a/WeaselDeployer/UIStyleSettingsDialog.h
 +++ b/WeaselDeployer/UIStyleSettingsDialog.h
-@@ -29,9 +29,10 @@ class UIStyleSettingsDialog : public CDialogImpl<UIStyleSettingsDialog> {
+@@ -13,25 +13,32 @@ class UIStyleSettingsDialog : public CDialogImpl<UIStyleSettingsDialog> {
+  protected:
+   BEGIN_MSG_MAP(UIStyleSettingsDialog)
+   MESSAGE_HANDLER(WM_INITDIALOG, OnInitDialog)
++  MESSAGE_HANDLER(WM_DESTROY, OnDestroy)
+   MESSAGE_HANDLER(WM_CLOSE, OnClose)
+   COMMAND_ID_HANDLER(IDOK, OnOK)
+   COMMAND_HANDLER(IDC_COLOR_SCHEME, LBN_SELCHANGE, OnColorSchemeSelChange)
++  COMMAND_HANDLER(IDC_SELECT_FONT, CBN_SELCHANGE, OnCandidateFontSelChange)
+   END_MSG_MAP()
+ 
+   LRESULT OnInitDialog(UINT, WPARAM, LPARAM, BOOL&);
++  LRESULT OnDestroy(UINT, WPARAM, LPARAM, BOOL&);
+   LRESULT OnClose(UINT, WPARAM, LPARAM, BOOL&);
+   LRESULT OnOK(WORD, WORD code, HWND, BOOL&);
+   LRESULT OnColorSchemeSelChange(WORD, WORD, HWND, BOOL&);
++  LRESULT OnCandidateFontSelChange(WORD, WORD, HWND, BOOL&);
+ 
+   void Populate();
+   void Preview(int index);
+ 
    UIStyleSettings* settings_;
    bool loaded_;
++  bool font_changed_;
++  int initial_font_index_;
    std::vector<ColorSchemeInfo> preset_;
 +  std::vector<std::string> fonts_;
  
@@ -1586,53 +1733,56 @@ index a57801435a7cd33247884614f650a230e7b9f0a3..dc18c3b83e4c069a38889df86c1bf9df
      return 0;
    }
 diff --git a/WeaselDeployer/WeaselDeployer.rc b/WeaselDeployer/WeaselDeployer.rc
-index d8b9e1769bd38aeb087a695fae53d90e5eb6a02b..1c308203c68773e0588c49ca829e23523d1cc306 100644
+index d8b9e1769bd38aeb087a695fae53d90e5eb6a02b..79e279b8a918bd7b5ad3ad4570fc4a18b6b5dbb8 100644
 GIT binary patch
-delta 4190
-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
+delta 4755
+zcmc&%YfO_@7(PWDf|8*@ZqE6EyWqG848{9~rCb~q+OJ5V+O9}}a=#YXG^in7S~l5^
+z5uJ<tF^h|fW9gsGAKP5AnV2!nvKW7C$y|cbCF-V2G}$G4-t)DTLW`)=rTO|@&ig*+
+zy`AU0=cBJfF5e0nc{gnKN#n<R=5tl}68_!5=}>xeH_kZ|CZ2d|)Q`%;U{$fZa{m5M
+zMc~@P!y(F3f815iQ|qEFA^h{$q=@*^@WG)s%1v?!|1vIVSq{r$sca=%f&W!3l0`7d
+z^HZ}DwwZ0jKV3$ytBdFN><Kv}nF)>6o_h}NIYM6zNtsz#9@9gk6!#KV&a|wU6)~Bg
+zU90Bnp3UMl_1W$Ob(Bi6@Y5yPs@bavjPKUC_|2GkJX;gZQ=8*-1e^);lzRruOT{#q
+z_?N{r8ca~c42%rb;!cwm!}uMz6bY>`L(eoUACgA?N$hg>p~UD&{+uo<d?PEv$6}Vp
+zKTPlS|Ki@J8&bK?WaO(NDdN`#+xrfgle?05qMX9lWIe-oY>D85hB&^#8N)O7uZ)yg
+zC$q6e{H)Bz+xA<zxh#UGzg#(K#CpIaGAfYVQno|IFP4Y$lg3pk<ck_!SXhDZqznPH
+zuw3!2h;4xn5=&yTWwSns>%tbM1(q)aiVTzzU{nZ=z4C2YXuKF$qXg20K-UXthwc);
+z5*fR~C!2>c8CF<uX@yLhcAst3b;EUD-f4(5yzu5-x!+M^dR?2&ukhIQfiyJ}GzSd7
+z@7ZTdtbf|lrc3VXchK9YtDtclAvX}hCPah$Z)3}u15abMzql0rG20DSQDeF3ygcf<
+zU>ip%4}|g>;;F@Dfya~MbltY3R$}d}g*73G^~{c$3Q8jl;e*$!6#qtCWftM190+?e
+z5RHgcUO@EQ+y3mWKHTr<KhoTHw`q=H)HSUCd)FjfO(5JU`O%V(t+wXv+?<L?P(>tn
+zMGq!yeW~^vSBhR(sPiGou&EfAQd{0^>S1juGG8Rt4n>yyBxG*BC6Cq4?Iz3tgVA)d
+zRDx6<f9GKQgc|kMST3qn1CJpg^5c_7EhOd(bgF5ZHy@ENgDnOjdHMJWm#9k~ZCbF@
+zg0EDAddQG9*Bb8(Nyvc2GRkLl{#A8nNXWk8^ULeWWX%Zes^-sZg?0Uo-;A>cNOQnI
+zXi8<AeSaYzsY>OQ^P~B_1<CGzR#bXO)4ayuCCDB@kUzZl{}80Rran*gR8)rG`VTf7
+z@(}o|xxadzGV-1<WzNgL6yZ;h0V(q*#XkP3p>#$BS$!XJ3{knamXD|cZGl%SzVd8=
+zr>)~#pu|geJ_wiIbUY}Rb~ii@E;T!kJH1?L+1u~vF@4|n@LXzkR#?UnX2_*gPA``p
+zcP6zEmztdyY~v{Z8JG49o~u^;W60E_a%q%@OU+J&OUd4G+!=By>6{xlYC9#klq$l@
+zrAF8D56z|ICn2Bm<I*gh(exl(>XW}8mqr~)b3R@!ZQu2U)5oPsWq?cFBUPbc)K)H1
+zW7BMA)z~(x@kHH_#A>jaHnUEi*tM9C#Du0~qLq8H-DZ;8P=9ewSSI?$jG!H6j_52i
+zA)$1b)Yv{shxu(sanuaxG6mbs-k;<32w9T|SI5LAl1XSI*UzZg9Gl9cu|ZII+kv$_
+zJ^K$3>uFU`p(|XRHiC`2_q`Q4FX-U#(cM9j-6_WkLiq{fx=i0bK3%t)%eEsXc659;
+z>MbX9r4zNL_Hu>Lp=h?CpX(*fAl<TmZ&d<~I%J}qG%9=+`Z^772dsvi9i?r<EL7;-
+zVy0@mNuFgOVbm(}T8(cVtQXH!kZNQd)JgRPLicvb8tB$Sl6<I}gic?q@XCf|CIPV*
+z|C6mz7NUfH${(i*^H&R-(>XsF8_))CpS=mQv<hFmJ~oIq>Wd|0r4Cqj+-a2jn`)J}
+zQ*VT13u|Cqz)MGGH-5zA!w2UEv|+j~T@Nf@f3DbMon(;&YbN9$qcxtsUV^<8J&G;z
+z%%muoZbRCs$S7FBlQVsL?^kes6DlP|2MZevZ=q5ascRKql-VVW*jbMlNn_nH5Nj7g
+zHTXni+C{=a>&Cx|bD>EzOfC`qTH&pPOYywf<ER7~LbjrYtRe{MkW!18$W+ia-n+zz
+z1Rct9Gi!+!pNZoY5j#R_=NH~yywq3FK@S}KSi@pFCF}miNSLPuk`y0WVB`*&&?*dU
+z#h9}2yru44>{jHE<UI$L34{^sz(OZ?3im`!EdOQG9bNJ;M-4Q(;7KQu1s!45PCkfi
+z1TI-hS*M*)InEfM+b-slZ~&vK>qP{uhXYfB|DnhL6e1mpgGUqZKFXOo<J3s|mI5tE
+eiW{XHRJ8y=9b#ouq0+ie=gMg*!96f6&H5K03|(IU
 
-delta 917
-zcmccjl4;FRrVW$W+4*Ds6ur(CoSew1I4NNb8-%+#gJTyvls#EZ;0{cfP4Ef}jD1gZ
-z8WW6NA@K~(PLd8|nw%r4B)G48R&;oDu)iJy2r4n?OtzO(p1h}2V)7alj>!wEl_v8^
-zi7*;Y-d(D{na@*z5oTDJf(fInA%iIp>M-~)I57k>!~?NELl8p<g91YhgTmy6GMSV8
-zBvdwEQ4->1G?@Hfzmm~l^F)KYOneacznD-|KP671bh3h}&g5mrGLz33OH6(esWn-^
-zM1eb;A(bJKp%_T!Oy)PWom^$ofhHCWbqY|s)nuP(Unb8nE1A4%wbWz>LAA*rgfuoc
-z2*xmOUS{(T?&%fwArMdNc7Z&7WflQXZ{A&M&&VNQ01fUrE>qw}nYh1#c|*`Zqtq-Z
-zu4{6f!i34Yyyg%UDoUH@`CQ{d3YF=MlYJ&lnd}v{3F@s$(E$VkL~pWLOcb6#+3YiI
-z5fdlO`RIvfL&70=;wj63C7#J_f<BX%**E|L&x>*MzdS!yP%7aM2F61PFj~_X@)`0N
-zN+t(Z3s3ftlR`=-8Jk~~c5%oWF&HwK5J(Y9oA=fG2%z|Vv(KawMqZ>i2PPj-tP@HV
-zucoX(4*+ETX2EH9nUDo0Ut9pnK*&OyU(V#^K@s3x*2st=uynaQ3n*o6-nUVK8319A
-BGco`G
+delta 928
+zcmccdo@vcdrVW$W+4*Ds6ur(CoSew1IC%&A8a4=ja|XvQb|`zYn!p_xQzuJd^1Lll
+zn;isavA~qx6P?BcV^>H#gR_&Q!<Z)j^H37p*F7sbJUZB4j{yXg7<492EK{DW=OQtA
+zjS9!)I!`l3!^yfX`jcm9$xTj>|HKD%l7U94dD7YLN!}ACzf+hqS)qYN(v(4m!H2<#
+zA($Z^i2WIY7(y5n7-|?4CL8*6Z@#1?!pmqd`M-W8qrv8h26vgDCcT(YR6iw7qjYjZ
+zw8`Xk#v+pqVk9QB7>P`tU@SISz(j#NoFSDVk)aq!=1g7~lRbHbNferx?c@!ya<D*9
+zFtwV@6Zd8E9J7+mJFE}E1ES6$1ma=cE|7<>%);a0&AKj*jIdBEa-9MXH7<`=aP|)`
+z6GkHZUE+I<3-0g4N!m=46{0sG`Tb-f(SAQlz~7sB;+8O>rx_kdgz@_6r%6tjoW~Ke
+z`9Wd^JoWfwqNkq84uV3P74mPefl`NLFfiClfU%gykk60@WMK`o&3fgZIAo0&3>i%D
+zCV{L*9|5GG;AZAUid$eZSr}tGc}+A25vd??@~&wu*g^wEY-5ZrFlF!ogJlsDs>H0b
+i$o$PyXY=x)2<%+m$cQ2kxYC_v@(ydM%{#UzFarQHJ2|BQ
 
 diff --git a/WeaselDeployer/WeaselDeployer.vcxproj b/WeaselDeployer/WeaselDeployer.vcxproj
 index 88fbaa2fecc2c2db12ea51784657527cfc5d6651..02e9d401539bc04e8fdd42fed9a18162479e028e 100644
@@ -2100,10 +2250,10 @@ index 88fbaa2fecc2c2db12ea51784657527cfc5d6651..02e9d401539bc04e8fdd42fed9a18162
 +  </ImportGroup>
 +</Project>
 diff --git a/WeaselDeployer/resource.h b/WeaselDeployer/resource.h
-index 25bc31ab5d44218ea0ade8aa9448d49826ba7d01..4582bbd99452c06ce7e42ce72414e5fb410e3311 100644
+index 25bc31ab5d44218ea0ade8aa9448d49826ba7d01..518b4e09a54f9aef49a913a304f2ce42b97e63a4 100644
 --- a/WeaselDeployer/resource.h
 +++ b/WeaselDeployer/resource.h
-@@ -38,6 +38,17 @@
+@@ -38,6 +38,20 @@
  #define IDS_STR_DICT_SNAPSHOT           156
  #define IDS_STR_KCSS_DICT_SNAPSHOT      157
  #define IDS_STR_HELP                    158
@@ -2118,10 +2268,13 @@ index 25bc31ab5d44218ea0ade8aa9448d49826ba7d01..4582bbd99452c06ce7e42ce72414e5fb
 +#define IDS_DICT_DESC_OTHER                 167
 +#define IDS_DICT_SELECT_DESCRIPTION         168
 +#define IDS_DICT_STORAGE_ID                 169
++#define IDS_FONT_DEFAULT                    170
++#define IDS_DICT_NAME_TERRA                 171
++#define IDS_DICT_DESC_TERRA                 172
  #define IDC_SCHEMA_LIST                 1000
  #define IDC_SCHEMA_DESCRIPTION          1001
  #define IDC_GET_SCHEMATA                1002
-@@ -50,6 +61,7 @@
+@@ -50,6 +64,7 @@
  #define IDC_RESTORE                     1009
  #define IDC_EXPORT                      1010
  #define IDC_IMPORT                      1011
@@ -2129,7 +2282,7 @@ index 25bc31ab5d44218ea0ade8aa9448d49826ba7d01..4582bbd99452c06ce7e42ce72414e5fb
  #define IDC_STATIC1                     -1
  
  // Next default values for new objects
-@@ -59,7 +71,7 @@
+@@ -59,7 +74,7 @@
  #define _APS_NO_MFC                     1
  #define _APS_NEXT_RESOURCE_VALUE        135
  #define _APS_NEXT_COMMAND_VALUE         32771

@@ -5,7 +5,7 @@ import argparse
 import ctypes as c
 from ctypes import wintypes as w
 from dataclasses import asdict, dataclass
-from hashlib import file_digest
+from hashlib import file_digest, sha256
 import json
 import os
 from pathlib import Path
@@ -20,10 +20,13 @@ FOCUS_IN, MOVE_CARET = 0x8006, 0x8008
 FRAME_BYTES = 64 * 1024  # PipeChannel default, including the native header.
 SCHEMA_LIST, THEME_LIST, FONT_COMBO, PREVIEW = 1000, 1004, 1005, 1006
 LB_GETCURSEL, LB_GETTEXT, LB_GETTEXTLEN = 0x0188, 0x0189, 0x018A
+LB_GETCOUNT, LB_SETCURSEL = 0x018B, 0x0186
 STM_GETIMAGE, IMAGE_BITMAP = 0x0173, 0
 WM_COMMAND, IDOK = 0x0111, 1
+WM_CLOSE = 0x0010
 WM_KEYDOWN, WM_KEYUP, WM_NEXTDLGCTL = 0x0100, 0x0101, 0x0028
 VK_HOME, VK_DOWN = 0x24, 0x28
+DEFAULT_LABELS = {'Default', '默认', '預設'}
 CB_GETCOUNT, CB_GETCURSEL, CB_GETLBTEXT, CB_GETLBTEXTLEN = (
     0x0146, 0x0147, 0x0148, 0x0149,
 )
@@ -195,6 +198,10 @@ class SettingsDialog:
         if not self.post_message(window, WM_COMMAND, IDOK, 0):
             raise c.WinError(c.get_last_error())
 
+    def cancel(self, window):
+        if not self.post_message(window, WM_CLOSE, 0, 0):
+            raise c.WinError(c.get_last_error())
+
     def combo_items(self, combo):
         count = self.send(combo, CB_GETCOUNT)
         require(3 <= count <= 10, 'Unexpected native font choice count')
@@ -238,6 +245,115 @@ class SettingsDialog:
         report['nativeSettingsThemeName'] = text.value
         report['nativeSettingsPreviewBitmapPresent'] = True
 
+    def preview_fingerprint(self, appearance):
+        """Read back this CI control with ordinary PrintWindow, without injection."""
+        preview = self.get_child(appearance, PREVIEW)
+        handle = self.send(preview, STM_GETIMAGE, IMAGE_BITMAP)
+        require(handle, 'The selected font has no native preview bitmap')
+        user = c.WinDLL('user32', use_last_error=True)
+        gdi = c.WinDLL('gdi32', use_last_error=True)
+        rect = w.RECT()
+        get_rect = win_function(user, 'GetClientRect', w.BOOL, w.HWND, c.POINTER(w.RECT))
+        require(get_rect(preview, c.byref(rect)), 'Could not read the preview dimensions')
+        width, height = rect.right - rect.left, rect.bottom - rect.top
+        require(0 < width < 2048 and 0 < height < 2048, 'Invalid preview control dimensions')
+        get_dc = win_function(user, 'GetDC', w.HDC, w.HWND)
+        release_dc = win_function(user, 'ReleaseDC', c.c_int, w.HWND, w.HDC)
+        create_dc = win_function(gdi, 'CreateCompatibleDC', w.HDC, w.HDC)
+        create_bitmap = win_function(gdi, 'CreateCompatibleBitmap', w.HBITMAP,
+                                     w.HDC, c.c_int, c.c_int)
+        select = win_function(gdi, 'SelectObject', w.HGDIOBJ, w.HDC, w.HGDIOBJ)
+        delete_dc = win_function(gdi, 'DeleteDC', w.BOOL, w.HDC)
+        delete_bitmap = win_function(gdi, 'DeleteObject', w.BOOL, w.HGDIOBJ)
+        print_window = win_function(user, 'PrintWindow', w.BOOL, w.HWND, w.HDC, w.UINT)
+        get_bits = win_function(gdi, 'GetDIBits', c.c_int, w.HDC, w.HBITMAP,
+                                w.UINT, w.UINT, c.c_void_p, c.c_void_p, w.UINT)
+        screen = get_dc(None)
+        dc, bitmap, previous = None, None, None
+        try:
+            require(screen, 'Could not create the preview capture surface')
+            dc = create_dc(screen)
+            bitmap = create_bitmap(screen, width, height)
+            require(dc and bitmap, 'Could not allocate the preview capture surface')
+            previous = select(dc, bitmap)
+            require(previous, 'Could not select the preview capture bitmap')
+            require(print_window(preview, dc, 1), 'PrintWindow could not capture the native preview')
+            select(dc, previous)
+            previous = None
+            pixels = c.create_string_buffer(width * height * 4)
+            info = c.create_string_buffer(struct.pack(
+                '<IiiHHIIiiII', 40, width, -height, 1, 32, 0, len(pixels), 0, 0, 0, 0))
+            require(get_bits(dc, bitmap, 0, height, pixels, info, 0) == height,
+                    'Could not read back the native preview pixels')
+            raw = pixels.raw
+            colors = {raw[offset:offset + 3] for offset in range(0, len(raw), 4)}
+            require(len(colors) > 8, 'The native preview capture was blank or unrendered')
+            rgb = b''.join(raw[offset:offset + 3] for offset in range(0, len(raw), 4))
+            return handle, sha256(rgb).hexdigest()
+        finally:
+            if previous:
+                select(dc, previous)
+            if bitmap:
+                delete_bitmap(bitmap)
+            if dc:
+                delete_dc(dc)
+            if screen:
+                release_dc(None, screen)
+
+
+def font_item(items, family):
+    if family == 'Microsoft YaHei':
+        matches = [index for index, label in enumerate(items) if label in DEFAULT_LABELS]
+        require(len(matches) == 1, 'The native font choices have no unique localized Default')
+        return matches[0]
+    return items.index(family)
+
+
+def configuration_snapshot(profile):
+    paths = list(profile.glob('*.yaml')) + [profile / 'build/weasel.yaml']
+    return {str(path.relative_to(profile)): (digest(path), path.stat().st_mtime_ns)
+            for path in paths if path.is_file()}
+
+
+def preview_and_cancel(installation, profile, initial_font, report):
+    before = configuration_snapshot(profile)
+    deployer = installation / 'StellaeDeployer.exe'
+    with subprocess.Popen([str(deployer)], cwd=installation, stdout=subprocess.DEVNULL,
+                          stderr=subprocess.DEVNULL) as process:
+        try:
+            settings = SettingsDialog(process)
+            switcher, _ = settings.wait_for(SCHEMA_LIST)
+            settings.accept(switcher)
+            appearance, combo = settings.wait_for(FONT_COMBO)
+            settings.verify_theme_preview(appearance, report)
+            items = settings.combo_items(combo)
+            require(settings.send(combo, CB_GETCURSEL) == font_item(items, initial_font),
+                    'Preview browsing started with the wrong candidate font')
+            initial_handle, _ = settings.preview_fingerprint(appearance)
+            previous_handle = initial_handle
+            variants = {}
+            for family in ['Microsoft YaHei', 'Noto Sans CJK SC',
+                           'Noto Sans CJK TC', 'Noto Sans CJK HK']:
+                settings.select_font_by_keyboard(appearance, combo, font_item(items, family))
+                handle, fingerprint = settings.preview_fingerprint(appearance)
+                require(handle != previous_handle,
+                        'Changing the preview did not replace its native bitmap')
+                require(configuration_snapshot(profile) == before,
+                        'Browsing font previews wrote or deployed the appearance configuration')
+                variants[family] = fingerprint
+                previous_handle = handle
+            require(len(set(variants.values())) == 4,
+                    'The four font choices did not produce distinct rendered previews')
+            settings.cancel(appearance)
+            require(process.wait(timeout=30) == 0, 'Native preview settings did not cancel cleanly')
+            require(configuration_snapshot(profile) == before,
+                    'Cancelling the font preview changed configuration files')
+            report['previewVariants'] = variants
+            report['previewCancelPreservedConfiguration'] = True
+        finally:
+            if process.poll() is None:
+                process.kill()
+
 
 def apply_through_settings(installation, initial_font, replacement_font, report):
     deployer = installation / 'StellaeDeployer.exe'
@@ -257,10 +373,10 @@ def apply_through_settings(installation, initial_font, replacement_font, report)
             require(all(f'Noto Sans CJK {style}' in items for style in ('SC', 'TC', 'HK')),
                     'The native appearance settings did not offer all three installed families')
             current = settings.send(combo, CB_GETCURSEL)
-            require(0 <= current < len(items) and items[current] == initial_font,
+            require(0 <= current < len(items) and current == font_item(items, initial_font),
                     'The native appearance settings did not display the current candidate font')
             report['nativeSettingsInitialFont'] = items[current]
-            replacement = items.index(replacement_font)
+            replacement = font_item(items, replacement_font)
             settings.select_font_by_keyboard(appearance, combo, replacement)
             report['nativeSettingsSelectionMethod'] = 'keyboard-home-down'
             start = time.monotonic()
@@ -271,6 +387,79 @@ def apply_through_settings(installation, initial_font, replacement_font, report)
         finally:
             if process.poll() is None:
                 process.kill()
+
+
+def verify_custom_font_defaults(installation, profile, report):
+    """Use fixed CI-only custom values, then restore the fixture configuration."""
+    import yaml
+
+    custom = profile / 'weasel.custom.yaml'
+    original = custom.read_bytes()
+    custom_stack = 'Microsoft YaHei, Noto Sans CJK TC'
+    deployer = installation / 'StellaeDeployer.exe'
+
+    def compile_appearance():
+        subprocess.run([str(deployer), '/deploy-appearance'], cwd=installation,
+                       stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+                       check=True, timeout=90)
+
+    def style():
+        return yaml.safe_load((profile / 'build/weasel.yaml').read_text(encoding='utf-8-sig'))['style']
+
+    def configure(default):
+        with subprocess.Popen([str(deployer)], cwd=installation, stdout=subprocess.DEVNULL,
+                              stderr=subprocess.DEVNULL) as process:
+            try:
+                settings = SettingsDialog(process)
+                switcher, _ = settings.wait_for(SCHEMA_LIST)
+                settings.accept(switcher)
+                appearance, combo = settings.wait_for(FONT_COMBO)
+                items = settings.combo_items(combo)
+                require(settings.send(combo, CB_GETCURSEL) == items.index(custom_stack),
+                        'An explicit custom fallback stack was mislabeled as Default')
+                if default:
+                    settings.select_font_by_keyboard(appearance, combo,
+                                                     font_item(items, 'Microsoft YaHei'))
+                else:
+                    themes = settings.get_child(appearance, THEME_LIST)
+                    count = settings.send(themes, LB_GETCOUNT)
+                    require(count > 1, 'The fixture needs an unrelated theme choice')
+                    current = settings.send(themes, LB_GETCURSEL)
+                    selected = 0 if current != 0 else 1
+                    settings.send(themes, LB_SETCURSEL, selected)
+                    settings.send(appearance, WM_COMMAND, THEME_LIST | (1 << 16), themes)
+                settings.accept(appearance)
+                require(process.wait(timeout=90) == 0, 'The custom-font settings did not apply')
+            finally:
+                if process.poll() is None:
+                    process.kill()
+
+    try:
+        data = yaml.safe_load(original)
+        patch = data.setdefault('patch', {})
+        patch['style/font_face'] = custom_stack
+        patch['style/label_font_face'] = custom_stack
+        patch['style/comment_font_face'] = 'Consolas'
+        custom.write_text(yaml.safe_dump(data, allow_unicode=True, sort_keys=False), encoding='utf-8')
+        compile_appearance()
+        require(style()['font_face'] == custom_stack, 'The synthetic fallback fixture did not load')
+        configure(False)
+        unchanged = style()
+        require(unchanged['font_face'] == custom_stack and
+                unchanged['label_font_face'] == custom_stack and
+                unchanged['comment_font_face'] == 'Consolas',
+                'Saving an unrelated theme rewrote a custom font stack')
+        configure(True)
+        default = style()
+        require(default['font_face'] == 'Microsoft YaHei' and
+                default['label_font_face'] == 'Microsoft YaHei' and
+                default['comment_font_face'] == 'Consolas',
+                'Default did not reset inherited fonts while preserving a distinct custom font')
+        report['customStackPreservedByUnrelatedTheme'] = True
+        report['defaultClearedInheritedStackOnly'] = True
+    finally:
+        custom.write_bytes(original)
+        compile_appearance()
 
 
 def digest(path):
@@ -333,8 +522,27 @@ def validate(args, report):
         files_before = scheme_snapshot(installation, profile)
         appearance_before = digest(profile / 'build/weasel.yaml')
         offset = len(read_frames(trace))
+        report['phase'] = 'preview without applying, then cancel'
+        preview_and_cancel(installation, profile, initial_font, report)
+        unchanged = read_frames(trace)[-1]
+        require((unchanged.window, unchanged.composition, unchanged.selected,
+                 unchanged.count, unchanged.family) ==
+                (before.window, before.composition, before.selected, before.count, initial_font),
+                'Browsing or cancelling the preview changed the live font or draft')
+        report['previewCancelPreservedDraft'] = True
+
+        report['phase'] = 'apply Default through native settings'
+        default_report = {}
+        apply_through_settings(installation, initial_font, 'Microsoft YaHei', default_report)
+        default_frame, offset = wait_for_frame(trace, args.server_pid, offset, 'Microsoft YaHei')
+        require((before.window, before.composition, before.selected, before.count) ==
+                (default_frame.window, default_frame.composition,
+                 default_frame.selected, default_frame.count),
+                'Applying Default changed the live candidate window or draft')
+        report['defaultApply'] = default_report
+        report['defaultFrame'] = asdict(default_frame)
         report['phase'] = 'native appearance-only apply'
-        apply_through_settings(installation, initial_font, replacement_font, report)
+        apply_through_settings(installation, 'Microsoft YaHei', replacement_font, report)
 
         # Observe the real repaint before sending any further IPC request.
         report['phase'] = 'repaint and compare'
@@ -363,6 +571,8 @@ def validate(args, report):
         require('status.composing=0' in response, 'Commit did not finish the retained composition')
         client.request(END, session=session)
         report['sameSessionCommitted'] = True
+    report['phase'] = 'custom fallback and Default configuration'
+    verify_custom_font_defaults(installation, profile, report)
 
 
 def main():

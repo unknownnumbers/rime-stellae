@@ -1,6 +1,6 @@
 {
   "format": "stellae-bundle-inputs-v2",
-  "bundleVersion": "2026.11.24.2",
+  "bundleVersion": "2026.11.24.3",
   "frontendVersion": "0.17.4.61052",
   "frontendInstaller": {
     "url": "https://github.com/unknownnumbers/rime-stellae/releases/download/v0.17.4.61052/stellae-0.17.4.61052-installer.exe",
@@ -17,7 +17,7 @@
   "schemes": {
     "sourceDirectory": "schemes",
     "profile": "stellae",
-    "version": "2026.11.24.2"
+    "version": "2026.11.24.3"
   },
   "nativeEngines": {
     "x64": "engine-n01",
@@ -36,15 +36,15 @@
       "RimeWithWeasel/RimeWithWeasel.cpp": "e254f6c792dac9d486340e3c82ca3e8842cffc81147d6789583161b76d7eece9",
       "WeaselDeployer/Configurator.cpp": "3609bac39e0634c49b3510b216ec2a79c7b458794c932e12580e2c0bbf912178",
       "WeaselDeployer/Configurator.h": "9ba9f1fb5e2b9adb3aa32ab6f347c3bb4f30c2a34e01abf11aaacbdf2d290d5b",
-      "WeaselDeployer/DictManagementDialog.cpp": "735a8d49ccf566bf1687e262802346853a165823fce1d7c431978fc3c629685b",
-      "WeaselDeployer/DictManagementDialog.h": "3005dec5922cc0c4ece408b7c3e1387d28f467d5c11e7cb904b932fcf4da677b",
-      "WeaselDeployer/UIStyleSettings.cpp": "e6958efbdb7cfe83c80275c0e7483e9c8d6c08a742a7d2e2dc6faec2820f7347",
-      "WeaselDeployer/UIStyleSettings.h": "a7e1d72627afecd844f0ed991906b039da33d7b0eb9b013993f5df9ffc3ca3bb",
-      "WeaselDeployer/UIStyleSettingsDialog.cpp": "3d6c447b4d552ce66de4c2bec61699016ea4a8bc460da4010bf5dc3910955fe4",
-      "WeaselDeployer/UIStyleSettingsDialog.h": "d886244653d91351574d1287ab452019831de0f4a2cbe498a70767bf1ed022c5",
+      "WeaselDeployer/DictManagementDialog.cpp": "5107c407e1ff03c1cb95c1c408cc0f09a953391f17249270a8cbce71e6222781",
+      "WeaselDeployer/DictManagementDialog.h": "68bf2e403d8e9a63c24948b2a86f4307ce78f648ad72c2d9d80f975bc4556264",
+      "WeaselDeployer/UIStyleSettings.cpp": "421b77236c6e5068001ee084f46cc9ff9d1736a3166e46d1c98f02f282b2c924",
+      "WeaselDeployer/UIStyleSettings.h": "efd0a3286987a7e81d7522fd688300e7585896073e1f8bc71a406e44e2509984",
+      "WeaselDeployer/UIStyleSettingsDialog.cpp": "d98b74d7d6806e3fc2fe610cc4cb7ecd4d092a66def7241abe51aaefd6cfafc2",
+      "WeaselDeployer/UIStyleSettingsDialog.h": "e6aba3bc7e13bab2341ceb8eb35734d9be2c5f1ca3f1b54dab984fe862ed3059",
       "WeaselDeployer/WeaselDeployer.cpp": "09bcffb1d43e0798e69dd991c00a9b9e81b31cd3380761656c25bb00c73368f3",
-      "WeaselDeployer/WeaselDeployer.rc": "1d7efb0e362e1aa278f924dc026a37064c4b41ae5990413132abb4dca3b1bafe",
-      "WeaselDeployer/resource.h": "89d35b9d5b538acdf4826da70261aabd3a48ee79da21b4d3f75bbec907474c72",
+      "WeaselDeployer/WeaselDeployer.rc": "c5ce2b41f870e66425e2f98ac235ac11e145a6ecbbfc2ec35394ae02522d2f7c",
+      "WeaselDeployer/resource.h": "3d9b2af4ef233c5faff0321c2e194c208854da28d0fbaba8b1dbd4dc5a65a99c",
       "WeaselIPC/WeaselClientImpl.cpp": "4a1e156b954449870e95d7d4f59da8cc846763863a0c770bb4e1b0c8370036cf",
       "WeaselIPC/WeaselClientImpl.h": "4c9657f380d5016e8189706f2d7657eb4ced41eeb86eb15a51d861239fedd0ac",
       "WeaselIPCServer/WeaselServerImpl.cpp": "517ffa04a508673c76ba57d13321d1f2e363365b1f02b43b318fb2283fd2806d",

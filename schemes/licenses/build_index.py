@@ -103,6 +103,10 @@ def classify(path: str, old: dict[str, dict]) -> dict:
         'config/pc/assets/status/smart-english.svg',
         'config/pc/assets/status/smart-english.ico',
         'config/pc/preview/color_scheme_reference_gray.png',
+        'config/pc/preview/color_scheme_reference_gray_default.png',
+        'config/pc/preview/color_scheme_reference_gray_sc.png',
+        'config/pc/preview/color_scheme_reference_gray_tc.png',
+        'config/pc/preview/color_scheme_reference_gray_hk.png',
     }:
         record = copy.deepcopy(ORIGINAL_PROGRAM)
         record['kind'] = 'original-status-asset-or-generator'

@@ -2015,6 +2015,50 @@
       "path": "config/official-weasel/preview/color_scheme_reference_gray.png"
     },
     {
+      "kind": "original-status-asset-or-generator",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "LICENSE",
+        "docs/sources/official-weasel-sources.md"
+      ],
+      "path": "config/official-weasel/preview/color_scheme_reference_gray_default.png"
+    },
+    {
+      "kind": "original-status-asset-or-generator",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "LICENSE",
+        "docs/sources/official-weasel-sources.md"
+      ],
+      "path": "config/official-weasel/preview/color_scheme_reference_gray_hk.png"
+    },
+    {
+      "kind": "original-status-asset-or-generator",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "LICENSE",
+        "docs/sources/official-weasel-sources.md"
+      ],
+      "path": "config/official-weasel/preview/color_scheme_reference_gray_sc.png"
+    },
+    {
+      "kind": "original-status-asset-or-generator",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "LICENSE",
+        "docs/sources/official-weasel-sources.md"
+      ],
+      "path": "config/official-weasel/preview/color_scheme_reference_gray_tc.png"
+    },
+    {
       "kind": "project-metadata",
       "project_license": "GPL-3.0-only",
       "license_scope": "Original structured source and file metadata; referenced source data retains its own terms.",
@@ -4022,6 +4066,46 @@
         "LICENSE"
       ],
       "path": "config/pc/preview/color_scheme_reference_gray.png"
+    },
+    {
+      "kind": "original-status-asset-or-generator",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "LICENSE"
+      ],
+      "path": "config/pc/preview/color_scheme_reference_gray_default.png"
+    },
+    {
+      "kind": "original-status-asset-or-generator",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "LICENSE"
+      ],
+      "path": "config/pc/preview/color_scheme_reference_gray_hk.png"
+    },
+    {
+      "kind": "original-status-asset-or-generator",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "LICENSE"
+      ],
+      "path": "config/pc/preview/color_scheme_reference_gray_sc.png"
+    },
+    {
+      "kind": "original-status-asset-or-generator",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "LICENSE"
+      ],
+      "path": "config/pc/preview/color_scheme_reference_gray_tc.png"
     },
     {
       "path": "config/pc/project_radical.dict.yaml",

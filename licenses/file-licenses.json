@@ -3574,6 +3574,54 @@
       "source_ids": []
     },
     {
+      "kind": "original-status-asset-or-generator",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "schemes/LICENSE",
+        "schemes/docs/sources/official-weasel-sources.md"
+      ],
+      "path": "schemes/config/official-weasel/preview/color_scheme_reference_gray_default.png",
+      "source_ids": []
+    },
+    {
+      "kind": "original-status-asset-or-generator",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "schemes/LICENSE",
+        "schemes/docs/sources/official-weasel-sources.md"
+      ],
+      "path": "schemes/config/official-weasel/preview/color_scheme_reference_gray_hk.png",
+      "source_ids": []
+    },
+    {
+      "kind": "original-status-asset-or-generator",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "schemes/LICENSE",
+        "schemes/docs/sources/official-weasel-sources.md"
+      ],
+      "path": "schemes/config/official-weasel/preview/color_scheme_reference_gray_sc.png",
+      "source_ids": []
+    },
+    {
+      "kind": "original-status-asset-or-generator",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "schemes/LICENSE",
+        "schemes/docs/sources/official-weasel-sources.md"
+      ],
+      "path": "schemes/config/official-weasel/preview/color_scheme_reference_gray_tc.png",
+      "source_ids": []
+    },
+    {
       "kind": "project-metadata",
       "project_license": "GPL-3.0-only",
       "license_scope": "Original structured source and file metadata; referenced source data retains its own terms.",
@@ -5701,6 +5749,50 @@
         "schemes/LICENSE"
       ],
       "path": "schemes/config/pc/preview/color_scheme_reference_gray.png",
+      "source_ids": []
+    },
+    {
+      "kind": "original-status-asset-or-generator",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "schemes/LICENSE"
+      ],
+      "path": "schemes/config/pc/preview/color_scheme_reference_gray_default.png",
+      "source_ids": []
+    },
+    {
+      "kind": "original-status-asset-or-generator",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "schemes/LICENSE"
+      ],
+      "path": "schemes/config/pc/preview/color_scheme_reference_gray_hk.png",
+      "source_ids": []
+    },
+    {
+      "kind": "original-status-asset-or-generator",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "schemes/LICENSE"
+      ],
+      "path": "schemes/config/pc/preview/color_scheme_reference_gray_sc.png",
+      "source_ids": []
+    },
+    {
+      "kind": "original-status-asset-or-generator",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "schemes/LICENSE"
+      ],
+      "path": "schemes/config/pc/preview/color_scheme_reference_gray_tc.png",
       "source_ids": []
     },
     {
@@ -8651,6 +8743,15 @@
     },
     {
       "path": "scripts/fonts/Generate-ThemePreview.ps1",
+      "source_ids": [
+        "project-code"
+      ],
+      "references": [
+        "LICENSE"
+      ]
+    },
+    {
+      "path": "scripts/fonts/Generate-ThemePreview.py",
       "source_ids": [
         "project-code"
       ],

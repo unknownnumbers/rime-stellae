@@ -4,6 +4,7 @@
 import argparse
 import ctypes as c
 from ctypes import wintypes as w
+import hashlib
 import json
 import os
 from pathlib import Path
@@ -17,10 +18,10 @@ FIXTURES = [
     ('luna_pinyin', 'Active: cn_stellae', 'fixturecn'),
     ('pc_english', 'Active: en_intelligence', 'fixtureen'),
     ('jp_family', 'Active: jp_kanji', 'fixturejp'),
-    ('jp_sela_custom', 'History: jp_romaji', 'fixturekana'),
     ('pc_mixed', 'History: pc_mixed', 'fixturemixed'),
-    ('terra_pinyin', 'Other: terra_pinyin', 'fixtureother'),
+    ('terra_pinyin', 'Other: Bopomofo / Terra Pinyin', 'fixtureother'),
 ]
+HIDDEN_FIXTURE = ('jp_sela_custom', 'fixturekana')
 LIST, DESCRIPTION, BACKUP, EXPORT, IMPORT = 1007, 1012, 1008, 1010, 1011
 WM_COMMAND, WM_CLOSE = 0x0111, 0x0010
 WM_GETTEXT, WM_GETTEXTLENGTH = 0x000D, 0x000E
@@ -95,7 +96,8 @@ def seed_learning(engine, header, shared, user):
             require(module, 'The fixture engine has no levers API')
             levers = c.CFUNCTYPE(c.POINTER(Levers))(module.contents.get_api)().contents
             import_table = c.CFUNCTYPE(c.c_int, c.c_char_p, c.c_char_p)(levers.import_user_dict)
-            for dictionary, _, marker in FIXTURES:
+            seeds = [(dictionary, marker) for dictionary, _, marker in FIXTURES] + [HIDDEN_FIXTURE]
+            for dictionary, marker in seeds:
                 table = user / (dictionary + '-fixture.tsv')
                 table.write_text(marker + '\tfixture\t1\n', encoding='utf-8')
                 require(import_table(dictionary.encode(), str(table).encode()) > 0,
@@ -103,6 +105,12 @@ def seed_learning(engine, header, shared, user):
                 table.unlink()
         finally:
             c.CFUNCTYPE(None)(api.finalize)()
+
+
+def directory_fingerprint(directory):
+    require(directory.is_dir(), 'The hidden owned learning database is missing')
+    return {path.relative_to(directory).as_posix(): hashlib.sha256(path.read_bytes()).hexdigest()
+            for path in directory.rglob('*') if path.is_file()}
 
 
 class DictionaryWindow:
@@ -199,6 +207,8 @@ def main():
     deployer = Path(args.deployer).resolve(strict=True)
     seed_learning(Path(args.engine).resolve(strict=True), Path(args.header).resolve(strict=True),
                   Path(args.shared).resolve(strict=True), user)
+    hidden_database = user / (HIDDEN_FIXTURE[0] + '.userdb')
+    hidden_before = directory_fingerprint(hidden_database)
     registry = r'Software\RimeStellae'
     original = {}
     with winreg.CreateKey(winreg.HKEY_CURRENT_USER, registry) as key:
@@ -217,9 +227,14 @@ def main():
                     labels = dialog.items()
                     require(labels == [label for _, label, _ in FIXTURES],
                             'The native dictionary aliases or categories differ')
+                    require(all('jp_romaji' not in label and HIDDEN_FIXTURE[0] not in label for label in labels),
+                            'The inactive owned kana database is still listed')
                     results = []
                     for index, (dictionary, label, marker) in enumerate(FIXTURES):
                         description = dialog.select(index, dictionary)
+                        if dictionary == 'terra_pinyin':
+                            require('Tone pinyin and Bopomofo learning from upstream schemes' in description,
+                                    'The identified Terra/Bopomofo dictionary purpose is missing')
                         dialog.send(dialog.window, WM_COMMAND, BACKUP,
                                     dialog.child(dialog.window, BACKUP))
                         until = time.monotonic() + 10
@@ -236,17 +251,24 @@ def main():
                                         'description': description, 'snapshotIdentityPreserved': True})
                     require(not list(user.glob('cn_stellae.userdb*')) and
                             not list(user.glob('en_intelligence.userdb*')) and
-                            not list(user.glob('jp_kanji.userdb*')),
+                            not list(user.glob('jp_kanji.userdb*')) and
+                            not list(user.glob('jp_romaji.userdb*')),
                             'Display aliases created replacement learning databases')
                     dialog.send(dialog.window, WM_CLOSE)
                     require(process.wait(timeout=15) == 0, 'The dictionary manager failed to close')
+                    require(directory_fingerprint(hidden_database) == hidden_before,
+                            'Listing dictionaries changed or removed the hidden kana database')
                 finally:
                     if process.poll() is None:
                         process.kill()
             report = Path(args.report)
             report.parent.mkdir(parents=True, exist_ok=True)
             report.write_text(json.dumps({'passed': True, 'syntheticFixtureOnly': True,
-                                          'dictionaries': results}, indent=2) + '\n', encoding='utf-8')
+                                          'dictionaries': results,
+                                          'hiddenOwnedDatabase': {
+                                              'storageId': HIDDEN_FIXTURE[0], 'shown': False,
+                                              'directoryPreserved': True, 'filesUnchanged': True,
+                                          }}, indent=2) + '\n', encoding='utf-8')
         finally:
             for name, value in original.items():
                 if value is None:

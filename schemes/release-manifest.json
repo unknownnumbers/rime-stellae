@@ -654,13 +654,33 @@
     },
     {
       "path": "config/official-weasel/preview/color_scheme_reference_gray.png",
-      "bytes": 4249,
-      "sha256": "1e20193c0ce46c15bc0743e702bbd84b862a69af97096782ce8eaa4f605d8233"
+      "bytes": 23142,
+      "sha256": "c6e5b73c28af6ac86a361b92067e0b6784fa45ee6060d51376b3aaccd21ccb73"
+    },
+    {
+      "path": "config/official-weasel/preview/color_scheme_reference_gray_default.png",
+      "bytes": 23044,
+      "sha256": "d03eb67cc29f514921c819b76ac29760159f826859d6b7a42d2f36c65d4fa27c"
+    },
+    {
+      "path": "config/official-weasel/preview/color_scheme_reference_gray_hk.png",
+      "bytes": 23006,
+      "sha256": "788083761043eded420b6f94fff9975104f6284f04c6de9f114adcd5ac5e7236"
+    },
+    {
+      "path": "config/official-weasel/preview/color_scheme_reference_gray_sc.png",
+      "bytes": 23129,
+      "sha256": "f5f55846497fecacb0e43a72c2cd2e8755d17a53413501b3c031ea810503d0e6"
+    },
+    {
+      "path": "config/official-weasel/preview/color_scheme_reference_gray_tc.png",
+      "bytes": 23131,
+      "sha256": "a651efe058fdc549e56fa2ea4e0792b95516677f62a6578a1984441944604155"
     },
     {
       "path": "config/official-weasel/profile-manifest.json",
-      "bytes": 28893,
-      "sha256": "882877663e7f466b758178385bf8a5f870116fe3c207d352a8c18aafc775c42c"
+      "bytes": 29611,
+      "sha256": "8fbac26825ba88193af57640b437a9e08b1c89b0f283c270a2eb9dc46b51c4bf"
     },
     {
       "path": "config/official-weasel/project_radical.dict.yaml",
@@ -974,8 +994,8 @@
     },
     {
       "path": "config/pc/config-source-manifest.json",
-      "bytes": 28955,
-      "sha256": "bc5cd5c8faaca2dfcab8a27e897eb13ea6f612f00fe8b5c12182b923d9f95dce"
+      "bytes": 29673,
+      "sha256": "07a09d1ac563e2a987ca6529c3b74d8ea514a0e90aadef41e48a8671a89f6b6a"
     },
     {
       "path": "config/pc/default.custom.yaml",
@@ -1564,8 +1584,28 @@
     },
     {
       "path": "config/pc/preview/color_scheme_reference_gray.png",
-      "bytes": 4249,
-      "sha256": "1e20193c0ce46c15bc0743e702bbd84b862a69af97096782ce8eaa4f605d8233"
+      "bytes": 23142,
+      "sha256": "c6e5b73c28af6ac86a361b92067e0b6784fa45ee6060d51376b3aaccd21ccb73"
+    },
+    {
+      "path": "config/pc/preview/color_scheme_reference_gray_default.png",
+      "bytes": 23044,
+      "sha256": "d03eb67cc29f514921c819b76ac29760159f826859d6b7a42d2f36c65d4fa27c"
+    },
+    {
+      "path": "config/pc/preview/color_scheme_reference_gray_hk.png",
+      "bytes": 23006,
+      "sha256": "788083761043eded420b6f94fff9975104f6284f04c6de9f114adcd5ac5e7236"
+    },
+    {
+      "path": "config/pc/preview/color_scheme_reference_gray_sc.png",
+      "bytes": 23129,
+      "sha256": "f5f55846497fecacb0e43a72c2cd2e8755d17a53413501b3c031ea810503d0e6"
+    },
+    {
+      "path": "config/pc/preview/color_scheme_reference_gray_tc.png",
+      "bytes": 23131,
+      "sha256": "a651efe058fdc549e56fa2ea4e0792b95516677f62a6578a1984441944604155"
     },
     {
       "path": "config/pc/project_radical.dict.yaml",
@@ -2174,8 +2214,8 @@
     },
     {
       "path": "licenses/build_index.py",
-      "bytes": 10402,
-      "sha256": "c723fd5f9d584f65b2494661f85501d4f0109cb0dc629efcf26ae6646179db93"
+      "bytes": 10663,
+      "sha256": "f8dd9b57cb30f43141857ef29211f83d66e7a10a0e8bd13b2ab67fb4cfc1d323"
     },
     {
       "path": "licenses/english-core/CC-BY-3.0-legalcode.txt",
@@ -2229,8 +2269,8 @@
     },
     {
       "path": "licenses/file-licenses.json",
-      "bytes": 225088,
-      "sha256": "eb22e5240f312758ab4e9481854d5eec9ec62b01dd3b795e505272214150a122"
+      "bytes": 228458,
+      "sha256": "e514030b1b32ab05769e0ee09c5f1ba5f9a43229d2ed29fa46a0b452d625f64b"
     },
     {
       "path": "licenses/luna-compact-model-LGPL-3.0.txt",
@@ -2754,8 +2794,8 @@
     },
     {
       "path": "scripts/verify_release.py",
-      "bytes": 13069,
-      "sha256": "2d9c8c27aede2a6d387aa6c3744edcb6ab049898a1149967d5a1d4db40386a14"
+      "bytes": 13707,
+      "sha256": "cf2cbbb43a4728dd751935fefeaedf070b66d40f0abc513d62ef00ba51fcd451"
     },
     {
       "path": "sources/base-build.json",

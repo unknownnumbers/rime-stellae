@@ -1,7 +1,7 @@
 {
   "format": "rymcp-official-profile-v2",
-  "version": "2026.11.24.2",
-  "maintenance_source_manifest_sha256": "bc5cd5c8faaca2dfcab8a27e897eb13ea6f612f00fe8b5c12182b923d9f95dce",
+  "version": "2026.11.24.3",
+  "maintenance_source_manifest_sha256": "07a09d1ac563e2a987ca6529c3b74d8ea514a0e90aadef41e48a8671a89f6b6a",
   "files": [
     {
       "path": "JAPANESE.md",
@@ -610,8 +610,28 @@
     },
     {
       "path": "preview/color_scheme_reference_gray.png",
-      "bytes": 4249,
-      "sha256": "1e20193c0ce46c15bc0743e702bbd84b862a69af97096782ce8eaa4f605d8233"
+      "bytes": 23142,
+      "sha256": "c6e5b73c28af6ac86a361b92067e0b6784fa45ee6060d51376b3aaccd21ccb73"
+    },
+    {
+      "path": "preview/color_scheme_reference_gray_default.png",
+      "bytes": 23044,
+      "sha256": "d03eb67cc29f514921c819b76ac29760159f826859d6b7a42d2f36c65d4fa27c"
+    },
+    {
+      "path": "preview/color_scheme_reference_gray_hk.png",
+      "bytes": 23006,
+      "sha256": "788083761043eded420b6f94fff9975104f6284f04c6de9f114adcd5ac5e7236"
+    },
+    {
+      "path": "preview/color_scheme_reference_gray_sc.png",
+      "bytes": 23129,
+      "sha256": "f5f55846497fecacb0e43a72c2cd2e8755d17a53413501b3c031ea810503d0e6"
+    },
+    {
+      "path": "preview/color_scheme_reference_gray_tc.png",
+      "bytes": 23131,
+      "sha256": "a651efe058fdc549e56fa2ea4e0792b95516677f62a6578a1984441944604155"
     },
     {
       "path": "project_radical.dict.yaml",

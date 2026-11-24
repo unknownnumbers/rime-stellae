@@ -23,3 +23,16 @@ Validation checks both frontend architectures, source and image hashes, the extr
 After a reviewed source change, update the file license index with `python licenses/build_index.py`, then record the source snapshot with `python scripts/verify_release.py --write-manifest --date YYYY-MM-DD`. Installer and scheme archives must be built from the same reviewed source commit.
 
 [Source inputs](SOURCES.md) | [User guide](PC.md)
+
+
+## Static font previews
+
+The appearance dialog uses the upstream static PNG preview mechanism. The project theme includes Default, SC, TC and HK comparison images with the same Unicode sample. The selected font highlights its row; browsing images does not deploy a scheme.
+
+To regenerate these assets on Windows, use Pillow 13.0.0, the pinned Noto Sans CJK 2.004 Regular collection, and Microsoft YaHei from Windows:
+
+```powershell
+python scripts/fonts/Generate-ThemePreview.py --theme schemes/config/pc/weasel.custom.yaml --collection PATH_TO_NotoSansCJK-Regular.ttc --default-font C:/Windows/Fonts/msyh.ttc --output-file schemes/config/pc/preview/color_scheme_reference_gray.png
+```
+
+The generator checks the collection hash and each face name. Only the rendered PNG files are included in the scheme.
