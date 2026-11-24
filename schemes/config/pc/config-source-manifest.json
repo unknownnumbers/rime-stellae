@@ -1,6 +1,6 @@
 {
   "format": "rymcp-public-config-v2",
-  "scheme_version": "2026.11.24",
+  "scheme_version": "2026.11.24.1",
   "allowlisted_source_files": 182,
   "source_files": [
     {
@@ -375,8 +375,8 @@
     },
     {
       "path": "lua/cn_translator.lua",
-      "bytes": 35894,
-      "sha256": "f5c7109532da50973a00faa59c89ddd9bad22d5da47ff76a88a22058f1e660e6"
+      "bytes": 36225,
+      "sha256": "b147a8ec40aaebdc0c1e3c80c58e9a79cd497f00ca336e0506aa83d064d1bbac"
     },
     {
       "path": "lua/draft_limit.lua",

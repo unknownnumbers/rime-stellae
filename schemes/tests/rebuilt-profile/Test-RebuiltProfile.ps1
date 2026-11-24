@@ -207,6 +207,26 @@ try{
   }
   [RimeProbe]::RimeSetOption($session,'probe_options_ready',1)
   [RimeProbe]::RimeSetOption($session,'ascii_mode',0);[RimeProbe]::RimeSetOption($session,'research_english',0);[RimeProbe]::RimeSetOption($session,'simplification',1)
+  Compose 'hao';$coldHao=Snapshot
+  Record 'whole normal result precedes cold correction' ($coldHao.Candidates[0] -ceq '好') @($coldHao.Candidates|Select-Object -First 6)
+  for($i=0;$i -lt 3;$i++){
+    Compose 'yao';Select-Text '要'
+    $commit=[RimeProbe]::ReadCommit($session)
+    Record ('normal word learning '+$i) ($commit -ceq '要') $commit
+  }
+  Compose 'hao';$learnedHao=Snapshot
+  $correctionIndex=[Array]::IndexOf([string[]]$learnedHao.Candidates,'要')
+  Record 'whole normal result precedes learned correction' ($learnedHao.Candidates[0] -ceq '好' -and $correctionIndex -gt 0) @($learnedHao.Candidates|Select-Object -First 6)
+  foreach($case in @(@('l','了','lambda','λ'),@('z','在','zeta','ζ'))){
+    for($i=0;$i -lt 3;$i++){
+      Compose $case[0];Select-Text $case[1];[void][RimeProbe]::ReadCommit($session)
+    }
+    Compose $case[2];Select-Text $case[3];[void][RimeProbe]::ReadCommit($session)
+    Compose $case[0];$state=Snapshot
+    $normalIndex=[Array]::IndexOf([string[]]$state.Candidates,$case[1])
+    $symbolIndex=[Array]::IndexOf([string[]]$state.Candidates,$case[3])
+    Record ('Chinese abbreviation and learned symbol share score scale '+$case[0]) ($normalIndex -ge 0 -and $symbolIndex -gt $normalIndex) @($state.Candidates|Select-Object -First 6)
+  }
   foreach($case in @(
     @('nihao',@('你好'),@()),@('haode''ba"',@('好的吧'),@()),@('wenti"s',@('问题是'),@()),
     @('xiao;sr',@('笑死人'),@()),@('xian;ren',@('先人'),@('西安人')),@('xian"r',@('先人','西安人'),@()),

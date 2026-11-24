@@ -618,6 +618,9 @@ function M.func(input, seg, env)
   -- Keep this separate from the existing static correction policy above.
   local completion_waits_for_normal = env.allow_word_completion and not env.use_stock_word_completion and
     (has_normal_complete or normal_whole(x))
+  -- Keep the existing cross-language score contract; protect one normal CN head.
+  local correction_waits_for_normal = not env.only_chinese and
+    (has_normal_complete or normal_whole(x))
   local previous_quality, seen = math.huge, {}
 
   local function prefer_cn(a, a_source, a_score, b, b_source, b_score)
@@ -686,7 +689,8 @@ function M.func(input, seg, env)
     local anchor_candidate,anchor_source,anchor_score=candidate,source,score
     for _,head in ipairs(heads) do
       local value,lane,quality=head[1],head[2],head[3]
-      if value and classify(value,input,seg,env,match_cache)==2 and
+      if value and classify(value,input,seg,env,match_cache)==2
+          and not (correction_waits_for_normal and normal_whole(anchor_candidate)) and
           (not anchor_candidate or prefer_cn(value,lane,quality,anchor_candidate,anchor_source,anchor_score)) and
           (candidate==anchor_candidate or not candidate or prefer_cn(value,lane,quality,candidate,source,score)) then
         candidate,source,score=value,lane,quality
@@ -728,7 +732,10 @@ function M.func(input, seg, env)
       candidate.comment = ''
       -- Only an ordinary whole normal result reaching final output/dedup
       -- releases the gate; an intervening symbol/English/mixed result cannot.
-      if normal_whole(candidate) then completion_waits_for_normal = false end
+      if normal_whole(candidate) then
+        completion_waits_for_normal = false
+        correction_waits_for_normal = false
+      end
     end
     if not duplicate_key or not seen[duplicate_key] then
       if duplicate_key then seen[duplicate_key] = true end

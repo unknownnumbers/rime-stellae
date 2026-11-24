@@ -3,7 +3,7 @@
   "date": "2026-11-24",
   "kind": "frontend-and-input-scheme-source",
   "frontendVersion": "0.17.4.61052",
-  "bundleVersion": "2026.11.24",
+  "bundleVersion": "2026.11.24.1",
   "nativeBinariesIncluded": false,
   "personalLearningIncluded": false,
   "productionInputSchemesIncluded": true,
@@ -18,7 +18,7 @@
     {
       "path": ".github/workflows/bundle.yml",
       "bytes": 22664,
-      "sha256": "26daea5ef19813fa2acbbd938c678c988c4cca7705f2d6f24ea7f5a0a7de9b06"
+      "sha256": "84698fb50fc6c7d9d61306323741d5c0ca2b5def481ffe47bfbeac6160e01e27"
     },
     {
       "path": ".github/workflows/native.yml",
@@ -52,18 +52,18 @@
     },
     {
       "path": "README.en.md",
-      "bytes": 3013,
-      "sha256": "3fc8bc8aa9d5c8ecc18669540d92ee32534a2b4c1a234057498df16b61ac6969"
+      "bytes": 3027,
+      "sha256": "4e7374abc43e964ca12a07da75fcc7697ea6f67825c22118022eee13ba0a41b3"
     },
     {
       "path": "README.md",
-      "bytes": 2607,
-      "sha256": "7b9cc04f032bdf3522134f1c3e15a5a68c4d11fc56fcc328ad1a37d4895f523c"
+      "bytes": 2621,
+      "sha256": "037ad45fc513de0ce16311f9dca26a9b3873569cbab29ee10b3a1025a1f1e970"
     },
     {
       "path": "README.zh-SC.md",
-      "bytes": 2619,
-      "sha256": "82fd922abff72e74c4fe67a5ab1f4f8610d9481add3ec44d2fa408c33044d719"
+      "bytes": 2633,
+      "sha256": "2c9a50ad2ebdae8e6e6c921c2477f36e0a1dd63eb043e26e95ab3ab8fb07d945"
     },
     {
       "path": "THIRD_PARTY_NOTICES.md",
@@ -112,13 +112,13 @@
     },
     {
       "path": "docs/BUILD.md",
-      "bytes": 3225,
-      "sha256": "78bf29d71609e752495e2210611e7740a2d8f8a1c67a6def8382fc8bcb3478d1"
+      "bytes": 3235,
+      "sha256": "3c4ba42f68c19b55388cc504cce70f3c61ee17ecaebb8222f1eaf8f561a68d4e"
     },
     {
       "path": "docs/PC.md",
-      "bytes": 2137,
-      "sha256": "e2bc1c057e3b995d0644d5689b77edcebf364d6514cc0e97006388db5247d073"
+      "bytes": 2147,
+      "sha256": "7084446d7764952679e75d07d75f5fa8dfbfa30df5322a7c5d5b332c27d2806f"
     },
     {
       "path": "docs/SOURCES.md",
@@ -142,8 +142,8 @@
     },
     {
       "path": "installer/bundle-inputs.json",
-      "bytes": 5051,
-      "sha256": "beedf88c8c2fb7c5a9731632b74a99b17b9b342923f075bbe246b8a5c24dcde3"
+      "bytes": 5055,
+      "sha256": "6ee4319dbc8d528f8f75a703bd93058e8c2ac7dba38a667b9beb688c791e3b2a"
     },
     {
       "path": "installer/bundle.nsi",
@@ -1127,8 +1127,8 @@
     },
     {
       "path": "schemes/config/official-weasel/lua/cn_translator.lua",
-      "bytes": 35894,
-      "sha256": "f5c7109532da50973a00faa59c89ddd9bad22d5da47ff76a88a22058f1e660e6"
+      "bytes": 36225,
+      "sha256": "b147a8ec40aaebdc0c1e3c80c58e9a79cd497f00ca336e0506aa83d064d1bbac"
     },
     {
       "path": "schemes/config/official-weasel/lua/draft_limit.lua",
@@ -1387,8 +1387,8 @@
     },
     {
       "path": "schemes/config/official-weasel/profile-manifest.json",
-      "bytes": 29338,
-      "sha256": "17d4919ed6443e3a78fe61086fa90c2d49244b75c0df229a57bc4e06534a88fb"
+      "bytes": 29340,
+      "sha256": "79ddd23ce28e89b67d8a8500ffc6ba5cff7ff7ccb607abcad64f37e91be37ab3"
     },
     {
       "path": "schemes/config/official-weasel/project_radical.dict.yaml",
@@ -1702,8 +1702,8 @@
     },
     {
       "path": "schemes/config/pc/config-source-manifest.json",
-      "bytes": 29400,
-      "sha256": "32371b01acdfa4536de37db3449deee15e6d7b6e38f5524be4f1698d133d4575"
+      "bytes": 29402,
+      "sha256": "397fb82ad7330bedad938f99c57adc56f7d6b75bf05796c9602315e3fb7471b5"
     },
     {
       "path": "schemes/config/pc/default.custom.yaml",
@@ -2052,8 +2052,8 @@
     },
     {
       "path": "schemes/config/pc/lua/cn_translator.lua",
-      "bytes": 35894,
-      "sha256": "f5c7109532da50973a00faa59c89ddd9bad22d5da47ff76a88a22058f1e660e6"
+      "bytes": 36225,
+      "sha256": "b147a8ec40aaebdc0c1e3c80c58e9a79cd497f00ca336e0506aa83d064d1bbac"
     },
     {
       "path": "schemes/config/pc/lua/draft_limit.lua",
@@ -2772,8 +2772,8 @@
     },
     {
       "path": "schemes/docs/BUILD.md",
-      "bytes": 5319,
-      "sha256": "5845b4d965220df8e904832b3ac8f12e32ec0e4a1e8b945989fa765298785ddc"
+      "bytes": 5321,
+      "sha256": "39f3c3f618e6e6e4ffa09e826f190ffe5c6f06e70eeb57e70379cae80d240bfd"
     },
     {
       "path": "schemes/docs/PC.md",
@@ -3383,7 +3383,7 @@
     {
       "path": "schemes/release-manifest.json",
       "bytes": 102839,
-      "sha256": "e8ee53dbf97b06640a223b1860bf830093e29cfa4dbc8d4355914102b331048c"
+      "sha256": "3bd9c787e4c596ae1382fe167151fb2f0a6a577ba102c0e5cbcd56eadace75f8"
     },
     {
       "path": "schemes/scripts/build_dlc.py",
@@ -3572,8 +3572,8 @@
     },
     {
       "path": "schemes/tests/rebuilt-profile/Test-RebuiltProfile.ps1",
-      "bytes": 16901,
-      "sha256": "dbf6cf1ef62fdfcff3d7efe17e226de76dd21f2013ec02ad67dd6b8bcfe53ca4"
+      "bytes": 18188,
+      "sha256": "c91e23c0af0ea41a9e2b4933d535060f46882340161a63bebcfd5487451ef93d"
     },
     {
       "path": "schemes/tests/schemes/Check-ChineseDlcTables.py",

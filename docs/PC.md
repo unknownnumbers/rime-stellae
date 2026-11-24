@@ -2,12 +2,12 @@
 
 ## 安裝
 
-從[墨芯發布頁](https://github.com/unknownnumbers/rime-stellae/releases/tag/v2026.11.24)選擇所需檔案:
+從[墨芯發布頁](https://github.com/unknownnumbers/rime-stellae/releases/tag/v2026.11.24.1)選擇所需檔案:
 
-- `stellae-2026.11.24-installer.exe`: 墨芯前端與完整方案整合安裝器.
-- `stellae-2026.11.24-schemes.zip`: 完整方案, 用於已有的墨芯安裝.
-- `stellae-2026.11.24-official-weasel-schemes.zip`: 官方 Weasel 用的墨芯方案, 依[手動安裝與合併說明](../schemes/docs/official-weasel.md)使用.
-- `stellae-2026.11.24-source.zip`: 對應的前端、引擎與方案來源.
+- `stellae-2026.11.24.1-installer.exe`: 墨芯前端與完整方案整合安裝器.
+- `stellae-2026.11.24.1-schemes.zip`: 完整方案, 用於已有的墨芯安裝.
+- `stellae-2026.11.24.1-official-weasel-schemes.zip`: 官方 Weasel 用的墨芯方案, 依[手動安裝與合併說明](../schemes/docs/official-weasel.md)使用.
+- `stellae-2026.11.24.1-source.zip`: 對應的前端、引擎與方案來源.
 
 前端版本為 `0.17.4.61052`, x64 安裝同時提供 32-bit 應用所需支援, Win32 安裝使用對應引擎. 官方 Weasel 方案 ZIP 使用官方前端與引擎, 不需要替換 DLL.
 
