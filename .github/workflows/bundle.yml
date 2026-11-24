@@ -298,6 +298,8 @@ jobs:
           compression-level: 0
 
       - name: Test actual installation, shared-only input, upgrades and uninstall
+        env:
+          STELLAE_INSTALLER_POLICY_TRACE: '1'
         run: ./native/tests/installer/Test-BundleInstaller.ps1 -PackageDirectory (Join-Path $env:RUNNER_TEMP 'bundle') -SchemeSource (Join-Path $env:GITHUB_WORKSPACE 'frontend/schemes') -OutputDirectory (Join-Path $env:RUNNER_TEMP 'installer-validation')
       - name: Record finite release validation
         run: |
@@ -332,6 +334,7 @@ jobs:
             ${{ runner.temp }}/profile-policy/*.json
             ${{ runner.temp }}/source-profile-tests/proof.json
             ${{ runner.temp }}/source-profile-tests/rebuilt-binaries.json
+            ${{ github.workspace }}/policy-diagnostics/*.json
           if-no-files-found: warn
           retention-days: 14
 

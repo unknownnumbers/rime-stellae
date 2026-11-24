@@ -17,8 +17,8 @@
     },
     {
       "path": ".github/workflows/bundle.yml",
-      "bytes": 22664,
-      "sha256": "84698fb50fc6c7d9d61306323741d5c0ca2b5def481ffe47bfbeac6160e01e27"
+      "bytes": 22785,
+      "sha256": "8ff73d18d86868bf1cba1dbd32eee45c9d764799b546fa6172b9bc409cfed472"
     },
     {
       "path": ".github/workflows/native.yml",
