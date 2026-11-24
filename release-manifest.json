@@ -527,8 +527,8 @@
     },
     {
       "path": "native/tests/appearance/Test-LiveFont.ps1",
-      "bytes": 9062,
-      "sha256": "69a1b4377f1e57ac70b5cba324fa77b724e6c83edb495c527d66586ad724e3d8"
+      "bytes": 9068,
+      "sha256": "1896740f9b65504eb27fc03ff3066cf11f89f00fa23e0feeab40fd98ea70b86c"
     },
     {
       "path": "native/tests/installer/Export-SyntheticLearning.py",
