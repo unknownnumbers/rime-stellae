@@ -15,6 +15,16 @@ def digest(path):
         return hashlib.file_digest(stream, 'sha256').hexdigest()
 
 
+def appearance_preset(raw):
+    # Earlier installed bundles have no stellae/ resource directory. Render the
+    # shared Weasel section as their existing self-contained patch resource.
+    text = raw.decode('utf-8-sig').replace('\r\n', '\n')
+    parts = text.split('\nweasel:\n')
+    if len(parts) != 2 or any(line and not line.startswith('  ') for line in parts[1].splitlines()):
+        raise ValueError('Use the reviewed final Weasel appearance section')
+    return ('# Derived from stellae/appearance.yaml.\npatch:\n' + parts[1]).encode('utf-8')
+
+
 def main():
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument('--build-directory', type=Path, required=True)
@@ -70,6 +80,10 @@ def main():
             hashes = previous.setdefault(row['path'], [])
             if row['sha256'] not in hashes:
                 hashes.append(row['sha256'])
+    # The integrated package stores the current include-based preset under this
+    # name; it is also a reviewed predecessor of the self-contained component.
+    current_preset = hashlib.sha256(source('schemes/config/pc/weasel.custom.yaml')).hexdigest()
+    previous.setdefault('data/stellae_bundle_weasel.yaml', []).append(current_preset)
     updater = source('scripts/package/Update-Settings.ps1')
     inputs = json.loads(source('installer/bundle-inputs.json'))
     out = a.output.resolve()
@@ -85,7 +99,7 @@ def main():
                      'previousSha256': previous.get(relative, [])})
 
     add('StellaeDeployer.exe', raw)
-    add('data/stellae_bundle_weasel.yaml', source('schemes/config/pc/weasel.custom.yaml'))
+    add('data/stellae_bundle_weasel.yaml', appearance_preset(source('schemes/config/pc/stellae/appearance.yaml')))
     names = ['color_scheme_' + t + '.png' for t in THEMES]
     names += ['candidate_font' + s + '.png' for s in ('', '_default', '_sc', '_tc', '_hk')]
     for name in names:

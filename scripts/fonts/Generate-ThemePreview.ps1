@@ -3,7 +3,7 @@ param(
   [Parameter(Mandatory)][string]$FontCollection,
   [string]$DefaultFont=(Join-Path $env:WINDIR 'Fonts/msyh.ttc'),
   [string]$Python='python',
-  [string]$ThemeFile=(Join-Path $PSScriptRoot '../../schemes/config/pc/weasel.custom.yaml'),
+  [string]$ThemeFile=(Join-Path $PSScriptRoot '../../schemes/config/pc/stellae/appearance.yaml'),
   [string]$OutputDirectory=(Join-Path $PSScriptRoot '../../schemes/config/pc/preview')
 )
 $ErrorActionPreference='Stop'

@@ -1,9 +1,13 @@
-name: Build and validate Stellae installer
+name: Validate historical dual-runtime installer (opt-in)
 
 on:
-  push:
-    branches: ['ci/stellae-*']
   workflow_dispatch:
+    inputs:
+      legacy_dual_runtime:
+        description: Build the historical x64 and x86 backend package
+        required: true
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -14,6 +18,7 @@ defaults:
 
 jobs:
   inventory:
+    if: inputs.legacy_dual_runtime == true
     runs-on: windows-2022
     timeout-minutes: 15
     steps:
@@ -102,9 +107,9 @@ jobs:
       - name: Assemble fixed frontend source
         run: ./scripts/native/Prepare-Sources.ps1 -Variant stellae-61052 -Destination (Join-Path $env:RUNNER_TEMP 'stellae')
       - name: Build clean x64 and Win32 products
-        run: ./scripts/native/Build-Weasel.ps1 -SourcePath (Join-Path $env:RUNNER_TEMP 'stellae') -SdkRoot (Join-Path $env:RUNNER_TEMP 'sdk') -CacheDirectory (Join-Path $env:RUNNER_TEMP 'native-cache') -OutputDirectory (Join-Path $env:RUNNER_TEMP 'frontend-output')
+        run: ./scripts/native/Build-Weasel.ps1 -LegacyDualRuntime -SourcePath (Join-Path $env:RUNNER_TEMP 'stellae') -SdkRoot (Join-Path $env:RUNNER_TEMP 'sdk') -CacheDirectory (Join-Path $env:RUNNER_TEMP 'native-cache') -OutputDirectory (Join-Path $env:RUNNER_TEMP 'frontend-output')
       - name: Build and extract the scheme-free installer
-        run: ./scripts/package/Prepare-Package.ps1 -FrontendOutput (Join-Path $env:RUNNER_TEMP 'frontend-output') -SourcePath (Join-Path $env:RUNNER_TEMP 'stellae') -SdkRoot (Join-Path $env:RUNNER_TEMP 'sdk') -CacheDirectory (Join-Path $env:RUNNER_TEMP 'native-cache') -OutputDirectory (Join-Path $env:RUNNER_TEMP 'package')
+        run: ./scripts/package/Prepare-Package.ps1 -LegacyDualRuntime -FrontendOutput (Join-Path $env:RUNNER_TEMP 'frontend-output') -SourcePath (Join-Path $env:RUNNER_TEMP 'stellae') -SdkRoot (Join-Path $env:RUNNER_TEMP 'sdk') -CacheDirectory (Join-Path $env:RUNNER_TEMP 'native-cache') -OutputDirectory (Join-Path $env:RUNNER_TEMP 'package')
       - name: Validate empty-scheme callbacks and existing key regressions
         run: |
           $source=Join-Path $env:RUNNER_TEMP 'stellae'

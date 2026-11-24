@@ -2,14 +2,14 @@
 
 ## 安裝
 
-從[墨芯發布頁](https://github.com/unknownnumbers/rime-stellae/releases/tag/v2026.11.24.1)選擇所需檔案:
+從[墨芯發布頁](https://github.com/unknownnumbers/rime-stellae/releases/latest)選擇同一版本的所需檔案, 以下 `VERSION` 代表發布版本:
 
-- `stellae-2026.11.24.1-installer.exe`: 墨芯前端與完整方案整合安裝器.
-- `stellae-2026.11.24.1-schemes.zip`: 完整方案, 用於已有的墨芯安裝.
-- `stellae-2026.11.24.1-official-weasel-schemes.zip`: 官方 Weasel 用的墨芯方案, 依[手動安裝與合併說明](../schemes/docs/official-weasel.md)使用.
-- `stellae-2026.11.24.1-source.zip`: 對應的前端、引擎與方案來源.
+- `stellae-VERSION-installer.exe`: 墨芯前端與完整方案整合安裝器.
+- `stellae-VERSION-schemes.zip`: 完整方案, 用於已有的墨芯安裝.
+- `stellae-VERSION-official-weasel-schemes.zip`: 官方 Weasel 用的墨芯方案, 依[手動安裝與合併說明](../schemes/docs/official-weasel.md)使用.
+- `stellae-VERSION-source.zip`: 對應的前端、引擎與方案來源.
 
-前端版本為 `0.17.4.61052`, x64 安裝同時提供 32-bit 應用所需支援, Win32 安裝使用對應引擎. 官方 Weasel 方案 ZIP 使用官方前端與引擎, 不需要替換 DLL.
+前端版本為 `0.17.4.61052`, 整合安裝包使用 x64 服務與引擎, 並提供 32-bit 應用所需的 TSF/IME 客戶端. 兩種應用共用同一服務, 安裝包不含獨立 Win32 後端. 官方 Weasel 方案 ZIP 使用官方前端與引擎, 不需要替換 DLL.
 
 整合包附完整墨芯方案. 新裝預設 SC 輸出, 中文橫排 5 項、英文直排 6 項, 保留 TC/SC 切換. 中文、英文、日語、固定音節、查字與工具見[完整方案說明](../schemes/docs/PC.md); 官方 Weasel 的設定與能力見[官方適配版說明](../schemes/docs/official-weasel.md).
 

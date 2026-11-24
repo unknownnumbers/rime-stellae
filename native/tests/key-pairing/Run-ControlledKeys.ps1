@@ -4,7 +4,8 @@ param(
   [Parameter(Mandatory)][string]$SourceRoot,
   [Parameter(Mandatory)][string]$SharedData,
   [Parameter(Mandatory)][string]$RuntimeN01,
-  [ValidateSet('x64','Win32')][string]$Architecture='x64'
+  [ValidateSet('x64','Win32')][string]$Architecture='x64',
+  [switch]$UseX64Backend
 )
 $ErrorActionPreference='Stop'
 if($env:GITHUB_ACTIONS -ne 'true' -or -not $IsWindows){throw 'Use a disposable Windows hosted runner.'}
@@ -16,6 +17,11 @@ $stem='controlled-keys-'+$Architecture.ToLowerInvariant()
 $reportPath=Join-Path $logs ($stem+'.json')
 $utf8=[Text.UTF8Encoding]::new($false)
 $report=[ordered]@{SourceVersion='0.17.4.61052';SourceCommit=$env:GITHUB_SHA;Architecture=$Architecture;EmptyRuntime=$(if($Architecture -eq 'x64'){'N01 x64'}else{'R5 x86'});RegressionRuntime=$(if($Architecture -eq 'x64'){'R5 x64'}else{'R5 x86'});Scope='Empty-scheme pass-through and R2/V13/V18/V19 production callbacks with controlled COM host and real IPC';NativeAcpClaimed=$false;PhysicalKeyboardDispatcherUsed=$false;Passed=$false;Probes=@();SourceRestored=$false;ProductOutputRestored=$false;Errors=@();RestoreErrors=@()}
+if($UseX64Backend){
+  $report.EmptyRuntime='N01 x64'
+  $report.RegressionRuntime='N01 x64'
+  $report.BackendArchitecture='x64'
+}
 $sourceFiles=@{};$productFiles=@{};$added=@();$server=$null;$child=$null
 $registry='HKCU:\Software\RimeStellae'
 $oldUser=Get-ItemProperty -LiteralPath $registry -Name RimeUserDir -ErrorAction SilentlyContinue
@@ -29,7 +35,7 @@ foreach($name in @('stellae','stellaex64')){foreach($extension in @('dll','pdb',
 }}
 $r5Engine=Join-Path $output 'rime.dll'
 $productFiles[$r5Engine]=[IO.File]::ReadAllBytes($r5Engine)
-$serverDirectory=if($Architecture -eq 'x64'){$output}else{Join-Path $output 'Win32'}
+$serverDirectory=if($Architecture -eq 'x64' -or $UseX64Backend){$output}else{Join-Path $output 'Win32'}
 function Run-Probe([string]$Mode,[string]$Group,[int]$Checks){
   $trace=Join-Path $logs "$stem-$Mode.txt"
   $stderr=Join-Path $logs "$stem-$Mode-stderr.txt"
@@ -88,7 +94,7 @@ try{
   $null=New-Item -ItemType Directory -Path $user
   New-Item -Path $registry -Force|Out-Null
   New-ItemProperty -LiteralPath $registry -Name RimeUserDir -Value $user -PropertyType String -Force|Out-Null
-  if($Architecture -eq 'x64'){Copy-Item -LiteralPath $RuntimeN01 -Destination $r5Engine -Force}
+  if($Architecture -eq 'x64' -or $UseX64Backend){Copy-Item -LiteralPath $RuntimeN01 -Destination $r5Engine -Force}
   Deploy $user -Empty
   $server=Start-Process -FilePath (Join-Path $serverDirectory 'StellaeServer.exe') -WorkingDirectory $serverDirectory -WindowStyle Hidden -PassThru
   Start-Sleep -Seconds 2

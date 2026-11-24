@@ -9,6 +9,7 @@ from zipfile import ZipFile
 
 from apply_frontend_overlays import ENGINES, MACHINES, frontend_products, image_machine
 from prepare_bundle import DEFAULT_FONT_NAME, FONT_INSTALLER_HELPERS, check_scheme_archive
+from bundle_architecture import excluded_native_paths, excluded_native_records, runtime_engines
 
 
 def digest(path):
@@ -111,7 +112,14 @@ if (not re.fullmatch('[a-f0-9]{40}', source_ref)
     raise SystemExit('Native overlay source or package identity differs')
 
 suffixes = {'.exe', '.dll', '.ime'}
-base_images = {row['path']: row for row in base['files'] if Path(row['path']).suffix.lower() in suffixes}
+excluded = excluded_native_paths(inputs)
+excluded_records = excluded_native_records(inputs, base['files'])
+if (provenance.get('excludedNativeImages', []) != excluded_records
+        or (excluded_records and overlay.get('excludedNativeImages') != excluded_records)
+        or any(row['sha256'] in hashes for row in excluded_records)):
+    raise SystemExit('The installer contains or misreports an excluded legacy backend image')
+base_images = {row['path']: row for row in base['files']
+               if Path(row['path']).suffix.lower() in suffixes and row['path'] not in excluded}
 native_rows = [row for row in provenance['files'] if Path(row['installed_path']).suffix.lower() in suffixes]
 current = {}
 for row in native_rows:
@@ -121,18 +129,17 @@ for row in native_rows:
 staged_images = {path.relative_to(a.stage).as_posix() for path in a.stage.rglob('*')
                  if path.is_file() and path.suffix.lower() in suffixes
                  and not path.relative_to(a.stage).as_posix().startswith('archives/')}
-if len(base_images) != 14 or set(current) != set(base_images) or staged_images != set(base_images):
+if len(base_images) != 14 - len(excluded) or set(current) != set(base_images) or staged_images != set(base_images):
     raise SystemExit('The complete native image set differs')
 expected = ({name: arch for arch, products in frontend_products(inputs['nativeFrontend']).items() for name in products}
             if full_frontend else {'StellaeServer.exe': 'x64', 'Win32/StellaeServer.exe': 'x86'})
 specs = {} if full_frontend else inputs['serverOverlays']['architectures']
 proof_rows = overlay['rebuiltImages' if full_frontend else 'rebuiltServers']
 engine_rows = overlay.get('rebuiltRuntimeEngines', [])
-engine_spec = inputs.get('nativeEngines')
-expected_engines = {name: arch for arch, (_, name) in ENGINES.items()} if engine_spec else {}
+selected_engines = runtime_engines(inputs)
+expected_engines = {name: arch for arch, (_, name) in selected_engines.items()}
 unchanged = len(base_images) - len(expected) - len(expected_engines)
-if (('nativeEngines' in inputs and
-        (not full_frontend or engine_spec != {arch: variant for arch, (variant, _) in ENGINES.items()}))
+if (('nativeEngines' in inputs and not full_frontend)
         or (a.engine_sources is not None) != bool(expected_engines)
         or (not full_frontend and set(specs) != set(MACHINES))
         or len(proof_rows) != len(expected)
@@ -226,6 +233,9 @@ report = {'format': 'stellae-bundle-extraction-v1', 'passed': True,
           'verifiedInputFiles': len(manifest['files']), 'installedProfileRecordsVerified': len(profile_records),
           'extractedFiles': len(files), 'reusedImages': retained, 'rebuiltImages': rebuilt,
           'nativeImages': len(current), 'physicalKeyboardTested': False}
+if excluded_records:
+    report.update(backendArchitecture='x64', compatibilityClientArchitectures=['x86'],
+                  excludedNativeImages=excluded_records)
 if not full_frontend:
     report['sourceRunId'] = overlay['runId']
 if rebuilt_engines:

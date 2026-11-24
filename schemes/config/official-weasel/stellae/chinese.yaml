@@ -1,0 +1,100 @@
+# Shared Chinese defaults. Frontend capabilities are adapted during profile generation.
+patch:
+  schema/name: 墨芯基底
+  switches:
+    - { name: ascii_mode, reset: 0 }
+    - { name: full_shape, reset: 0 }
+    - { name: simplification, reset: 1, states: [漢字, 汉字] }
+    - { name: ascii_punct, reset: 1 }
+    - { name: research_english, reset: 0, states: [中文, 英文] }
+    # Last reset is a private initialization-complete notification.
+    - { name: probe_options_ready, reset: 1 }
+  speller/alphabet: abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ
+  speller/initials: abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ
+  speller/delimiter: " '"
+  speller/algebra:
+    __include: stellae/spelling:/algebra
+  translator/dictionary: cn_stellae
+  engine/processors:
+    - lua_processor@probe_global_mode
+    - lua_processor@draft_limit
+    - lua_processor@cn_exact_processor
+    - lua_processor@en_processor
+    - lua_processor@query_info_submit
+    - lua_processor@tool_processor
+    - lua_processor@candidate_keys
+    - lua_processor@select_hanzi
+    - ascii_composer
+    - recognizer
+    - key_binder
+    - speller
+    - punctuator
+    - selector
+    - navigator
+    - express_editor
+  engine/translators:
+    - punct_translator
+    - lua_translator@official_translator
+  engine/filters:
+    - lua_filter@research_mode_filter
+    - simplifier
+    - uniquifier
+    - lua_filter@candidate_comment_filter
+  ascii_composer/switch_key:
+    Shift_L: noop
+    Shift_R: noop
+    Caps_Lock: noop
+    Eisu_toggle: clear
+    Control_L: noop
+    Control_R: noop
+  # Keep the default uppercase recognizer from consuming candidate numbers.
+  recognizer/patterns/uppercase: '^$'
+  recognizer/patterns/reverse_lookup: '^$'
+  key_binder/bindings:
+    - { when: has_menu, accept: Shift+Delete, send: Control+Delete }
+    - { when: always, accept: Control+Shift+f, toggle: simplification }
+    - { when: always, accept: Control+Shift+F, toggle: simplification }
+  probe/unified_memory: true
+  translator/user_dict: cn_stellae
+
+  cn_decoder:
+    dictionary: cn_stellae
+    prism: cn_stellae
+    enable_user_dict: false
+  translator/enable_completion: false
+  translator/enable_word_completion: true
+  translator/use_stock_word_completion: true
+  probe/greek_code_prefix: "~g~"
+
+  schema/dependencies: [stroke, project_radical, project_radical_parts, english_full]
+  engine/segmentors:
+    - lua_segmentor@en_segmentor
+    - lua_segmentor@tool_segmentor
+    - lua_segmentor@cn_exact_segmentor
+    - ascii_segmentor
+    - matcher
+    - abc_segmentor
+    - punct_segmentor
+    - fallback_segmentor
+  simplifier/excluded_types: [tool_unicode, tool_calc, u_stroke, u_stroke_completion, u_radical, u_radical_completion, u_radical_abbreviation, mdx_sc_original]
+  simplifier/opencc_config: mdx_t2s.json
+
+  # Optional tolerance paths. Change flags and redeploy.
+  cn_tolerance:
+    missing_letter: true
+    neighbor_substitution: true
+    double_transposition: true
+
+  # Compact language model.
+  grammar:
+    language: zh-hant-t-essay-bgw-compact
+    collocation_max_length: 6
+    collocation_min_length: 3
+    collocation_penalty: -14
+    non_collocation_penalty: -6
+    weak_collocation_penalty: -100
+    rear_penalty: -20
+
+  # Pending spelling only. Mode prefixes and supported reading suffixes are separate.
+  draft_limits:
+    __include: stellae/tools:/draft_limits

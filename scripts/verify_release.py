@@ -18,6 +18,21 @@ ROOT = Path(__file__).resolve().parents[1]
 IGNORED = {'.git', '__pycache__', 'out', 'work', '.venv', '.pytest_cache'}
 MANIFEST = ROOT / 'release-manifest.json'
 
+PRIVATE_MARKER = re.compile(
+    r'(?i)(?:[a-z]:[\\/](?:Users|Portable)[\\/]|'
+    r'gh[pousr]_[a-z0-9]{20,}|-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----)'
+)
+UNIX_PRIVATE_PATH = re.compile(r'(?i)(?<![\w./\\])/(?:Users|home)/[^/\s]+/')
+FILE_PRIVATE_PATH = re.compile(r'(?i)\bfile:(?://[^/\s]*)?/(?:Users|home)/[^/\s]+/')
+NON_FILE_URL = re.compile(r'''(?i)\b(?!file:)[a-z][a-z0-9+.-]*://[^\s<>"'`]+''')
+
+
+def contains_private_marker(source):
+    """Keep credentials and Windows paths visible while distinguishing Unix paths from URLs."""
+    if PRIVATE_MARKER.search(source) or FILE_PRIVATE_PATH.search(source):
+        return True
+    return UNIX_PRIVATE_PATH.search(NON_FILE_URL.sub(' ', source)) is not None
+
 
 def files():
     return sorted((p for p in ROOT.rglob('*') if p.is_file()
@@ -98,11 +113,6 @@ def main():
             raise SystemExit(f'Unexpected runtime or personal file: {path.relative_to(ROOT)}')
         if path.stat().st_size >= 100_000_000:
             raise SystemExit(f'File exceeds this source snapshot size limit: {path.relative_to(ROOT)}')
-    private_marker = re.compile(
-        r'(?i)(?:[a-z]:[\\/](?:Users|Portable)[\\/]|' + '/' + 'Users' + r'/[^/\s]+/|'
-        + '/' + 'home' + r'/[^/\s]+/|'
-        r'gh[pousr]_[a-z0-9]{20,}|-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----)'
-    )
     python_count = json_count = yaml_count = 0
     try:
         import yaml
@@ -124,7 +134,7 @@ def main():
             if path.suffix.lower() not in {'.html', '.htm'}:
                 raise SystemExit(f'Unexpected non-text source: {path.relative_to(ROOT)}')
             continue
-        if private_marker.search(source):
+        if contains_private_marker(source):
             raise SystemExit(f'Personal path or credential marker in {path.relative_to(ROOT)}')
         if path.suffix == '.py':
             ast.parse(source, filename=str(path.relative_to(ROOT)))

@@ -1,5 +1,5 @@
 ﻿# SPDX-License-Identifier: GPL-3.0-only
-# Public source files and fixed synthetic input, in a fresh isolated profile.
+# Current semicolon syllable locks and quote chunk confirmation, using fixed synthetic input.
 param(
  [Parameter(Mandatory=$true)][string]$EngineDll,
  [Parameter(Mandatory=$true)][string]$ProfileRoot,
@@ -38,11 +38,11 @@ if(Test-Path -LiteralPath (Join-Path $standard 'opencc')){Copy-Item -LiteralPath
 [IO.File]::WriteAllText((Join-Path $user '.synthetic-profile.json'),'{"kind":"fixed-synthetic-exact-profile","format":1}',$utf8)
 foreach($pair in @(@('observer.lua','cn_exact_test_observer.lua'),@('unit_runner.lua','cn_exact_unit_runner.lua'),@('processor_unit.lua','cn_exact_processor_unit.lua'))){Copy-Item -LiteralPath (Join-Path $PSScriptRoot ('exact_syllable/'+$pair[0])) -Destination (Join-Path $user ('lua/'+$pair[1]))}
 [IO.File]::AppendAllText((Join-Path $user 'rime.lua'),"`ncn_exact_test_observer = require('cn_exact_test_observer')`ncn_exact_unit_runner = require('cn_exact_unit_runner')`n",$utf8)
-[IO.File]::AppendAllText((Join-Path $user 'cn_stellae.custom.yaml'),"`n  'engine/processors/@before 0': lua_processor@cn_exact_test_observer`n  'engine/processors/@before 1': lua_processor@cn_exact_unit_runner`n",$utf8)
+[IO.File]::WriteAllText((Join-Path $user 'cn_stellae.custom.yaml'),"patch:`n  'engine/processors/@before 0': lua_processor@cn_exact_test_observer`n  'engine/processors/@before 1': lua_processor@cn_exact_unit_runner`n",$utf8)
 $realJapanese=Test-Path -LiteralPath (Join-Path $user 'jp_stellae.schema.yaml')
 $foreignSchema=if($realJapanese){'jp_stellae'}else{'exact_foreign'}
 $tabWordNavigation=$realJapanese
-[IO.File]::AppendAllText((Join-Path $user 'default.custom.yaml'),"`n  'schema_list/=':`n    - schema: cn_stellae`n    - schema: $foreignSchema`n",$utf8)
+[IO.File]::WriteAllText((Join-Path $user 'default.custom.yaml'),"patch:`n  'schema_list/=':`n    - schema: cn_stellae`n    - schema: $foreignSchema`n",$utf8)
 if(-not $realJapanese){
  $foreign=@"
 schema:
@@ -67,7 +67,7 @@ punctuator:
  [IO.File]::WriteAllText((Join-Path $user 'exact_foreign.dict.yaml'),"---`nname: exact_foreign`nversion: '1'`n...`n$foreignWord`tkana`t100`n",$utf8)
 }
 $sourceHashes=[ordered]@{}
-foreach($name in @('cn_stellae.schema.yaml','cn_stellae.custom.yaml','lua/cn_match.lua','lua/cn_translator.lua','lua/cn_preedit_spacing.lua','lua/cn_exact_spelling.lua','lua/cn_exact_processor.lua')){$sourceHashes[$name]=(Get-FileHash -LiteralPath (Join-Path $profile $name) -Algorithm SHA256).Hash.ToLowerInvariant()}
+foreach($name in @('cn_stellae.schema.yaml','cn_stellae.custom.yaml','lua/cn/cn_match.lua','lua/cn/cn_translator.lua','lua/cn/cn_preedit_spacing.lua','lua/cn/cn_exact_spelling.lua','lua/cn/cn_exact_processor.lua')){$sourceHashes[$name]=(Get-FileHash -LiteralPath (Join-Path $profile $name) -Algorithm SHA256).Hash.ToLowerInvariant()}
 $registrationSource=if(Test-Path -LiteralPath (Join-Path $profile 'samples/rime.lua')){'samples/rime.lua'}else{'rime.lua'}
 $sourceHashes[$registrationSource]=(Get-FileHash -LiteralPath (Join-Path $profile $registrationSource) -Algorithm SHA256).Hash.ToLowerInvariant()
 Add-Type -TypeDefinition ([IO.File]::ReadAllText((Join-Path $repo 'tests/RimeProbe.cs'),$utf8).Replace('__RIME_ENGINE_DLL__',$dll))
@@ -225,7 +225,7 @@ try {
     $unitSummary = [RimeProbe]::Property($script:s, 'cn_exact_unit_checks')
     Check 'pure-lua-unit-suites' ($unitSummary -ceq 'PASS processor=56 matcher=16') $unitSummary
 
-    if (Test-Path -LiteralPath (Join-Path $user 'lua/official_translator.lua')) {
+    if (Test-Path -LiteralPath (Join-Path $user 'lua/shared/on_demand_translator.lua')) {
         $beforeThreshold = Query ('s' * 7)
         Type-Raw 's'
         Check 'eight-initials-keep-Chinese-candidates' (
@@ -261,28 +261,28 @@ try {
 
     $menu = Query 'xiao'
     Check 'unmarked-xiao-keeps-correction-and-split' ($menu.Candidates -ccontains '喜愛' -and $menu.Candidates -ccontains '西澳')
-    $menu = Query 'xiao"'
+    $menu = Query 'xiao;'
     Check 'single-mark-excludes-xi-ai-and-xi-ao' (-not ($menu.Candidates -ccontains '喜愛') -and -not ($menu.Candidates -ccontains '西澳'))
     [void](Selected 'single-mark' '笑' 0 5 'xiao')
-    Check 'single-mark-visible' ([RimeProbe]::Snapshot($script:s,6).Preedit.Contains('"'))
+    Check 'single-mark-visible' ([RimeProbe]::Snapshot($script:s,6).Preedit.Contains(';'))
     Stroke 0x20
     Commit-Is 'single-mark-commit-has-no-marker' '笑'
 
-    Inspect-Lock 'xiao"' 'xiao'
-    Inspect-Lock 'xiao"sr' 'xiao'
+    Inspect-Lock 'xiao;' 'xiao'
+    Inspect-Lock 'xiao;sr' 'xiao'
 
-    [void](Query 'xiao"sr')
+    [void](Query 'xiao;sr')
     [void](Selected 'mixed-prefix-phrase' '笑死人' 0 7 'xiao si ren')
     Stroke 0x20
     Commit-Is 'mixed-prefix-phrase-commit' '笑死人'
-    [void](Query 'xiao"si"ren"')
+    [void](Query 'xiao;si;ren;')
     [void](Selected 'all-marked-learned-phrase' '笑死人' 0 12 'xiao si ren')
     Stroke 0x20
     Commit-Is 'all-marked-phrase-commit' '笑死人'
 
-    foreach ($raw in @('xi''an"','xi"an"')) {
+    foreach ($raw in @('xi''an;','xi;an;')) {
         $menu = Query $raw
-        if ($raw -ceq 'xi"an"') {
+        if ($raw -ceq 'xi;an;') {
             Check 'both-marked-exclude-ci-an' (-not ($menu.Candidates -ccontains '此案'))
         } else {
             Check 'apostrophe-keeps-unmarked-xi-correction' ($menu.Candidates -ccontains '此案')
@@ -292,12 +292,12 @@ try {
         Commit-Is ('apostrophe-commit-' + $raw) '西安'
     }
 
-    [void](Query 'xiao"ren"')
+    [void](Query 'xiao;ren;')
     [void](Selected 'marked-two-syllables' '小人' 0 9 'xiao ren')
     Stroke 0x20
     Commit-Is 'marked-two-syllables-commit' '小人'
 
-    [void](Query 'xiao"ren"ni"hao"')
+    [void](Query 'xiao;ren;ni;hao;')
     $menu = [RimeProbe]::Snapshot($script:s,40)
     $sentenceFound = $false
     $sentenceRows = [Collections.Generic.List[object]]::new()
@@ -314,50 +314,50 @@ try {
     $observations.Add([pscustomobject]@{Id='native-sentence-bounded-metadata';Candidates=$sentenceRows.ToArray()})
     Check 'native-sentence-path-observed' $sentenceFound $sentenceRows.ToArray()
 
-    $menu = Query 'xioa"'
+    $menu = Query 'xioa;'
     Check 'invalid-locked-code-no-candidates' ($menu.Candidates.Count -eq 0) $menu.Candidates.Count
     Stroke 0xff08
     Check 'backspace-removes-marker' ([RimeProbe]::Input($script:s) -ceq 'xioa')
     Check 'backspace-unlocks-correction' ([RimeProbe]::Snapshot($script:s,400).Candidates -ccontains '笑')
 
-    [void](Query 'xioa"')
+    [void](Query 'xioa;')
     [RimeProbe]::SetCaret($script:s,4)
     Stroke 0xffff
     Check 'delete-removes-marker' ([RimeProbe]::Input($script:s) -ceq 'xioa')
     Check 'delete-unlocks-correction' ([RimeProbe]::Snapshot($script:s,400).Candidates -ccontains '笑')
 
-    [void](Query 'xi''ao"')
+    [void](Query 'xi''ao;')
     [RimeProbe]::SetCaret($script:s,2)
     Stroke 0xffff
     $menu = [RimeProbe]::Snapshot($script:s,400)
-    Check 'delete-apostrophe-recomputes-whole-locked-block' ([RimeProbe]::Input($script:s) -ceq 'xiao"' -and [RimeProbe]::Caret($script:s) -eq 2 -and $menu.Candidates.Count -eq 0 -and $script:commits.Count -eq 0) $menu.Candidates.Count
+    Check 'delete-apostrophe-recomputes-whole-locked-block' ([RimeProbe]::Input($script:s) -ceq 'xiao;' -and [RimeProbe]::Caret($script:s) -eq 2 -and $menu.Candidates.Count -eq 0 -and $script:commits.Count -eq 0) $menu.Candidates.Count
     Stroke 0xff57
     $menu = [RimeProbe]::Snapshot($script:s,400)
     Check 'merged-locked-block-valid-at-end' ([RimeProbe]::Caret($script:s) -eq 5 -and $menu.Candidates -ccontains '笑')
     Check 'merged-locked-block-excludes-old-splits' (-not ($menu.Candidates -ccontains '西澳') -and -not ($menu.Candidates -ccontains '喜愛'))
 
-    $menu = Query 'xiaoren"'
+    $menu = Query 'xiaoren;'
     Check 'whole-marked-block-cannot-resplit-into-two-syllables' ($menu.Candidates.Count -eq 0) $menu.Candidates.Count
 
-    [void](Query 'xiao"')
+    [void](Query 'xiao;')
     [RimeProbe]::SetCaret($script:s,3)
     Stroke 0xff08
-    Check 'edit-inside-locked-block-recomputes' ([RimeProbe]::Input($script:s) -ceq 'xio"' -and [RimeProbe]::Snapshot($script:s,6).Candidates.Count -eq 0)
+    Check 'edit-inside-locked-block-recomputes' ([RimeProbe]::Input($script:s) -ceq 'xio;' -and [RimeProbe]::Snapshot($script:s,6).Candidates.Count -eq 0)
     Stroke 0x61
-    Check 'edit-restores-raw-without-candidates-past-caret' ([RimeProbe]::Input($script:s) -ceq 'xiao"' -and [RimeProbe]::Caret($script:s) -eq 3 -and [RimeProbe]::Snapshot($script:s,6).Candidates.Count -eq 0)
+    Check 'edit-restores-raw-without-candidates-past-caret' ([RimeProbe]::Input($script:s) -ceq 'xiao;' -and [RimeProbe]::Caret($script:s) -eq 3 -and [RimeProbe]::Snapshot($script:s,6).Candidates.Count -eq 0)
     Stroke 0xff57
     Check 'edit-restores-valid-locked-block-at-end' ([RimeProbe]::Caret($script:s) -eq 5 -and [RimeProbe]::Snapshot($script:s,400).Candidates -ccontains '笑')
 
-    [void](Query 'xin"g')
+    [void](Query 'xin;g')
     [RimeProbe]::SetCaret($script:s,4)
-    Check 'focus-xin-keeps-original-g-tail' ([RimeProbe]::Input($script:s) -ceq 'xin"g' -and [RimeProbe]::Caret($script:s) -eq 4 -and $script:commits.Count -eq 0)
+    Check 'focus-xin-keeps-original-g-tail' ([RimeProbe]::Input($script:s) -ceq 'xin;g' -and [RimeProbe]::Caret($script:s) -eq 4 -and $script:commits.Count -eq 0)
     [void](Selected 'locked-xing-reading-keeps-next-g' '星' 0 4 'xing')
     [void](Selected 'locked-xin-keeps-next-g' '心' 0 4 'xin')
     Stroke 0x20
-    Check 'xin-g-partial-selection-keeps-full-raw' ([RimeProbe]::Input($script:s) -ceq 'xin"g' -and $script:commits.Count -eq 0)
+    Check 'xin-g-partial-selection-keeps-full-raw' ([RimeProbe]::Input($script:s) -ceq 'xin;g' -and $script:commits.Count -eq 0)
     Stroke 0xff0d
     Commit-Is 'xin-g-not-swallowed' '心g'
-    $menu = Query 'xin"'
+    $menu = Query 'xin;'
     Check 'xin-lock-keeps-project-normal-readings' ($menu.Candidates -ccontains '心' -and $menu.Candidates -ccontains '星')
 
     [void](Query 'xiaoren')
@@ -369,68 +369,68 @@ try {
         $skippedChecks.Add('ordinary-tab-word-navigation')
         Check 'ordinary-native-tab-keeps-raw-unmarked-input' ([RimeProbe]::Input($script:s) -ceq 'xiaoren' -and $script:commits.Count -eq 0)
     }
-    [void](Query 'xiao"ren"')
+    [void](Query 'xiao;ren;')
     Highlight '小人'
     Stroke 0xff09
     if ($tabWordNavigation) {
-        Check 'marked-tab-consumes-marker-position' ([RimeProbe]::Input($script:s) -ceq 'xiao"ren"' -and [RimeProbe]::Caret($script:s) -eq 5)
+        Check 'marked-tab-consumes-marker-position' ([RimeProbe]::Input($script:s) -ceq 'xiao;ren;' -and [RimeProbe]::Caret($script:s) -eq 5)
         Stroke 0xff09 1
         Check 'marked-shift-tab-returns-to-start' ([RimeProbe]::Caret($script:s) -eq 0)
     } else {
         $skippedChecks.Add('marked-tab-word-navigation')
         $skippedChecks.Add('marked-shift-tab-word-navigation')
-        Check 'marked-native-tab-keeps-raw-locks' ([RimeProbe]::Input($script:s) -ceq 'xiao"ren"' -and $script:commits.Count -eq 0)
+        Check 'marked-native-tab-keeps-raw-locks' ([RimeProbe]::Input($script:s) -ceq 'xiao;ren;' -and $script:commits.Count -eq 0)
         [RimeProbe]::SetCaret($script:s,0)
     }
     Stroke 0xff53
     Stroke 0xff51
-    Check 'marked-char-navigation-keeps-raw' ([RimeProbe]::Caret($script:s) -eq 0 -and [RimeProbe]::Input($script:s) -ceq 'xiao"ren"' -and $script:commits.Count -eq 0)
+    Check 'marked-char-navigation-keeps-raw' ([RimeProbe]::Caret($script:s) -eq 0 -and [RimeProbe]::Input($script:s) -ceq 'xiao;ren;' -and $script:commits.Count -eq 0)
 
-    [void](Query 'xiao"ren"')
+    [void](Query 'xiao;ren;')
     Highlight '小人'
     Event 0xffe3
     Stroke 0xff08 4
     Event 0xffe3 0x40000000
     $menu = [RimeProbe]::Snapshot($script:s,400)
-    Check 'Control-Backspace-removes-one-marked-syllable' ([RimeProbe]::Input($script:s) -ceq 'xiao"' -and [RimeProbe]::Caret($script:s) -eq 5 -and $script:commits.Count -eq 0)
+    Check 'Control-Backspace-removes-one-marked-syllable' ([RimeProbe]::Input($script:s) -ceq 'xiao;' -and [RimeProbe]::Caret($script:s) -eq 5 -and $script:commits.Count -eq 0)
     Check 'Control-Backspace-retains-earlier-lock' ($menu.Candidates -ccontains '笑' -and -not ($menu.Candidates -ccontains '西澳') -and -not ($menu.Candidates -ccontains '喜愛'))
 
     [void](Query 'nixiao')
     [RimeProbe]::SetCaret($script:s,2)
     Pick '你'
     Check 'confirmed-prefix-before-marker-keeps-pending-raw' ([RimeProbe]::Input($script:s) -ceq 'nixiao' -and $script:commits.Count -eq 0)
-    Type-Raw '"ren"'
-    Check 'marker-appended-after-confirmed-prefix' ([RimeProbe]::Input($script:s) -ceq 'nixiao"ren"' -and $script:commits.Count -eq 0)
+    Type-Raw ';ren;'
+    Check 'marker-appended-after-confirmed-prefix' ([RimeProbe]::Input($script:s) -ceq 'nixiao;ren;' -and $script:commits.Count -eq 0)
     [void](Selected 'nonzero-selected-prefix' '小人' 2 11 'xiao ren')
     Stroke 0x20
     Commit-Is 'nonzero-prefix-single-commit' '你小人'
 
-    [void](Query 'xiao"ren"nihao')
+    [void](Query 'xiao;ren;nihao')
     [RimeProbe]::SetCaret($script:s,9)
     [void](Selected 'middle-caret-marked-prefix' '小人' 0 9 'xiao ren')
     Stroke 0x20
-    Check 'middle-caret-retains-raw-tail' ([RimeProbe]::Input($script:s) -ceq 'xiao"ren"nihao' -and $script:commits.Count -eq 0)
+    Check 'middle-caret-retains-raw-tail' ([RimeProbe]::Input($script:s) -ceq 'xiao;ren;nihao' -and $script:commits.Count -eq 0)
     [void](Selected 'middle-caret-tail-offset' '你好' 9 14 'ni hao')
     Stroke 0x20
     Commit-Is 'middle-caret-final-single-commit' '小人你好'
 
-    [void](Query 'xiao"ren"hao')
+    [void](Query 'xiao;ren;hao')
     Highlight '小人'
     Stroke 0x5b
-    Check 'marked-bracket-preserves-pending-raw-tail' ([RimeProbe]::Input($script:s) -ceq 'xiao"ren"hao' -and $script:commits.Count -eq 0 -and [RimeProbe]::Snapshot($script:s,6).Preedit.StartsWith('小'))
+    Check 'marked-bracket-preserves-pending-raw-tail' ([RimeProbe]::Input($script:s) -ceq 'xiao;ren;hao' -and $script:commits.Count -eq 0 -and [RimeProbe]::Snapshot($script:s,6).Preedit.StartsWith('小'))
     [void](Selected 'marked-bracket-remainder-offset' '好' 9 12 'hao')
     Stroke 0x20
     Commit-Is 'marked-bracket-remainder-single-commit' '小好'
 
-    [void](Query 'xiao"')
+    [void](Query 'xiao;')
     Stroke 0xff0d
-    Commit-Is 'raw-return-preserves-marker' 'xiao"'
-    [void](Query 'ni''xiao"')
+    Commit-Is 'raw-return-preserves-marker' 'xiao;'
+    [void](Query 'ni''xiao;')
     Pick '你'
     Stroke 0xff0d
-    Commit-Is 'selected-prefix-raw-return-preserves-marker' '你xiao"'
+    Commit-Is 'selected-prefix-raw-return-preserves-marker' '你xiao;'
 
-    [void](Query 'ni''xiao"ren"')
+    [void](Query 'ni''xiao;ren;')
     Pick '你'
     Stroke 0xff1b
     Check 'escape-cancels-pending-suffix-only' ([RimeProbe]::Input($script:s) -ceq 'ni''' -and $script:commits.Count -eq 0)
@@ -481,11 +481,11 @@ try {
     Check 'marked-selection-learns-canonical-phrase' ($targetRows.Count -eq 1 -and $targetRows[0].Code -ceq 'xiao si ren' -and $targetRows[0].Count -eq 3) @($targetRows | Select-Object Code,Count)
     $bracketRows = @($learned | Where-Object { $_.Text -ceq '小好' })
     Check 'marked-bracket-learns-only-selected-character-and-tail' ($bracketRows.Count -eq 1 -and $bracketRows[0].Code -ceq 'xiao hao' -and $bracketRows[0].Count -eq 1) @($bracketRows | Select-Object Code,Count)
-    Check 'no-marker-in-any-learned-code' (@($learned | Where-Object { $_.Code.Contains('"') }).Count -eq 0)
+    Check 'no-marker-in-any-learned-code' (@($learned | Where-Object { $_.Code.Contains('"') -or $_.Code.Contains(';') }).Count -eq 0)
     [RimeProbe]::RimeFinalize()
     [RimeProbe]::RimeInitialize([ref]$traits)
     New-Session
-    $menu = Query 'xiao"sr'
+    $menu = Query 'xiao;sr'
     Check 'learned-phrase-persists-after-runtime-reopen' ($menu.Candidates -ccontains '笑死人')
     [void](Selected 'persisted-learned-phrase-span' '笑死人' 0 7 'xiao si ren')
 

@@ -36,7 +36,7 @@ font_sources={
     } for entry in font_records.values()
 }
 records=[]
-excluded={'install.nsi','bundle.nsi','InstallProfilePolicy.ps1','NativeProfileSnapshot.ps1','stellae_identity.nsh'}
+excluded={'install.nsi','bundle.nsi','bundle_architecture.nsh','InstallProfilePolicy.ps1','NativeProfileSnapshot.ps1','stellae_identity.nsh'}
 
 def scheme_reference(name):
     if '://' in name:return name

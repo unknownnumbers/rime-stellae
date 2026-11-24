@@ -15,6 +15,7 @@ from zipfile import ZipFile
 PACKAGE = Path(__file__).resolve().parents[3] / 'scripts/package'
 sys.path.insert(0, str(PACKAGE))
 import apply_frontend_overlays as overlay
+import bundle_architecture as architecture
 sys.path.pop(0)
 
 REF = 'a' * 40
@@ -199,6 +200,73 @@ class RuntimeEngineTests(unittest.TestCase):
     def test_rejects_missing_engine_inputs(self):
         with self.assertRaisesRegex(ValueError, 'required together'):
             overlay.apply(self.stage, self.products, self.products, REF)
+
+    def select_x64_backend_and_compatibility_clients(self):
+        inputs = overlay.load(self.stage / 'bundle-inputs.json')
+        inputs['nativeEngines'] = {'x64': 'engine-n01'}
+        inputs['nativeFrontend']['clientOnlyArchitectures'] = ['x86']
+        save(self.stage / 'bundle-inputs.json', inputs)
+        provenance = overlay.load(self.stage / 'bundle-provenance.json')
+        base = overlay.load(self.stage / 'base-package-license-index.json')
+        excluded = architecture.excluded_native_paths(inputs)
+        for name in excluded:
+            (self.stage / name).unlink()
+        provenance['files'] = [row for row in provenance['files'] if row['installed_path'] not in excluded]
+        provenance['excludedNativeImages'] = architecture.excluded_native_records(inputs, base['files'])
+        provenance['inputs'] = inputs
+        save(self.stage / 'bundle-provenance.json', provenance)
+        record = self.products / 'x86/build-result.json'
+        frontend = overlay.load(record)
+        frontend['buildScope'] = 'frontend-client-images'
+        frontend['products'] = [row for row in frontend['products']
+                                if row['installedRelativePath'] in overlay.CLIENT_PRODUCTS['x86']]
+        save(record, frontend)
+
+    def test_x64_backend_with_x86_clients_has_one_engine_and_no_win32_service(self):
+        self.select_x64_backend_and_compatibility_clients()
+        proof = self.apply()
+        self.assertEqual((len(proof['rebuiltImages']), len(proof['rebuiltRuntimeEngines'])), (6, 1))
+        self.assertEqual(proof['nativeImages'], 11)
+        self.assertEqual(proof['backendArchitecture'], 'x64')
+        self.assertEqual(proof['compatibilityClientArchitectures'], ['x86'])
+        self.assertEqual(len(list(self.sources.glob('*.zip'))), 1)
+        self.run_package_script('index_bundle.py', '--stage', self.stage, '--ref', REF)
+        extracted = self.root / 'extracted-x64'
+        shutil.copytree(self.stage, extracted)
+        report = self.root / 'report-x64.json'
+        args = ('--stage', self.stage, '--extracted', extracted, '--report', report,
+                '--engine-sources', self.sources)
+        self.run_package_script('verify_bundle.py', *args)
+        self.assertEqual(len(overlay.load(report)['rebuiltRuntimeEngines']), 1)
+        self.assertFalse((self.stage / 'Win32/rime.dll').exists())
+        # Retained historical backend bytes must also be absent from the final
+        # installer, even when the extractor renames duplicate filenames.
+        write(extracted / 'StellaeServer_1.exe', image(overlay.MACHINES['x86'], 'original-Win32/StellaeServer.exe'))
+        with self.assertRaises(subprocess.CalledProcessError) as failure:
+            self.run_package_script('verify_bundle.py', *args)
+        self.assertIn('excluded legacy backend', failure.exception.stderr)
+
+    def test_x64_package_rejects_a_staged_legacy_backend(self):
+        self.select_x64_backend_and_compatibility_clients()
+        write(self.stage / 'Win32/rime.dll', image(overlay.MACHINES['x86'], 'unexpected-backend'))
+        with self.assertRaisesRegex(ValueError, 'original native image set'):
+            self.apply()
+
+    def test_x64_package_rejects_a_full_x86_frontend_artifact(self):
+        self.select_x64_backend_and_compatibility_clients()
+        record = self.products / 'x86/build-result.json'
+        save(record, overlay.load(record) | {'buildScope': 'frontend-images'})
+        with self.assertRaisesRegex(ValueError, 'artifact validation'):
+            self.apply()
+
+    def test_compatibility_client_role_rejects_an_independent_x86_engine(self):
+        self.select_x64_backend_and_compatibility_clients()
+        path = self.stage / 'bundle-inputs.json'
+        inputs = overlay.load(path)
+        inputs['nativeEngines']['x86'] = 'engine-r5'
+        save(path, inputs)
+        with self.assertRaisesRegex(ValueError, 'architecture roles'):
+            self.apply()
 
 
 if __name__ == '__main__':

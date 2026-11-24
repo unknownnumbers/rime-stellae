@@ -27,9 +27,6 @@ jobs:
           - architecture: x64
             compiler: x64
             variant: engine-n01
-          - architecture: x86
-            compiler: x64_x86
-            variant: engine-r5
     steps:
       - uses: actions/checkout@v4
         with:
@@ -59,7 +56,7 @@ jobs:
       fail-fast: false
       matrix:
         architecture: [x64, x86]
-    name: Build appearance frontend (${{ matrix.architecture }})
+    name: Build frontend and application compatibility clients (${{ matrix.architecture }})
     steps:
       - uses: actions/checkout@v4
         with:
@@ -73,13 +70,15 @@ jobs:
           arch: ${{ matrix.architecture }}
       - name: Assemble pinned frontend source
         run: ./scripts/native/Prepare-Sources.ps1 -Variant stellae-61052 -Destination "$env:RUNNER_TEMP/frontend-source"
-      - name: Compile the server, deployer and frontend images
+      - name: Compile the x64 backend or x86 compatibility clients
         env:
           APPEARANCE_ARCHITECTURE: ${{ matrix.architecture }}
         run: |
           $source = Join-Path $env:RUNNER_TEMP 'frontend-source'
           $out = Join-Path $env:RUNNER_TEMP 'frontend-output'
-          ./scripts/native/Build-FrontendOverlay.ps1 -Architecture $env:APPEARANCE_ARCHITECTURE -SourcePath $source -CacheDirectory "$env:RUNNER_TEMP/frontend-cache" -OutputDirectory $out
+          $role = @{}
+          if ($env:APPEARANCE_ARCHITECTURE -ceq 'x86') { $role.ClientOnly = $true }
+          ./scripts/native/Build-FrontendOverlay.ps1 -Architecture $env:APPEARANCE_ARCHITECTURE @role -SourcePath $source -CacheDirectory "$env:RUNNER_TEMP/frontend-cache" -OutputDirectory $out
           if ($env:APPEARANCE_ARCHITECTURE -cne 'x64') { return }
 
           # The clean release directory was copied by Build-FrontendOverlay.
@@ -128,6 +127,56 @@ jobs:
           if-no-files-found: warn
           retention-days: 7
 
+  compatibility-client:
+    needs: [frontend-images, runtime-engines]
+    runs-on: windows-2022
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: frontend
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: microsoft/setup-msbuild@v2
+        with:
+          vs-version: '[17.0,18.0)'
+      - uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: x86
+      - uses: actions/download-artifact@v4
+        with:
+          name: frontend-images-x64
+          path: ${{ runner.temp }}/compatibility-backend
+      - uses: actions/download-artifact@v4
+        with:
+          name: bundle-runtime-x64
+          path: ${{ runner.temp }}/compatibility-engine
+      - name: Check a 32-bit COM client against the single x64 service
+        run: |
+          $source=Join-Path $env:RUNNER_TEMP 'compatibility-source'
+          ./scripts/native/Prepare-Sources.ps1 -Variant stellae-61052 -Destination $source
+          ./scripts/native/Build-FrontendOverlay.ps1 -Architecture x86 -ClientOnly -SourcePath $source -CacheDirectory (Join-Path $env:RUNNER_TEMP 'compatibility-cache') -OutputDirectory (Join-Path $env:RUNNER_TEMP 'compatibility-client-build')
+          $output=Join-Path $source 'output'
+          $backend=Join-Path $env:RUNNER_TEMP 'compatibility-backend'
+          Copy-Item -LiteralPath (Join-Path $backend 'StellaeServer.exe') -Destination $output
+          $engine=Join-Path $env:RUNNER_TEMP 'compatibility-engine/dist/lib/rime.dll'
+          Copy-Item -LiteralPath $engine -Destination $output
+          $shared=Join-Path $output 'data'
+          $null=New-Item -ItemType Directory -Path $shared -Force
+          Copy-Item -LiteralPath installer/default.yaml -Destination $shared
+          Copy-Item -LiteralPath native/tests/key-pairing/fixture/weasel.yaml -Destination $shared
+          ./native/tests/key-pairing/Run-ControlledKeys.ps1 -SourceRoot $source -SharedData $shared -Architecture Win32 -UseX64Backend -RuntimeN01 $engine
+          if(Test-Path -LiteralPath (Join-Path $output 'Win32/StellaeServer.exe')){throw 'The application compatibility test must not build an x86 service'}
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: compatibility-client-validation
+          path: ${{ runner.temp }}/compatibility-source/ci-logs/controlled-keys-win32*.json
+          if-no-files-found: warn
+          retention-days: 14
+
   official-scheme:
     runs-on: windows-2022
     timeout-minutes: 60
@@ -142,7 +191,7 @@ jobs:
       - name: Prepare the official engine and source-derived scheme
         run: |
           $runtime=Join-Path $env:RUNNER_TEMP 'official-validation-engines'
-          ./schemes/scripts/schemes/Prepare-ValidationEngines.ps1 -OutputDirectory $runtime
+          ./schemes/scripts/schemes/Prepare-ValidationEngines.ps1 -Source official -OutputDirectory $runtime
           $official=Join-Path $env:RUNNER_TEMP 'official-source-profile'
           python schemes/scripts/rebuild_profiles.py --profile official-weasel --output (Join-Path $env:RUNNER_TEMP 'official-generated-profile') --prepare-official $official
           if($LASTEXITCODE){throw 'Official profile generation failed'}
@@ -164,7 +213,7 @@ jobs:
           retention-days: 14
 
   bundle:
-    needs: [frontend-images, runtime-engines, official-scheme]
+    needs: [frontend-images, runtime-engines, compatibility-client, official-scheme]
     runs-on: windows-2022
     timeout-minutes: 90
     steps:
@@ -187,10 +236,6 @@ jobs:
         with:
           name: bundle-runtime-x64
           path: ${{ runner.temp }}/runtime-engines/x64
-      - uses: actions/download-artifact@v4
-        with:
-          name: bundle-runtime-x86
-          path: ${{ runner.temp }}/runtime-engines/x86
       - name: Check source and fixed scheme input
         id: inputs
         run: |
@@ -226,6 +271,8 @@ jobs:
         run: ./native/tests/installer/Test-BundleData.ps1 -OutputDirectory (Join-Path $env:RUNNER_TEMP 'shared-policy')
       - name: Test scheme notice upgrade ownership
         run: ./native/tests/installer/Test-BundleNotices.ps1 -OutputDirectory (Join-Path $env:RUNNER_TEMP 'notices-policy')
+      - name: Test source layout migration and modified user sources
+        run: ./native/tests/installer/Test-BundleSourceLayout.ps1 -OutputDirectory (Join-Path $env:RUNNER_TEMP 'source-layout-policy')
       - name: Provision the pinned NSIS compiler
         run: |
           $root=Join-Path ${env:ProgramFiles(x86)} 'NSIS'
@@ -263,12 +310,13 @@ jobs:
           $spec=Get-Content -LiteralPath installer/bundle-inputs.json -Raw | ConvertFrom-Json
           $release=Join-Path $bundle 'release'
           $proof=Get-Content -LiteralPath (Join-Path $release 'payload-verification.json') -Raw | ConvertFrom-Json
-          if (-not $proof.passed -or $proof.sourceRef -cne $env:GITHUB_SHA -or $proof.rebuiltRuntimeEngines.Count -ne 2 -or
+          if (-not $proof.passed -or $proof.sourceRef -cne $env:GITHUB_SHA -or $proof.rebuiltRuntimeEngines.Count -ne 1 -or
+              $proof.backendArchitecture -cne 'x64' -or ($proof.compatibilityClientArchitectures -join ',') -cne 'x86' -or
               $proof.candidateFontCollection.path -cne 'font-payload/NotoSansCJK-Regular.ttc' -or
               $proof.candidateFontCollection.sha256 -cne 'b76b0433203017ca80401b2ee0dd69350349871c4b19d504c34dbdd80541690a') {
             throw 'The package proof does not match this source snapshot'
           }
-          $required=@('StellaeDeployer.exe','StellaeServer.exe','Win32/StellaeDeployer.exe','Win32/StellaeServer.exe')
+          $required=@('stellaex64.dll','stellaex64.ime','StellaeDeployer.exe','StellaeServer.exe','stellae.dll','stellae.ime')
           foreach ($name in $required) {
             if (@($proof.rebuiltImages | Where-Object { $_.path -ceq $name -and $_.sourceRef -ceq $env:GITHUB_SHA }).Count -ne 1) {
               throw "The installer did not verify a rebuilt appearance binary: $name"
@@ -311,9 +359,9 @@ jobs:
           foreach($path in $checks){$report=Get-Content -LiteralPath $path -Raw|ConvertFrom-Json;if(-not $report.passed){throw 'A required validation failed'}}
           $release=Join-Path $env:RUNNER_TEMP 'bundle/release'
           $overlay=Get-Content -LiteralPath (Join-Path $release 'frontend-overlay-verification.json') -Raw|ConvertFrom-Json
-          if ($overlay.runtimeEnginesPreserved -ne $false -or $overlay.rebuiltRuntimeEngines.Count -ne 2) { throw 'The installer must contain both rebuilt engines.' }
+          if ($overlay.runtimeEnginesPreserved -ne $false -or $overlay.rebuiltRuntimeEngines.Count -ne 1 -or $overlay.backendArchitecture -cne 'x64') { throw 'The installer must contain only the rebuilt x64 backend.' }
           $spec=Get-Content -LiteralPath installer/bundle-inputs.json -Raw|ConvertFrom-Json
-          [ordered]@{passed=$true;bundleVersion=$spec.bundleVersion;frontendVersion=$spec.frontendVersion;sourceRef=$env:GITHUB_SHA;rebuiltImages=$overlay.rebuiltImages.Count;rebuiltRuntimeEngines=$overlay.rebuiltRuntimeEngines.Count;unchangedNativeImages=$overlay.unchangedNativeImages;sourceDerivedN01Checks=76;sharedOnlyN01AndR5InputTested=$true;bundlePresetAndUserPriorityTested=$true;actualInstalledProfileReadyWithoutTestRedeploy=$true;bare61052UpgradeTested=$true;installedUpgradeAndUninstallTested=$true;physicalKeyboardTested=$false;actualWindows11Tested=$false}|ConvertTo-Json|Set-Content -LiteralPath (Join-Path $release 'validation.json') -Encoding UTF8
+          [ordered]@{passed=$true;bundleVersion=$spec.bundleVersion;frontendVersion=$spec.frontendVersion;sourceRef=$env:GITHUB_SHA;backendArchitecture='x64';compatibilityClientArchitectures=@('x86');rebuiltImages=$overlay.rebuiltImages.Count;rebuiltRuntimeEngines=$overlay.rebuiltRuntimeEngines.Count;unchangedNativeImages=$overlay.unchangedNativeImages;sourceDerivedN01Checks=76;sharedOnlyN01InputTested=$true;bundlePresetAndUserPriorityTested=$true;actualInstalledProfileReadyWithoutTestRedeploy=$true;bare61052UpgradeTested=$true;installedUpgradeAndUninstallTested=$true;physicalKeyboardTested=$false;actualWindows11Tested=$false}|ConvertTo-Json|Set-Content -LiteralPath (Join-Path $release 'validation.json') -Encoding UTF8
           Get-ChildItem -LiteralPath $release -File|Where-Object {$_.Name -ne 'SHA256SUMS.txt'}|Sort-Object Name|ForEach-Object{(Get-FileHash -LiteralPath $_.FullName).Hash.ToLowerInvariant()+'  '+$_.Name}|Set-Content -LiteralPath (Join-Path $release 'SHA256SUMS.txt') -Encoding ASCII
       - name: Record settings trial validation
         if: startsWith(github.ref_name, 'ci/settings-')
@@ -341,11 +389,11 @@ jobs:
             ${{ runner.temp }}/bundle/*.log
             ${{ runner.temp }}/shared-policy/*.json
             ${{ runner.temp }}/notices-policy/*.json
+            ${{ runner.temp }}/source-layout-policy/**/*.json
             ${{ runner.temp }}/installer-validation/*.json
             ${{ runner.temp }}/installer-validation/*.log
             ${{ runner.temp }}/installer-validation/installed-ready/*.json
             ${{ runner.temp }}/installer-validation/shared-x64/**/result*.json
-            ${{ runner.temp }}/installer-validation/shared-win32/**/result*.json
             ${{ runner.temp }}/profile-policy/*.json
             ${{ runner.temp }}/source-profile-tests/proof.json
             ${{ runner.temp }}/source-profile-tests/rebuilt-binaries.json

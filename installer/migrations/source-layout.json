@@ -1,0 +1,607 @@
+{
+  "format": "stellae-source-layout-upgrade-v1",
+  "previousSourceRef": "04e4bb6e7e62a51c7eed191d269ffa84929b68f6",
+  "policy": "Remove only byte-exact former public source copies so the installed shared profile supplies the current layout. Preserve modified files and report manual merges. A modified Lua entrypoint or module retains the prior Lua source group.",
+  "files": [
+    {
+      "path": "cn_stellae.custom.yaml",
+      "sha256": "709693eda6d406671a0eb1d3e75ae108a7f92f45f61ed2f4d83a26cc177a2c95",
+      "group": "configuration"
+    },
+    {
+      "path": "cn_stellae.dict.yaml",
+      "sha256": "534a918c6496d769cfd83803eeff7e862e0d77ef8cd8094ac22fa9377881fac6",
+      "group": "configuration"
+    },
+    {
+      "path": "cn_stellae.schema.yaml",
+      "sha256": "04ded0595001135df5a1d2496c3b4e95186575d1de9f08ea468295e6047b660a",
+      "group": "configuration"
+    },
+    {
+      "path": "default.custom.yaml",
+      "sha256": "e0ea2ce3a10a045a9124923575f6703be8911efbc0842af8f7cbb9a5aa4dfd4c",
+      "group": "configuration"
+    },
+    {
+      "path": "default.yaml",
+      "sha256": "5cfdf0ddf96d340f4e9187528df0191bf60895d7da9740a15c84d6609c1fec68",
+      "group": "configuration"
+    },
+    {
+      "path": "english_extensions.dict.yaml",
+      "sha256": "46f5b1f58a71fbf4408d6bfeb1d2a292c88b60aae30792f415ef411cea96b4b7",
+      "group": "configuration"
+    },
+    {
+      "path": "english_full.dict.yaml",
+      "sha256": "722b9dda5152877bd6372ab1f2ae24a56146e192ce66c740ef031d37b8df774b",
+      "group": "configuration"
+    },
+    {
+      "path": "english_full.schema.yaml",
+      "sha256": "47f7d2ae2f6595697457d676957c518439f0304105b6e00442f819bb9f81252f",
+      "group": "configuration"
+    },
+    {
+      "path": "jp_q_lookup.dict.yaml",
+      "sha256": "a88dbdca92805084447df214ce135402b58b1842844fcc7ffbfa8f4af1be7e05",
+      "group": "configuration"
+    },
+    {
+      "path": "jp_q_lookup.schema.yaml",
+      "sha256": "e0c3f3b2118212d69e5b720d711522f53627e4f39f0f8bc600ef69ddb82e11f4",
+      "group": "configuration"
+    },
+    {
+      "path": "jp_romaji.dict.yaml",
+      "sha256": "c4c8230624fc30d12ce8847d30f73fab50ce270b37ad62a306c8fd4c45f8a72b",
+      "group": "configuration"
+    },
+    {
+      "path": "jp_small_lookup.dict.yaml",
+      "sha256": "7e664bdef52e48e30a83a3ca83037fa72b1e92312c023c59bfbbcbf75fcc8871",
+      "group": "configuration"
+    },
+    {
+      "path": "jp_small_lookup.schema.yaml",
+      "sha256": "bf00022bf2dcb0b06821c1e254e712ba61d5667fd73da6f8b1a6c5f6a0a95c4c",
+      "group": "configuration"
+    },
+    {
+      "path": "jp_stellae.custom.yaml",
+      "sha256": "71412cb5c0ca2cbdb10ce00f94255223784458b48b4befffba06ea240a346c6b",
+      "group": "configuration"
+    },
+    {
+      "path": "jp_stellae.schema.yaml",
+      "sha256": "cc1cceefcc3d3fc79f2edc69c18d24386d4567f34497bb39facd1063a6133ca4",
+      "group": "configuration"
+    },
+    {
+      "path": "jp_v.dict.yaml",
+      "sha256": "7ed64f8bbef89b6f1f0faa0dbbb24edd74204927e980fd37e0d3ab2eaa7a7902",
+      "group": "configuration"
+    },
+    {
+      "path": "jp_v_lookup.schema.yaml",
+      "sha256": "5f077ddfc2df825e23f9c33716263ac972e71ad2080f749bcb8afef9d9f42b20",
+      "group": "configuration"
+    },
+    {
+      "path": "jp_v_pc_lookup.schema.yaml",
+      "sha256": "679464ba10d1c1ec61ec0638b4f3ca83b2ab763c3687d370cc6526d19085268a",
+      "group": "configuration"
+    },
+    {
+      "path": "key_bindings.yaml",
+      "sha256": "19c52d80a4bf043c16c49fdfeb58cfa4d7a9f2b94bd18c79ff2485bd7627db5f",
+      "group": "configuration"
+    },
+    {
+      "path": "lua/candidate_keys.lua",
+      "sha256": "7d5ef3b87e39fd8982fd9b721dd85c6a12f3e93058151200a119eba7b029df91",
+      "group": "lua"
+    },
+    {
+      "path": "lua/cn_boundaries.lua",
+      "sha256": "20689e1a71bfe13ac67e5ccc505a35e1af41563424e0cab4ba55c300d23a876f",
+      "group": "lua"
+    },
+    {
+      "path": "lua/cn_dlc.lua",
+      "sha256": "39dbb3c34abee5eb42eab971cef2717e865d443681edeecfdfc7fbbfe2d50fd5",
+      "group": "lua"
+    },
+    {
+      "path": "lua/cn_exact_processor.lua",
+      "sha256": "d6c41eef0c224e615d9d6522fef42e79c1b72308bc7d4fb9f5e26874bad057a2",
+      "group": "lua"
+    },
+    {
+      "path": "lua/cn_exact_spelling.lua",
+      "sha256": "20477aa5589a958c260d2924ae8a4fd47b2488e1936ca1d6c1c0d4655de3961d",
+      "group": "lua"
+    },
+    {
+      "path": "lua/cn_extra_forms.lua",
+      "sha256": "b0b08c1b47740a8b9d9a4b24e4d7410b89355d2e0d4936c2afe09edfc9414a65",
+      "group": "lua"
+    },
+    {
+      "path": "lua/cn_forms.lua",
+      "sha256": "cf766b14dfa7a688dacc2e548f2b41520c12b2a81ea90477fd1f1190566607f5",
+      "group": "lua"
+    },
+    {
+      "path": "lua/cn_match.lua",
+      "sha256": "f5da316d250420d5b83f7eac0faacf4ecf5ccacb03701ade6a256286253a690d",
+      "group": "lua"
+    },
+    {
+      "path": "lua/cn_native_boundary.lua",
+      "sha256": "4dd3c3247958fdfebd98501362d09cc9e88777f6a1c099c6cff7b0dc1483c6a4",
+      "group": "lua"
+    },
+    {
+      "path": "lua/cn_neighbor_keys.lua",
+      "sha256": "42fb46041478aeb5de92614dd040bc8ebad45fe02b4e4bf7810496a9bfa9b1cd",
+      "group": "lua"
+    },
+    {
+      "path": "lua/cn_normal_codec.lua",
+      "sha256": "87ef9a43b71bbe2131e89ef581c4211ae893370c757fc98f01e031edf73147c0",
+      "group": "lua"
+    },
+    {
+      "path": "lua/cn_orthography.lua",
+      "sha256": "0547348bf2042b07d802a7ef0961d16ecb3a3e430af2c9e48ea5008099792a9c",
+      "group": "lua"
+    },
+    {
+      "path": "lua/cn_preedit_spacing.lua",
+      "sha256": "83f5e3d4b46d6cc7513358eed4dff016c5040652406a580bd46fb9f75eb3e598",
+      "group": "lua"
+    },
+    {
+      "path": "lua/cn_tolerance.lua",
+      "sha256": "13ce3e50251f6ff624b0d0e7184cd2897e4a988018ce5cbc1abd7d738e6d37d5",
+      "group": "lua"
+    },
+    {
+      "path": "lua/cn_translator.lua",
+      "sha256": "05c1d5c5c34e83c998a1d71f65993206884d3bf110bec658a730349ad2e5fe25",
+      "group": "lua"
+    },
+    {
+      "path": "lua/draft_limit.lua",
+      "sha256": "1e3f83f3e8214017e3e1bfff622570d3b155a5491c80e80e9f78617361de1de6",
+      "group": "lua"
+    },
+    {
+      "path": "lua/en_dlc.lua",
+      "sha256": "22709457928c17a86c4a613e08d2e01439774cda74b331b022942a25c4f9e589",
+      "group": "lua"
+    },
+    {
+      "path": "lua/en_dlc_format.lua",
+      "sha256": "7e7730697d85fe5386d71581f3216458fccc12d91291365f066781961a64f4e8",
+      "group": "lua"
+    },
+    {
+      "path": "lua/en_index.lua",
+      "sha256": "82fe0a1e5d02e6c56077b8dc3d8121859edbfd245d722d7acc2b2f55d9c630de",
+      "group": "lua"
+    },
+    {
+      "path": "lua/en_indexed_translator.lua",
+      "sha256": "4d0085a9ff4283c5db90fc30892564b6eefa4da2bb8e57aecacb8426c3d5dd80",
+      "group": "lua"
+    },
+    {
+      "path": "lua/en_processor.lua",
+      "sha256": "4bd73c1162523fc857f30b52227aa5f940ca245ed38f7cc7f5819d181fa7793b",
+      "group": "lua"
+    },
+    {
+      "path": "lua/en_segmentor.lua",
+      "sha256": "9c6d82a414f8a6819260d8efd18d6cae6d7a7fed9f7066c1f500c986814f9415",
+      "group": "lua"
+    },
+    {
+      "path": "lua/jp_family.lua",
+      "sha256": "9187336313ed6cfdeb25baea4b7de560dbafb8ab2fe5fc82be8306812d97f304",
+      "group": "lua"
+    },
+    {
+      "path": "lua/jp_family_data.lua",
+      "sha256": "17ee0d663c8025c2aee8d4768057df9f3cba0fe8b0423eb712a66629bf0fee48",
+      "group": "lua"
+    },
+    {
+      "path": "lua/jp_learning_match.lua",
+      "sha256": "19dd2711c8cb2b1dabdfc61922b757dc67dd3d4902f75c13eed70de4f5190444",
+      "group": "lua"
+    },
+    {
+      "path": "lua/jp_memory.lua",
+      "sha256": "77d4245df40ebb1e29fdec836537a2a7a5a427b765a9c326b5435ac7ea2768ad",
+      "group": "lua"
+    },
+    {
+      "path": "lua/jp_named_symbols.lua",
+      "sha256": "4a1821ea2e4cc900341871cc21e1f508992d70d2508997b95dd9f1f1317dd58a",
+      "group": "lua"
+    },
+    {
+      "path": "lua/jp_query.lua",
+      "sha256": "25ac8ccebb80dbe334721337a87357785b50775e51fac911b2a14af4eae6bddb",
+      "group": "lua"
+    },
+    {
+      "path": "lua/jp_reading_metadata.lua",
+      "sha256": "f8bc18eb9ccb12a30a95a5e7563ffeb6c9081305c1cbcf5cf4641434b3a3d968",
+      "group": "lua"
+    },
+    {
+      "path": "lua/jp_sequence.lua",
+      "sha256": "aadafae772b689beaa578c55acbf87f8bb71c58daf0b26b8feb57811b49ce18d",
+      "group": "lua"
+    },
+    {
+      "path": "lua/jp_small_kana.lua",
+      "sha256": "71305fc843fccfcefd712838b90f1ad149f22ddb0bba12c6cd8f46647c64738a",
+      "group": "lua"
+    },
+    {
+      "path": "lua/jp_v.lua",
+      "sha256": "3b09785481c85a1749191617089401b86a6f6e3376433e42ed79d44b36348174",
+      "group": "lua"
+    },
+    {
+      "path": "lua/jp_v_chars.lua",
+      "sha256": "f7fee696edf402839e511ebdc68e9fab04d3f0b71782be93bd8571a6fc204a22",
+      "group": "lua"
+    },
+    {
+      "path": "lua/jp_v_data.lua",
+      "sha256": "f952661298fd89089865c0557eb7a9d5b1e8551a32f002fd492ee587373a1c1b",
+      "group": "lua"
+    },
+    {
+      "path": "lua/jp_v_words_index.lua",
+      "sha256": "a08f35e07c34815135c41a96b17d0758af962aa595a13f804d9d4ce22f791f00",
+      "group": "lua"
+    },
+    {
+      "path": "lua/official_translator.lua",
+      "sha256": "1ce06c18cd2121ca1ee0b81c10dccc4f10b2531de4b34fc1414ed1ed40c11da9",
+      "group": "lua"
+    },
+    {
+      "path": "lua/pc_probe_global_mode.lua",
+      "sha256": "edd2b3530c1bddf7f611d9d381e8efd9157230a57b34fac0a560864b4c2d8670",
+      "group": "lua"
+    },
+    {
+      "path": "lua/pc_probe_greek_proxy.lua",
+      "sha256": "ccb7d4e32ed3286f2af72e9471baad840d98000923eb6f29f6ccf1f867a4394c",
+      "group": "lua"
+    },
+    {
+      "path": "lua/query_info_submit.lua",
+      "sha256": "01483e4b196f4937f730301f84707d879d45d0bcf160d7c3ebe834e7c91cb9d6",
+      "group": "lua"
+    },
+    {
+      "path": "lua/scheme_data.lua",
+      "sha256": "181b37a95ff605818b6db79c1fc94747a9d9cb04c0ca9eb82b120c35d0628426",
+      "group": "lua"
+    },
+    {
+      "path": "lua/select_hanzi.lua",
+      "sha256": "02d84356f88819f9fc8455e59d58b6243981a4ed9212260a53092c43953d2baa",
+      "group": "lua"
+    },
+    {
+      "path": "lua/stellae_dlc.lua",
+      "sha256": "22302a74fc037b6e7554c0325d38d60e92a51e9749d51d36f8298a637750e0c9",
+      "group": "lua"
+    },
+    {
+      "path": "lua/tool_calculator.lua",
+      "sha256": "6e4fada9bd31a636d67a31ddc67c3bec7fab02116d060b79e2457e308ada884a",
+      "group": "lua"
+    },
+    {
+      "path": "lua/tool_processor.lua",
+      "sha256": "9fc7ac2b782c4c6f6950d6583a95ea5a199711c94de442eb0183e543ff374a7d",
+      "group": "lua"
+    },
+    {
+      "path": "lua/tool_segmentor.lua",
+      "sha256": "8678374c63de5e412e0f39aebecf0076bdb75b22ae58d7210d959b6fb337aac4",
+      "group": "lua"
+    },
+    {
+      "path": "lua/tool_translator.lua",
+      "sha256": "c620b182fdf6483337cb56b214dcf8d728e4c1257c1b66f6743a8ee2d6869b94",
+      "group": "lua"
+    },
+    {
+      "path": "lua/tool_unicode.lua",
+      "sha256": "b6375b1114b92bb9b420baa3aea1bdedcca2366f6fc3fc499d87d7464ef47c63",
+      "group": "lua"
+    },
+    {
+      "path": "lua/tool_unicode_data.lua",
+      "sha256": "84ced4a71016ee930f04c7d70f8982e61231cf5fe113cc19cbaa0f69bec7526d",
+      "group": "lua"
+    },
+    {
+      "path": "lua/u_translator.lua",
+      "sha256": "70bd4596d6cb2cb5bb84718bfeb5bb7679cb73bdc9bb3134aa3d93687804075f",
+      "group": "lua"
+    },
+    {
+      "path": "luna_pinyin.dict.yaml",
+      "sha256": "15cc2481fffb3682173fca712b2ee6a2b154ebd0c6be61252f3fa175f7dc996f",
+      "group": "configuration"
+    },
+    {
+      "path": "luna_pinyin.extended.dict.yaml",
+      "sha256": "6b41615b48852b51144be1c5d4a0c97494ca79f9b8250fd90b13ed3c36695569",
+      "group": "configuration"
+    },
+    {
+      "path": "luna_pinyin.schema.yaml",
+      "sha256": "53f844938fe5d65e2bcbff12fcc864c9fea83655cf48e66441e2f21349caadea",
+      "group": "configuration"
+    },
+    {
+      "path": "pinyin.yaml",
+      "sha256": "f2d291166946a848fd88e541844567415f1ed3d9c5a7477757b88aeb3a69c0ca",
+      "group": "configuration"
+    },
+    {
+      "path": "project_radical.dict.yaml",
+      "sha256": "ac2ce6698fc4982fd2d5580a903fb7f7517ab4d8cd1e09403645b4dea08e5f7e",
+      "group": "configuration"
+    },
+    {
+      "path": "project_radical.schema.yaml",
+      "sha256": "01af910694d8f254b6d491b3b532c8b5c09d6370fab1938f386407b2b28d1846",
+      "group": "configuration"
+    },
+    {
+      "path": "project_radical_parts.dict.yaml",
+      "sha256": "dcdbeaa0e9e711e3f6e7f0d0d492db6fa1f67424299d36fde1ef2b59dbe66287",
+      "group": "configuration"
+    },
+    {
+      "path": "project_radical_parts.schema.yaml",
+      "sha256": "5d923577a4d360bd90bc87eb21ce8ee044045694768ecf9e7d835a408abf3232",
+      "group": "configuration"
+    },
+    {
+      "path": "project_symbols.dict.yaml",
+      "sha256": "0bf9bf46468ce399b586ed038394a5da60225098456140840b6cee9ebc79213f",
+      "group": "configuration"
+    },
+    {
+      "path": "punctuation.yaml",
+      "sha256": "c9e5147fda24d1a13085075df5a2e73deecb643069be3751c6d4d793ceb2de5b",
+      "group": "configuration"
+    },
+    {
+      "path": "rime.lua",
+      "sha256": "99649c8db94fdf34453f66af2e73610baa7f9c3846f98718886bac20ddb66d7f",
+      "group": "lua"
+    },
+    {
+      "path": "stellae_dlc_computer.dict.yaml",
+      "sha256": "7ac080ee1a66f93cd4bdf76a9699eabced3b51c7134cfb14fb78fce89af9f6e0",
+      "group": "configuration"
+    },
+    {
+      "path": "stellae_dlc_math.dict.yaml",
+      "sha256": "645984326dd4af0ef5fe7c5c8216ab06ab67318efb27f16e681f33418dac26af",
+      "group": "configuration"
+    },
+    {
+      "path": "stellae_dlc_physics.dict.yaml",
+      "sha256": "5f8816af8d17f30cf45d977a6085b8bc7548026a6408c72fda5457e05fb345a7",
+      "group": "configuration"
+    },
+    {
+      "path": "stellae_dlc_poetry.dict.yaml",
+      "sha256": "8bc32cc541c26f72e2f6c8a2537f26845c879dba14757c36c92d986b3052b58b",
+      "group": "configuration"
+    },
+    {
+      "path": "stellae_dlc_poetry_00.dict.yaml",
+      "sha256": "d6d4afd98172a19f42f193bdba709614e9dd7c4ef94aeab5cbb5a13f5b6e1a33",
+      "group": "configuration"
+    },
+    {
+      "path": "stellae_dlc_poetry_01.dict.yaml",
+      "sha256": "4345151c4b8db4373c44ceedf33404cbb06f27bb3528abc4472fb037dd0c1ad7",
+      "group": "configuration"
+    },
+    {
+      "path": "stellae_dlc_poetry_02.dict.yaml",
+      "sha256": "ef7b10ce6d5da9687f9c7057576e8ed5a7fd0accb15b4c9e89994e8f12a1e987",
+      "group": "configuration"
+    },
+    {
+      "path": "stellae_dlc_poetry_03.dict.yaml",
+      "sha256": "37627ec544989c31744726230a192e0c5d0a39945b6f5b2d60439b2d350521ab",
+      "group": "configuration"
+    },
+    {
+      "path": "stellae_dlc_poetry_04.dict.yaml",
+      "sha256": "7789a5ada30289da3686c9ec20ebf4c97869611b40974429a8d92ea67ef3bc72",
+      "group": "configuration"
+    },
+    {
+      "path": "stellae_dlc_poetry_05.dict.yaml",
+      "sha256": "d088218b601a2c791ee3e5c9a7922c8b80abb1843a56d3f02ddf3ff777f5e179",
+      "group": "configuration"
+    },
+    {
+      "path": "stellae_dlc_poetry_06.dict.yaml",
+      "sha256": "85a237dd362c378f574645e1f00cd38884cbf0c90e14385b730ed0a407784ed7",
+      "group": "configuration"
+    },
+    {
+      "path": "stellae_dlc_poetry_07.dict.yaml",
+      "sha256": "23429ff84a6f06d717c484264ea76dc408adf6e9249ce776c4ccac86835965c7",
+      "group": "configuration"
+    },
+    {
+      "path": "stellae_dlc_poetry_08.dict.yaml",
+      "sha256": "aa8c7c53dea541bcc0677dad85ed4df2bb9b683c3f233cad0615bb2caefedd9b",
+      "group": "configuration"
+    },
+    {
+      "path": "stellae_dlc_poetry_09.dict.yaml",
+      "sha256": "c085b77fb2705d9652e0c68a3d92d29c79e62df5f088b54f12e089910d273438",
+      "group": "configuration"
+    },
+    {
+      "path": "stellae_dlc_poetry_10.dict.yaml",
+      "sha256": "0d1b0afdc95391ed309d15b12a224f3d3589eeb6b3665cf540f2fb508821a503",
+      "group": "configuration"
+    },
+    {
+      "path": "stellae_dlc_poetry_11.dict.yaml",
+      "sha256": "1a967f872d1b781cd635bde6135cb83983fc8521820a01a32924256ea52b0c81",
+      "group": "configuration"
+    },
+    {
+      "path": "stellae_dlc_poetry_12.dict.yaml",
+      "sha256": "8144b4159d0b34aaf3cfa65dafa67d1d665853a83e1d4ff641aa4a88d0ecd369",
+      "group": "configuration"
+    },
+    {
+      "path": "stellae_dlc_poetry_13.dict.yaml",
+      "sha256": "3dec7b56ac41f8e566c505e699471a0c7f13a04ca58854948360141b25bd3d2e",
+      "group": "configuration"
+    },
+    {
+      "path": "stellae_dlc_poetry_14.dict.yaml",
+      "sha256": "de2cfacf19f77255c2783ffe00058e0359f88b5a74937848b69f165d3eb391e7",
+      "group": "configuration"
+    },
+    {
+      "path": "stellae_dlc_poetry_15.dict.yaml",
+      "sha256": "4b51c09fcef724abf3df5e553fbe49697ec5f751f0d8b5a1503c6e8ecc84e129",
+      "group": "configuration"
+    },
+    {
+      "path": "stellae_dlc_poetry_16.dict.yaml",
+      "sha256": "e279f9a2b64c4b94b03814a8a5e412794fdd0f3d52db88966ec10dead2848bd6",
+      "group": "configuration"
+    },
+    {
+      "path": "stellae_dlc_poetry_17.dict.yaml",
+      "sha256": "b7850db51e06b68c8574a05d69b7c2fcc8a43e4da5385a9e2f6898874ac97543",
+      "group": "configuration"
+    },
+    {
+      "path": "stellae_dlc_poetry_18.dict.yaml",
+      "sha256": "aae159483aa682613929d2006b1b03123f79c26779b291a9b909e3171830dc0d",
+      "group": "configuration"
+    },
+    {
+      "path": "stellae_dlc_poetry_19.dict.yaml",
+      "sha256": "2029d3c9734bfc0329140f68a0705159dc8de89d24a808d045fd3d5698810000",
+      "group": "configuration"
+    },
+    {
+      "path": "stellae_dlc_poetry_20.dict.yaml",
+      "sha256": "b2641fc974cf23d9f7b7c2d8ed1434aa85ee066c72d575eb52ab2615d97a1940",
+      "group": "configuration"
+    },
+    {
+      "path": "stellae_dlc_poetry_21.dict.yaml",
+      "sha256": "fc3cc1bba24c9fe09bbf6369cba738e6381a3f4ec10ae383f2034ca551659817",
+      "group": "configuration"
+    },
+    {
+      "path": "stellae_dlc_poetry_22.dict.yaml",
+      "sha256": "8c6ec3e9fddded318f5faa5ba9a0d10d54d566cd8cfb8c1b283e34947889ad38",
+      "group": "configuration"
+    },
+    {
+      "path": "stellae_dlc_poetry_23.dict.yaml",
+      "sha256": "720831c8f0707b1e926d6bddde465b97b1e0661a678c70c5c2523a5fbe0f02c5",
+      "group": "configuration"
+    },
+    {
+      "path": "stellae_dlc_poetry_24.dict.yaml",
+      "sha256": "b1348f35cead9f89c8626b85cfd5324f18d53c8131ea555dae2b3a08f476177a",
+      "group": "configuration"
+    },
+    {
+      "path": "stellae_dlc_poetry_25.dict.yaml",
+      "sha256": "d878838eeb9ac1d8459d246083827ed3321b5b32493d90e8686d4f76b8de921b",
+      "group": "configuration"
+    },
+    {
+      "path": "stellae_dlc_poetry_26.dict.yaml",
+      "sha256": "6e42a36c0ead758b6e7f0b1d63ad227ee702239132a9552cccd696bbe19e0f2d",
+      "group": "configuration"
+    },
+    {
+      "path": "stellae_dlc_poetry_27.dict.yaml",
+      "sha256": "4e07339cd57ede6c588efc9c98ebc26e4c167cf4867c78825100c02d24605f3e",
+      "group": "configuration"
+    },
+    {
+      "path": "stellae_dlc_poetry_28.dict.yaml",
+      "sha256": "de3854903b6bc9b42f95320bfc383312c2323739f106dbd6813e1b559dbd77b9",
+      "group": "configuration"
+    },
+    {
+      "path": "stellae_dlc_poetry_29.dict.yaml",
+      "sha256": "18190e2ffad45ec453b194d4f892c2ad3dda30889fb4da781c4d68530c25f315",
+      "group": "configuration"
+    },
+    {
+      "path": "stellae_dlc_poetry_30.dict.yaml",
+      "sha256": "ae2a3237be6a481d06359453d3dc95b5a55058a27e499da287b74f85d99b33a1",
+      "group": "configuration"
+    },
+    {
+      "path": "stellae_dlc_poetry_31.dict.yaml",
+      "sha256": "e2c6cd5e4c5921f7ea169b96ddec227befe69e54c9faaae43ea33881678763e1",
+      "group": "configuration"
+    },
+    {
+      "path": "stellae_symbols.dict.yaml",
+      "sha256": "d1ec66d9612ca887237f8f1bbc3d181447972a2674a86b8a84b49a43b9a880c8",
+      "group": "configuration"
+    },
+    {
+      "path": "stroke.dict.yaml",
+      "sha256": "0fe1c1c0673f3564f16deb1f659a75f3ad6a43e5308165dccfb63fd94864f631",
+      "group": "configuration"
+    },
+    {
+      "path": "stroke.schema.yaml",
+      "sha256": "6201af057277c4353c1d199bb6ee4b8d7e8623fff91f84a41c93010240ce1a50",
+      "group": "configuration"
+    },
+    {
+      "path": "symbols.yaml",
+      "sha256": "d3c1823f0e3bae5fb2dac338f4863a0d7164436d1ee132727ff5c4687f53601a",
+      "group": "configuration"
+    },
+    {
+      "path": "weasel.custom.yaml",
+      "sha256": "3a1848f077b03c7480da0571ca1f448e93284da52a25f9cca1058a6c4dbb489a",
+      "group": "configuration"
+    }
+  ]
+}

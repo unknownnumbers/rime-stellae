@@ -4,8 +4,10 @@ param(
     [Parameter(Mandatory)][string]$SourcePath,
     [Parameter(Mandatory)][string]$SdkRoot,
     [Parameter(Mandatory)][string]$CacheDirectory,
-    [Parameter(Mandatory)][string]$OutputDirectory
+    [Parameter(Mandatory)][string]$OutputDirectory,
+    [switch]$LegacyDualRuntime
 )
+if (-not $LegacyDualRuntime) { throw 'This is the historical dual-runtime recipe. Use Build-FrontendOverlay.ps1 for the current x64 backend and x86 compatibility clients, or select -LegacyDualRuntime explicitly.' }
 . (Join-Path $PSScriptRoot 'Common.ps1')
 if (-not $IsWindows) { throw 'This recipe targets the Windows MSVC toolchain.' }
 $manifest = Get-NativeManifest

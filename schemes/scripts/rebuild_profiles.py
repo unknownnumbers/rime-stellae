@@ -16,8 +16,9 @@ FORBIDDEN_PARTS = {'.git', '.codex', '.agents', 'build', 'sync', 'logs', 'backup
 FORBIDDEN_NAMES = {'user.yaml', 'installation.yaml'}
 REQUIRED_INPUTS = {
     'default.custom.yaml', 'cn_stellae.custom.yaml', 'jp_stellae.schema.yaml', 'rime.lua', 'weasel.custom.yaml',
-    'lua/pc_probe_global_mode.lua', 'lua/cn_translator.lua', 'lua/cn_normal_codec.lua',
-    'lua/official_translator.lua', 'key_bindings.yaml', 'punctuation.yaml', 'symbols.yaml',
+    'stellae/defaults.yaml', 'stellae/chinese.yaml', 'stellae/english.yaml',
+    'stellae/japanese.yaml', 'stellae/tools.yaml', 'stellae/appearance.yaml', 'stellae/spelling.yaml',
+    'key_bindings.yaml', 'punctuation.yaml', 'symbols.yaml',
     'opencc/s2t.json', 'opencc/STCharacters.ocd2', 'opencc/STPhrases.ocd2',
     'source-dependencies.json',
 }
@@ -31,6 +32,35 @@ def digest(data):
 
 def json_bytes(value):
     return (json.dumps(value, ensure_ascii=False, indent=2) + '\n').encode('utf-8')
+
+
+def refresh_source_manifest(root, version=None):
+    """Inventory maintained runtime inputs after reviewed source edits."""
+    path = root / 'config-source-manifest.json'
+    manifest = json.loads(path.read_bytes())
+    if version is not None:
+        if not re.fullmatch(r'\d{4}\.\d{2}\.\d{2}\.\d+', version):
+            raise ValueError('Use a dated scheme version with an explicit revision.')
+        manifest['scheme_version'] = version
+    generated = {'lua/data/cn_forms.lua', 'lua/data/cn_extra_forms.lua',
+                 'lua/cn/cn_neighbor_keys.lua'}
+    rows = []
+    for candidate in sorted(root.rglob('*')):
+        if candidate.is_symlink():
+            raise ValueError('Maintained profile inputs must not be symbolic links.')
+        if not candidate.is_file() or candidate == path:
+            continue
+        relative = candidate.relative_to(root).as_posix()
+        if '__pycache__' in candidate.relative_to(root).parts:
+            continue
+        raw = source_path(root, relative).read_bytes()
+        rows.append({'path': relative, 'bytes': len(raw), 'sha256': digest(raw)})
+    manifest['source_files'] = [row for row in rows if row['path'] not in generated]
+    manifest['generated_files'] = [row for row in rows if row['path'] in generated]
+    manifest['allowlisted_source_files'] = len(rows)
+    path.write_bytes(json_bytes(manifest))
+    return {'source_files': len(rows), 'generated_files': len(manifest['generated_files']),
+            'scheme_version': manifest['scheme_version']}
 
 
 def source_path(root, relative):
@@ -71,6 +101,12 @@ def load_inputs(root):
         for notice in record.get('notices', []):
             if notice not in inputs:
                 raise ValueError(f'Fixed dependency notice missing: {notice}')
+    for relative, raw in inputs.items():
+        if relative == 'rime.lua' or relative.startswith('lua/') and relative.endswith('.lua'):
+            for module in re.findall(r"\brequire\s*\(?\s*['\"]([A-Za-z0-9_.]+)['\"]", raw.decode('utf-8')):
+                target = 'lua/' + module.replace('.', '/') + '.lua'
+                if target not in inputs:
+                    raise ValueError(f'Unresolved Lua module in {relative}: {module}')
     return manifest, manifest_raw, inputs
 
 
@@ -102,30 +138,65 @@ def check_common_contract(inputs):
             if fields != [value]:
                 raise ValueError(f'Unexpected switch behavior: {relative} {key}, expected {value}')
     pc_keys = {'Shift_L': 'noop', 'Shift_R': 'noop', 'Caps_Lock': 'noop'}
-    switch_keys('default.custom.yaml', '    switch_key:\n', pc_keys)
-    switch_keys('cn_stellae.custom.yaml', '  ascii_composer/switch_key:\n', pc_keys)
+    switch_keys('stellae/defaults.yaml', '    switch_key:\n', pc_keys)
+    switch_keys('stellae/chinese.yaml', '  ascii_composer/switch_key:\n', pc_keys)
     switch_keys('jp_stellae.schema.yaml', '  switch_key:\n',
                 {'Shift_L': 'noop', 'Shift_R': 'inline_ascii', 'Caps_Lock': 'noop'})
-    schemas = re.findall(r'^    - schema: (\S+)\s*$', inputs['default.custom.yaml'].decode('utf-8'), re.MULTILINE)
+    schemas = re.findall(r'^    - schema: (\S+)\s*$', inputs['stellae/defaults.yaml'].decode('utf-8'), re.MULTILINE)
     if schemas != ['cn_stellae', 'jp_stellae']:
         raise ValueError('The shared preset must contain the two maintained schemas.')
 
 
 def official_pc_settings(text):
+    if 'accept: Control+space' in text:
+        raise ValueError('Chinese defaults must not own the default Ctrl+Space binding.')
+    return replace_once(text, '  translator/use_stock_word_completion: false\n',
+                        '  translator/use_stock_word_completion: true\n')
+
+
+def official_appearance(text):
     start = text.index('  menu/page_size: 5\n')
-    end = text.index('  switches:\n', start)
+    end = text.index('\njapanese:\n', start)
     block = text[start:end]
     keys = re.findall(r'^  ([^\s][^\n]*?):(?: |$)', block, flags=re.MULTILINE)
     if set(keys) != {'menu/page_size', 'menu/chinese_page_size', 'menu/english_page_size', 'style/mode_layout'}:
         raise ValueError('Unexpected fields inside the reviewed dynamic layout block.')
     text = text[:start] + '  menu/page_size: 6\n' + text[end:]
-    text = replace_once(text, '  translator/use_stock_word_completion: false\n',
-                        '  translator/use_stock_word_completion: true\n')
-    if 'accept: Control+space' in text:
-        raise ValueError('PC customization must not own the default Ctrl+Space binding.')
-    return replace_once(text,
-        '# Public PC baseline: matching patched Weasel and librime-lua builds are required.',
-        '# Full scheme for official Weasel with a fixed candidate page.')
+    return official_weasel_palette(text)
+
+
+def official_weasel_palette(text):
+    """Patch individual themes while retaining the official host's catalog."""
+    lines = text.splitlines(keepends=True)
+    anchors = [index for index, line in enumerate(lines) if line == '  preset_color_schemes:\n']
+    if len(anchors) != 1 or text.count('\nweasel:\n') != 1:
+        raise ValueError('Official appearance palette anchor changed.')
+    start = anchors[0]
+    if start <= lines.index('weasel:\n'):
+        raise ValueError('Official palette must be inside the frontend patch section.')
+    end = len(lines)
+    for index in range(start + 1, len(lines)):
+        line = lines[index]
+        if line.strip() and not line.lstrip().startswith('#') and len(line) - len(line.lstrip(' ')) <= 2:
+            end = index
+            break
+    replacement = []
+    themes = []
+    for line in lines[start + 1:end]:
+        match = re.fullmatch(r'    ([A-Za-z0-9_-]+):\n', line)
+        if match:
+            themes.append(match.group(1))
+            replacement.append('  preset_color_schemes/' + line[4:])
+        elif line.startswith('    '):
+            replacement.append(line[2:])
+        elif not line.strip() or line.lstrip().startswith('#'):
+            replacement.append(line)
+        else:
+            raise ValueError('Unexpected curated theme indentation.')
+    if themes != ['reference_gray', 'stellae_sakura', 'stellae_lavender',
+                  'stellae_night', 'stellae_crimson', 'stellae_mono']:
+        raise ValueError('Official palette adapter requires the reviewed theme set.')
+    return ''.join(lines[:start] + replacement + lines[end:])
 
 
 def adapt_profile(inputs, name, specification):
@@ -133,20 +204,21 @@ def adapt_profile(inputs, name, specification):
     if name == 'official-weasel':
         if specification['stock_word_completion'] is not True or specification['ctrl_space_owner'] != 'official-client':
             raise ValueError('Unexpected official capability specification.')
-        result['cn_stellae.custom.yaml'] = edit_text(result['cn_stellae.custom.yaml'], official_pc_settings)
-        result['default.custom.yaml'] = edit_text(result['default.custom.yaml'],
+        result['stellae/chinese.yaml'] = edit_text(result['stellae/chinese.yaml'], official_pc_settings)
+        result['stellae/appearance.yaml'] = edit_text(result['stellae/appearance.yaml'], official_appearance)
+        result['stellae/defaults.yaml'] = edit_text(result['stellae/defaults.yaml'],
             lambda text: replace_once(text, CTRL_SPACE_LINE, ''))
-        style = result['weasel.custom.yaml'].decode('utf-8')
+        style = result['stellae/appearance.yaml'].decode('utf-8')
         for setting in ('"style/inline_preedit": false', '"style/horizontal": false'):
             if setting not in style:
                 raise ValueError(f'Official default style must retain {setting}.')
     elif name == 'stellae':
         if specification['stock_word_completion'] is not False:
             raise ValueError('Unexpected Stellae capability specification.')
-        text = result['cn_stellae.custom.yaml'].decode('utf-8').replace('\r\n', '\n')
+        text = result['stellae/chinese.yaml'].decode('utf-8').replace('\r\n', '\n')
         if text.count('  translator/use_stock_word_completion: false\n') != 1:
             raise ValueError('Stellae source must explicitly select its native completion capability.')
-        default = result['default.custom.yaml'].decode('utf-8').replace('\r\n', '\n')
+        default = result['stellae/defaults.yaml'].decode('utf-8').replace('\r\n', '\n')
         if default.count(CTRL_SPACE_LINE) != 1 or 'accept: Control+space' in text:
             raise ValueError('Stellae Ctrl+Space must be defined once in its default preset.')
     else:
@@ -193,7 +265,8 @@ def maintained_official(manifest, manifest_raw, inputs, specifications, check):
         'maintenance_source_manifest_sha256': digest(manifest_raw), 'files': records,
     })
     actual = {path.relative_to(destination).as_posix()
-              for path in destination.rglob('*') if path.is_file()} if destination.exists() else set()
+              for path in destination.rglob('*') if path.is_file()
+              and '__pycache__' not in path.relative_to(destination).parts} if destination.exists() else set()
     extra = actual - payload.keys()
     different = [relative for relative, raw in payload.items()
                  if relative not in actual or source_path(destination, relative).read_bytes() != raw]
@@ -202,7 +275,17 @@ def maintained_official(manifest, manifest_raw, inputs, specifications, check):
             raise ValueError(f'Derived official profile differs: extra={sorted(extra)}, changed={different}')
     else:
         if extra:
-            raise ValueError(f'Unexpected files in the derived official profile: {sorted(extra)}')
+            previous_path = destination / 'profile-manifest.json'
+            previous = json.loads(previous_path.read_bytes()) if previous_path.is_file() else {}
+            if previous.get('format') != 'rymcp-official-profile-v2':
+                raise ValueError('Cannot retire generated files without their previous source manifest.')
+            owned = {row['path']: row for row in previous['files']}
+            for relative in sorted(extra):
+                path = source_path(destination, relative)
+                if relative not in owned or digest(path.read_bytes()) != owned[relative]['sha256']:
+                    raise ValueError(f'Unexpected or edited file in the derived official profile: {relative}')
+            for relative in sorted(extra):
+                source_path(destination, relative).unlink()
         for relative, raw in payload.items():
             target = destination / relative
             target.parent.mkdir(parents=True, exist_ok=True)
@@ -239,9 +322,19 @@ def main():
     operation = parser.add_mutually_exclusive_group()
     operation.add_argument('--check', action='store_true', help='Check the tracked official derivation.')
     operation.add_argument('--refresh-official', action='store_true', help='Refresh the tracked official derivation.')
+    operation.add_argument('--refresh-source-manifest', action='store_true',
+                           help='Inventory reviewed maintained source edits before regenerating profiles.')
+    parser.add_argument('--scheme-version', help='Set the dated version when refreshing the source manifest.')
     parser.add_argument('--profile', choices=('all', 'stellae', 'official-weasel'), default='all')
     parser.add_argument('--prepare-official', type=Path)
     args = parser.parse_args()
+    if args.refresh_source_manifest:
+        if args.output or args.prepare_official or args.source.resolve() != (ROOT / 'config/pc').resolve():
+            parser.error('Source inventory refresh only applies to maintained config/pc.')
+        print(json.dumps(refresh_source_manifest(args.source, args.scheme_version)))
+        return
+    if args.scheme_version:
+        parser.error('--scheme-version requires --refresh-source-manifest.')
     for destination in (args.output, args.prepare_official):
         if destination and destination.resolve().is_relative_to(args.source.resolve()):
             raise ValueError('Generated profiles must not be written inside the maintained source.')

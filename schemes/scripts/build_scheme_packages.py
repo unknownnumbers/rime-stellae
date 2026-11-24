@@ -125,7 +125,7 @@ def package(profile, output_dir, version, source_ref):
     for path in sorted(license_records):
         if path.startswith('licenses/') or path.startswith('docs/sources/'):
             mappings.append((path, path))
-    for path in ('docs/PC.md', 'docs/BUILD.md', 'docs/official-weasel.md'):
+    for path in ('docs/PC.md', 'docs/BUILD.md', 'docs/STRUCTURE.md', 'docs/official-weasel.md'):
         mappings.append((path, path))
     mappings.append(('native/source-manifest.json', 'native/source-manifest.json'))
     mappings.append(('INSTALL.md', 'docs/official-weasel.md' if profile == 'official-weasel' else 'docs/PC.md'))

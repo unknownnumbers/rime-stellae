@@ -14,13 +14,13 @@ $utf8=[Text.UTF8Encoding]::new($false)
 foreach($directory in @($user,$shared,$logs,(Join-Path $user 'build'),(Join-Path $user 'lua'))){[IO.Directory]::CreateDirectory($directory)|Out-Null}
 function Write-Text([string]$path,[string]$text){[IO.Directory]::CreateDirectory((Split-Path $path))|Out-Null;[IO.File]::WriteAllText($path,$text,$utf8)}
 Write-Text (Join-Path $user '.synthetic-profile.json') '{"Synthetic":true,"Fixture":"english-dlc"}'
-foreach($name in @('en_dlc.lua','en_dlc_format.lua','en_index.lua','en_indexed_translator.lua','stellae_dlc.lua','scheme_data.lua','pc_probe_greek_proxy.lua','en_distance.lua')){
+foreach($name in @('en/en_dlc.lua','en/en_dlc_format.lua','en/en_index.lua','en/en_indexed_translator.lua','shared/scheme_data.lua','shared/pc_probe_greek_proxy.lua')){
  $source=Join-Path $repo ('config/'+$Profile+'/lua/'+$name)
- if(Test-Path -LiteralPath $source){Copy-Item -LiteralPath $source -Destination (Join-Path $user ('lua/'+$name))}
+ Write-Text (Join-Path $user ('lua/'+$name)) ([IO.File]::ReadAllText($source,$utf8))
 }
 Write-Text (Join-Path $user 'rime.lua') "en_dlc_test = require('en_dlc_test')`n"
 Write-Text (Join-Path $user 'lua/en_dlc_test.lua') @'
-local english = require('en_indexed_translator')
+local english = require('en.en_indexed_translator')
 local M = {init=english.init, fini=english.fini}
 function M.func(input, seg, env)
   english.func(input, seg, env, env.engine.context:get_option('synthetic_cn'))

@@ -84,9 +84,9 @@ def literal(values):
 
 
 def rebuild(directory):
-    characters_path = directory / 'lua/jp_v_chars.lua'
+    characters_path = directory / 'lua/data/jp_v_chars.lua'
     canonical_path = directory / 'japanese-q-canonical.json'
-    family_path = directory / 'lua/jp_family_data.lua'
+    family_path = directory / 'lua/data/jp_family_data.lua'
     characters = character_readings(characters_path.read_text('utf-8-sig'))
     spelling.KANA_SOURCE = canonical_path
     spelling.INVENTORY = spelling.kana_inventory()
@@ -120,7 +120,7 @@ def rebuild(directory):
         'q_characters': len(codes),
         'q_codes': sum(map(len, codes.values())),
         'sources': {
-            'lua/jp_v_chars.lua': hashlib.sha256(characters_path.read_bytes()).hexdigest(),
+            'lua/data/jp_v_chars.lua': hashlib.sha256(characters_path.read_bytes()).hexdigest(),
             'japanese-q-canonical.json': hashlib.sha256(canonical_path.read_bytes()).hexdigest(),
             'scripts/data/build_japanese_q.py': hashlib.sha256(Path(spelling.__file__).read_bytes()).hexdigest(),
         },
@@ -140,7 +140,7 @@ def main():
     args = parser.parse_args()
     rebuilt, report = rebuild(args.directory)
     if args.check:
-        if (args.directory / 'lua/jp_family_data.lua').read_bytes() != rebuilt.encode('utf-8'):
+        if (args.directory / 'lua/data/jp_family_data.lua').read_bytes() != rebuilt.encode('utf-8'):
             parser.error('Committed family q codes differ from public readings and current rules')
         report['status'] = 'verified'
     else:

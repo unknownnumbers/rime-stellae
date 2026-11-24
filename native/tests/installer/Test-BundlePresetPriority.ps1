@@ -175,7 +175,12 @@ try{
   Check 'select-Chinese' ([bool][RimeProbe]::RimeSelectSchema($session,'cn_stellae'))
   Check 'Chinese-default-SC' ([RimeProbe]::RimeGetOption($session,'simplification') -eq 1)
   Check 'actual-Chinese-candidate' ((Query 'nihao').Candidates -ccontains '你好')
-  Check 'actual-default-SC-mixed-candidate' ((Query 'wifimima').Candidates -ccontains 'Wi-Fi 密码')
+  $removedMixed=Query 'wifimima'
+  $removedRaw=[RimeProbe]::Input($session)
+  $removedCommit=[RimeProbe]::ReadCommit($session)
+  $removedFound=@('Wi-Fi 密码','Wi-Fi 密碼'|Where-Object {$_ -cin $removedMixed.Candidates})
+  Check 'bundle-presets-do-not-restore-removed-mixed-words' ($removedRaw -ceq 'wifimima' -and
+    -not $removedCommit -and $removedFound.Count -eq 0) @{raw=$removedRaw;commit=$removedCommit;removedCandidates=$removedFound}
   if($Case -eq 'Override'){
     [RimeProbe]::RimeClearComposition($session)
     $before=[RimeProbe]::RimeGetOption($session,'ascii_punct')

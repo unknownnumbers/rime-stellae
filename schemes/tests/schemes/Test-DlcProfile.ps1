@@ -37,7 +37,7 @@ $codes=@('ce shi jia jia','ce shi yi yi','ce shi bo bo','ce shi du a')
 $words=@('DLCMathFixture','DLCPhysicsFixture','DLCComputerFixture','DLCPoetryFixture')
 $fixtureSyllables=@('a','ai','an','ang','ao','ba','bai','ban','bang','bao','bei','ben','beng','bi','bian','biao','bie','bin','bing','bo','bu','ca','cai','can','cang','cao','ce','cen','ceng','cha','chai','chan')
 $canonicalForms=@{}
-foreach($line in [IO.File]::ReadLines((Join-Path $profileSource 'lua/cn_forms.lua'),$utf8)){
+foreach($line in [IO.File]::ReadLines((Join-Path $profileSource 'lua/data/cn_forms.lua'),$utf8)){
  if($line -match '^\s*\["([^"\r\n]+)"\]=\{'){$syllable=$Matches[1];$forms=@([regex]::Matches($line,'\["([^"\r\n]+)"\]=0')|ForEach-Object {$_.Groups[1].Value}|Sort-Object);if($forms.Count){$canonicalForms[$syllable]=$forms[0]}}
 }
 function Exact-Spelling([string]$code){return ((@($code.Split(' ')|ForEach-Object {if($canonicalForms.ContainsKey($_)){$canonicalForms[$_]}else{$_}}) -join '"')+'"')}
@@ -111,7 +111,7 @@ function Check-Tables([string]$name){
 }
 function Export-Learning([string]$name){Close-Engine;Start-Engine;[RimeProbe]::RimeDeployerInitialize([ref]$traits);$path=Join-Path $out $name;Check $name ([RimeProbe]::ExportUserDict('cn_stellae',$path) -gt 0);Close-Engine;return @([IO.File]::ReadAllLines($path,$utf8)|Where-Object {$_ -and -not $_.StartsWith('#')}) -join "`n"}
 $errorText=$null;$samples=@();$inputHashes=[ordered]@{}
-foreach($name in @('essay.txt','luna_pinyin.dict.yaml','cn_stellae.dict.yaml','cn_stellae.schema.yaml','cn_stellae.custom.yaml','lua/cn_translator.lua','lua/cn_dlc.lua','lua/stellae_dlc.lua')){$inputHashes[$name]=(Get-FileHash -Algorithm SHA256 -LiteralPath (Join-Path $user $name)).Hash.ToLowerInvariant()}
+foreach($name in @('essay.txt','luna_pinyin.dict.yaml','cn_stellae.dict.yaml','cn_stellae.schema.yaml','cn_stellae.custom.yaml','lua/cn/cn_translator.lua')){$inputHashes[$name]=(Get-FileHash -Algorithm SHA256 -LiteralPath (Join-Path $user $name)).Hash.ToLowerInvariant()}
 try{
  [RimeProbe]::RimeSetup([ref]$traits)
  Redeploy

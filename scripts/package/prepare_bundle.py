@@ -10,6 +10,8 @@ import re
 import shutil
 import zipfile
 
+from bundle_architecture import excluded_native_paths, excluded_native_records, runtime_engines
+
 DEFAULT_FONT_NAME = 'NotoSansCJK-Regular.ttc'
 DEFAULT_FONT_FAMILIES = {
     f'{prefix} {style}'
@@ -70,7 +72,7 @@ def stage_math_upgrade(repo, stage, archive_path, inputs):
     if spec['format'] != 'stellae-bundle-user-upgrade-v1':
         raise SystemExit('Unexpected user upgrade manifest.')
     migrations = stage/'shared-payload/migrations'
-    migrations.mkdir()
+    migrations.mkdir(exist_ok=True)
     shutil.copyfile(upgrade, migrations/'upgrade.json')
     notices = (
         'AUTHORS-OpenCC.txt', 'LICENSE-CC-BY-SA-4.0.txt', 'LICENSE-OpenCC-Apache-2.0.txt',
@@ -142,12 +144,16 @@ def main():
     a = p.parse_args()
     repo = a.repository.resolve()
     inputs = json.loads((a.inputs or repo/'installer/bundle-inputs.json').read_text('utf-8'))
+    runtime_engines(inputs)
     with zipfile.ZipFile(a.schemes) as archive:
         scheme_manifest = check_scheme_archive(archive, inputs, a.source_ref)
     stage = a.stage
     stage.mkdir(parents=True, exist_ok=False)
     payload = stage/'shared-payload/data'
     payload.mkdir(parents=True)
+    migrations = stage/'shared-payload/migrations'
+    migrations.mkdir()
+    shutil.copyfile(repo/'installer/migrations/source-layout.json', migrations/'source-layout.json')
     if 'indexedMath' in inputs:
         if a.indexed_math is None:
             raise SystemExit('The bundle requires the pinned indexed math archive.')
@@ -162,10 +168,14 @@ def main():
     if len(manifests) != 1:
         raise SystemExit('Expected one original package manifest.')
     base_manifest = json.loads(manifests[0].read_text('utf-8-sig'))
+    excluded = excluded_native_paths(inputs)
+    excluded_records = excluded_native_records(inputs, base_manifest['files'])
     shutil.copyfile(next(a.base.rglob('package-license-index.json')), stage/'base-package-license-index.json')
     provenance = []
     for entry in base_manifest['files']:
         name = safe_name(entry['path']).as_posix()
+        if name in excluded:
+            continue
         if entry['sha256'] not in by_hash:
             raise SystemExit('Missing original installer bytes: '+name)
         target = payload/name[5:] if name.startswith('data/') else stage/name
@@ -216,18 +226,24 @@ def main():
         base_file = payload/(config+'.yaml')
         raw = base_file.read_bytes()
         text = raw.decode('utf-8-sig')
-        if any(line.startswith('__patch:') or line.strip() == '...' for line in text.splitlines()):
+        native_defaults = config == 'default' and text.replace('\r\n', '\n').endswith(
+            '\n__patch:\n  - stellae/defaults:/patch\n  - default.custom:/patch?\n')
+        if any(line.strip() == '...' for line in text.splitlines()) or (
+                any(line.startswith('__patch:') for line in text.splitlines()) and not native_defaults):
             raise SystemExit('The fixed shared base needs a reviewed patch layout.')
         font_layer = ('  - rymcp_candidate_font:/patch?\n  - stellae_candidate_font:/patch?\n'
                       if config == 'weasel' and a.default_font_directory is not None else '')
-        extension = ('\n# Stellae defaults followed by optional user overrides.\n__patch:\n'
+        extension = ('' if native_defaults else
+                     '\n# Stellae defaults followed by optional user overrides.\n__patch:\n'
                      f'  - {alias}:/patch\n{font_layer}  - {config}.custom:/patch?\n').encode('utf-8')
         base_file.write_bytes(raw+extension)
         origin = next(row for row in reversed(provenance) if row['installed_path'] == 'data/'+config+'.yaml')
         origin['original_sha256'] = origin['sha256']
         origin['sha256'] = digest(base_file)
         origin['generated_sha256'] = origin['sha256']
-        origin['transformation'] = ('append an explicit bundle preset, optional candidate-font preset, and optional user custom patch'
+        origin['transformation'] = ('retain the native product defaults followed by the final optional user patch'
+                                    if native_defaults else
+                                    'append an explicit bundle preset, optional candidate-font preset, and optional user custom patch'
                                     if font_layer else 'append an explicit bundle preset followed by the optional user custom patch')
         origin['generated_source_ids'] = ['project-code']
     profile_file = payload/'config-source-manifest.json'
@@ -279,6 +295,9 @@ def main():
                  'NativeProfileSnapshot.ps1', 'stellae_identity.nsh', 'bundle-inputs.json']:
         shutil.copyfile(repo/'installer'/name, stage/name)
     write_json(stage/'bundle-inputs.json', inputs)
+    (stage/'bundle_architecture.nsh').write_text(
+        '; Generated from bundle-inputs.json architecture roles.\n'
+        + ('!define STELLAE_X64_BACKEND\n' if excluded else ''), encoding='utf-8')
     files = [{'path': file.relative_to(payload).as_posix(), 'bytes': file.stat().st_size,
               'sha256': digest(file)} for file in sorted(payload.rglob('*')) if file.is_file()]
     predecessors = [{'path': row['path'][len('data/'):], 'bytes': row['bytes'], 'sha256': row['sha256']}
@@ -289,7 +308,7 @@ def main():
     write_json(stage/'bundle-provenance.json', {'format': 'stellae-bundle-provenance-v1',
                'bundleVersion': inputs['bundleVersion'], 'frontendVersion': inputs['frontendVersion'],
                'scope': 'Layered public input records. Later records for an installed path supersede earlier input records; the payload license index records the final package bytes.',
-               'inputs': inputs, 'schemeArchive': {'name': a.schemes.name,
+               'inputs': inputs, 'excludedNativeImages': excluded_records, 'schemeArchive': {'name': a.schemes.name,
                    'sha256': digest(a.schemes), 'source_ref': a.source_ref,
                    'source_prefix': scheme_manifest['source_prefix']}, 'files': provenance})
     resource = stage.parent/'resource'
@@ -297,7 +316,7 @@ def main():
     shutil.copyfile(repo/'assets/icon/star-core.ico', resource/'weasel.ico')
     (stage/'archives').mkdir()
     print(json.dumps({'sharedFiles': len(files), 'baseFiles': len(base_manifest['files']),
-                      'baseNativeImagesStaged': True, 'bundleVersion': inputs['bundleVersion']}))
+                      'excludedNativeImages': len(excluded_records), 'bundleVersion': inputs['bundleVersion']}))
 
 
 if __name__ == '__main__':

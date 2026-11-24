@@ -168,6 +168,11 @@ LangString AUTOCHKUPDATE ${LANG_ENGLISH} "Automatically check for updates?"
 ;--------------------------------
 
 Function .onInit
+!ifdef STELLAE_X64_BACKEND
+  ${IfNot} ${IsNativeAMD64}
+    Abort "This bundle requires x64 Windows. It includes compatibility clients for 32-bit applications."
+  ${EndIf}
+!endif
 !ifdef STELLAE_BUNDLE
   ReadEnvStr $BundleTraceFile "GITHUB_ACTIONS"
   ${If} $BundleTraceFile == "true"
@@ -214,6 +219,13 @@ toquit:
   Goto skip
 choose_directory:
   ; The default installation directory
+!ifdef STELLAE_X64_BACKEND
+  ; Both application client architectures connect to this single x64 service.
+  File "${STELLAE_DEPLOYER_EXE}"
+  File "${STELLAE_SERVER_EXE}"
+  File "rime.dll"
+!else
+  ; Retained for explicitly selected historical dual-runtime packages.
   ; install x64 build for NativeARM64_WINDOWS11 and NativeAMD64_WINDOWS11
   ${If} ${AtLeastWin11} ; Windows 11 and above
     ${If} ${IsNativeARM64}
@@ -431,6 +443,7 @@ program_files:
     ${Endif}
   ${Endif}
 
+!endif
   File "${STELLAE_SETUP_EXE}"
 !ifndef STELLAE_BUNDLE
   ; shared data files

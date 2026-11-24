@@ -153,7 +153,7 @@ def sparse_tsv(name, data):
             values = sorted(data[surface])
             file.write(('\t'.join([surface, *values]) + '\n').encode('utf-8'))
     temp.replace(path)
-    lua = OUT / 'lua' / (name + '_index.lua')
+    lua = OUT / 'lua/data' / (name + '_index.lua')
     with lua.open('w', encoding='utf-8', newline='\n') as file:
         file.write(f'-- Generated JMdict derivative; CC BY-SA 4.0.\nreturn {{stride={STRIDE},count={len(data)},blocks={{\n')
         for surface, offset in blocks:
@@ -175,7 +175,7 @@ def main():
     if args.expected_source_sha256 and hashlib.sha256(SOURCE.read_bytes()).hexdigest() != args.expected_source_sha256.lower():
         raise ValueError('JMdict source digest mismatch')
     OUT.mkdir(parents=True)
-    (OUT / 'lua').mkdir(exist_ok=True)
+    (OUT / 'lua/data').mkdir(parents=True, exist_ok=True)
     assets = ROOT / 'config/pc'
     shutil.copyfile(assets / 'jp_q_lookup.schema.yaml', OUT / 'jp_q_lookup.schema.yaml')
     INVENTORY = kana_inventory()

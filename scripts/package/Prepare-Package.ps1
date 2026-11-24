@@ -6,8 +6,10 @@ param(
   [Parameter(Mandatory)][string]$SourcePath,
   [Parameter(Mandatory)][string]$SdkRoot,
   [Parameter(Mandatory)][string]$OutputDirectory,
-  [Parameter(Mandatory)][string]$CacheDirectory
+  [Parameter(Mandatory)][string]$CacheDirectory,
+  [switch]$LegacyDualRuntime
 )
+if(-not $LegacyDualRuntime){throw 'This is the historical scheme-free dual-runtime package. Use Build-Bundle.ps1 for the current package, or select -LegacyDualRuntime explicitly.'}
 Set-StrictMode -Version Latest
 $ErrorActionPreference='Stop'
 if($env:GITHUB_ACTIONS -ne 'true' -or -not $IsWindows){throw 'Use a disposable Windows build runner.'}

@@ -4,14 +4,15 @@ Use Python 3.12. The common maintained scheme source is `config/pc`; `config/off
 
 ## Maintain and derive profiles
 
-`config/pc/config-source-manifest.json` explicitly lists the common inputs. After changing a listed file, update its byte count and SHA-256. Add a new file only after its source and license have been recorded. `config/pc/source-dependencies.json` pins the shared prelude and OpenCC resources separately.
+`config/pc/config-source-manifest.json` explicitly lists the common inputs. After reviewing source changes, refresh its paths, byte counts and SHA-256 records with the command below. Add a new file only after its source and license have been recorded. `config/pc/source-dependencies.json` pins the shared prelude and OpenCC resources separately. See [STRUCTURE.md](STRUCTURE.md) for module responsibilities and personal overrides.
 
 ```sh
+python scripts/rebuild_profiles.py --refresh-source-manifest
 python scripts/rebuild_profiles.py --refresh-official
 python scripts/rebuild_profiles.py --check
 ```
 
-The refresh command updates the official profile from the common input manifest. It retains the official global configuration, Lua entrypoint and appearance files under `samples/` for manual merging. Unexpected files in the derived directory require review. It never rewrites the common PC inputs.
+The official refresh updates the derived profile from the common input manifest. It retains the official global configuration, Lua entrypoint and appearance files under `samples/` for manual merging. Old generated files are removed only when their previous manifest and bytes match. Unexpected or edited files require review. Official derivation never rewrites the common PC inputs.
 
 Stellae uses native matched-syllable information and dynamic Chinese/English page sizes. Official Weasel uses its native completion adapter and six vertical, non-inline candidates. Both profiles share spelling, lookup, Japanese and learning modules. Both PC Shift keys use the shared En coordinator. Stellae defines Ctrl+Space once in its default preset; its frontend cancels composition after the mode action. Official Weasel retains client ownership of Ctrl+Space. Japanese keeps its independent Shift rules.
 
@@ -27,12 +28,15 @@ The output includes `config/pc`, `config/official-weasel` and provenance manifes
 
 Run `python scripts/data/rebuild_base.py` to reproduce the base dictionaries and English indexes from the committed fixed inputs, then refresh the official derivation. See [base dictionary sources](sources/base-dictionaries.md).
 
+Run `python scripts/data/rebuild_chinese_spelling.py --check` to verify the Chinese classifiers and neighbor-key table against the fixed syllable inventory. The ordered spelling algebra is a maintained input. See [spelling sources](../sources/spelling/README.md).
+
 Run `python scripts/build_dlc.py` to generate optional catalogs offline from the locked public snapshots and pinned reading dependencies. Expanded modules are written to `out/dlc/modules/stellae_dlc/` and ZIPs to `out/dlc/`. These are generated outputs. Fixed input archives under `dlc/sources/` are source materials. See [DLC sources](dlc-sources.md).
 
 ## Validate
 
 ```sh
 python scripts/rebuild_profiles.py --check
+python scripts/data/rebuild_chinese_spelling.py --check
 python config/pc/tools/validate-japanese-base.py --directory config/pc
 python scripts/data/rebuild_japanese_family_q.py --check
 python -m unittest discover -s tests/data -p "test_*.py"
@@ -46,7 +50,7 @@ pwsh -NoProfile -File tests/rebuilt-profile/Test-RebuiltProfile.ps1 -Kind pc -Ge
 pwsh -NoProfile -File tests/rebuilt-profile/Test-RebuiltProfile.ps1 -Kind official-weasel -GeneratedProfile out/official-fresh -EnginePath OFFICIAL_ENGINE_DIR/rime.dll -OutputPath out/proofs/official-weasel
 ```
 
-The runner writes native binaries and fixed synthetic learning only inside the supplied fresh output profile. Engine-only tests do not replace frontend Ctrl+Space, display or physical-key acceptance. Current native regression coverage targets Stellae N01 x64 and official Weasel x64. On 32-bit Windows, Chinese whole-word completion is limited by the missing matched-syllable metadata.
+The runner writes native binaries and fixed synthetic learning only inside the supplied fresh output profile. Engine-only tests do not replace frontend Ctrl+Space, display or physical-key acceptance. Current native regression coverage targets Stellae N01 x64 and official Weasel x64. The Stellae installer targets 64-bit Windows; compatibility clients connect 32-bit applications to the same x64 backend. Complete historical dual-runtime recipes require explicit opt-in.
 
 Build the DLC catalogs before running `scripts/schemes/Test-DlcRuntime.ps1` with the matching engine and a fresh `-WorkRoot`. It validates the distributed tables and a bounded synthetic install, update and removal lifecycle. Native table readback uses the test-only `marisa-trie==1.3.1` binding pinned in [scheme validation workflow](../../.github/workflows/schemes.yml).
 
@@ -55,7 +59,7 @@ Build the DLC catalogs before running `scripts/schemes/Test-DlcRuntime.ps1` with
 Refresh `licenses/file-licenses.json` with `python licenses/build_index.py`, then record the reviewed source snapshot with `python scripts/verify_release.py --write-manifest --require-yaml`. Run the verifier again without `--write-manifest` before packaging.
 
 ```sh
-python scripts/build_scheme_packages.py --profile all --version 2026.11.24.1 --source-ref FULL_COMMIT_SHA --output-dir out/schemes
+python scripts/build_scheme_packages.py --profile all --version 2026.11.25.5 --source-ref FULL_COMMIT_SHA --output-dir out/schemes
 ```
 
 The source ref must identify the reviewed rime-stellae commit. Run this command from the schemes directory. Archives are named `stellae-VERSION-schemes.zip` and `stellae-VERSION-official-weasel-schemes.zip`. Both ZIPs include per-file license records and pinned source provenance. The latest Stellae frontend source and installer build are maintained in [rime-stellae](https://github.com/unknownnumbers/rime-stellae). The retained [native recipes](../native/BUILD.md) document earlier native source inputs. Source preparation, native compilation, runtime checks, installer validation and physical-host acceptance remain separate results.

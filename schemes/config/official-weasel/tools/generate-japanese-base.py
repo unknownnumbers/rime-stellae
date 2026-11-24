@@ -181,6 +181,8 @@ key_binder:
 recognizer:
   import_preset: default
 __patch:
+  - stellae/japanese:/patch
+  - stellae/appearance:/japanese
   - jp_stellae.custom:/patch?
 '''
     canonical = json.dumps(build_inventory(), ensure_ascii=False, indent=2, sort_keys=True) + '\n'

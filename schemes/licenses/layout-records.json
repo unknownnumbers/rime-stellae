@@ -1,0 +1,693 @@
+{
+  "format": "stellae-layout-license-records-v1",
+  "scope": "Reviewed component terms retained when source files move or product defaults are split.",
+  "files": [
+    {
+      "path": "config/pc/lua/cn/cn_boundaries.lua",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "LICENSE"
+      ],
+      "previous_path": "config/pc/lua/cn_boundaries.lua"
+    },
+    {
+      "path": "config/pc/lua/cn/cn_exact_processor.lua",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "references": [
+        "LICENSE"
+      ],
+      "previous_path": "config/pc/lua/cn_exact_processor.lua"
+    },
+    {
+      "path": "config/pc/lua/cn/cn_exact_spelling.lua",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "references": [
+        "LICENSE"
+      ],
+      "previous_path": "config/pc/lua/cn_exact_spelling.lua"
+    },
+    {
+      "path": "config/pc/lua/cn/cn_match.lua",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "LICENSE"
+      ],
+      "previous_path": "config/pc/lua/cn_match.lua"
+    },
+    {
+      "path": "config/pc/lua/cn/cn_native_boundary.lua",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "LICENSE"
+      ],
+      "previous_path": "config/pc/lua/cn_native_boundary.lua"
+    },
+    {
+      "path": "config/pc/lua/cn/cn_neighbor_keys.lua",
+      "kind": "data-or-generated-data",
+      "source_group": "cn-spelling-data",
+      "source_ids": [
+        "project",
+        "luna",
+        "ice"
+      ],
+      "license_scope": "Own GPLv3 spelling-mapping expression; source factual syllable inventory and Ice rule reference retained",
+      "references": [
+        "docs/sources/README.md"
+      ],
+      "previous_path": "config/pc/lua/cn_neighbor_keys.lua"
+    },
+    {
+      "path": "config/pc/lua/cn/cn_normal_codec.lua",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "LICENSE"
+      ],
+      "previous_path": "config/pc/lua/cn_normal_codec.lua"
+    },
+    {
+      "path": "config/pc/lua/cn/cn_orthography.lua",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "LICENSE",
+        "docs/sources/mdx-orthography-sources.md"
+      ],
+      "previous_path": "config/pc/lua/cn_orthography.lua"
+    },
+    {
+      "path": "config/pc/lua/cn/cn_preedit_spacing.lua",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "LICENSE"
+      ],
+      "previous_path": "config/pc/lua/cn_preedit_spacing.lua"
+    },
+    {
+      "path": "config/pc/lua/cn/cn_tolerance.lua",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "LICENSE"
+      ],
+      "previous_path": "config/pc/lua/cn_tolerance.lua"
+    },
+    {
+      "path": "config/pc/lua/cn/cn_translator.lua",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "LICENSE"
+      ],
+      "previous_path": "config/pc/lua/cn_translator.lua"
+    },
+    {
+      "path": "config/pc/lua/data/cn_extra_forms.lua",
+      "kind": "data-or-generated-data",
+      "source_group": "cn-spelling-data",
+      "source_ids": [
+        "project",
+        "luna",
+        "ice"
+      ],
+      "license_scope": "Own GPLv3 spelling-mapping expression; source factual syllable inventory and Ice rule reference retained",
+      "references": [
+        "docs/sources/README.md"
+      ],
+      "previous_path": "config/pc/lua/cn_extra_forms.lua"
+    },
+    {
+      "path": "config/pc/lua/data/cn_forms.lua",
+      "kind": "data-or-generated-data",
+      "source_group": "cn-spelling-data",
+      "source_ids": [
+        "project",
+        "luna",
+        "ice"
+      ],
+      "license_scope": "Own GPLv3 spelling-mapping expression; source factual syllable inventory and Ice rule reference retained",
+      "references": [
+        "docs/sources/README.md"
+      ],
+      "previous_path": "config/pc/lua/cn_forms.lua"
+    },
+    {
+      "path": "config/pc/lua/data/jp_family_data.lua",
+      "kind": "data-or-generated-data",
+      "source_group": "jp-family-data",
+      "source_ids": [
+        "jmdict",
+        "kanjidic2",
+        "unihan17",
+        "bunka",
+        "opencc",
+        "project"
+      ],
+      "license_scope": "EDRDG derivative readings and compound relations CC BY-SA 4.0; Unicode License V3 and OpenCC Apache-2.0 source portions retained. Own mapping/generation logic GPLv3 separately.",
+      "references": [
+        "docs/sources/jp-q-sources.md",
+        "docs/sources/jp-v-sources.md"
+      ],
+      "previous_path": "config/pc/lua/jp_family_data.lua"
+    },
+    {
+      "path": "config/pc/lua/data/jp_v_chars.lua",
+      "kind": "data-or-generated-data",
+      "source_group": "jp-v-character-metadata",
+      "source_ids": [
+        "kanjidic2",
+        "unihan17",
+        "bunka",
+        "opencc",
+        "project"
+      ],
+      "license_scope": "KANJIDIC2 derivative readings CC BY-SA 4.0; Unicode License V3 pinyin and OpenCC Apache-2.0 form portions retained.",
+      "references": [
+        "docs/sources/jp-v-sources.md"
+      ],
+      "previous_path": "config/pc/lua/jp_v_chars.lua"
+    },
+    {
+      "path": "config/pc/lua/data/jp_v_words_index.lua",
+      "kind": "data-or-generated-data",
+      "source_group": "jp-word-family-data",
+      "source_ids": [
+        "jmdict",
+        "project"
+      ],
+      "license_scope": "JMdict derivative data CC BY-SA 4.0; own index/reader code GPLv3 separately",
+      "references": [
+        "docs/sources/jp-v-sources.md"
+      ],
+      "previous_path": "config/pc/lua/jp_v_words_index.lua"
+    },
+    {
+      "path": "config/pc/lua/data/tool_unicode_data.lua",
+      "kind": "data-or-generated-data",
+      "source_group": "unicode-tools-data",
+      "source_ids": [
+        "unicode17",
+        "project"
+      ],
+      "license_scope": "Unicode License V3 derived data; project tool reader code separately GPLv3",
+      "references": [
+        "docs/sources/tools-sources.md"
+      ],
+      "previous_path": "config/pc/lua/tool_unicode_data.lua"
+    },
+    {
+      "path": "config/pc/lua/en/en_dlc.lua",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "references": [
+        "LICENSE"
+      ],
+      "previous_path": "config/pc/lua/en_dlc.lua"
+    },
+    {
+      "path": "config/pc/lua/en/en_dlc_format.lua",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "references": [
+        "LICENSE"
+      ],
+      "previous_path": "config/pc/lua/en_dlc_format.lua"
+    },
+    {
+      "path": "config/pc/lua/en/en_index.lua",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "LICENSE"
+      ],
+      "previous_path": "config/pc/lua/en_index.lua"
+    },
+    {
+      "path": "config/pc/lua/en/en_indexed_translator.lua",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "LICENSE"
+      ],
+      "previous_path": "config/pc/lua/en_indexed_translator.lua"
+    },
+    {
+      "path": "config/pc/lua/en/en_processor.lua",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "LICENSE"
+      ],
+      "previous_path": "config/pc/lua/en_processor.lua"
+    },
+    {
+      "path": "config/pc/lua/en/en_segmentor.lua",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "LICENSE"
+      ],
+      "previous_path": "config/pc/lua/en_segmentor.lua"
+    },
+    {
+      "path": "config/pc/lua/jp/jp_family.lua",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "LICENSE"
+      ],
+      "previous_path": "config/pc/lua/jp_family.lua"
+    },
+    {
+      "path": "config/pc/lua/jp/jp_learning_match.lua",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "LICENSE"
+      ],
+      "previous_path": "config/pc/lua/jp_learning_match.lua"
+    },
+    {
+      "path": "config/pc/lua/jp/jp_memory.lua",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "LICENSE"
+      ],
+      "previous_path": "config/pc/lua/jp_memory.lua"
+    },
+    {
+      "path": "config/pc/lua/jp/jp_named_symbols.lua",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "LICENSE"
+      ],
+      "previous_path": "config/pc/lua/jp_named_symbols.lua"
+    },
+    {
+      "path": "config/pc/lua/jp/jp_query.lua",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "LICENSE"
+      ],
+      "previous_path": "config/pc/lua/jp_query.lua"
+    },
+    {
+      "path": "config/pc/lua/jp/jp_reading_metadata.lua",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "LICENSE"
+      ],
+      "previous_path": "config/pc/lua/jp_reading_metadata.lua"
+    },
+    {
+      "path": "config/pc/lua/jp/jp_sequence.lua",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "LICENSE"
+      ],
+      "previous_path": "config/pc/lua/jp_sequence.lua"
+    },
+    {
+      "path": "config/pc/lua/jp/jp_v.lua",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "LICENSE"
+      ],
+      "previous_path": "config/pc/lua/jp_v.lua"
+    },
+    {
+      "path": "config/pc/lua/jp/jp_v_data.lua",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "LICENSE",
+        "docs/sources/jp-v-sources.md"
+      ],
+      "previous_path": "config/pc/lua/jp_v_data.lua"
+    },
+    {
+      "path": "config/pc/lua/shared/draft_limit.lua",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "LICENSE"
+      ],
+      "previous_path": "config/pc/lua/draft_limit.lua"
+    },
+    {
+      "path": "config/pc/lua/shared/on_demand_translator.lua",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "LICENSE"
+      ],
+      "previous_path": "config/pc/lua/official_translator.lua"
+    },
+    {
+      "path": "config/pc/lua/shared/pc_probe_global_mode.lua",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "LICENSE"
+      ],
+      "previous_path": "config/pc/lua/pc_probe_global_mode.lua"
+    },
+    {
+      "path": "config/pc/lua/shared/pc_probe_greek_proxy.lua",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "LICENSE"
+      ],
+      "previous_path": "config/pc/lua/pc_probe_greek_proxy.lua"
+    },
+    {
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "LICENSE"
+      ],
+      "path": "config/pc/lua/shared/scheme_data.lua",
+      "previous_path": "config/pc/lua/scheme_data.lua"
+    },
+    {
+      "path": "config/pc/lua/tools/query_info_submit.lua",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "LICENSE"
+      ],
+      "previous_path": "config/pc/lua/query_info_submit.lua"
+    },
+    {
+      "path": "config/pc/lua/tools/tool_calculator.lua",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [
+        "GPL-3.0"
+      ],
+      "references": [
+        "LICENSE",
+        "docs/sources/tools-sources.md",
+        "licenses/tools-Ice-GPL-3.0.txt"
+      ],
+      "source_ids": [
+        "project",
+        "ice"
+      ],
+      "previous_path": "config/pc/lua/tool_calculator.lua"
+    },
+    {
+      "path": "config/pc/lua/tools/tool_processor.lua",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "LICENSE"
+      ],
+      "previous_path": "config/pc/lua/tool_processor.lua"
+    },
+    {
+      "path": "config/pc/lua/tools/tool_segmentor.lua",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "LICENSE"
+      ],
+      "previous_path": "config/pc/lua/tool_segmentor.lua"
+    },
+    {
+      "path": "config/pc/lua/tools/tool_translator.lua",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "LICENSE"
+      ],
+      "previous_path": "config/pc/lua/tool_translator.lua"
+    },
+    {
+      "path": "config/pc/lua/tools/tool_unicode.lua",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [
+        "GPL-3.0"
+      ],
+      "references": [
+        "LICENSE",
+        "docs/sources/tools-sources.md",
+        "licenses/tools-Ice-GPL-3.0.txt"
+      ],
+      "source_ids": [
+        "project",
+        "ice"
+      ],
+      "previous_path": "config/pc/lua/tool_unicode.lua"
+    },
+    {
+      "path": "config/pc/lua/tools/u_translator.lua",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "LICENSE"
+      ],
+      "previous_path": "config/pc/lua/u_translator.lua"
+    },
+    {
+      "path": "config/pc/lua/ui/candidate_comment_filter.lua",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "LICENSE"
+      ],
+      "previous_path": "config/pc/rime.lua"
+    },
+    {
+      "path": "config/pc/lua/ui/candidate_keys.lua",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "LICENSE"
+      ],
+      "previous_path": "config/pc/lua/candidate_keys.lua"
+    },
+    {
+      "path": "config/pc/lua/ui/research_mode_filter.lua",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "LICENSE"
+      ],
+      "previous_path": "config/pc/rime.lua"
+    },
+    {
+      "path": "config/pc/lua/ui/select_hanzi.lua",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [
+        "GPL-3.0"
+      ],
+      "references": [
+        "LICENSE",
+        "docs/sources/tools-sources.md",
+        "licenses/tools-Ice-GPL-3.0.txt"
+      ],
+      "source_ids": [
+        "project",
+        "ice"
+      ],
+      "previous_path": "config/pc/lua/select_hanzi.lua"
+    },
+    {
+      "path": "config/pc/stellae/appearance.yaml",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "LICENSE"
+      ],
+      "previous_path": "config/pc/weasel.custom.yaml"
+    },
+    {
+      "path": "config/pc/stellae/chinese.yaml",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "LICENSE"
+      ],
+      "previous_path": "config/pc/cn_stellae.custom.yaml"
+    },
+    {
+      "path": "config/pc/stellae/defaults.yaml",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "LICENSE"
+      ],
+      "previous_path": "config/pc/default.custom.yaml"
+    },
+    {
+      "path": "config/pc/stellae/english.yaml",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "LICENSE"
+      ],
+      "previous_path": "config/pc/cn_stellae.custom.yaml"
+    },
+    {
+      "path": "config/pc/stellae/japanese.yaml",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms. Existing Rime spelling-rule source comments remain in the file.",
+      "retained_upstream_terms": [],
+      "references": [
+        "LICENSE",
+        "config/pc/JAPANESE.md"
+      ],
+      "previous_path": "config/pc/jp_stellae.custom.yaml"
+    },
+    {
+      "path": "config/pc/stellae/spelling.yaml",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "LICENSE"
+      ],
+      "previous_path": "config/pc/cn_stellae.custom.yaml"
+    },
+    {
+      "path": "config/pc/stellae/tools.yaml",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "LICENSE"
+      ],
+      "previous_path": "config/pc/cn_stellae.custom.yaml"
+    },
+    {
+      "path": "sources/spelling/cn-syllables.txt",
+      "kind": "data-or-generated-data",
+      "source_group": "cn-syllable-inventory",
+      "source_ids": [
+        "luna"
+      ],
+      "license_scope": "Factual spelling codes extracted from the retained Luna input; upstream LGPL-3.0 attribution retained.",
+      "references": [
+        "licenses/luna-pinyin-LGPL-3.0.txt",
+        "sources/spelling/README.md"
+      ]
+    },
+    {
+      "path": "tests/schemes/fixtures/legacy_dlc/cn_dlc.lua",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "references": [
+        "LICENSE"
+      ],
+      "previous_path": "config/pc/lua/cn_dlc.lua"
+    },
+    {
+      "path": "tests/schemes/fixtures/legacy_dlc/stellae_dlc.lua",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "references": [
+        "LICENSE"
+      ],
+      "previous_path": "config/pc/lua/stellae_dlc.lua"
+    }
+  ]
+}

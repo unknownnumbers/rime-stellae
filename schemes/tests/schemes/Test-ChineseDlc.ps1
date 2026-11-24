@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: GPL-3.0-only
-# Fixed synthetic dictionaries and learning only, in a fresh output directory.
+# Historical guarded-catalog fixture. Current production DLC coverage is Test-DlcProfile.ps1.
 param(
   [Parameter(Mandatory=$true)][string]$EngineDll,
   [Parameter(Mandatory=$true)][string]$OutputDirectory,
@@ -23,7 +23,8 @@ $words=@();foreach($cp in @(0x7532,0x4e59,0x4e19,0x4e01)){$words+=(([string][cha
 $overlapWord=([string][char]0x91cd)*2
 Write-Text (Join-Path $user 'rime.lua') ''
 if($Guarded){
- foreach($name in @('stellae_dlc.lua','cn_dlc.lua','en_dlc_format.lua')){Write-Text (Join-Path $user ('lua/'+$name)) ([IO.File]::ReadAllText((Join-Path $repo ('config/pc/lua/'+$name)),$utf8))}
+ foreach($name in @('stellae_dlc.lua','cn_dlc.lua')){Write-Text (Join-Path $user ('lua/'+$name)) ([IO.File]::ReadAllText((Join-Path $PSScriptRoot ('fixtures/legacy_dlc/'+$name)),$utf8))}
+ Write-Text (Join-Path $user 'lua/en/en_dlc_format.lua') ([IO.File]::ReadAllText((Join-Path $repo 'config/pc/lua/en/en_dlc_format.lua'),$utf8))
  Write-Text (Join-Path $user 'rime.lua') @'
 dlc_synthetic = {
   init = function(env)

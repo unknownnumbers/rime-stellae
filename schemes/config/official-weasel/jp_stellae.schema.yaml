@@ -40,4 +40,6 @@ key_binder:
 recognizer:
   import_preset: default
 __patch:
+  - stellae/japanese:/patch
+  - stellae/appearance:/japanese
   - jp_stellae.custom:/patch?

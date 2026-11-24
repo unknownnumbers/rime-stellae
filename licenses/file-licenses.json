@@ -987,6 +987,15 @@
       ]
     },
     {
+      "path": "installer/migrations/source-layout.json",
+      "source_ids": [
+        "project-code"
+      ],
+      "references": [
+        "LICENSE"
+      ]
+    },
+    {
       "path": "installer/migrations/upgrade.json",
       "source_ids": [
         "project-code"
@@ -1587,6 +1596,15 @@
       ]
     },
     {
+      "path": "native/tests/installer/Test-BundleSourceLayout.ps1",
+      "source_ids": [
+        "project-code"
+      ],
+      "references": [
+        "LICENSE"
+      ]
+    },
+    {
       "path": "native/tests/installer/Test-FontInstallerE2E.ps1",
       "source_ids": [
         "project-code"
@@ -1803,6 +1821,15 @@
       ]
     },
     {
+      "path": "native/tests/package/test_bundle_architecture.py",
+      "source_ids": [
+        "project-code"
+      ],
+      "references": [
+        "LICENSE"
+      ]
+    },
+    {
       "path": "native/tests/package/test_runtime_engines.py",
       "source_ids": [
         "project-code"
@@ -1822,6 +1849,15 @@
     },
     {
       "path": "native/tests/package/test_server_overlays.py",
+      "source_ids": [
+        "project-code"
+      ],
+      "references": [
+        "LICENSE"
+      ]
+    },
+    {
+      "path": "native/tests/package/test_source_privacy.py",
       "source_ids": [
         "project-code"
       ],
@@ -2112,13 +2148,14 @@
     {
       "kind": "program-or-configuration",
       "source_ids": [
-        "schemes:prelude"
+        "schemes:prelude",
+        "schemes:project"
       ],
       "retained_upstream_terms": [
         "LGPL-3.0",
         "rime-prelude AUTHORS"
       ],
-      "license_scope": "Unmodified upstream default configuration under LGPL-3.0; original attribution retained.",
+      "license_scope": "Upstream prelude defaults with project schema selection and native product/personal patch wiring; original upstream terms and attribution retained.",
       "references": [
         "schemes/LICENSE",
         "schemes/licenses/shared-config/prelude-LICENSE.txt",
@@ -2802,7 +2839,7 @@
       "source_ids": []
     },
     {
-      "path": "schemes/config/official-weasel/lua/candidate_keys.lua",
+      "path": "schemes/config/official-weasel/lua/cn/cn_boundaries.lua",
       "kind": "program-or-configuration",
       "project_license": "GPL-3.0-only",
       "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
@@ -2811,10 +2848,33 @@
         "schemes/LICENSE",
         "schemes/docs/sources/official-weasel-sources.md"
       ],
+      "previous_path": "config/pc/lua/cn_boundaries.lua",
       "source_ids": []
     },
     {
-      "path": "schemes/config/official-weasel/lua/cn_boundaries.lua",
+      "path": "schemes/config/official-weasel/lua/cn/cn_exact_processor.lua",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "references": [
+        "schemes/LICENSE",
+        "schemes/docs/sources/official-weasel-sources.md"
+      ],
+      "previous_path": "config/pc/lua/cn_exact_processor.lua",
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/official-weasel/lua/cn/cn_exact_spelling.lua",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "references": [
+        "schemes/LICENSE",
+        "schemes/docs/sources/official-weasel-sources.md"
+      ],
+      "previous_path": "config/pc/lua/cn_exact_spelling.lua",
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/official-weasel/lua/cn/cn_match.lua",
       "kind": "program-or-configuration",
       "project_license": "GPL-3.0-only",
       "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
@@ -2823,40 +2883,24 @@
         "schemes/LICENSE",
         "schemes/docs/sources/official-weasel-sources.md"
       ],
+      "previous_path": "config/pc/lua/cn_match.lua",
       "source_ids": []
     },
     {
-      "path": "schemes/config/official-weasel/lua/cn_dlc.lua",
+      "path": "schemes/config/official-weasel/lua/cn/cn_native_boundary.lua",
       "kind": "program-or-configuration",
       "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
       "references": [
         "schemes/LICENSE",
         "schemes/docs/sources/official-weasel-sources.md"
       ],
+      "previous_path": "config/pc/lua/cn_native_boundary.lua",
       "source_ids": []
     },
     {
-      "path": "schemes/config/official-weasel/lua/cn_exact_processor.lua",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "references": [
-        "schemes/LICENSE",
-        "schemes/docs/sources/official-weasel-sources.md"
-      ],
-      "source_ids": []
-    },
-    {
-      "path": "schemes/config/official-weasel/lua/cn_exact_spelling.lua",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "references": [
-        "schemes/LICENSE",
-        "schemes/docs/sources/official-weasel-sources.md"
-      ],
-      "source_ids": []
-    },
-    {
-      "path": "schemes/config/official-weasel/lua/cn_extra_forms.lua",
+      "path": "schemes/config/official-weasel/lua/cn/cn_neighbor_keys.lua",
       "kind": "data-or-generated-data",
       "source_group": "cn-spelling-data",
       "source_ids": [
@@ -2868,25 +2912,11 @@
       "references": [
         "schemes/docs/sources/README.md",
         "schemes/docs/sources/official-weasel-sources.md"
-      ]
-    },
-    {
-      "path": "schemes/config/official-weasel/lua/cn_forms.lua",
-      "kind": "data-or-generated-data",
-      "source_group": "cn-spelling-data",
-      "source_ids": [
-        "schemes:project",
-        "schemes:luna",
-        "schemes:ice"
       ],
-      "license_scope": "Own GPLv3 spelling-mapping expression; source factual syllable inventory and Ice rule reference retained",
-      "references": [
-        "schemes/docs/sources/README.md",
-        "schemes/docs/sources/official-weasel-sources.md"
-      ]
+      "previous_path": "config/pc/lua/cn_neighbor_keys.lua"
     },
     {
-      "path": "schemes/config/official-weasel/lua/cn_match.lua",
+      "path": "schemes/config/official-weasel/lua/cn/cn_normal_codec.lua",
       "kind": "program-or-configuration",
       "project_license": "GPL-3.0-only",
       "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
@@ -2895,49 +2925,11 @@
         "schemes/LICENSE",
         "schemes/docs/sources/official-weasel-sources.md"
       ],
+      "previous_path": "config/pc/lua/cn_normal_codec.lua",
       "source_ids": []
     },
     {
-      "path": "schemes/config/official-weasel/lua/cn_native_boundary.lua",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
-      "retained_upstream_terms": [],
-      "references": [
-        "schemes/LICENSE",
-        "schemes/docs/sources/official-weasel-sources.md"
-      ],
-      "source_ids": []
-    },
-    {
-      "path": "schemes/config/official-weasel/lua/cn_neighbor_keys.lua",
-      "kind": "data-or-generated-data",
-      "source_group": "cn-spelling-data",
-      "source_ids": [
-        "schemes:project",
-        "schemes:luna",
-        "schemes:ice"
-      ],
-      "license_scope": "Own GPLv3 spelling-mapping expression; source factual syllable inventory and Ice rule reference retained",
-      "references": [
-        "schemes/docs/sources/README.md",
-        "schemes/docs/sources/official-weasel-sources.md"
-      ]
-    },
-    {
-      "path": "schemes/config/official-weasel/lua/cn_normal_codec.lua",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
-      "retained_upstream_terms": [],
-      "references": [
-        "schemes/LICENSE",
-        "schemes/docs/sources/official-weasel-sources.md"
-      ],
-      "source_ids": []
-    },
-    {
-      "path": "schemes/config/official-weasel/lua/cn_orthography.lua",
+      "path": "schemes/config/official-weasel/lua/cn/cn_orthography.lua",
       "kind": "program-or-configuration",
       "project_license": "GPL-3.0-only",
       "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
@@ -2947,10 +2939,11 @@
         "schemes/docs/sources/mdx-orthography-sources.md",
         "schemes/docs/sources/official-weasel-sources.md"
       ],
+      "previous_path": "config/pc/lua/cn_orthography.lua",
       "source_ids": []
     },
     {
-      "path": "schemes/config/official-weasel/lua/cn_preedit_spacing.lua",
+      "path": "schemes/config/official-weasel/lua/cn/cn_preedit_spacing.lua",
       "kind": "program-or-configuration",
       "project_license": "GPL-3.0-only",
       "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
@@ -2959,10 +2952,11 @@
         "schemes/LICENSE",
         "schemes/docs/sources/official-weasel-sources.md"
       ],
+      "previous_path": "config/pc/lua/cn_preedit_spacing.lua",
       "source_ids": []
     },
     {
-      "path": "schemes/config/official-weasel/lua/cn_tolerance.lua",
+      "path": "schemes/config/official-weasel/lua/cn/cn_tolerance.lua",
       "kind": "program-or-configuration",
       "project_license": "GPL-3.0-only",
       "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
@@ -2971,10 +2965,11 @@
         "schemes/LICENSE",
         "schemes/docs/sources/official-weasel-sources.md"
       ],
+      "previous_path": "config/pc/lua/cn_tolerance.lua",
       "source_ids": []
     },
     {
-      "path": "schemes/config/official-weasel/lua/cn_translator.lua",
+      "path": "schemes/config/official-weasel/lua/cn/cn_translator.lua",
       "kind": "program-or-configuration",
       "project_license": "GPL-3.0-only",
       "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
@@ -2983,102 +2978,43 @@
         "schemes/LICENSE",
         "schemes/docs/sources/official-weasel-sources.md"
       ],
+      "previous_path": "config/pc/lua/cn_translator.lua",
       "source_ids": []
     },
     {
-      "path": "schemes/config/official-weasel/lua/draft_limit.lua",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
-      "retained_upstream_terms": [],
+      "path": "schemes/config/official-weasel/lua/data/cn_extra_forms.lua",
+      "kind": "data-or-generated-data",
+      "source_group": "cn-spelling-data",
+      "source_ids": [
+        "schemes:project",
+        "schemes:luna",
+        "schemes:ice"
+      ],
+      "license_scope": "Own GPLv3 spelling-mapping expression; source factual syllable inventory and Ice rule reference retained",
       "references": [
-        "schemes/LICENSE",
+        "schemes/docs/sources/README.md",
         "schemes/docs/sources/official-weasel-sources.md"
       ],
-      "source_ids": []
+      "previous_path": "config/pc/lua/cn_extra_forms.lua"
     },
     {
-      "path": "schemes/config/official-weasel/lua/en_dlc.lua",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
+      "path": "schemes/config/official-weasel/lua/data/cn_forms.lua",
+      "kind": "data-or-generated-data",
+      "source_group": "cn-spelling-data",
+      "source_ids": [
+        "schemes:project",
+        "schemes:luna",
+        "schemes:ice"
+      ],
+      "license_scope": "Own GPLv3 spelling-mapping expression; source factual syllable inventory and Ice rule reference retained",
       "references": [
-        "schemes/LICENSE",
+        "schemes/docs/sources/README.md",
         "schemes/docs/sources/official-weasel-sources.md"
       ],
-      "source_ids": []
+      "previous_path": "config/pc/lua/cn_forms.lua"
     },
     {
-      "path": "schemes/config/official-weasel/lua/en_dlc_format.lua",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "references": [
-        "schemes/LICENSE",
-        "schemes/docs/sources/official-weasel-sources.md"
-      ],
-      "source_ids": []
-    },
-    {
-      "path": "schemes/config/official-weasel/lua/en_index.lua",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
-      "retained_upstream_terms": [],
-      "references": [
-        "schemes/LICENSE",
-        "schemes/docs/sources/official-weasel-sources.md"
-      ],
-      "source_ids": []
-    },
-    {
-      "path": "schemes/config/official-weasel/lua/en_indexed_translator.lua",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
-      "retained_upstream_terms": [],
-      "references": [
-        "schemes/LICENSE",
-        "schemes/docs/sources/official-weasel-sources.md"
-      ],
-      "source_ids": []
-    },
-    {
-      "path": "schemes/config/official-weasel/lua/en_processor.lua",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
-      "retained_upstream_terms": [],
-      "references": [
-        "schemes/LICENSE",
-        "schemes/docs/sources/official-weasel-sources.md"
-      ],
-      "source_ids": []
-    },
-    {
-      "path": "schemes/config/official-weasel/lua/en_segmentor.lua",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
-      "retained_upstream_terms": [],
-      "references": [
-        "schemes/LICENSE",
-        "schemes/docs/sources/official-weasel-sources.md"
-      ],
-      "source_ids": []
-    },
-    {
-      "path": "schemes/config/official-weasel/lua/jp_family.lua",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
-      "retained_upstream_terms": [],
-      "references": [
-        "schemes/LICENSE",
-        "schemes/docs/sources/official-weasel-sources.md"
-      ],
-      "source_ids": []
-    },
-    {
-      "path": "schemes/config/official-weasel/lua/jp_family_data.lua",
+      "path": "schemes/config/official-weasel/lua/data/jp_family_data.lua",
       "kind": "data-or-generated-data",
       "source_group": "jp-family-data",
       "source_ids": [
@@ -3094,107 +3030,11 @@
         "schemes/docs/sources/jp-q-sources.md",
         "schemes/docs/sources/jp-v-sources.md",
         "schemes/docs/sources/official-weasel-sources.md"
-      ]
-    },
-    {
-      "path": "schemes/config/official-weasel/lua/jp_learning_match.lua",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
-      "retained_upstream_terms": [],
-      "references": [
-        "schemes/LICENSE",
-        "schemes/docs/sources/official-weasel-sources.md"
       ],
-      "source_ids": []
+      "previous_path": "config/pc/lua/jp_family_data.lua"
     },
     {
-      "path": "schemes/config/official-weasel/lua/jp_memory.lua",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
-      "retained_upstream_terms": [],
-      "references": [
-        "schemes/LICENSE",
-        "schemes/docs/sources/official-weasel-sources.md"
-      ],
-      "source_ids": []
-    },
-    {
-      "path": "schemes/config/official-weasel/lua/jp_named_symbols.lua",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
-      "retained_upstream_terms": [],
-      "references": [
-        "schemes/LICENSE",
-        "schemes/docs/sources/official-weasel-sources.md"
-      ],
-      "source_ids": []
-    },
-    {
-      "path": "schemes/config/official-weasel/lua/jp_query.lua",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
-      "retained_upstream_terms": [],
-      "references": [
-        "schemes/LICENSE",
-        "schemes/docs/sources/official-weasel-sources.md"
-      ],
-      "source_ids": []
-    },
-    {
-      "path": "schemes/config/official-weasel/lua/jp_reading_metadata.lua",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
-      "retained_upstream_terms": [],
-      "references": [
-        "schemes/LICENSE",
-        "schemes/docs/sources/official-weasel-sources.md"
-      ],
-      "source_ids": []
-    },
-    {
-      "path": "schemes/config/official-weasel/lua/jp_sequence.lua",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
-      "retained_upstream_terms": [],
-      "references": [
-        "schemes/LICENSE",
-        "schemes/docs/sources/official-weasel-sources.md"
-      ],
-      "source_ids": []
-    },
-    {
-      "path": "schemes/config/official-weasel/lua/jp_small_kana.lua",
-      "kind": "data-or-generated-data",
-      "source_group": "jp-independent-kana",
-      "source_ids": [
-        "schemes:project"
-      ],
-      "license_scope": "GPLv3 original mapping specification; no exclusive claim on kana characters",
-      "references": [
-        "schemes/docs/sources/jp-q-sources.md",
-        "schemes/docs/sources/official-weasel-sources.md"
-      ]
-    },
-    {
-      "path": "schemes/config/official-weasel/lua/jp_v.lua",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
-      "retained_upstream_terms": [],
-      "references": [
-        "schemes/LICENSE",
-        "schemes/docs/sources/official-weasel-sources.md"
-      ],
-      "source_ids": []
-    },
-    {
-      "path": "schemes/config/official-weasel/lua/jp_v_chars.lua",
+      "path": "schemes/config/official-weasel/lua/data/jp_v_chars.lua",
       "kind": "data-or-generated-data",
       "source_group": "jp-v-character-metadata",
       "source_ids": [
@@ -3208,23 +3048,11 @@
       "references": [
         "schemes/docs/sources/jp-v-sources.md",
         "schemes/docs/sources/official-weasel-sources.md"
-      ]
-    },
-    {
-      "path": "schemes/config/official-weasel/lua/jp_v_data.lua",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
-      "retained_upstream_terms": [],
-      "references": [
-        "schemes/LICENSE",
-        "schemes/docs/sources/jp-v-sources.md",
-        "schemes/docs/sources/official-weasel-sources.md"
       ],
-      "source_ids": []
+      "previous_path": "config/pc/lua/jp_v_chars.lua"
     },
     {
-      "path": "schemes/config/official-weasel/lua/jp_v_words_index.lua",
+      "path": "schemes/config/official-weasel/lua/data/jp_v_words_index.lua",
       "kind": "data-or-generated-data",
       "source_group": "jp-word-family-data",
       "source_ids": [
@@ -3235,173 +3063,11 @@
       "references": [
         "schemes/docs/sources/jp-v-sources.md",
         "schemes/docs/sources/official-weasel-sources.md"
-      ]
+      ],
+      "previous_path": "config/pc/lua/jp_v_words_index.lua"
     },
     {
-      "path": "schemes/config/official-weasel/lua/official_translator.lua",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
-      "retained_upstream_terms": [],
-      "references": [
-        "schemes/LICENSE",
-        "schemes/docs/sources/official-weasel-sources.md"
-      ],
-      "source_ids": []
-    },
-    {
-      "path": "schemes/config/official-weasel/lua/pc_probe_global_mode.lua",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
-      "retained_upstream_terms": [],
-      "references": [
-        "schemes/LICENSE",
-        "schemes/docs/sources/official-weasel-sources.md"
-      ],
-      "source_ids": []
-    },
-    {
-      "path": "schemes/config/official-weasel/lua/pc_probe_greek_proxy.lua",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
-      "retained_upstream_terms": [],
-      "references": [
-        "schemes/LICENSE",
-        "schemes/docs/sources/official-weasel-sources.md"
-      ],
-      "source_ids": []
-    },
-    {
-      "path": "schemes/config/official-weasel/lua/query_info_submit.lua",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
-      "retained_upstream_terms": [],
-      "references": [
-        "schemes/LICENSE",
-        "schemes/docs/sources/official-weasel-sources.md"
-      ],
-      "source_ids": []
-    },
-    {
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
-      "retained_upstream_terms": [],
-      "references": [
-        "schemes/LICENSE",
-        "schemes/docs/sources/official-weasel-sources.md"
-      ],
-      "path": "schemes/config/official-weasel/lua/scheme_data.lua",
-      "source_ids": []
-    },
-    {
-      "path": "schemes/config/official-weasel/lua/select_hanzi.lua",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
-      "retained_upstream_terms": [
-        "GPL-3.0"
-      ],
-      "references": [
-        "schemes/LICENSE",
-        "schemes/docs/sources/tools-sources.md",
-        "schemes/licenses/tools-Ice-GPL-3.0.txt",
-        "schemes/docs/sources/official-weasel-sources.md"
-      ],
-      "source_ids": [
-        "schemes:project",
-        "schemes:ice"
-      ]
-    },
-    {
-      "path": "schemes/config/official-weasel/lua/stellae_dlc.lua",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "references": [
-        "schemes/LICENSE",
-        "schemes/docs/sources/official-weasel-sources.md"
-      ],
-      "source_ids": []
-    },
-    {
-      "path": "schemes/config/official-weasel/lua/tool_calculator.lua",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
-      "retained_upstream_terms": [
-        "GPL-3.0"
-      ],
-      "references": [
-        "schemes/LICENSE",
-        "schemes/docs/sources/tools-sources.md",
-        "schemes/licenses/tools-Ice-GPL-3.0.txt",
-        "schemes/docs/sources/official-weasel-sources.md"
-      ],
-      "source_ids": [
-        "schemes:project",
-        "schemes:ice"
-      ]
-    },
-    {
-      "path": "schemes/config/official-weasel/lua/tool_processor.lua",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
-      "retained_upstream_terms": [],
-      "references": [
-        "schemes/LICENSE",
-        "schemes/docs/sources/official-weasel-sources.md"
-      ],
-      "source_ids": []
-    },
-    {
-      "path": "schemes/config/official-weasel/lua/tool_segmentor.lua",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
-      "retained_upstream_terms": [],
-      "references": [
-        "schemes/LICENSE",
-        "schemes/docs/sources/official-weasel-sources.md"
-      ],
-      "source_ids": []
-    },
-    {
-      "path": "schemes/config/official-weasel/lua/tool_translator.lua",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
-      "retained_upstream_terms": [],
-      "references": [
-        "schemes/LICENSE",
-        "schemes/docs/sources/official-weasel-sources.md"
-      ],
-      "source_ids": []
-    },
-    {
-      "path": "schemes/config/official-weasel/lua/tool_unicode.lua",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
-      "retained_upstream_terms": [
-        "GPL-3.0"
-      ],
-      "references": [
-        "schemes/LICENSE",
-        "schemes/docs/sources/tools-sources.md",
-        "schemes/licenses/tools-Ice-GPL-3.0.txt",
-        "schemes/docs/sources/official-weasel-sources.md"
-      ],
-      "source_ids": [
-        "schemes:project",
-        "schemes:ice"
-      ]
-    },
-    {
-      "path": "schemes/config/official-weasel/lua/tool_unicode_data.lua",
+      "path": "schemes/config/official-weasel/lua/data/tool_unicode_data.lua",
       "kind": "data-or-generated-data",
       "source_group": "unicode-tools-data",
       "source_ids": [
@@ -3412,10 +3078,33 @@
       "references": [
         "schemes/docs/sources/tools-sources.md",
         "schemes/docs/sources/official-weasel-sources.md"
-      ]
+      ],
+      "previous_path": "config/pc/lua/tool_unicode_data.lua"
     },
     {
-      "path": "schemes/config/official-weasel/lua/u_translator.lua",
+      "path": "schemes/config/official-weasel/lua/en/en_dlc.lua",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "references": [
+        "schemes/LICENSE",
+        "schemes/docs/sources/official-weasel-sources.md"
+      ],
+      "previous_path": "config/pc/lua/en_dlc.lua",
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/official-weasel/lua/en/en_dlc_format.lua",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "references": [
+        "schemes/LICENSE",
+        "schemes/docs/sources/official-weasel-sources.md"
+      ],
+      "previous_path": "config/pc/lua/en_dlc_format.lua",
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/official-weasel/lua/en/en_index.lua",
       "kind": "program-or-configuration",
       "project_license": "GPL-3.0-only",
       "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
@@ -3424,7 +3113,394 @@
         "schemes/LICENSE",
         "schemes/docs/sources/official-weasel-sources.md"
       ],
+      "previous_path": "config/pc/lua/en_index.lua",
       "source_ids": []
+    },
+    {
+      "path": "schemes/config/official-weasel/lua/en/en_indexed_translator.lua",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "schemes/LICENSE",
+        "schemes/docs/sources/official-weasel-sources.md"
+      ],
+      "previous_path": "config/pc/lua/en_indexed_translator.lua",
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/official-weasel/lua/en/en_processor.lua",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "schemes/LICENSE",
+        "schemes/docs/sources/official-weasel-sources.md"
+      ],
+      "previous_path": "config/pc/lua/en_processor.lua",
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/official-weasel/lua/en/en_segmentor.lua",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "schemes/LICENSE",
+        "schemes/docs/sources/official-weasel-sources.md"
+      ],
+      "previous_path": "config/pc/lua/en_segmentor.lua",
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/official-weasel/lua/jp/jp_family.lua",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "schemes/LICENSE",
+        "schemes/docs/sources/official-weasel-sources.md"
+      ],
+      "previous_path": "config/pc/lua/jp_family.lua",
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/official-weasel/lua/jp/jp_learning_match.lua",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "schemes/LICENSE",
+        "schemes/docs/sources/official-weasel-sources.md"
+      ],
+      "previous_path": "config/pc/lua/jp_learning_match.lua",
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/official-weasel/lua/jp/jp_memory.lua",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "schemes/LICENSE",
+        "schemes/docs/sources/official-weasel-sources.md"
+      ],
+      "previous_path": "config/pc/lua/jp_memory.lua",
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/official-weasel/lua/jp/jp_named_symbols.lua",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "schemes/LICENSE",
+        "schemes/docs/sources/official-weasel-sources.md"
+      ],
+      "previous_path": "config/pc/lua/jp_named_symbols.lua",
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/official-weasel/lua/jp/jp_query.lua",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "schemes/LICENSE",
+        "schemes/docs/sources/official-weasel-sources.md"
+      ],
+      "previous_path": "config/pc/lua/jp_query.lua",
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/official-weasel/lua/jp/jp_reading_metadata.lua",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "schemes/LICENSE",
+        "schemes/docs/sources/official-weasel-sources.md"
+      ],
+      "previous_path": "config/pc/lua/jp_reading_metadata.lua",
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/official-weasel/lua/jp/jp_sequence.lua",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "schemes/LICENSE",
+        "schemes/docs/sources/official-weasel-sources.md"
+      ],
+      "previous_path": "config/pc/lua/jp_sequence.lua",
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/official-weasel/lua/jp/jp_v.lua",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "schemes/LICENSE",
+        "schemes/docs/sources/official-weasel-sources.md"
+      ],
+      "previous_path": "config/pc/lua/jp_v.lua",
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/official-weasel/lua/jp/jp_v_data.lua",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "schemes/LICENSE",
+        "schemes/docs/sources/jp-v-sources.md",
+        "schemes/docs/sources/official-weasel-sources.md"
+      ],
+      "previous_path": "config/pc/lua/jp_v_data.lua",
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/official-weasel/lua/shared/draft_limit.lua",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "schemes/LICENSE",
+        "schemes/docs/sources/official-weasel-sources.md"
+      ],
+      "previous_path": "config/pc/lua/draft_limit.lua",
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/official-weasel/lua/shared/on_demand_translator.lua",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "schemes/LICENSE",
+        "schemes/docs/sources/official-weasel-sources.md"
+      ],
+      "previous_path": "config/pc/lua/official_translator.lua",
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/official-weasel/lua/shared/pc_probe_global_mode.lua",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "schemes/LICENSE",
+        "schemes/docs/sources/official-weasel-sources.md"
+      ],
+      "previous_path": "config/pc/lua/pc_probe_global_mode.lua",
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/official-weasel/lua/shared/pc_probe_greek_proxy.lua",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "schemes/LICENSE",
+        "schemes/docs/sources/official-weasel-sources.md"
+      ],
+      "previous_path": "config/pc/lua/pc_probe_greek_proxy.lua",
+      "source_ids": []
+    },
+    {
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "schemes/LICENSE",
+        "schemes/docs/sources/official-weasel-sources.md"
+      ],
+      "path": "schemes/config/official-weasel/lua/shared/scheme_data.lua",
+      "previous_path": "config/pc/lua/scheme_data.lua",
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/official-weasel/lua/tools/query_info_submit.lua",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "schemes/LICENSE",
+        "schemes/docs/sources/official-weasel-sources.md"
+      ],
+      "previous_path": "config/pc/lua/query_info_submit.lua",
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/official-weasel/lua/tools/tool_calculator.lua",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [
+        "GPL-3.0"
+      ],
+      "references": [
+        "schemes/LICENSE",
+        "schemes/docs/sources/tools-sources.md",
+        "schemes/licenses/tools-Ice-GPL-3.0.txt",
+        "schemes/docs/sources/official-weasel-sources.md"
+      ],
+      "source_ids": [
+        "schemes:project",
+        "schemes:ice"
+      ],
+      "previous_path": "config/pc/lua/tool_calculator.lua"
+    },
+    {
+      "path": "schemes/config/official-weasel/lua/tools/tool_processor.lua",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "schemes/LICENSE",
+        "schemes/docs/sources/official-weasel-sources.md"
+      ],
+      "previous_path": "config/pc/lua/tool_processor.lua",
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/official-weasel/lua/tools/tool_segmentor.lua",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "schemes/LICENSE",
+        "schemes/docs/sources/official-weasel-sources.md"
+      ],
+      "previous_path": "config/pc/lua/tool_segmentor.lua",
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/official-weasel/lua/tools/tool_translator.lua",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "schemes/LICENSE",
+        "schemes/docs/sources/official-weasel-sources.md"
+      ],
+      "previous_path": "config/pc/lua/tool_translator.lua",
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/official-weasel/lua/tools/tool_unicode.lua",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [
+        "GPL-3.0"
+      ],
+      "references": [
+        "schemes/LICENSE",
+        "schemes/docs/sources/tools-sources.md",
+        "schemes/licenses/tools-Ice-GPL-3.0.txt",
+        "schemes/docs/sources/official-weasel-sources.md"
+      ],
+      "source_ids": [
+        "schemes:project",
+        "schemes:ice"
+      ],
+      "previous_path": "config/pc/lua/tool_unicode.lua"
+    },
+    {
+      "path": "schemes/config/official-weasel/lua/tools/u_translator.lua",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "schemes/LICENSE",
+        "schemes/docs/sources/official-weasel-sources.md"
+      ],
+      "previous_path": "config/pc/lua/u_translator.lua",
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/official-weasel/lua/ui/candidate_comment_filter.lua",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "schemes/LICENSE",
+        "schemes/docs/sources/official-weasel-sources.md"
+      ],
+      "previous_path": "config/pc/rime.lua",
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/official-weasel/lua/ui/candidate_keys.lua",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "schemes/LICENSE",
+        "schemes/docs/sources/official-weasel-sources.md"
+      ],
+      "previous_path": "config/pc/lua/candidate_keys.lua",
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/official-weasel/lua/ui/research_mode_filter.lua",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "schemes/LICENSE",
+        "schemes/docs/sources/official-weasel-sources.md"
+      ],
+      "previous_path": "config/pc/rime.lua",
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/official-weasel/lua/ui/select_hanzi.lua",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [
+        "GPL-3.0"
+      ],
+      "references": [
+        "schemes/LICENSE",
+        "schemes/docs/sources/tools-sources.md",
+        "schemes/licenses/tools-Ice-GPL-3.0.txt",
+        "schemes/docs/sources/official-weasel-sources.md"
+      ],
+      "source_ids": [
+        "schemes:project",
+        "schemes:ice"
+      ],
+      "previous_path": "config/pc/lua/select_hanzi.lua"
     },
     {
       "path": "schemes/config/official-weasel/luna_pinyin.dict.yaml",
@@ -3892,6 +3968,98 @@
         "schemes/docs/sources/official-weasel-sources.md"
       ],
       "path": "schemes/config/official-weasel/source-dependencies.json",
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/official-weasel/stellae/appearance.yaml",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "schemes/LICENSE",
+        "schemes/docs/sources/official-weasel-sources.md"
+      ],
+      "previous_path": "config/pc/weasel.custom.yaml",
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/official-weasel/stellae/chinese.yaml",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "schemes/LICENSE",
+        "schemes/docs/sources/official-weasel-sources.md"
+      ],
+      "previous_path": "config/pc/cn_stellae.custom.yaml",
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/official-weasel/stellae/defaults.yaml",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "schemes/LICENSE",
+        "schemes/docs/sources/official-weasel-sources.md"
+      ],
+      "previous_path": "config/pc/default.custom.yaml",
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/official-weasel/stellae/english.yaml",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "schemes/LICENSE",
+        "schemes/docs/sources/official-weasel-sources.md"
+      ],
+      "previous_path": "config/pc/cn_stellae.custom.yaml",
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/official-weasel/stellae/japanese.yaml",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms. Existing Rime spelling-rule source comments remain in the file.",
+      "retained_upstream_terms": [],
+      "references": [
+        "schemes/LICENSE",
+        "schemes/config/pc/JAPANESE.md",
+        "schemes/docs/sources/official-weasel-sources.md"
+      ],
+      "previous_path": "config/pc/jp_stellae.custom.yaml",
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/official-weasel/stellae/spelling.yaml",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "schemes/LICENSE",
+        "schemes/docs/sources/official-weasel-sources.md"
+      ],
+      "previous_path": "config/pc/cn_stellae.custom.yaml",
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/official-weasel/stellae/tools.yaml",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "schemes/LICENSE",
+        "schemes/docs/sources/official-weasel-sources.md"
+      ],
+      "previous_path": "config/pc/cn_stellae.custom.yaml",
       "source_ids": []
     },
     {
@@ -4496,13 +4664,14 @@
     {
       "kind": "program-or-configuration",
       "source_ids": [
-        "schemes:prelude"
+        "schemes:prelude",
+        "schemes:project"
       ],
       "retained_upstream_terms": [
         "LGPL-3.0",
         "rime-prelude AUTHORS"
       ],
-      "license_scope": "Unmodified upstream default configuration under LGPL-3.0; original attribution retained.",
+      "license_scope": "Upstream prelude defaults with project schema selection and native product/personal patch wiring; original upstream terms and attribution retained.",
       "references": [
         "schemes/LICENSE",
         "schemes/licenses/shared-config/prelude-LICENSE.txt",
@@ -5131,7 +5300,7 @@
       "source_ids": []
     },
     {
-      "path": "schemes/config/pc/lua/candidate_keys.lua",
+      "path": "schemes/config/pc/lua/cn/cn_boundaries.lua",
       "kind": "program-or-configuration",
       "project_license": "GPL-3.0-only",
       "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
@@ -5139,10 +5308,31 @@
       "references": [
         "schemes/LICENSE"
       ],
+      "previous_path": "config/pc/lua/cn_boundaries.lua",
       "source_ids": []
     },
     {
-      "path": "schemes/config/pc/lua/cn_boundaries.lua",
+      "path": "schemes/config/pc/lua/cn/cn_exact_processor.lua",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "references": [
+        "schemes/LICENSE"
+      ],
+      "previous_path": "config/pc/lua/cn_exact_processor.lua",
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/pc/lua/cn/cn_exact_spelling.lua",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "references": [
+        "schemes/LICENSE"
+      ],
+      "previous_path": "config/pc/lua/cn_exact_spelling.lua",
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/pc/lua/cn/cn_match.lua",
       "kind": "program-or-configuration",
       "project_license": "GPL-3.0-only",
       "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
@@ -5150,37 +5340,23 @@
       "references": [
         "schemes/LICENSE"
       ],
+      "previous_path": "config/pc/lua/cn_match.lua",
       "source_ids": []
     },
     {
-      "path": "schemes/config/pc/lua/cn_dlc.lua",
+      "path": "schemes/config/pc/lua/cn/cn_native_boundary.lua",
       "kind": "program-or-configuration",
       "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
       "references": [
         "schemes/LICENSE"
       ],
+      "previous_path": "config/pc/lua/cn_native_boundary.lua",
       "source_ids": []
     },
     {
-      "path": "schemes/config/pc/lua/cn_exact_processor.lua",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "references": [
-        "schemes/LICENSE"
-      ],
-      "source_ids": []
-    },
-    {
-      "path": "schemes/config/pc/lua/cn_exact_spelling.lua",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "references": [
-        "schemes/LICENSE"
-      ],
-      "source_ids": []
-    },
-    {
-      "path": "schemes/config/pc/lua/cn_extra_forms.lua",
+      "path": "schemes/config/pc/lua/cn/cn_neighbor_keys.lua",
       "kind": "data-or-generated-data",
       "source_group": "cn-spelling-data",
       "source_ids": [
@@ -5191,24 +5367,11 @@
       "license_scope": "Own GPLv3 spelling-mapping expression; source factual syllable inventory and Ice rule reference retained",
       "references": [
         "schemes/docs/sources/README.md"
-      ]
-    },
-    {
-      "path": "schemes/config/pc/lua/cn_forms.lua",
-      "kind": "data-or-generated-data",
-      "source_group": "cn-spelling-data",
-      "source_ids": [
-        "schemes:project",
-        "schemes:luna",
-        "schemes:ice"
       ],
-      "license_scope": "Own GPLv3 spelling-mapping expression; source factual syllable inventory and Ice rule reference retained",
-      "references": [
-        "schemes/docs/sources/README.md"
-      ]
+      "previous_path": "config/pc/lua/cn_neighbor_keys.lua"
     },
     {
-      "path": "schemes/config/pc/lua/cn_match.lua",
+      "path": "schemes/config/pc/lua/cn/cn_normal_codec.lua",
       "kind": "program-or-configuration",
       "project_license": "GPL-3.0-only",
       "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
@@ -5216,46 +5379,11 @@
       "references": [
         "schemes/LICENSE"
       ],
+      "previous_path": "config/pc/lua/cn_normal_codec.lua",
       "source_ids": []
     },
     {
-      "path": "schemes/config/pc/lua/cn_native_boundary.lua",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
-      "retained_upstream_terms": [],
-      "references": [
-        "schemes/LICENSE"
-      ],
-      "source_ids": []
-    },
-    {
-      "path": "schemes/config/pc/lua/cn_neighbor_keys.lua",
-      "kind": "data-or-generated-data",
-      "source_group": "cn-spelling-data",
-      "source_ids": [
-        "schemes:project",
-        "schemes:luna",
-        "schemes:ice"
-      ],
-      "license_scope": "Own GPLv3 spelling-mapping expression; source factual syllable inventory and Ice rule reference retained",
-      "references": [
-        "schemes/docs/sources/README.md"
-      ]
-    },
-    {
-      "path": "schemes/config/pc/lua/cn_normal_codec.lua",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
-      "retained_upstream_terms": [],
-      "references": [
-        "schemes/LICENSE"
-      ],
-      "source_ids": []
-    },
-    {
-      "path": "schemes/config/pc/lua/cn_orthography.lua",
+      "path": "schemes/config/pc/lua/cn/cn_orthography.lua",
       "kind": "program-or-configuration",
       "project_license": "GPL-3.0-only",
       "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
@@ -5264,10 +5392,11 @@
         "schemes/LICENSE",
         "schemes/docs/sources/mdx-orthography-sources.md"
       ],
+      "previous_path": "config/pc/lua/cn_orthography.lua",
       "source_ids": []
     },
     {
-      "path": "schemes/config/pc/lua/cn_preedit_spacing.lua",
+      "path": "schemes/config/pc/lua/cn/cn_preedit_spacing.lua",
       "kind": "program-or-configuration",
       "project_license": "GPL-3.0-only",
       "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
@@ -5275,10 +5404,11 @@
       "references": [
         "schemes/LICENSE"
       ],
+      "previous_path": "config/pc/lua/cn_preedit_spacing.lua",
       "source_ids": []
     },
     {
-      "path": "schemes/config/pc/lua/cn_tolerance.lua",
+      "path": "schemes/config/pc/lua/cn/cn_tolerance.lua",
       "kind": "program-or-configuration",
       "project_license": "GPL-3.0-only",
       "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
@@ -5286,10 +5416,11 @@
       "references": [
         "schemes/LICENSE"
       ],
+      "previous_path": "config/pc/lua/cn_tolerance.lua",
       "source_ids": []
     },
     {
-      "path": "schemes/config/pc/lua/cn_translator.lua",
+      "path": "schemes/config/pc/lua/cn/cn_translator.lua",
       "kind": "program-or-configuration",
       "project_license": "GPL-3.0-only",
       "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
@@ -5297,94 +5428,41 @@
       "references": [
         "schemes/LICENSE"
       ],
+      "previous_path": "config/pc/lua/cn_translator.lua",
       "source_ids": []
     },
     {
-      "path": "schemes/config/pc/lua/draft_limit.lua",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
-      "retained_upstream_terms": [],
-      "references": [
-        "schemes/LICENSE"
+      "path": "schemes/config/pc/lua/data/cn_extra_forms.lua",
+      "kind": "data-or-generated-data",
+      "source_group": "cn-spelling-data",
+      "source_ids": [
+        "schemes:project",
+        "schemes:luna",
+        "schemes:ice"
       ],
-      "source_ids": []
-    },
-    {
-      "path": "schemes/config/pc/lua/en_dlc.lua",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
+      "license_scope": "Own GPLv3 spelling-mapping expression; source factual syllable inventory and Ice rule reference retained",
       "references": [
-        "schemes/LICENSE"
+        "schemes/docs/sources/README.md"
       ],
-      "source_ids": []
+      "previous_path": "config/pc/lua/cn_extra_forms.lua"
     },
     {
-      "path": "schemes/config/pc/lua/en_dlc_format.lua",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
+      "path": "schemes/config/pc/lua/data/cn_forms.lua",
+      "kind": "data-or-generated-data",
+      "source_group": "cn-spelling-data",
+      "source_ids": [
+        "schemes:project",
+        "schemes:luna",
+        "schemes:ice"
+      ],
+      "license_scope": "Own GPLv3 spelling-mapping expression; source factual syllable inventory and Ice rule reference retained",
       "references": [
-        "schemes/LICENSE"
+        "schemes/docs/sources/README.md"
       ],
-      "source_ids": []
+      "previous_path": "config/pc/lua/cn_forms.lua"
     },
     {
-      "path": "schemes/config/pc/lua/en_index.lua",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
-      "retained_upstream_terms": [],
-      "references": [
-        "schemes/LICENSE"
-      ],
-      "source_ids": []
-    },
-    {
-      "path": "schemes/config/pc/lua/en_indexed_translator.lua",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
-      "retained_upstream_terms": [],
-      "references": [
-        "schemes/LICENSE"
-      ],
-      "source_ids": []
-    },
-    {
-      "path": "schemes/config/pc/lua/en_processor.lua",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
-      "retained_upstream_terms": [],
-      "references": [
-        "schemes/LICENSE"
-      ],
-      "source_ids": []
-    },
-    {
-      "path": "schemes/config/pc/lua/en_segmentor.lua",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
-      "retained_upstream_terms": [],
-      "references": [
-        "schemes/LICENSE"
-      ],
-      "source_ids": []
-    },
-    {
-      "path": "schemes/config/pc/lua/jp_family.lua",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
-      "retained_upstream_terms": [],
-      "references": [
-        "schemes/LICENSE"
-      ],
-      "source_ids": []
-    },
-    {
-      "path": "schemes/config/pc/lua/jp_family_data.lua",
+      "path": "schemes/config/pc/lua/data/jp_family_data.lua",
       "kind": "data-or-generated-data",
       "source_group": "jp-family-data",
       "source_ids": [
@@ -5399,99 +5477,11 @@
       "references": [
         "schemes/docs/sources/jp-q-sources.md",
         "schemes/docs/sources/jp-v-sources.md"
-      ]
-    },
-    {
-      "path": "schemes/config/pc/lua/jp_learning_match.lua",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
-      "retained_upstream_terms": [],
-      "references": [
-        "schemes/LICENSE"
       ],
-      "source_ids": []
+      "previous_path": "config/pc/lua/jp_family_data.lua"
     },
     {
-      "path": "schemes/config/pc/lua/jp_memory.lua",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
-      "retained_upstream_terms": [],
-      "references": [
-        "schemes/LICENSE"
-      ],
-      "source_ids": []
-    },
-    {
-      "path": "schemes/config/pc/lua/jp_named_symbols.lua",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
-      "retained_upstream_terms": [],
-      "references": [
-        "schemes/LICENSE"
-      ],
-      "source_ids": []
-    },
-    {
-      "path": "schemes/config/pc/lua/jp_query.lua",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
-      "retained_upstream_terms": [],
-      "references": [
-        "schemes/LICENSE"
-      ],
-      "source_ids": []
-    },
-    {
-      "path": "schemes/config/pc/lua/jp_reading_metadata.lua",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
-      "retained_upstream_terms": [],
-      "references": [
-        "schemes/LICENSE"
-      ],
-      "source_ids": []
-    },
-    {
-      "path": "schemes/config/pc/lua/jp_sequence.lua",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
-      "retained_upstream_terms": [],
-      "references": [
-        "schemes/LICENSE"
-      ],
-      "source_ids": []
-    },
-    {
-      "path": "schemes/config/pc/lua/jp_small_kana.lua",
-      "kind": "data-or-generated-data",
-      "source_group": "jp-independent-kana",
-      "source_ids": [
-        "schemes:project"
-      ],
-      "license_scope": "GPLv3 original mapping specification; no exclusive claim on kana characters",
-      "references": [
-        "schemes/docs/sources/jp-q-sources.md"
-      ]
-    },
-    {
-      "path": "schemes/config/pc/lua/jp_v.lua",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
-      "retained_upstream_terms": [],
-      "references": [
-        "schemes/LICENSE"
-      ],
-      "source_ids": []
-    },
-    {
-      "path": "schemes/config/pc/lua/jp_v_chars.lua",
+      "path": "schemes/config/pc/lua/data/jp_v_chars.lua",
       "kind": "data-or-generated-data",
       "source_group": "jp-v-character-metadata",
       "source_ids": [
@@ -5504,22 +5494,11 @@
       "license_scope": "KANJIDIC2 derivative readings CC BY-SA 4.0; Unicode License V3 pinyin and OpenCC Apache-2.0 form portions retained.",
       "references": [
         "schemes/docs/sources/jp-v-sources.md"
-      ]
-    },
-    {
-      "path": "schemes/config/pc/lua/jp_v_data.lua",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
-      "retained_upstream_terms": [],
-      "references": [
-        "schemes/LICENSE",
-        "schemes/docs/sources/jp-v-sources.md"
       ],
-      "source_ids": []
+      "previous_path": "config/pc/lua/jp_v_chars.lua"
     },
     {
-      "path": "schemes/config/pc/lua/jp_v_words_index.lua",
+      "path": "schemes/config/pc/lua/data/jp_v_words_index.lua",
       "kind": "data-or-generated-data",
       "source_group": "jp-word-family-data",
       "source_ids": [
@@ -5529,161 +5508,11 @@
       "license_scope": "JMdict derivative data CC BY-SA 4.0; own index/reader code GPLv3 separately",
       "references": [
         "schemes/docs/sources/jp-v-sources.md"
-      ]
+      ],
+      "previous_path": "config/pc/lua/jp_v_words_index.lua"
     },
     {
-      "path": "schemes/config/pc/lua/official_translator.lua",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
-      "retained_upstream_terms": [],
-      "references": [
-        "schemes/LICENSE"
-      ],
-      "source_ids": []
-    },
-    {
-      "path": "schemes/config/pc/lua/pc_probe_global_mode.lua",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
-      "retained_upstream_terms": [],
-      "references": [
-        "schemes/LICENSE"
-      ],
-      "source_ids": []
-    },
-    {
-      "path": "schemes/config/pc/lua/pc_probe_greek_proxy.lua",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
-      "retained_upstream_terms": [],
-      "references": [
-        "schemes/LICENSE"
-      ],
-      "source_ids": []
-    },
-    {
-      "path": "schemes/config/pc/lua/query_info_submit.lua",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
-      "retained_upstream_terms": [],
-      "references": [
-        "schemes/LICENSE"
-      ],
-      "source_ids": []
-    },
-    {
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
-      "retained_upstream_terms": [],
-      "references": [
-        "schemes/LICENSE"
-      ],
-      "path": "schemes/config/pc/lua/scheme_data.lua",
-      "source_ids": []
-    },
-    {
-      "path": "schemes/config/pc/lua/select_hanzi.lua",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
-      "retained_upstream_terms": [
-        "GPL-3.0"
-      ],
-      "references": [
-        "schemes/LICENSE",
-        "schemes/docs/sources/tools-sources.md",
-        "schemes/licenses/tools-Ice-GPL-3.0.txt"
-      ],
-      "source_ids": [
-        "schemes:project",
-        "schemes:ice"
-      ]
-    },
-    {
-      "path": "schemes/config/pc/lua/stellae_dlc.lua",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "references": [
-        "schemes/LICENSE"
-      ],
-      "source_ids": []
-    },
-    {
-      "path": "schemes/config/pc/lua/tool_calculator.lua",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
-      "retained_upstream_terms": [
-        "GPL-3.0"
-      ],
-      "references": [
-        "schemes/LICENSE",
-        "schemes/docs/sources/tools-sources.md",
-        "schemes/licenses/tools-Ice-GPL-3.0.txt"
-      ],
-      "source_ids": [
-        "schemes:project",
-        "schemes:ice"
-      ]
-    },
-    {
-      "path": "schemes/config/pc/lua/tool_processor.lua",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
-      "retained_upstream_terms": [],
-      "references": [
-        "schemes/LICENSE"
-      ],
-      "source_ids": []
-    },
-    {
-      "path": "schemes/config/pc/lua/tool_segmentor.lua",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
-      "retained_upstream_terms": [],
-      "references": [
-        "schemes/LICENSE"
-      ],
-      "source_ids": []
-    },
-    {
-      "path": "schemes/config/pc/lua/tool_translator.lua",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
-      "retained_upstream_terms": [],
-      "references": [
-        "schemes/LICENSE"
-      ],
-      "source_ids": []
-    },
-    {
-      "path": "schemes/config/pc/lua/tool_unicode.lua",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
-      "retained_upstream_terms": [
-        "GPL-3.0"
-      ],
-      "references": [
-        "schemes/LICENSE",
-        "schemes/docs/sources/tools-sources.md",
-        "schemes/licenses/tools-Ice-GPL-3.0.txt"
-      ],
-      "source_ids": [
-        "schemes:project",
-        "schemes:ice"
-      ]
-    },
-    {
-      "path": "schemes/config/pc/lua/tool_unicode_data.lua",
+      "path": "schemes/config/pc/lua/data/tool_unicode_data.lua",
       "kind": "data-or-generated-data",
       "source_group": "unicode-tools-data",
       "source_ids": [
@@ -5693,10 +5522,31 @@
       "license_scope": "Unicode License V3 derived data; project tool reader code separately GPLv3",
       "references": [
         "schemes/docs/sources/tools-sources.md"
-      ]
+      ],
+      "previous_path": "config/pc/lua/tool_unicode_data.lua"
     },
     {
-      "path": "schemes/config/pc/lua/u_translator.lua",
+      "path": "schemes/config/pc/lua/en/en_dlc.lua",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "references": [
+        "schemes/LICENSE"
+      ],
+      "previous_path": "config/pc/lua/en_dlc.lua",
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/pc/lua/en/en_dlc_format.lua",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "references": [
+        "schemes/LICENSE"
+      ],
+      "previous_path": "config/pc/lua/en_dlc_format.lua",
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/pc/lua/en/en_index.lua",
       "kind": "program-or-configuration",
       "project_license": "GPL-3.0-only",
       "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
@@ -5704,7 +5554,366 @@
       "references": [
         "schemes/LICENSE"
       ],
+      "previous_path": "config/pc/lua/en_index.lua",
       "source_ids": []
+    },
+    {
+      "path": "schemes/config/pc/lua/en/en_indexed_translator.lua",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "schemes/LICENSE"
+      ],
+      "previous_path": "config/pc/lua/en_indexed_translator.lua",
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/pc/lua/en/en_processor.lua",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "schemes/LICENSE"
+      ],
+      "previous_path": "config/pc/lua/en_processor.lua",
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/pc/lua/en/en_segmentor.lua",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "schemes/LICENSE"
+      ],
+      "previous_path": "config/pc/lua/en_segmentor.lua",
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/pc/lua/jp/jp_family.lua",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "schemes/LICENSE"
+      ],
+      "previous_path": "config/pc/lua/jp_family.lua",
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/pc/lua/jp/jp_learning_match.lua",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "schemes/LICENSE"
+      ],
+      "previous_path": "config/pc/lua/jp_learning_match.lua",
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/pc/lua/jp/jp_memory.lua",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "schemes/LICENSE"
+      ],
+      "previous_path": "config/pc/lua/jp_memory.lua",
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/pc/lua/jp/jp_named_symbols.lua",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "schemes/LICENSE"
+      ],
+      "previous_path": "config/pc/lua/jp_named_symbols.lua",
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/pc/lua/jp/jp_query.lua",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "schemes/LICENSE"
+      ],
+      "previous_path": "config/pc/lua/jp_query.lua",
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/pc/lua/jp/jp_reading_metadata.lua",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "schemes/LICENSE"
+      ],
+      "previous_path": "config/pc/lua/jp_reading_metadata.lua",
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/pc/lua/jp/jp_sequence.lua",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "schemes/LICENSE"
+      ],
+      "previous_path": "config/pc/lua/jp_sequence.lua",
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/pc/lua/jp/jp_v.lua",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "schemes/LICENSE"
+      ],
+      "previous_path": "config/pc/lua/jp_v.lua",
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/pc/lua/jp/jp_v_data.lua",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "schemes/LICENSE",
+        "schemes/docs/sources/jp-v-sources.md"
+      ],
+      "previous_path": "config/pc/lua/jp_v_data.lua",
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/pc/lua/shared/draft_limit.lua",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "schemes/LICENSE"
+      ],
+      "previous_path": "config/pc/lua/draft_limit.lua",
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/pc/lua/shared/on_demand_translator.lua",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "schemes/LICENSE"
+      ],
+      "previous_path": "config/pc/lua/official_translator.lua",
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/pc/lua/shared/pc_probe_global_mode.lua",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "schemes/LICENSE"
+      ],
+      "previous_path": "config/pc/lua/pc_probe_global_mode.lua",
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/pc/lua/shared/pc_probe_greek_proxy.lua",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "schemes/LICENSE"
+      ],
+      "previous_path": "config/pc/lua/pc_probe_greek_proxy.lua",
+      "source_ids": []
+    },
+    {
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "schemes/LICENSE"
+      ],
+      "path": "schemes/config/pc/lua/shared/scheme_data.lua",
+      "previous_path": "config/pc/lua/scheme_data.lua",
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/pc/lua/tools/query_info_submit.lua",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "schemes/LICENSE"
+      ],
+      "previous_path": "config/pc/lua/query_info_submit.lua",
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/pc/lua/tools/tool_calculator.lua",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [
+        "GPL-3.0"
+      ],
+      "references": [
+        "schemes/LICENSE",
+        "schemes/docs/sources/tools-sources.md",
+        "schemes/licenses/tools-Ice-GPL-3.0.txt"
+      ],
+      "source_ids": [
+        "schemes:project",
+        "schemes:ice"
+      ],
+      "previous_path": "config/pc/lua/tool_calculator.lua"
+    },
+    {
+      "path": "schemes/config/pc/lua/tools/tool_processor.lua",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "schemes/LICENSE"
+      ],
+      "previous_path": "config/pc/lua/tool_processor.lua",
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/pc/lua/tools/tool_segmentor.lua",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "schemes/LICENSE"
+      ],
+      "previous_path": "config/pc/lua/tool_segmentor.lua",
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/pc/lua/tools/tool_translator.lua",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "schemes/LICENSE"
+      ],
+      "previous_path": "config/pc/lua/tool_translator.lua",
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/pc/lua/tools/tool_unicode.lua",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [
+        "GPL-3.0"
+      ],
+      "references": [
+        "schemes/LICENSE",
+        "schemes/docs/sources/tools-sources.md",
+        "schemes/licenses/tools-Ice-GPL-3.0.txt"
+      ],
+      "source_ids": [
+        "schemes:project",
+        "schemes:ice"
+      ],
+      "previous_path": "config/pc/lua/tool_unicode.lua"
+    },
+    {
+      "path": "schemes/config/pc/lua/tools/u_translator.lua",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "schemes/LICENSE"
+      ],
+      "previous_path": "config/pc/lua/u_translator.lua",
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/pc/lua/ui/candidate_comment_filter.lua",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "schemes/LICENSE"
+      ],
+      "previous_path": "config/pc/rime.lua",
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/pc/lua/ui/candidate_keys.lua",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "schemes/LICENSE"
+      ],
+      "previous_path": "config/pc/lua/candidate_keys.lua",
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/pc/lua/ui/research_mode_filter.lua",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "schemes/LICENSE"
+      ],
+      "previous_path": "config/pc/rime.lua",
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/pc/lua/ui/select_hanzi.lua",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [
+        "GPL-3.0"
+      ],
+      "references": [
+        "schemes/LICENSE",
+        "schemes/docs/sources/tools-sources.md",
+        "schemes/licenses/tools-Ice-GPL-3.0.txt"
+      ],
+      "source_ids": [
+        "schemes:project",
+        "schemes:ice"
+      ],
+      "previous_path": "config/pc/lua/select_hanzi.lua"
     },
     {
       "path": "schemes/config/pc/luna_pinyin.dict.yaml",
@@ -6104,6 +6313,91 @@
         "schemes/docs/sources/shared-config-sources.md"
       ],
       "path": "schemes/config/pc/source-dependencies.json",
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/pc/stellae/appearance.yaml",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "schemes/LICENSE"
+      ],
+      "previous_path": "config/pc/weasel.custom.yaml",
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/pc/stellae/chinese.yaml",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "schemes/LICENSE"
+      ],
+      "previous_path": "config/pc/cn_stellae.custom.yaml",
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/pc/stellae/defaults.yaml",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "schemes/LICENSE"
+      ],
+      "previous_path": "config/pc/default.custom.yaml",
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/pc/stellae/english.yaml",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "schemes/LICENSE"
+      ],
+      "previous_path": "config/pc/cn_stellae.custom.yaml",
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/pc/stellae/japanese.yaml",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms. Existing Rime spelling-rule source comments remain in the file.",
+      "retained_upstream_terms": [],
+      "references": [
+        "schemes/LICENSE",
+        "schemes/config/pc/JAPANESE.md"
+      ],
+      "previous_path": "config/pc/jp_stellae.custom.yaml",
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/pc/stellae/spelling.yaml",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "schemes/LICENSE"
+      ],
+      "previous_path": "config/pc/cn_stellae.custom.yaml",
+      "source_ids": []
+    },
+    {
+      "path": "schemes/config/pc/stellae/tools.yaml",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "schemes/LICENSE"
+      ],
+      "previous_path": "config/pc/cn_stellae.custom.yaml",
       "source_ids": []
     },
     {
@@ -7176,6 +7470,17 @@
       "source_ids": []
     },
     {
+      "kind": "project-explanatory-document",
+      "project_license": "CC-BY-SA-4.0",
+      "license_scope": "Original explanatory prose; quotations, attribution statements and code/data excerpts retain their own terms.",
+      "references": [
+        "schemes/THIRD_PARTY_NOTICES.md",
+        "schemes/licenses/CC-BY-SA-4.0.txt"
+      ],
+      "path": "schemes/docs/STRUCTURE.md",
+      "source_ids": []
+    },
+    {
       "path": "schemes/LICENSE",
       "kind": "license-text",
       "license_scope": "Verbatim GNU GPL version 3 legal text.",
@@ -7330,6 +7635,17 @@
       "references": [
         "schemes/licenses/KANJIDIC_Project.html"
       ],
+      "source_ids": []
+    },
+    {
+      "kind": "project-metadata",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original profile and dependency metadata; referenced resources retain their component terms.",
+      "references": [
+        "schemes/LICENSE",
+        "schemes/docs/sources/shared-config-sources.md"
+      ],
+      "path": "schemes/licenses/layout-records.json",
       "source_ids": []
     },
     {
@@ -8443,6 +8759,17 @@
       "source_ids": []
     },
     {
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "schemes/LICENSE"
+      ],
+      "path": "schemes/scripts/data/rebuild_chinese_spelling.py",
+      "source_ids": []
+    },
+    {
       "path": "schemes/scripts/data/rebuild_japanese_family_q.py",
       "kind": "program-or-configuration",
       "project_license": "GPL-3.0-only",
@@ -8451,7 +8778,7 @@
       "references": [
         "schemes/LICENSE",
         "schemes/config/pc/japanese-q-canonical.json",
-        "schemes/config/pc/lua/jp_v_chars.lua",
+        "schemes/config/pc/lua/data/jp_v_chars.lua",
         "schemes/scripts/data/build_japanese_q.py"
       ],
       "source_ids": []
@@ -8704,6 +9031,30 @@
       "license_scope": "Source-derived rows retain component data terms; original correction metadata uses GPL-3.0-only."
     },
     {
+      "path": "schemes/sources/spelling/cn-syllables.txt",
+      "kind": "data-or-generated-data",
+      "source_group": "cn-syllable-inventory",
+      "source_ids": [
+        "schemes:luna"
+      ],
+      "license_scope": "Factual spelling codes extracted from the retained Luna input; upstream LGPL-3.0 attribution retained.",
+      "references": [
+        "schemes/licenses/luna-pinyin-LGPL-3.0.txt",
+        "schemes/sources/spelling/README.md"
+      ]
+    },
+    {
+      "kind": "project-explanatory-document",
+      "project_license": "CC-BY-SA-4.0",
+      "license_scope": "Original explanatory prose; quotations, attribution statements and code/data excerpts retain their own terms.",
+      "references": [
+        "schemes/THIRD_PARTY_NOTICES.md",
+        "schemes/licenses/CC-BY-SA-4.0.txt"
+      ],
+      "path": "schemes/sources/spelling/README.md",
+      "source_ids": []
+    },
+    {
       "path": "schemes/tests/data/test_dlc_readings.py",
       "kind": "program-or-configuration",
       "project_license": "GPL-3.0-only",
@@ -8799,6 +9150,37 @@
       "references": [
         "schemes/LICENSE"
       ],
+      "source_ids": []
+    },
+    {
+      "path": "schemes/tests/schemes/fixtures/legacy_dlc/cn_dlc.lua",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "references": [
+        "schemes/LICENSE"
+      ],
+      "previous_path": "config/pc/lua/cn_dlc.lua",
+      "source_ids": []
+    },
+    {
+      "kind": "project-explanatory-document",
+      "project_license": "CC-BY-SA-4.0",
+      "license_scope": "Original explanatory prose; quotations, attribution statements and code/data excerpts retain their own terms.",
+      "references": [
+        "schemes/THIRD_PARTY_NOTICES.md",
+        "schemes/licenses/CC-BY-SA-4.0.txt"
+      ],
+      "path": "schemes/tests/schemes/fixtures/legacy_dlc/README.md",
+      "source_ids": []
+    },
+    {
+      "path": "schemes/tests/schemes/fixtures/legacy_dlc/stellae_dlc.lua",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "references": [
+        "schemes/LICENSE"
+      ],
+      "previous_path": "config/pc/lua/stellae_dlc.lua",
       "source_ids": []
     },
     {
@@ -9060,6 +9442,15 @@
     },
     {
       "path": "scripts/package/Build-Bundle.ps1",
+      "source_ids": [
+        "project-code"
+      ],
+      "references": [
+        "LICENSE"
+      ]
+    },
+    {
+      "path": "scripts/package/bundle_architecture.py",
       "source_ids": [
         "project-code"
       ],

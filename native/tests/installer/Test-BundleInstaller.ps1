@@ -121,25 +121,28 @@ Check 'Actual installed user input works without test redeployment' ((Get-Conten
 & $hostExe -NoProfile -File (Join-Path $PSScriptRoot 'Test-BundleShared.ps1') -EngineDll (Join-Path $root 'rime.dll') -SharedData $shared -SchemeSource $SchemeSource -OutputDirectory (Join-Path $out 'shared-x64')
 if($LASTEXITCODE){throw 'Installed shared N01 validation failed'}
 Check 'Installed shared N01 input and learning passed' ((Get-Content -LiteralPath (Join-Path $out 'shared-x64/result.json') -Raw|ConvertFrom-Json).passed)
-& "$env:WINDIR/SysWOW64/WindowsPowerShell/v1.0/powershell.exe" -NoProfile -ExecutionPolicy Bypass -File (Join-Path $PSScriptRoot 'Test-BundleShared.ps1') -EngineDll (Join-Path $package 'stage/output/Win32/rime.dll') -SharedData $shared -SchemeSource $SchemeSource -OutputDirectory (Join-Path $out 'shared-win32')
-if($LASTEXITCODE){throw 'Bundled Win32 R5 shared validation failed'}
-Check 'Bundled Win32 R5 shared input and learning passed' ((Get-Content -LiteralPath (Join-Path $out 'shared-win32/result.json') -Raw|ConvertFrom-Json).passed)
+Check 'The bundle declares only the x64 backend' (($inputs.nativeEngines.PSObject.Properties.Name -join ',') -ceq 'x64')
+Check 'The x86 frontend is an application compatibility client' (($inputs.nativeFrontend.clientOnlyArchitectures -join ',') -ceq 'x86')
+foreach($name in @('Win32/rime.dll','Win32/StellaeServer.exe','Win32/StellaeDeployer.exe')){
+  Check ('No independent x86 backend in the package '+$name) (-not (Test-Path -LiteralPath (Join-Path $package ('stage/output/'+$name))))
+  Check ('No independent x86 backend in the installation '+$name) (-not (Test-Path -LiteralPath (Join-Path $root $name)))
+}
 $fixture=Join-Path $PSScriptRoot '../key-pairing/fixture'
 foreach($name in @('gui_test.schema.yaml','b01_public_fixture.dict.yaml')){Copy-Item -LiteralPath (Join-Path $fixture $name) -Destination $user}
 $schema=Join-Path $user 'gui_test.schema.yaml'
 [IO.File]::WriteAllText($schema,([IO.File]::ReadAllText($schema)).Replace('enable_user_dict: false','enable_user_dict: true'))
 [IO.File]::WriteAllText((Join-Path $user 'default.custom.yaml'),"patch:`n  schema_list:`n    - schema: gui_test`n")
 [IO.File]::WriteAllText((Join-Path $user 'rime.lua'),'-- synthetic preserved user entry')
-$null=New-Item -ItemType Directory -Path (Join-Path $user 'lua') -Force
-[IO.File]::WriteAllText((Join-Path $user 'lua/select_hanzi.lua'),'return {} -- synthetic preserved user override')
+$null=New-Item -ItemType Directory -Path (Join-Path $user 'lua/ui') -Force
+[IO.File]::WriteAllText((Join-Path $user 'lua/ui/select_hanzi.lua'),'return {} -- synthetic preserved user override')
 Run (Join-Path $root 'StellaeDeployer.exe') '/deploy'
 & python (Join-Path $PSScriptRoot 'Probe-InstalledEngine.py') --engine (Join-Path $root 'rime.dll') --header $api --shared $shared --user $user --report (Join-Path $out 'synthetic-before-upgrade.json')
 if($LASTEXITCODE){throw 'Synthetic pre-upgrade input failed'}
 & python (Join-Path $PSScriptRoot 'Export-SyntheticLearning.py') --engine (Join-Path $root 'rime.dll') --header $api --shared $shared --user $user --output (Join-Path $out 'learning-before.tsv')
 if($LASTEXITCODE){throw 'Synthetic learning export failed'}
 $protected=@{}
-foreach($name in @('default.custom.yaml','weasel.custom.yaml','rime.lua','lua/select_hanzi.lua','bare-user-sentinel.txt')){$protected[$name]=(Get-FileHash -LiteralPath (Join-Path $user $name)).Hash}
-$modified=Join-Path $shared 'lua/select_hanzi.lua'
+foreach($name in @('default.custom.yaml','weasel.custom.yaml','rime.lua','lua/ui/select_hanzi.lua','bare-user-sentinel.txt')){$protected[$name]=(Get-FileHash -LiteralPath (Join-Path $user $name)).Hash}
+$modified=Join-Path $shared 'lua/ui/select_hanzi.lua'
 Add-Content -LiteralPath $modified -Value '-- synthetic local shared modification'
 $modifiedHash=(Get-FileHash -LiteralPath $modified).Hash
 $null=New-Item -ItemType Directory -Path (Join-Path $shared 'unmanaged') -Force
@@ -150,8 +153,8 @@ foreach($name in $protected.Keys){Check ('Upgrade preserves user source '+$name)
 Check 'Upgrade preserves modified shared source' ((Get-FileHash -LiteralPath $modified).Hash -ceq $modifiedHash)
 Check 'Upgrade preserves unknown shared nested source' (Test-Path -LiteralPath (Join-Path $shared 'unmanaged/keep.txt'))
 $status=Get-Content -LiteralPath (Join-Path $root 'scheme-status.json') -Raw|ConvertFrom-Json
-Check 'Upgrade reports user entry and Lua overrides' ('rime.lua' -in $status.userOverrides -and 'lua/select_hanzi.lua' -in $status.userOverrides)
-Check 'Upgrade reports modified shared source' ('lua/select_hanzi.lua' -in $status.sharedConflicts)
+Check 'Upgrade reports user entry and Lua overrides' ('rime.lua' -in $status.userOverrides -and 'lua/ui/select_hanzi.lua' -in $status.userOverrides)
+Check 'Upgrade reports modified shared source' ('lua/ui/select_hanzi.lua' -in $status.sharedConflicts)
 & python (Join-Path $PSScriptRoot 'Export-SyntheticLearning.py') --engine (Join-Path $root 'rime.dll') --header $api --shared $shared --user $user --output (Join-Path $out 'learning-after.tsv')
 if($LASTEXITCODE){throw 'Post-upgrade synthetic export failed'}
 $beforeLearning=(Get-Content -LiteralPath (Join-Path $out 'learning-before.json') -Raw|ConvertFrom-Json).records
@@ -185,7 +188,7 @@ Check 'Uninstall preserves modified shared source' ((Get-FileHash -LiteralPath $
 Check 'Uninstall preserves unknown shared nested source' (Test-Path -LiteralPath (Join-Path $shared 'unmanaged/keep.txt'))
 Check 'Uninstall preserves modified shared source from bare installation' ((Get-FileHash -LiteralPath (Join-Path $shared 'symbols.yaml')).Hash -ceq $bareSymbolsHash)
 Check 'Uninstall preserves unknown nested source from bare installation' (Test-Path -LiteralPath (Join-Path $shared 'unmanaged/bare-keep.txt'))
-Check 'Uninstall removes unchanged managed nested source' (-not (Test-Path -LiteralPath (Join-Path $shared 'lua/jp_query.lua')))
+Check 'Uninstall removes unchanged managed nested source' (-not (Test-Path -LiteralPath (Join-Path $shared 'lua/jp/jp_query.lua')))
 foreach($name in $protected.Keys){Check ('Uninstall preserves user source '+$name) ((Get-FileHash -LiteralPath (Join-Path $user $name)).Hash -ceq $protected[$name])}
 Check 'Uninstall preserves synthetic learning database' (@(Get-ChildItem -LiteralPath $user -Directory|Where-Object {$_.Name -like '*.userdb'}).Count -gt 0)
 Check 'Official frontend source and service preserved' ((Get-FileHash -LiteralPath (Join-Path $officialRoot 'WeaselServer.exe')).Hash -ceq $officialHash -and (($officialPids -join ',') -ceq ((@(Get-Process WeaselServer -ErrorAction SilentlyContinue|Select-Object -ExpandProperty Id|Sort-Object)) -join ',')))

@@ -134,7 +134,7 @@ function Add-LegacyMathIndex($Migration,$MigrationDirectory,[string]$UserRoot){
   }
   return 'installed'
 }
-$report=[ordered]@{format=$(if($notices){'stellae-notices-update-v1'}else{'stellae-shared-update-v1'});action=$Action;passed=$false;sharedConflicts=@();userOverrides=@();removed=@();installed=@();upgradedUserLua=@();mathIndex='not-requested'}
+$report=[ordered]@{format=$(if($notices){'stellae-notices-update-v1'}else{'stellae-shared-update-v1'});action=$Action;passed=$false;sharedConflicts=@();userOverrides=@();removed=@();installed=@();upgradedUserLua=@();mathIndex='not-requested';retiredUserSources=@();userSourceConflicts=@();compatibilitySourcesRetained=@();manualMergeRequired=$false}
 if($operation -eq 'Uninstall'){
   foreach($entry in $previous.Values){
     $path=Resolve-Child $shared $entry.path
@@ -152,6 +152,55 @@ if($operation -eq 'Uninstall'){
     $spec=Read-NoticesPackage $CurrentPackageManifest
     if(-not $spec -or -not @($spec.files).Count){throw 'The new package has no notices ownership records'}
   }else{$spec=Get-Content -LiteralPath (Join-Path $payload 'shared-manifest.json') -Raw|ConvertFrom-Json}
+  $layoutFiles=@{}
+  $retireUserSources=@()
+  $retainLegacyLua=$false
+  if(-not $notices){
+    if(-not $UserDirectory){
+      $base=[Microsoft.Win32.RegistryKey]::OpenBaseKey([Microsoft.Win32.RegistryHive]::CurrentUser,[Microsoft.Win32.RegistryView]::Registry32)
+      try{$key=$base.OpenSubKey('Software\RimeStellae');try{if($key){$UserDirectory=[string]$key.GetValue('RimeUserDir','')}}finally{if($key){$key.Dispose()}}}finally{$base.Dispose()}
+      if(-not $UserDirectory){$UserDirectory=Join-Path $env:APPDATA 'RimeStellae'}
+    }
+    $migrationDirectory=Resolve-Child $payload 'migrations'
+    $layoutPath=Resolve-Child $migrationDirectory 'source-layout.json'
+    if(Test-Path -LiteralPath $layoutPath -PathType Leaf){
+      $layout=Get-Content -LiteralPath $layoutPath -Raw|ConvertFrom-Json
+      if($layout.format -cne 'stellae-source-layout-upgrade-v1' -or $layout.previousSourceRef -cnotmatch '^[0-9a-f]{40}$'){throw 'Unexpected source layout migration'}
+      $incoming=@{}
+      foreach($entry in $spec.files){$incoming[$entry.path]=$entry.sha256}
+      foreach($entry in $layout.files){
+        $null=Resolve-Child $UserDirectory $entry.path
+        if($layoutFiles.ContainsKey($entry.path) -or $entry.sha256 -cnotmatch '^[0-9a-f]{64}$' -or
+           $entry.group -cnotin @('lua','configuration') -or
+           ($entry.group -ceq 'lua' -and $entry.path -cne 'rime.lua' -and $entry.path -cnotmatch '^lua/[A-Za-z0-9_]+\.lua$') -or
+           ($entry.group -ceq 'configuration' -and $entry.path -cnotmatch '\.yaml$')){throw 'Invalid source layout record'}
+        $layoutFiles[$entry.path]=$entry
+        $target=Resolve-Child $UserDirectory $entry.path
+        if(Test-Path -LiteralPath $target -PathType Leaf){
+          $current=Hash $target
+          if($current -ceq $entry.sha256){$retireUserSources+=@($entry)}
+          elseif(-not $incoming.ContainsKey($entry.path) -or $current -cne $incoming[$entry.path]){
+            $report.userSourceConflicts+=@($entry.path)
+            if($entry.group -ceq 'lua'){$retainLegacyLua=$true}
+          }
+        }
+        # Keep the entire previous Lua group when a modified old shared source
+        # still needs its flat dependencies. Current-layout files are ignored.
+        if($entry.group -ceq 'lua'){
+          $legacy=Resolve-Child $shared $entry.path
+          if(Test-Path -LiteralPath $legacy -PathType Leaf){
+            $current=Hash $legacy
+            if($current -cne $entry.sha256 -and (-not $incoming.ContainsKey($entry.path) -or $current -cne $incoming[$entry.path])){
+              $retainLegacyLua=$true
+              $report.sharedConflicts+=@($entry.path)
+            }
+          }
+        }
+      }
+      $report.manualMergeRequired=$retainLegacyLua -or $report.userSourceConflicts.Count -gt 0
+      $report.sourceLayoutPreviousRef=$layout.previousSourceRef
+    }
+  }
   # Adopt only unchanged files from the hash-pinned public bare distribution.
   # Existing bundle ownership always takes precedence over predecessor hints.
   if(-not $notices -and -not $hadManagedManifest -and $null -ne $spec.PSObject.Properties['predecessors']){
@@ -168,6 +217,11 @@ if($operation -eq 'Uninstall'){
     $origin=Resolve-Child $sourceRoot $entry.path
     if(-not (Test-Path -LiteralPath $origin -PathType Leaf) -or (Hash $origin) -cne $entry.sha256){throw 'Shared payload bytes differ from the manifest'}
     $target=Resolve-Child $shared $entry.path
+    if($retainLegacyLua -and $entry.path -ceq 'rime.lua' -and (Test-Path -LiteralPath $target -PathType Leaf)){
+      $report.compatibilitySourcesRetained+=@($entry.path)
+      if($previous.ContainsKey($entry.path)){$retained[$entry.path]=$previous[$entry.path]}
+      continue
+    }
     if(Test-Path -LiteralPath $target){
       $current=Hash $target
       $known=$previous.ContainsKey($entry.path) -and $current -ceq $previous[$entry.path].sha256
@@ -187,16 +241,24 @@ if($operation -eq 'Uninstall'){
     if($declared.ContainsKey($entry.path)){continue}
     $path=Resolve-Child $shared $entry.path
     if(Test-Path -LiteralPath $path -PathType Leaf){
+      if($retainLegacyLua -and $layoutFiles.ContainsKey($entry.path) -and $layoutFiles[$entry.path].group -ceq 'lua'){
+        $retained[$entry.path]=$entry
+        $report.compatibilitySourcesRetained+=@($entry.path)
+        continue
+      }
       if((Hash $path) -ceq $entry.sha256){Remove-Item -LiteralPath $path;$report.removed+=@($entry.path)}
       else{$report.sharedConflicts+=@($entry.path);$retained[$entry.path]=$entry}
     }
   }
   if(-not $notices){
   [ordered]@{format='stellae-managed-shared-v1';bundleVersion=$spec.bundleVersion;files=@($retained.Values|Sort-Object path)}|ConvertTo-Json -Depth 10|Set-Content -LiteralPath $manifestPath -Encoding UTF8
-  if(-not $UserDirectory){
-    $base=[Microsoft.Win32.RegistryKey]::OpenBaseKey([Microsoft.Win32.RegistryHive]::CurrentUser,[Microsoft.Win32.RegistryView]::Registry32)
-    try{$key=$base.OpenSubKey('Software\RimeStellae');try{if($key){$UserDirectory=[string]$key.GetValue('RimeUserDir','')}}finally{if($key){$key.Dispose()}}}finally{$base.Dispose()}
-    if(-not $UserDirectory){$UserDirectory=Join-Path $env:APPDATA 'RimeStellae'}
+  foreach($entry in $retireUserSources){
+    if($retainLegacyLua -and $entry.group -ceq 'lua'){continue}
+    $target=Resolve-Child $UserDirectory $entry.path
+    if((Test-Path -LiteralPath $target -PathType Leaf) -and (Hash $target) -ceq $entry.sha256){
+      Remove-Item -LiteralPath $target
+      $report.retiredUserSources+=@($entry.path)
+    }
   }
   $migrationDirectory=Resolve-Child $payload 'migrations'
   $migrationPath=Resolve-Child $migrationDirectory 'upgrade.json'
@@ -204,9 +266,11 @@ if($operation -eq 'Uninstall'){
     $migration=Get-Content -LiteralPath $migrationPath -Raw|ConvertFrom-Json
     if($migration.format -cne 'stellae-bundle-user-upgrade-v1'){throw 'Unexpected user upgrade format'}
     foreach($entry in $migration.previousLua){
-      if($entry.path -cnotin @('lua/cn_translator.lua','lua/en_dlc.lua') -or -not $declared.ContainsKey($entry.path)){
+      if($entry.path -cnotin @('lua/cn_translator.lua','lua/en_dlc.lua')){
         throw 'Unexpected prior Lua migration path'
       }
+      # The versioned source-layout policy retires old paths after the move.
+      if(-not $declared.ContainsKey($entry.path) -or $retainLegacyLua){continue}
       $target=Resolve-Child $UserDirectory $entry.path
       if(-not (Test-Path -LiteralPath $target -PathType Leaf) -or (Hash $target) -cne $entry.sha256){continue}
       $origin=Resolve-Child (Join-Path $payload 'data') $entry.path

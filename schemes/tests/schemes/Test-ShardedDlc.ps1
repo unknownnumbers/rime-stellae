@@ -1,4 +1,5 @@
 # SPDX-License-Identifier: GPL-3.0-only
+# Historical catalog-validator fixture; production uses native DLC pack activation.
 param(
  [Parameter(Mandatory=$true)][string]$EngineDll,
  [Parameter(Mandatory=$true)][string]$OutputDirectory,
@@ -35,7 +36,7 @@ function Write-Catalog([string]$directory,[int]$rows){
 Write-Catalog (Join-Path $user 'stellae_dlc/poetry') 32
 Write-Catalog (Join-Path $user 'stress') $StressRows
 Write-Text (Join-Path $user 'stress-rows.txt') ([string]$StressRows)
-Copy-Item -LiteralPath (Join-Path $repo 'config/pc/lua/stellae_dlc.lua') -Destination (Join-Path $user 'lua/stellae_dlc.lua')
+Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'fixtures/legacy_dlc/stellae_dlc.lua') -Destination (Join-Path $user 'lua/stellae_dlc.lua')
 Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'fixtures/sharded_dlc_test.lua') -Destination (Join-Path $user 'lua/sharded_dlc_test.lua')
 Write-Text (Join-Path $user 'rime.lua') "sharded_dlc_test = require('sharded_dlc_test')`n"
 Write-Text (Join-Path $user 'default.yaml') "config_version: '1'`nschema_list:`n  - schema: sharded_dlc_test`n"

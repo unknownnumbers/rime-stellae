@@ -1,10 +1,10 @@
 # 共用配置與筆畫依賴
 
-兩套方案共用以下配置與資料, 來自官方 [Weasel 0.17.4](https://github.com/rime/weasel/releases/tag/0.17.4) 資料包. 它們支援預設配置、拼音規則、筆畫反查及字形轉換, 原始署名保留. `default.yaml` 的方案清單使用墨芯基底與日語. `luna_pinyin.schema.yaml` 和 `stroke.schema.yaml` 保留為內部查字依賴, 僅省略 `schema/name` 顯示欄位.
+兩套方案共用以下配置與資料, 來自官方 [Weasel 0.17.4](https://github.com/rime/weasel/releases/tag/0.17.4) 資料包. 它們支援預設配置、拼音規則、筆畫反查及字形轉換, 原始署名保留. `default.yaml` 的方案清單使用墨芯基底與日語, 並依序套用產品預設及個人覆寫. `luna_pinyin.schema.yaml` 和 `stroke.schema.yaml` 保留為內部查字依賴, 僅省略 `schema/name` 顯示欄位.
 
 | 檔案 | SHA256 |
 | --- | --- |
-| `config/pc/default.yaml` | `ebe403660fbdd0bb2ad7a339a409c5f6a31d94295aee76efeb7def9ead546a9a` |
+| `config/pc/default.yaml` | `bd48cf09d5b53597825e52535d011c5d9d86b5cd3589c465e3f4c3ccb34703ba` |
 | `config/pc/pinyin.yaml` | `f2d291166946a848fd88e541844567415f1ed3d9c5a7477757b88aeb3a69c0ca` |
 | `config/pc/luna_pinyin.schema.yaml` | `53f844938fe5d65e2bcbff12fcc864c9fea83655cf48e66441e2f21349caadea` |
 | `config/pc/stroke.schema.yaml` | `6201af057277c4353c1d199bb6ee4b8d7e8623fff91f84a41c93010240ce1a50` |

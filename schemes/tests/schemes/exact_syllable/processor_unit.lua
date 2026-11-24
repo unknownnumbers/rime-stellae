@@ -3,7 +3,7 @@
 local checked = 0
 local limit_calls = 0
 local allowed = true
-package.loaded.draft_limit = {
+package.loaded['shared.draft_limit'] = {
   allow_context = function(_, _, character)
     assert(character == '"')
     limit_calls = limit_calls + 1

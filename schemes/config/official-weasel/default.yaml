@@ -58,3 +58,7 @@ ascii_composer:
     Control_R: noop
     Caps_Lock: clear
     Eisu_toggle: clear
+
+__patch:
+  - stellae/defaults:/patch
+  - default.custom:/patch?

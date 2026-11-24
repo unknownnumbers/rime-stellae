@@ -24,18 +24,18 @@
     },
     {
       "path": "README.en.md",
-      "bytes": 3510,
-      "sha256": "cca6dc9d3a95fd023f3efe1aa70e701b22262a629cec62a2186c2800732961d7"
+      "bytes": 3628,
+      "sha256": "d9d34905c42ee36ca85c44d7e20259777329aa92b9d396ee1bfae4afeebcaa7c"
     },
     {
       "path": "README.md",
-      "bytes": 2929,
-      "sha256": "45844d9a2182a7cf9bca1001715647a999a0715f47dabb9d8bf6199d2dc88cf9"
+      "bytes": 3048,
+      "sha256": "c16c676dc48f56b74651d138f11a5c95f8013a25028cb3ae9232f76a4dc2471f"
     },
     {
       "path": "README.zh-SC.md",
-      "bytes": 2941,
-      "sha256": "10c7b5d083850d72d2289f8ff39bd0a21f2c72c335d5c3d0ea26433d838fbcc9"
+      "bytes": 3060,
+      "sha256": "bec3905ab8d14faf204b4ffec7bcd4910e0304d6f7c49b18e5b4afa723a873f9"
     },
     {
       "path": "THIRD_PARTY_NOTICES.md",
@@ -74,8 +74,8 @@
     },
     {
       "path": "config/official-weasel/cn_stellae.custom.yaml",
-      "bytes": 295163,
-      "sha256": "72e92b5144c9c208ce39e4fd67111a18c074449682081b12ae6146715d8b2e88"
+      "bytes": 138,
+      "sha256": "9ddaa3c67afe36a753d6c7a65b64b70842e43a69cc065d511d2480fec876fe63"
     },
     {
       "path": "config/official-weasel/cn_stellae.dict.yaml",
@@ -84,13 +84,13 @@
     },
     {
       "path": "config/official-weasel/cn_stellae.schema.yaml",
-      "bytes": 2400,
-      "sha256": "04ded0595001135df5a1d2496c3b4e95186575d1de9f08ea468295e6047b660a"
+      "bytes": 2566,
+      "sha256": "c40fe291fe908bafba6ff85ec9363f075fd70557f27d72391a677f6becbec0fe"
     },
     {
       "path": "config/official-weasel/default.yaml",
-      "bytes": 1276,
-      "sha256": "5cfdf0ddf96d340f4e9187528df0191bf60895d7da9740a15c84d6609c1fec68"
+      "bytes": 1345,
+      "sha256": "bd48cf09d5b53597825e52535d011c5d9d86b5cd3589c465e3f4c3ccb34703ba"
     },
     {
       "path": "config/official-weasel/english_extensions.dict.yaml",
@@ -204,13 +204,13 @@
     },
     {
       "path": "config/official-weasel/jp_stellae.custom.yaml",
-      "bytes": 3912,
-      "sha256": "71412cb5c0ca2cbdb10ce00f94255223784458b48b4befffba06ea240a346c6b"
+      "bytes": 138,
+      "sha256": "9ddaa3c67afe36a753d6c7a65b64b70842e43a69cc065d511d2480fec876fe63"
     },
     {
       "path": "config/official-weasel/jp_stellae.schema.yaml",
-      "bytes": 1298,
-      "sha256": "cc1cceefcc3d3fc79f2edc69c18d24386d4567f34497bb39facd1063a6133ca4"
+      "bytes": 1359,
+      "sha256": "56454da05e26832a34a98ca70341386cac1dd859231f55cc924b2fa90ad16fcf"
     },
     {
       "path": "config/official-weasel/jp_v.dict.yaml",
@@ -358,249 +358,244 @@
       "sha256": "4a71d77530df2c4dff9dd7abed3a124ec2296dad458238089e4cc510d64158d2"
     },
     {
-      "path": "config/official-weasel/lua/candidate_keys.lua",
-      "bytes": 3719,
-      "sha256": "7d5ef3b87e39fd8982fd9b721dd85c6a12f3e93058151200a119eba7b029df91"
+      "path": "config/official-weasel/lua/cn/cn_boundaries.lua",
+      "bytes": 975,
+      "sha256": "ab4aaa7503ab4685b59753637050eba1b5b814ef4dc8accfb702907f23bf8bda"
     },
     {
-      "path": "config/official-weasel/lua/cn_boundaries.lua",
-      "bytes": 967,
-      "sha256": "20689e1a71bfe13ac67e5ccc505a35e1af41563424e0cab4ba55c300d23a876f"
+      "path": "config/official-weasel/lua/cn/cn_exact_processor.lua",
+      "bytes": 3006,
+      "sha256": "6d8af3cf14d85b4682665c5d8db81c4ec73e063f7e5bd64497d2e095f39882e5"
     },
     {
-      "path": "config/official-weasel/lua/cn_dlc.lua",
-      "bytes": 1056,
-      "sha256": "39dbb3c34abee5eb42eab971cef2717e865d443681edeecfdfc7fbbfe2d50fd5"
-    },
-    {
-      "path": "config/official-weasel/lua/cn_exact_processor.lua",
-      "bytes": 2999,
-      "sha256": "d6c41eef0c224e615d9d6522fef42e79c1b72308bc7d4fb9f5e26874bad057a2"
-    },
-    {
-      "path": "config/official-weasel/lua/cn_exact_spelling.lua",
+      "path": "config/official-weasel/lua/cn/cn_exact_spelling.lua",
       "bytes": 3739,
       "sha256": "20477aa5589a958c260d2924ae8a4fd47b2488e1936ca1d6c1c0d4655de3961d"
     },
     {
-      "path": "config/official-weasel/lua/cn_extra_forms.lua",
-      "bytes": 108874,
-      "sha256": "b0b08c1b47740a8b9d9a4b24e4d7410b89355d2e0d4936c2afe09edfc9414a65"
+      "path": "config/official-weasel/lua/cn/cn_match.lua",
+      "bytes": 8311,
+      "sha256": "0506f042dfc2bad733904114b3f203b4409036d71a47de6d145d6b047b81662c"
     },
     {
-      "path": "config/official-weasel/lua/cn_forms.lua",
-      "bytes": 1122446,
-      "sha256": "cf766b14dfa7a688dacc2e548f2b41520c12b2a81ea90477fd1f1190566607f5"
-    },
-    {
-      "path": "config/official-weasel/lua/cn_match.lua",
-      "bytes": 8305,
-      "sha256": "f5da316d250420d5b83f7eac0faacf4ecf5ccacb03701ade6a256286253a690d"
-    },
-    {
-      "path": "config/official-weasel/lua/cn_native_boundary.lua",
+      "path": "config/official-weasel/lua/cn/cn_native_boundary.lua",
       "bytes": 687,
       "sha256": "4dd3c3247958fdfebd98501362d09cc9e88777f6a1c099c6cff7b0dc1483c6a4"
     },
     {
-      "path": "config/official-weasel/lua/cn_neighbor_keys.lua",
-      "bytes": 438,
-      "sha256": "42fb46041478aeb5de92614dd040bc8ebad45fe02b4e4bf7810496a9bfa9b1cd"
+      "path": "config/official-weasel/lua/cn/cn_neighbor_keys.lua",
+      "bytes": 424,
+      "sha256": "aacd7479b8bc22643a0890713fe4fbb63f92269e6cad967800e8a590d2406da8"
     },
     {
-      "path": "config/official-weasel/lua/cn_normal_codec.lua",
-      "bytes": 760,
-      "sha256": "87ef9a43b71bbe2131e89ef581c4211ae893370c757fc98f01e031edf73147c0"
+      "path": "config/official-weasel/lua/cn/cn_normal_codec.lua",
+      "bytes": 769,
+      "sha256": "dfad2d8e61abe5c21738229ccb5f826ff023c85148f6ae40251b9f66fe86546f"
     },
     {
-      "path": "config/official-weasel/lua/cn_orthography.lua",
+      "path": "config/official-weasel/lua/cn/cn_orthography.lua",
       "bytes": 2436,
       "sha256": "0547348bf2042b07d802a7ef0961d16ecb3a3e430af2c9e48ea5008099792a9c"
     },
     {
-      "path": "config/official-weasel/lua/cn_preedit_spacing.lua",
-      "bytes": 6070,
-      "sha256": "83f5e3d4b46d6cc7513358eed4dff016c5040652406a580bd46fb9f75eb3e598"
+      "path": "config/official-weasel/lua/cn/cn_preedit_spacing.lua",
+      "bytes": 6073,
+      "sha256": "962d9970c9653d7d85f144dc2cee05d9c1caee719ad9b6549fdc7e4f6422a21e"
     },
     {
-      "path": "config/official-weasel/lua/cn_tolerance.lua",
-      "bytes": 1268,
-      "sha256": "13ce3e50251f6ff624b0d0e7184cd2897e4a988018ce5cbc1abd7d738e6d37d5"
+      "path": "config/official-weasel/lua/cn/cn_tolerance.lua",
+      "bytes": 1273,
+      "sha256": "fae79196c8ba4e57a131e3a7dfa29b9275f4398c0d0f5cb2fd1bdd2ba422f6b4"
     },
     {
-      "path": "config/official-weasel/lua/cn_translator.lua",
-      "bytes": 35391,
-      "sha256": "05c1d5c5c34e83c998a1d71f65993206884d3bf110bec658a730349ad2e5fe25"
+      "path": "config/official-weasel/lua/cn/cn_translator.lua",
+      "bytes": 35430,
+      "sha256": "db5c24662dc298fb4501988936cfb9ef2c3c50492285c092e1d213b1cbefd751"
     },
     {
-      "path": "config/official-weasel/lua/draft_limit.lua",
-      "bytes": 4373,
-      "sha256": "1e3f83f3e8214017e3e1bfff622570d3b155a5491c80e80e9f78617361de1de6"
+      "path": "config/official-weasel/lua/data/cn_extra_forms.lua",
+      "bytes": 108879,
+      "sha256": "5318c97dfb1aa7240ada89eb7aee470e99322b8252d3e41abb3aef62344c1835"
     },
     {
-      "path": "config/official-weasel/lua/en_dlc.lua",
-      "bytes": 4511,
-      "sha256": "22709457928c17a86c4a613e08d2e01439774cda74b331b022942a25c4f9e589"
+      "path": "config/official-weasel/lua/data/cn_forms.lua",
+      "bytes": 1122446,
+      "sha256": "cf766b14dfa7a688dacc2e548f2b41520c12b2a81ea90477fd1f1190566607f5"
     },
     {
-      "path": "config/official-weasel/lua/en_dlc_format.lua",
-      "bytes": 2249,
-      "sha256": "7e7730697d85fe5386d71581f3216458fccc12d91291365f066781961a64f4e8"
-    },
-    {
-      "path": "config/official-weasel/lua/en_index.lua",
-      "bytes": 4270,
-      "sha256": "82fe0a1e5d02e6c56077b8dc3d8121859edbfd245d722d7acc2b2f55d9c630de"
-    },
-    {
-      "path": "config/official-weasel/lua/en_indexed_translator.lua",
-      "bytes": 11647,
-      "sha256": "4d0085a9ff4283c5db90fc30892564b6eefa4da2bb8e57aecacb8426c3d5dd80"
-    },
-    {
-      "path": "config/official-weasel/lua/en_processor.lua",
-      "bytes": 2402,
-      "sha256": "4bd73c1162523fc857f30b52227aa5f940ca245ed38f7cc7f5819d181fa7793b"
-    },
-    {
-      "path": "config/official-weasel/lua/en_segmentor.lua",
-      "bytes": 891,
-      "sha256": "9c6d82a414f8a6819260d8efd18d6cae6d7a7fed9f7066c1f500c986814f9415"
-    },
-    {
-      "path": "config/official-weasel/lua/jp_family.lua",
-      "bytes": 2199,
-      "sha256": "9187336313ed6cfdeb25baea4b7de560dbafb8ab2fe5fc82be8306812d97f304"
-    },
-    {
-      "path": "config/official-weasel/lua/jp_family_data.lua",
+      "path": "config/official-weasel/lua/data/jp_family_data.lua",
       "bytes": 570526,
       "sha256": "17ee0d663c8025c2aee8d4768057df9f3cba0fe8b0423eb712a66629bf0fee48"
     },
     {
-      "path": "config/official-weasel/lua/jp_learning_match.lua",
-      "bytes": 2884,
-      "sha256": "19dd2711c8cb2b1dabdfc61922b757dc67dd3d4902f75c13eed70de4f5190444"
-    },
-    {
-      "path": "config/official-weasel/lua/jp_memory.lua",
-      "bytes": 7010,
-      "sha256": "77d4245df40ebb1e29fdec836537a2a7a5a427b765a9c326b5435ac7ea2768ad"
-    },
-    {
-      "path": "config/official-weasel/lua/jp_named_symbols.lua",
-      "bytes": 858,
-      "sha256": "4a1821ea2e4cc900341871cc21e1f508992d70d2508997b95dd9f1f1317dd58a"
-    },
-    {
-      "path": "config/official-weasel/lua/jp_query.lua",
-      "bytes": 11508,
-      "sha256": "25ac8ccebb80dbe334721337a87357785b50775e51fac911b2a14af4eae6bddb"
-    },
-    {
-      "path": "config/official-weasel/lua/jp_reading_metadata.lua",
-      "bytes": 4603,
-      "sha256": "f8bc18eb9ccb12a30a95a5e7563ffeb6c9081305c1cbcf5cf4641434b3a3d968"
-    },
-    {
-      "path": "config/official-weasel/lua/jp_sequence.lua",
-      "bytes": 2327,
-      "sha256": "aadafae772b689beaa578c55acbf87f8bb71c58daf0b26b8feb57811b49ce18d"
-    },
-    {
-      "path": "config/official-weasel/lua/jp_small_kana.lua",
-      "bytes": 1325,
-      "sha256": "71305fc843fccfcefd712838b90f1ad149f22ddb0bba12c6cd8f46647c64738a"
-    },
-    {
-      "path": "config/official-weasel/lua/jp_v.lua",
-      "bytes": 31668,
-      "sha256": "3b09785481c85a1749191617089401b86a6f6e3376433e42ed79d44b36348174"
-    },
-    {
-      "path": "config/official-weasel/lua/jp_v_chars.lua",
+      "path": "config/official-weasel/lua/data/jp_v_chars.lua",
       "bytes": 1833730,
       "sha256": "f7fee696edf402839e511ebdc68e9fab04d3f0b71782be93bd8571a6fc204a22"
     },
     {
-      "path": "config/official-weasel/lua/jp_v_data.lua",
-      "bytes": 1957,
-      "sha256": "f952661298fd89089865c0557eb7a9d5b1e8551a32f002fd492ee587373a1c1b"
-    },
-    {
-      "path": "config/official-weasel/lua/jp_v_words_index.lua",
+      "path": "config/official-weasel/lua/data/jp_v_words_index.lua",
       "bytes": 23903,
       "sha256": "a08f35e07c34815135c41a96b17d0758af962aa595a13f804d9d4ce22f791f00"
     },
     {
-      "path": "config/official-weasel/lua/official_translator.lua",
-      "bytes": 1058,
-      "sha256": "1ce06c18cd2121ca1ee0b81c10dccc4f10b2531de4b34fc1414ed1ed40c11da9"
-    },
-    {
-      "path": "config/official-weasel/lua/pc_probe_global_mode.lua",
-      "bytes": 6764,
-      "sha256": "edd2b3530c1bddf7f611d9d381e8efd9157230a57b34fac0a560864b4c2d8670"
-    },
-    {
-      "path": "config/official-weasel/lua/pc_probe_greek_proxy.lua",
-      "bytes": 7870,
-      "sha256": "ccb7d4e32ed3286f2af72e9471baad840d98000923eb6f29f6ccf1f867a4394c"
-    },
-    {
-      "path": "config/official-weasel/lua/query_info_submit.lua",
-      "bytes": 5848,
-      "sha256": "01483e4b196f4937f730301f84707d879d45d0bcf160d7c3ebe834e7c91cb9d6"
-    },
-    {
-      "path": "config/official-weasel/lua/scheme_data.lua",
-      "bytes": 750,
-      "sha256": "181b37a95ff605818b6db79c1fc94747a9d9cb04c0ca9eb82b120c35d0628426"
-    },
-    {
-      "path": "config/official-weasel/lua/select_hanzi.lua",
-      "bytes": 4228,
-      "sha256": "02d84356f88819f9fc8455e59d58b6243981a4ed9212260a53092c43953d2baa"
-    },
-    {
-      "path": "config/official-weasel/lua/stellae_dlc.lua",
-      "bytes": 16545,
-      "sha256": "22302a74fc037b6e7554c0325d38d60e92a51e9749d51d36f8298a637750e0c9"
-    },
-    {
-      "path": "config/official-weasel/lua/tool_calculator.lua",
-      "bytes": 12655,
-      "sha256": "6e4fada9bd31a636d67a31ddc67c3bec7fab02116d060b79e2457e308ada884a"
-    },
-    {
-      "path": "config/official-weasel/lua/tool_processor.lua",
-      "bytes": 2626,
-      "sha256": "9fc7ac2b782c4c6f6950d6583a95ea5a199711c94de442eb0183e543ff374a7d"
-    },
-    {
-      "path": "config/official-weasel/lua/tool_segmentor.lua",
-      "bytes": 1013,
-      "sha256": "8678374c63de5e412e0f39aebecf0076bdb75b22ae58d7210d959b6fb337aac4"
-    },
-    {
-      "path": "config/official-weasel/lua/tool_translator.lua",
-      "bytes": 2378,
-      "sha256": "c620b182fdf6483337cb56b214dcf8d728e4c1257c1b66f6743a8ee2d6869b94"
-    },
-    {
-      "path": "config/official-weasel/lua/tool_unicode.lua",
-      "bytes": 1815,
-      "sha256": "b6375b1114b92bb9b420baa3aea1bdedcca2366f6fc3fc499d87d7464ef47c63"
-    },
-    {
-      "path": "config/official-weasel/lua/tool_unicode_data.lua",
+      "path": "config/official-weasel/lua/data/tool_unicode_data.lua",
       "bytes": 5970,
       "sha256": "84ced4a71016ee930f04c7d70f8982e61231cf5fe113cc19cbaa0f69bec7526d"
     },
     {
-      "path": "config/official-weasel/lua/u_translator.lua",
-      "bytes": 5394,
-      "sha256": "70bd4596d6cb2cb5bb84718bfeb5bb7679cb73bdc9bb3134aa3d93687804075f"
+      "path": "config/official-weasel/lua/en/en_dlc.lua",
+      "bytes": 4517,
+      "sha256": "36419a204391b882f65e14ccab6549106632bc3b90de0f8e16cdba32aa457192"
+    },
+    {
+      "path": "config/official-weasel/lua/en/en_dlc_format.lua",
+      "bytes": 2249,
+      "sha256": "7e7730697d85fe5386d71581f3216458fccc12d91291365f066781961a64f4e8"
+    },
+    {
+      "path": "config/official-weasel/lua/en/en_index.lua",
+      "bytes": 4277,
+      "sha256": "c196cefe3ca7f8094d582d09c71b4227bd1381f7dc56ebffbbaaf7c9e87a5b35"
+    },
+    {
+      "path": "config/official-weasel/lua/en/en_indexed_translator.lua",
+      "bytes": 11660,
+      "sha256": "b74b5be4dceecd9450b9a2963cbd0953c85ed741954dd1888aefd0acec7f51cf"
+    },
+    {
+      "path": "config/official-weasel/lua/en/en_processor.lua",
+      "bytes": 2405,
+      "sha256": "a2dd2967719965c5ac0053a3317ec5018c4e9a153d9bff0827a016412b4de180"
+    },
+    {
+      "path": "config/official-weasel/lua/en/en_segmentor.lua",
+      "bytes": 891,
+      "sha256": "9c6d82a414f8a6819260d8efd18d6cae6d7a7fed9f7066c1f500c986814f9415"
+    },
+    {
+      "path": "config/official-weasel/lua/jp/jp_family.lua",
+      "bytes": 2210,
+      "sha256": "2eb6a0a277fb28d656211448ad2397c6cc81ef9b53bbc2ed7e6cfc6d1dc56208"
+    },
+    {
+      "path": "config/official-weasel/lua/jp/jp_learning_match.lua",
+      "bytes": 2901,
+      "sha256": "0aad657408c5789d35a98d23a91f38decdbfa1ae29df2b07523bd6ba2bba5293"
+    },
+    {
+      "path": "config/official-weasel/lua/jp/jp_memory.lua",
+      "bytes": 7031,
+      "sha256": "8f2aadf3173681b22f69f71e75bc1e4af2f9ab8d8670e6c2f730835c9585445e"
+    },
+    {
+      "path": "config/official-weasel/lua/jp/jp_named_symbols.lua",
+      "bytes": 858,
+      "sha256": "4a1821ea2e4cc900341871cc21e1f508992d70d2508997b95dd9f1f1317dd58a"
+    },
+    {
+      "path": "config/official-weasel/lua/jp/jp_query.lua",
+      "bytes": 11523,
+      "sha256": "f6456e3ef3c805d9aefcdc63f15bd03b8f37376c4f019ff01e7d43523ffcda3e"
+    },
+    {
+      "path": "config/official-weasel/lua/jp/jp_reading_metadata.lua",
+      "bytes": 4603,
+      "sha256": "f8bc18eb9ccb12a30a95a5e7563ffeb6c9081305c1cbcf5cf4641434b3a3d968"
+    },
+    {
+      "path": "config/official-weasel/lua/jp/jp_sequence.lua",
+      "bytes": 2327,
+      "sha256": "aadafae772b689beaa578c55acbf87f8bb71c58daf0b26b8feb57811b49ce18d"
+    },
+    {
+      "path": "config/official-weasel/lua/jp/jp_v.lua",
+      "bytes": 31720,
+      "sha256": "48888fdb381278c9e0a2cd4b6df8291d17fe75df2e11b964546427032e4f748c"
+    },
+    {
+      "path": "config/official-weasel/lua/jp/jp_v_data.lua",
+      "bytes": 1974,
+      "sha256": "640472aeb9b871340b824e2ac9ddd72c0d67dd207b793d43fc6de0bfc3673cae"
+    },
+    {
+      "path": "config/official-weasel/lua/shared/draft_limit.lua",
+      "bytes": 4373,
+      "sha256": "1e3f83f3e8214017e3e1bfff622570d3b155a5491c80e80e9f78617361de1de6"
+    },
+    {
+      "path": "config/official-weasel/lua/shared/on_demand_translator.lua",
+      "bytes": 1073,
+      "sha256": "92cb6c00f6512ba88c7597392000ea26e5613eaad3250d2325d35548e8958660"
+    },
+    {
+      "path": "config/official-weasel/lua/shared/pc_probe_global_mode.lua",
+      "bytes": 6764,
+      "sha256": "edd2b3530c1bddf7f611d9d381e8efd9157230a57b34fac0a560864b4c2d8670"
+    },
+    {
+      "path": "config/official-weasel/lua/shared/pc_probe_greek_proxy.lua",
+      "bytes": 7870,
+      "sha256": "ccb7d4e32ed3286f2af72e9471baad840d98000923eb6f29f6ccf1f867a4394c"
+    },
+    {
+      "path": "config/official-weasel/lua/shared/scheme_data.lua",
+      "bytes": 750,
+      "sha256": "181b37a95ff605818b6db79c1fc94747a9d9cb04c0ca9eb82b120c35d0628426"
+    },
+    {
+      "path": "config/official-weasel/lua/tools/query_info_submit.lua",
+      "bytes": 5865,
+      "sha256": "646ba39eba6620270863ff705eea18109f48dcb0f64ed3ebb0b512a31026f779"
+    },
+    {
+      "path": "config/official-weasel/lua/tools/tool_calculator.lua",
+      "bytes": 12655,
+      "sha256": "6e4fada9bd31a636d67a31ddc67c3bec7fab02116d060b79e2457e308ada884a"
+    },
+    {
+      "path": "config/official-weasel/lua/tools/tool_processor.lua",
+      "bytes": 2626,
+      "sha256": "9fc7ac2b782c4c6f6950d6583a95ea5a199711c94de442eb0183e543ff374a7d"
+    },
+    {
+      "path": "config/official-weasel/lua/tools/tool_segmentor.lua",
+      "bytes": 1013,
+      "sha256": "8678374c63de5e412e0f39aebecf0076bdb75b22ae58d7210d959b6fb337aac4"
+    },
+    {
+      "path": "config/official-weasel/lua/tools/tool_translator.lua",
+      "bytes": 2390,
+      "sha256": "6e2cb365e1d716b1bf5f15ffe31fbd5ed50d9cb2104c0a8ffa74daa3b794ceb0"
+    },
+    {
+      "path": "config/official-weasel/lua/tools/tool_unicode.lua",
+      "bytes": 1820,
+      "sha256": "f7e74e09486f7d77df62d38846d3b3135a6513872ee8cd4bc84efef169bc2c94"
+    },
+    {
+      "path": "config/official-weasel/lua/tools/u_translator.lua",
+      "bytes": 5401,
+      "sha256": "3eb2adf69d9dd59727978100d3b555ba6760768a7481f3387ae4b4fda24f2211"
+    },
+    {
+      "path": "config/official-weasel/lua/ui/candidate_comment_filter.lua",
+      "bytes": 1820,
+      "sha256": "dd5731609e9158389a5aa59c7749271d5120b1f38d9ea1da235cb09036262406"
+    },
+    {
+      "path": "config/official-weasel/lua/ui/candidate_keys.lua",
+      "bytes": 3729,
+      "sha256": "59e531f5d354207a3271141a0200ff1d24ca64d2ee34154ffabd93c1a046d075"
+    },
+    {
+      "path": "config/official-weasel/lua/ui/research_mode_filter.lua",
+      "bytes": 267,
+      "sha256": "d107941f71ee234b1baa0e6e10ea2825aec0e2d46fd2109a41cbaac05f353498"
+    },
+    {
+      "path": "config/official-weasel/lua/ui/select_hanzi.lua",
+      "bytes": 4236,
+      "sha256": "36f7af84bcd16175c090448b13cee2c5e7da172fe14c56a593e4c827965c195c"
     },
     {
       "path": "config/official-weasel/luna_pinyin.dict.yaml",
@@ -714,8 +709,8 @@
     },
     {
       "path": "config/official-weasel/profile-manifest.json",
-      "bytes": 30812,
-      "sha256": "6fc648100a78a1546976ea8b8ba0cecb8824eb24cb311bdaade53ec5c02c3405"
+      "bytes": 31963,
+      "sha256": "d0c18ae4be43e79ff762d995780e19fdce909b2cf2b4dca9b688e279ee77f5c8"
     },
     {
       "path": "config/official-weasel/project_radical.dict.yaml",
@@ -754,23 +749,58 @@
     },
     {
       "path": "config/official-weasel/samples/default.custom.yaml",
-      "bytes": 1321,
-      "sha256": "d71b4725c3298dd5aa66e57560deb18d4304051e3df80f172b2a6348e0dfd3b4"
+      "bytes": 138,
+      "sha256": "9ddaa3c67afe36a753d6c7a65b64b70842e43a69cc065d511d2480fec876fe63"
     },
     {
       "path": "config/official-weasel/samples/rime.lua",
-      "bytes": 3368,
-      "sha256": "99649c8db94fdf34453f66af2e73610baa7f9c3846f98718886bac20ddb66d7f"
+      "bytes": 1494,
+      "sha256": "41f3873ea57fcde2ea118b317ff1f08f2498f711e6c23831bb1c4f96c0698a72"
     },
     {
       "path": "config/official-weasel/samples/weasel.custom.yaml",
-      "bytes": 7196,
-      "sha256": "3a1848f077b03c7480da0571ca1f448e93284da52a25f9cca1058a6c4dbb489a"
+      "bytes": 111,
+      "sha256": "fde02f813ea018515f14aba62d476d4de8a2bf4c0b8f56a219fd60a4bda6fcb0"
     },
     {
       "path": "config/official-weasel/source-dependencies.json",
       "bytes": 3889,
       "sha256": "cd834c85a83878313e052fa41e58eadae6addaf1bb08ba4a2a03cf7ba61699a6"
+    },
+    {
+      "path": "config/official-weasel/stellae/appearance.yaml",
+      "bytes": 7091,
+      "sha256": "38cd928323561a31b28bace60d58f2fdfb2e5ef3f4b150825281fad70b50f521"
+    },
+    {
+      "path": "config/official-weasel/stellae/chinese.yaml",
+      "bytes": 3367,
+      "sha256": "7e8006d7c82e995fe7205c0cf2340216d4e902d9d9f6de914b2cf1cd4b45efbc"
+    },
+    {
+      "path": "config/official-weasel/stellae/defaults.yaml",
+      "bytes": 1321,
+      "sha256": "d71b4725c3298dd5aa66e57560deb18d4304051e3df80f172b2a6348e0dfd3b4"
+    },
+    {
+      "path": "config/official-weasel/stellae/english.yaml",
+      "bytes": 404,
+      "sha256": "dd360494fe0c2b37a071aed90a8fba780ee545bee3211eb5e9625e63d8ec02f3"
+    },
+    {
+      "path": "config/official-weasel/stellae/japanese.yaml",
+      "bytes": 3725,
+      "sha256": "abdf9d354f774819ee069dff88e2e8a787000c427775e7296c7d8f7d4d0d1df4"
+    },
+    {
+      "path": "config/official-weasel/stellae/spelling.yaml",
+      "bytes": 272108,
+      "sha256": "1fb8defd5c56058cc50a47c9b08161e6d41c66141894aa082659c46fc34ae167"
+    },
+    {
+      "path": "config/official-weasel/stellae/tools.yaml",
+      "bytes": 1593,
+      "sha256": "91998bdd6681f33ce9e6b342b92965b061df124ab46a3a2299361292257522cc"
     },
     {
       "path": "config/official-weasel/stellae_dlc_computer.dict.yaml",
@@ -979,8 +1009,8 @@
     },
     {
       "path": "config/official-weasel/tools/generate-japanese-base.py",
-      "bytes": 7937,
-      "sha256": "325940c3c7e0bd293c2b23a0e99b24525d20914ad0405a1f1cd4139254c6718b"
+      "bytes": 7998,
+      "sha256": "00ab2c006f9b5a1dadcf01fb16f3900b2ee5b76debf68ffa0003c30ba79e200c"
     },
     {
       "path": "config/official-weasel/tools/make-opencc-config.py",
@@ -1029,8 +1059,8 @@
     },
     {
       "path": "config/pc/cn_stellae.custom.yaml",
-      "bytes": 295511,
-      "sha256": "709693eda6d406671a0eb1d3e75ae108a7f92f45f61ed2f4d83a26cc177a2c95"
+      "bytes": 138,
+      "sha256": "9ddaa3c67afe36a753d6c7a65b64b70842e43a69cc065d511d2480fec876fe63"
     },
     {
       "path": "config/pc/cn_stellae.dict.yaml",
@@ -1039,23 +1069,23 @@
     },
     {
       "path": "config/pc/cn_stellae.schema.yaml",
-      "bytes": 2400,
-      "sha256": "04ded0595001135df5a1d2496c3b4e95186575d1de9f08ea468295e6047b660a"
+      "bytes": 2566,
+      "sha256": "c40fe291fe908bafba6ff85ec9363f075fd70557f27d72391a677f6becbec0fe"
     },
     {
       "path": "config/pc/config-source-manifest.json",
-      "bytes": 30874,
-      "sha256": "f15e1cdf27960c0ef0a052a26e659f62df1413e671e625980eaa85f551bf1eac"
+      "bytes": 32027,
+      "sha256": "54dd410944fd02df8392f0c93a44920468bd83c989b83f9b28a0897c48dcd50b"
     },
     {
       "path": "config/pc/default.custom.yaml",
-      "bytes": 1385,
-      "sha256": "e0ea2ce3a10a045a9124923575f6703be8911efbc0842af8f7cbb9a5aa4dfd4c"
+      "bytes": 138,
+      "sha256": "9ddaa3c67afe36a753d6c7a65b64b70842e43a69cc065d511d2480fec876fe63"
     },
     {
       "path": "config/pc/default.yaml",
-      "bytes": 1276,
-      "sha256": "5cfdf0ddf96d340f4e9187528df0191bf60895d7da9740a15c84d6609c1fec68"
+      "bytes": 1345,
+      "sha256": "bd48cf09d5b53597825e52535d011c5d9d86b5cd3589c465e3f4c3ccb34703ba"
     },
     {
       "path": "config/pc/english_extensions.dict.yaml",
@@ -1169,13 +1199,13 @@
     },
     {
       "path": "config/pc/jp_stellae.custom.yaml",
-      "bytes": 3912,
-      "sha256": "71412cb5c0ca2cbdb10ce00f94255223784458b48b4befffba06ea240a346c6b"
+      "bytes": 138,
+      "sha256": "9ddaa3c67afe36a753d6c7a65b64b70842e43a69cc065d511d2480fec876fe63"
     },
     {
       "path": "config/pc/jp_stellae.schema.yaml",
-      "bytes": 1298,
-      "sha256": "cc1cceefcc3d3fc79f2edc69c18d24386d4567f34497bb39facd1063a6133ca4"
+      "bytes": 1359,
+      "sha256": "56454da05e26832a34a98ca70341386cac1dd859231f55cc924b2fa90ad16fcf"
     },
     {
       "path": "config/pc/jp_v.dict.yaml",
@@ -1323,249 +1353,244 @@
       "sha256": "4a71d77530df2c4dff9dd7abed3a124ec2296dad458238089e4cc510d64158d2"
     },
     {
-      "path": "config/pc/lua/candidate_keys.lua",
-      "bytes": 3719,
-      "sha256": "7d5ef3b87e39fd8982fd9b721dd85c6a12f3e93058151200a119eba7b029df91"
+      "path": "config/pc/lua/cn/cn_boundaries.lua",
+      "bytes": 975,
+      "sha256": "ab4aaa7503ab4685b59753637050eba1b5b814ef4dc8accfb702907f23bf8bda"
     },
     {
-      "path": "config/pc/lua/cn_boundaries.lua",
-      "bytes": 967,
-      "sha256": "20689e1a71bfe13ac67e5ccc505a35e1af41563424e0cab4ba55c300d23a876f"
+      "path": "config/pc/lua/cn/cn_exact_processor.lua",
+      "bytes": 3006,
+      "sha256": "6d8af3cf14d85b4682665c5d8db81c4ec73e063f7e5bd64497d2e095f39882e5"
     },
     {
-      "path": "config/pc/lua/cn_dlc.lua",
-      "bytes": 1056,
-      "sha256": "39dbb3c34abee5eb42eab971cef2717e865d443681edeecfdfc7fbbfe2d50fd5"
-    },
-    {
-      "path": "config/pc/lua/cn_exact_processor.lua",
-      "bytes": 2999,
-      "sha256": "d6c41eef0c224e615d9d6522fef42e79c1b72308bc7d4fb9f5e26874bad057a2"
-    },
-    {
-      "path": "config/pc/lua/cn_exact_spelling.lua",
+      "path": "config/pc/lua/cn/cn_exact_spelling.lua",
       "bytes": 3739,
       "sha256": "20477aa5589a958c260d2924ae8a4fd47b2488e1936ca1d6c1c0d4655de3961d"
     },
     {
-      "path": "config/pc/lua/cn_extra_forms.lua",
-      "bytes": 108874,
-      "sha256": "b0b08c1b47740a8b9d9a4b24e4d7410b89355d2e0d4936c2afe09edfc9414a65"
+      "path": "config/pc/lua/cn/cn_match.lua",
+      "bytes": 8311,
+      "sha256": "0506f042dfc2bad733904114b3f203b4409036d71a47de6d145d6b047b81662c"
     },
     {
-      "path": "config/pc/lua/cn_forms.lua",
-      "bytes": 1122446,
-      "sha256": "cf766b14dfa7a688dacc2e548f2b41520c12b2a81ea90477fd1f1190566607f5"
-    },
-    {
-      "path": "config/pc/lua/cn_match.lua",
-      "bytes": 8305,
-      "sha256": "f5da316d250420d5b83f7eac0faacf4ecf5ccacb03701ade6a256286253a690d"
-    },
-    {
-      "path": "config/pc/lua/cn_native_boundary.lua",
+      "path": "config/pc/lua/cn/cn_native_boundary.lua",
       "bytes": 687,
       "sha256": "4dd3c3247958fdfebd98501362d09cc9e88777f6a1c099c6cff7b0dc1483c6a4"
     },
     {
-      "path": "config/pc/lua/cn_neighbor_keys.lua",
-      "bytes": 438,
-      "sha256": "42fb46041478aeb5de92614dd040bc8ebad45fe02b4e4bf7810496a9bfa9b1cd"
+      "path": "config/pc/lua/cn/cn_neighbor_keys.lua",
+      "bytes": 424,
+      "sha256": "aacd7479b8bc22643a0890713fe4fbb63f92269e6cad967800e8a590d2406da8"
     },
     {
-      "path": "config/pc/lua/cn_normal_codec.lua",
-      "bytes": 760,
-      "sha256": "87ef9a43b71bbe2131e89ef581c4211ae893370c757fc98f01e031edf73147c0"
+      "path": "config/pc/lua/cn/cn_normal_codec.lua",
+      "bytes": 769,
+      "sha256": "dfad2d8e61abe5c21738229ccb5f826ff023c85148f6ae40251b9f66fe86546f"
     },
     {
-      "path": "config/pc/lua/cn_orthography.lua",
+      "path": "config/pc/lua/cn/cn_orthography.lua",
       "bytes": 2436,
       "sha256": "0547348bf2042b07d802a7ef0961d16ecb3a3e430af2c9e48ea5008099792a9c"
     },
     {
-      "path": "config/pc/lua/cn_preedit_spacing.lua",
-      "bytes": 6070,
-      "sha256": "83f5e3d4b46d6cc7513358eed4dff016c5040652406a580bd46fb9f75eb3e598"
+      "path": "config/pc/lua/cn/cn_preedit_spacing.lua",
+      "bytes": 6073,
+      "sha256": "962d9970c9653d7d85f144dc2cee05d9c1caee719ad9b6549fdc7e4f6422a21e"
     },
     {
-      "path": "config/pc/lua/cn_tolerance.lua",
-      "bytes": 1268,
-      "sha256": "13ce3e50251f6ff624b0d0e7184cd2897e4a988018ce5cbc1abd7d738e6d37d5"
+      "path": "config/pc/lua/cn/cn_tolerance.lua",
+      "bytes": 1273,
+      "sha256": "fae79196c8ba4e57a131e3a7dfa29b9275f4398c0d0f5cb2fd1bdd2ba422f6b4"
     },
     {
-      "path": "config/pc/lua/cn_translator.lua",
-      "bytes": 35391,
-      "sha256": "05c1d5c5c34e83c998a1d71f65993206884d3bf110bec658a730349ad2e5fe25"
+      "path": "config/pc/lua/cn/cn_translator.lua",
+      "bytes": 35430,
+      "sha256": "db5c24662dc298fb4501988936cfb9ef2c3c50492285c092e1d213b1cbefd751"
     },
     {
-      "path": "config/pc/lua/draft_limit.lua",
-      "bytes": 4373,
-      "sha256": "1e3f83f3e8214017e3e1bfff622570d3b155a5491c80e80e9f78617361de1de6"
+      "path": "config/pc/lua/data/cn_extra_forms.lua",
+      "bytes": 108879,
+      "sha256": "5318c97dfb1aa7240ada89eb7aee470e99322b8252d3e41abb3aef62344c1835"
     },
     {
-      "path": "config/pc/lua/en_dlc.lua",
-      "bytes": 4511,
-      "sha256": "22709457928c17a86c4a613e08d2e01439774cda74b331b022942a25c4f9e589"
+      "path": "config/pc/lua/data/cn_forms.lua",
+      "bytes": 1122446,
+      "sha256": "cf766b14dfa7a688dacc2e548f2b41520c12b2a81ea90477fd1f1190566607f5"
     },
     {
-      "path": "config/pc/lua/en_dlc_format.lua",
-      "bytes": 2249,
-      "sha256": "7e7730697d85fe5386d71581f3216458fccc12d91291365f066781961a64f4e8"
-    },
-    {
-      "path": "config/pc/lua/en_index.lua",
-      "bytes": 4270,
-      "sha256": "82fe0a1e5d02e6c56077b8dc3d8121859edbfd245d722d7acc2b2f55d9c630de"
-    },
-    {
-      "path": "config/pc/lua/en_indexed_translator.lua",
-      "bytes": 11647,
-      "sha256": "4d0085a9ff4283c5db90fc30892564b6eefa4da2bb8e57aecacb8426c3d5dd80"
-    },
-    {
-      "path": "config/pc/lua/en_processor.lua",
-      "bytes": 2402,
-      "sha256": "4bd73c1162523fc857f30b52227aa5f940ca245ed38f7cc7f5819d181fa7793b"
-    },
-    {
-      "path": "config/pc/lua/en_segmentor.lua",
-      "bytes": 891,
-      "sha256": "9c6d82a414f8a6819260d8efd18d6cae6d7a7fed9f7066c1f500c986814f9415"
-    },
-    {
-      "path": "config/pc/lua/jp_family.lua",
-      "bytes": 2199,
-      "sha256": "9187336313ed6cfdeb25baea4b7de560dbafb8ab2fe5fc82be8306812d97f304"
-    },
-    {
-      "path": "config/pc/lua/jp_family_data.lua",
+      "path": "config/pc/lua/data/jp_family_data.lua",
       "bytes": 570526,
       "sha256": "17ee0d663c8025c2aee8d4768057df9f3cba0fe8b0423eb712a66629bf0fee48"
     },
     {
-      "path": "config/pc/lua/jp_learning_match.lua",
-      "bytes": 2884,
-      "sha256": "19dd2711c8cb2b1dabdfc61922b757dc67dd3d4902f75c13eed70de4f5190444"
-    },
-    {
-      "path": "config/pc/lua/jp_memory.lua",
-      "bytes": 7010,
-      "sha256": "77d4245df40ebb1e29fdec836537a2a7a5a427b765a9c326b5435ac7ea2768ad"
-    },
-    {
-      "path": "config/pc/lua/jp_named_symbols.lua",
-      "bytes": 858,
-      "sha256": "4a1821ea2e4cc900341871cc21e1f508992d70d2508997b95dd9f1f1317dd58a"
-    },
-    {
-      "path": "config/pc/lua/jp_query.lua",
-      "bytes": 11508,
-      "sha256": "25ac8ccebb80dbe334721337a87357785b50775e51fac911b2a14af4eae6bddb"
-    },
-    {
-      "path": "config/pc/lua/jp_reading_metadata.lua",
-      "bytes": 4603,
-      "sha256": "f8bc18eb9ccb12a30a95a5e7563ffeb6c9081305c1cbcf5cf4641434b3a3d968"
-    },
-    {
-      "path": "config/pc/lua/jp_sequence.lua",
-      "bytes": 2327,
-      "sha256": "aadafae772b689beaa578c55acbf87f8bb71c58daf0b26b8feb57811b49ce18d"
-    },
-    {
-      "path": "config/pc/lua/jp_small_kana.lua",
-      "bytes": 1325,
-      "sha256": "71305fc843fccfcefd712838b90f1ad149f22ddb0bba12c6cd8f46647c64738a"
-    },
-    {
-      "path": "config/pc/lua/jp_v.lua",
-      "bytes": 31668,
-      "sha256": "3b09785481c85a1749191617089401b86a6f6e3376433e42ed79d44b36348174"
-    },
-    {
-      "path": "config/pc/lua/jp_v_chars.lua",
+      "path": "config/pc/lua/data/jp_v_chars.lua",
       "bytes": 1833730,
       "sha256": "f7fee696edf402839e511ebdc68e9fab04d3f0b71782be93bd8571a6fc204a22"
     },
     {
-      "path": "config/pc/lua/jp_v_data.lua",
-      "bytes": 1957,
-      "sha256": "f952661298fd89089865c0557eb7a9d5b1e8551a32f002fd492ee587373a1c1b"
-    },
-    {
-      "path": "config/pc/lua/jp_v_words_index.lua",
+      "path": "config/pc/lua/data/jp_v_words_index.lua",
       "bytes": 23903,
       "sha256": "a08f35e07c34815135c41a96b17d0758af962aa595a13f804d9d4ce22f791f00"
     },
     {
-      "path": "config/pc/lua/official_translator.lua",
-      "bytes": 1058,
-      "sha256": "1ce06c18cd2121ca1ee0b81c10dccc4f10b2531de4b34fc1414ed1ed40c11da9"
-    },
-    {
-      "path": "config/pc/lua/pc_probe_global_mode.lua",
-      "bytes": 6764,
-      "sha256": "edd2b3530c1bddf7f611d9d381e8efd9157230a57b34fac0a560864b4c2d8670"
-    },
-    {
-      "path": "config/pc/lua/pc_probe_greek_proxy.lua",
-      "bytes": 7870,
-      "sha256": "ccb7d4e32ed3286f2af72e9471baad840d98000923eb6f29f6ccf1f867a4394c"
-    },
-    {
-      "path": "config/pc/lua/query_info_submit.lua",
-      "bytes": 5848,
-      "sha256": "01483e4b196f4937f730301f84707d879d45d0bcf160d7c3ebe834e7c91cb9d6"
-    },
-    {
-      "path": "config/pc/lua/scheme_data.lua",
-      "bytes": 750,
-      "sha256": "181b37a95ff605818b6db79c1fc94747a9d9cb04c0ca9eb82b120c35d0628426"
-    },
-    {
-      "path": "config/pc/lua/select_hanzi.lua",
-      "bytes": 4228,
-      "sha256": "02d84356f88819f9fc8455e59d58b6243981a4ed9212260a53092c43953d2baa"
-    },
-    {
-      "path": "config/pc/lua/stellae_dlc.lua",
-      "bytes": 16545,
-      "sha256": "22302a74fc037b6e7554c0325d38d60e92a51e9749d51d36f8298a637750e0c9"
-    },
-    {
-      "path": "config/pc/lua/tool_calculator.lua",
-      "bytes": 12655,
-      "sha256": "6e4fada9bd31a636d67a31ddc67c3bec7fab02116d060b79e2457e308ada884a"
-    },
-    {
-      "path": "config/pc/lua/tool_processor.lua",
-      "bytes": 2626,
-      "sha256": "9fc7ac2b782c4c6f6950d6583a95ea5a199711c94de442eb0183e543ff374a7d"
-    },
-    {
-      "path": "config/pc/lua/tool_segmentor.lua",
-      "bytes": 1013,
-      "sha256": "8678374c63de5e412e0f39aebecf0076bdb75b22ae58d7210d959b6fb337aac4"
-    },
-    {
-      "path": "config/pc/lua/tool_translator.lua",
-      "bytes": 2378,
-      "sha256": "c620b182fdf6483337cb56b214dcf8d728e4c1257c1b66f6743a8ee2d6869b94"
-    },
-    {
-      "path": "config/pc/lua/tool_unicode.lua",
-      "bytes": 1815,
-      "sha256": "b6375b1114b92bb9b420baa3aea1bdedcca2366f6fc3fc499d87d7464ef47c63"
-    },
-    {
-      "path": "config/pc/lua/tool_unicode_data.lua",
+      "path": "config/pc/lua/data/tool_unicode_data.lua",
       "bytes": 5970,
       "sha256": "84ced4a71016ee930f04c7d70f8982e61231cf5fe113cc19cbaa0f69bec7526d"
     },
     {
-      "path": "config/pc/lua/u_translator.lua",
-      "bytes": 5394,
-      "sha256": "70bd4596d6cb2cb5bb84718bfeb5bb7679cb73bdc9bb3134aa3d93687804075f"
+      "path": "config/pc/lua/en/en_dlc.lua",
+      "bytes": 4517,
+      "sha256": "36419a204391b882f65e14ccab6549106632bc3b90de0f8e16cdba32aa457192"
+    },
+    {
+      "path": "config/pc/lua/en/en_dlc_format.lua",
+      "bytes": 2249,
+      "sha256": "7e7730697d85fe5386d71581f3216458fccc12d91291365f066781961a64f4e8"
+    },
+    {
+      "path": "config/pc/lua/en/en_index.lua",
+      "bytes": 4277,
+      "sha256": "c196cefe3ca7f8094d582d09c71b4227bd1381f7dc56ebffbbaaf7c9e87a5b35"
+    },
+    {
+      "path": "config/pc/lua/en/en_indexed_translator.lua",
+      "bytes": 11660,
+      "sha256": "b74b5be4dceecd9450b9a2963cbd0953c85ed741954dd1888aefd0acec7f51cf"
+    },
+    {
+      "path": "config/pc/lua/en/en_processor.lua",
+      "bytes": 2405,
+      "sha256": "a2dd2967719965c5ac0053a3317ec5018c4e9a153d9bff0827a016412b4de180"
+    },
+    {
+      "path": "config/pc/lua/en/en_segmentor.lua",
+      "bytes": 891,
+      "sha256": "9c6d82a414f8a6819260d8efd18d6cae6d7a7fed9f7066c1f500c986814f9415"
+    },
+    {
+      "path": "config/pc/lua/jp/jp_family.lua",
+      "bytes": 2210,
+      "sha256": "2eb6a0a277fb28d656211448ad2397c6cc81ef9b53bbc2ed7e6cfc6d1dc56208"
+    },
+    {
+      "path": "config/pc/lua/jp/jp_learning_match.lua",
+      "bytes": 2901,
+      "sha256": "0aad657408c5789d35a98d23a91f38decdbfa1ae29df2b07523bd6ba2bba5293"
+    },
+    {
+      "path": "config/pc/lua/jp/jp_memory.lua",
+      "bytes": 7031,
+      "sha256": "8f2aadf3173681b22f69f71e75bc1e4af2f9ab8d8670e6c2f730835c9585445e"
+    },
+    {
+      "path": "config/pc/lua/jp/jp_named_symbols.lua",
+      "bytes": 858,
+      "sha256": "4a1821ea2e4cc900341871cc21e1f508992d70d2508997b95dd9f1f1317dd58a"
+    },
+    {
+      "path": "config/pc/lua/jp/jp_query.lua",
+      "bytes": 11523,
+      "sha256": "f6456e3ef3c805d9aefcdc63f15bd03b8f37376c4f019ff01e7d43523ffcda3e"
+    },
+    {
+      "path": "config/pc/lua/jp/jp_reading_metadata.lua",
+      "bytes": 4603,
+      "sha256": "f8bc18eb9ccb12a30a95a5e7563ffeb6c9081305c1cbcf5cf4641434b3a3d968"
+    },
+    {
+      "path": "config/pc/lua/jp/jp_sequence.lua",
+      "bytes": 2327,
+      "sha256": "aadafae772b689beaa578c55acbf87f8bb71c58daf0b26b8feb57811b49ce18d"
+    },
+    {
+      "path": "config/pc/lua/jp/jp_v.lua",
+      "bytes": 31720,
+      "sha256": "48888fdb381278c9e0a2cd4b6df8291d17fe75df2e11b964546427032e4f748c"
+    },
+    {
+      "path": "config/pc/lua/jp/jp_v_data.lua",
+      "bytes": 1974,
+      "sha256": "640472aeb9b871340b824e2ac9ddd72c0d67dd207b793d43fc6de0bfc3673cae"
+    },
+    {
+      "path": "config/pc/lua/shared/draft_limit.lua",
+      "bytes": 4373,
+      "sha256": "1e3f83f3e8214017e3e1bfff622570d3b155a5491c80e80e9f78617361de1de6"
+    },
+    {
+      "path": "config/pc/lua/shared/on_demand_translator.lua",
+      "bytes": 1073,
+      "sha256": "92cb6c00f6512ba88c7597392000ea26e5613eaad3250d2325d35548e8958660"
+    },
+    {
+      "path": "config/pc/lua/shared/pc_probe_global_mode.lua",
+      "bytes": 6764,
+      "sha256": "edd2b3530c1bddf7f611d9d381e8efd9157230a57b34fac0a560864b4c2d8670"
+    },
+    {
+      "path": "config/pc/lua/shared/pc_probe_greek_proxy.lua",
+      "bytes": 7870,
+      "sha256": "ccb7d4e32ed3286f2af72e9471baad840d98000923eb6f29f6ccf1f867a4394c"
+    },
+    {
+      "path": "config/pc/lua/shared/scheme_data.lua",
+      "bytes": 750,
+      "sha256": "181b37a95ff605818b6db79c1fc94747a9d9cb04c0ca9eb82b120c35d0628426"
+    },
+    {
+      "path": "config/pc/lua/tools/query_info_submit.lua",
+      "bytes": 5865,
+      "sha256": "646ba39eba6620270863ff705eea18109f48dcb0f64ed3ebb0b512a31026f779"
+    },
+    {
+      "path": "config/pc/lua/tools/tool_calculator.lua",
+      "bytes": 12655,
+      "sha256": "6e4fada9bd31a636d67a31ddc67c3bec7fab02116d060b79e2457e308ada884a"
+    },
+    {
+      "path": "config/pc/lua/tools/tool_processor.lua",
+      "bytes": 2626,
+      "sha256": "9fc7ac2b782c4c6f6950d6583a95ea5a199711c94de442eb0183e543ff374a7d"
+    },
+    {
+      "path": "config/pc/lua/tools/tool_segmentor.lua",
+      "bytes": 1013,
+      "sha256": "8678374c63de5e412e0f39aebecf0076bdb75b22ae58d7210d959b6fb337aac4"
+    },
+    {
+      "path": "config/pc/lua/tools/tool_translator.lua",
+      "bytes": 2390,
+      "sha256": "6e2cb365e1d716b1bf5f15ffe31fbd5ed50d9cb2104c0a8ffa74daa3b794ceb0"
+    },
+    {
+      "path": "config/pc/lua/tools/tool_unicode.lua",
+      "bytes": 1820,
+      "sha256": "f7e74e09486f7d77df62d38846d3b3135a6513872ee8cd4bc84efef169bc2c94"
+    },
+    {
+      "path": "config/pc/lua/tools/u_translator.lua",
+      "bytes": 5401,
+      "sha256": "3eb2adf69d9dd59727978100d3b555ba6760768a7481f3387ae4b4fda24f2211"
+    },
+    {
+      "path": "config/pc/lua/ui/candidate_comment_filter.lua",
+      "bytes": 1820,
+      "sha256": "dd5731609e9158389a5aa59c7749271d5120b1f38d9ea1da235cb09036262406"
+    },
+    {
+      "path": "config/pc/lua/ui/candidate_keys.lua",
+      "bytes": 3729,
+      "sha256": "59e531f5d354207a3271141a0200ff1d24ca64d2ee34154ffabd93c1a046d075"
+    },
+    {
+      "path": "config/pc/lua/ui/research_mode_filter.lua",
+      "bytes": 267,
+      "sha256": "d107941f71ee234b1baa0e6e10ea2825aec0e2d46fd2109a41cbaac05f353498"
+    },
+    {
+      "path": "config/pc/lua/ui/select_hanzi.lua",
+      "bytes": 4236,
+      "sha256": "36f7af84bcd16175c090448b13cee2c5e7da172fe14c56a593e4c827965c195c"
     },
     {
       "path": "config/pc/luna_pinyin.dict.yaml",
@@ -1714,13 +1739,48 @@
     },
     {
       "path": "config/pc/rime.lua",
-      "bytes": 3368,
-      "sha256": "99649c8db94fdf34453f66af2e73610baa7f9c3846f98718886bac20ddb66d7f"
+      "bytes": 1494,
+      "sha256": "41f3873ea57fcde2ea118b317ff1f08f2498f711e6c23831bb1c4f96c0698a72"
     },
     {
       "path": "config/pc/source-dependencies.json",
       "bytes": 3889,
       "sha256": "cd834c85a83878313e052fa41e58eadae6addaf1bb08ba4a2a03cf7ba61699a6"
+    },
+    {
+      "path": "config/pc/stellae/appearance.yaml",
+      "bytes": 7628,
+      "sha256": "b3f48ca2fdfc81461d803482fd6071a409984e708b20a1ac047a5c19a9ca1829"
+    },
+    {
+      "path": "config/pc/stellae/chinese.yaml",
+      "bytes": 3368,
+      "sha256": "bcce27d0293ab92bcaec49e1dabe3da74083cc9927eb028b372025d72ed41452"
+    },
+    {
+      "path": "config/pc/stellae/defaults.yaml",
+      "bytes": 1385,
+      "sha256": "e0ea2ce3a10a045a9124923575f6703be8911efbc0842af8f7cbb9a5aa4dfd4c"
+    },
+    {
+      "path": "config/pc/stellae/english.yaml",
+      "bytes": 404,
+      "sha256": "dd360494fe0c2b37a071aed90a8fba780ee545bee3211eb5e9625e63d8ec02f3"
+    },
+    {
+      "path": "config/pc/stellae/japanese.yaml",
+      "bytes": 3725,
+      "sha256": "abdf9d354f774819ee069dff88e2e8a787000c427775e7296c7d8f7d4d0d1df4"
+    },
+    {
+      "path": "config/pc/stellae/spelling.yaml",
+      "bytes": 272108,
+      "sha256": "1fb8defd5c56058cc50a47c9b08161e6d41c66141894aa082659c46fc34ae167"
+    },
+    {
+      "path": "config/pc/stellae/tools.yaml",
+      "bytes": 1593,
+      "sha256": "91998bdd6681f33ce9e6b342b92965b061df124ab46a3a2299361292257522cc"
     },
     {
       "path": "config/pc/stellae_dlc_computer.dict.yaml",
@@ -1929,8 +1989,8 @@
     },
     {
       "path": "config/pc/tools/generate-japanese-base.py",
-      "bytes": 7937,
-      "sha256": "325940c3c7e0bd293c2b23a0e99b24525d20914ad0405a1f1cd4139254c6718b"
+      "bytes": 7998,
+      "sha256": "00ab2c006f9b5a1dadcf01fb16f3900b2ee5b76debf68ffa0003c30ba79e200c"
     },
     {
       "path": "config/pc/tools/make-opencc-config.py",
@@ -1949,8 +2009,8 @@
     },
     {
       "path": "config/pc/weasel.custom.yaml",
-      "bytes": 7196,
-      "sha256": "3a1848f077b03c7480da0571ca1f448e93284da52a25f9cca1058a6c4dbb489a"
+      "bytes": 111,
+      "sha256": "fde02f813ea018515f14aba62d476d4de8a2bf4c0b8f56a219fd60a4bda6fcb0"
     },
     {
       "path": "config/pc/zh-hant-t-essay-bgw-compact.gram",
@@ -2139,13 +2199,18 @@
     },
     {
       "path": "docs/BUILD.md",
-      "bytes": 5323,
-      "sha256": "df2bcd900c61c683966c6526bc6fae99d7853f443b7effd2e49a70f8be727310"
+      "bytes": 6002,
+      "sha256": "50a51a33fa7079705066d7a335e28732405a10962200c9bad7c7597ba6b5320a"
     },
     {
       "path": "docs/PC.md",
       "bytes": 2551,
       "sha256": "e02b51185d2fa058410654e56eeb43407b63ebe4c07995f62f96f1b1c5477414"
+    },
+    {
+      "path": "docs/STRUCTURE.md",
+      "bytes": 4877,
+      "sha256": "ad19d506a8617111ce4ba36404c4ffebdd0c42b90b946eb2750fd5e3423263df"
     },
     {
       "path": "docs/dlc-sources.md",
@@ -2184,8 +2249,8 @@
     },
     {
       "path": "docs/sources/jp-q-sources.md",
-      "bytes": 4428,
-      "sha256": "cd2cdce88116fcb12ba486bddb5ac6ba0a103e629b73d3442bd447b7787ab794"
+      "bytes": 4433,
+      "sha256": "b45e966d9d63eade9f6631ee5c9e7c98ddb370ca4c3a9f626060c683692eee50"
     },
     {
       "path": "docs/sources/jp-v-sources.md",
@@ -2199,8 +2264,8 @@
     },
     {
       "path": "docs/sources/mdx-orthography-sources.md",
-      "bytes": 1218,
-      "sha256": "5e4ea8352635fa743bb2d247b1bdfe09d1d375877687f0d627311bcf6f8326f7"
+      "bytes": 1221,
+      "sha256": "3cee112a70e39ddd9eba5ffede95a01a21372bfe60ab4c28c3681fab5f8e0f70"
     },
     {
       "path": "docs/sources/mixed-phrases-sources.md",
@@ -2229,8 +2294,8 @@
     },
     {
       "path": "docs/sources/shared-config-sources.md",
-      "bytes": 3995,
-      "sha256": "32e13149e317567c45e750d81106b779dde70f84c40f6a9b0c0b0d4453428c62"
+      "bytes": 4039,
+      "sha256": "da08c56a619b863fb24d0aba6a3c6a39508b5125dbddf51e06bca1e876baf08a"
     },
     {
       "path": "docs/sources/tools-sources.md",
@@ -2284,8 +2349,8 @@
     },
     {
       "path": "licenses/build_index.py",
-      "bytes": 10663,
-      "sha256": "f8dd9b57cb30f43141857ef29211f83d66e7a10a0e8bd13b2ab67fb4cfc1d323"
+      "bytes": 12177,
+      "sha256": "3d5bdbe76f75dd743d48a8fe603df511ef08e985b3459011ba0200275cd876b0"
     },
     {
       "path": "licenses/english-core/CC-BY-3.0-legalcode.txt",
@@ -2339,8 +2404,13 @@
     },
     {
       "path": "licenses/file-licenses.json",
-      "bytes": 234660,
-      "sha256": "425a73cd05cc7e12dc2e3e009c18d09363f2ce57cd12c8128f6e8a80747e60bf"
+      "bytes": 249963,
+      "sha256": "0df2dd69eed7559667349fcb2f661f64f819cc22730982782e2de071f71463ff"
+    },
+    {
+      "path": "licenses/layout-records.json",
+      "bytes": 25543,
+      "sha256": "04a2f4b4b91150960ce80b724aaa72f414daa3fbcb71c7c15294123a7c79aebd"
     },
     {
       "path": "licenses/luna-compact-model-LGPL-3.0.txt",
@@ -2754,8 +2824,8 @@
     },
     {
       "path": "scripts/build_scheme_packages.py",
-      "bytes": 14079,
-      "sha256": "36ca0475f13ce399b829518de06ed0dbb380be683d48ed4384452cfaf79df99b"
+      "bytes": 14100,
+      "sha256": "53c9b72baa16a66c2037047b368cb13eec97ccc15a489c73d9b7d0c7c6bb94b0"
     },
     {
       "path": "scripts/data/build_dlc_english_index.py",
@@ -2769,8 +2839,8 @@
     },
     {
       "path": "scripts/data/build_japanese_q.py",
-      "bytes": 16588,
-      "sha256": "baba5b8e1074e7299c7385370cebe829d4b404f99c8528ee12a499f06e82444e"
+      "bytes": 16612,
+      "sha256": "30b6e23fabc4a7a5c86f49ba206ce6cf89d1f1328672366cba54c1d982c0b497"
     },
     {
       "path": "scripts/data/dlc_poetry.py",
@@ -2798,9 +2868,14 @@
       "sha256": "314c4270eab7e159f811b6d7b39ae29d2533b97c5ab8396a35db976f2a5b4fa5"
     },
     {
+      "path": "scripts/data/rebuild_chinese_spelling.py",
+      "bytes": 8092,
+      "sha256": "981b18c403d25ffbf3e5f125fa2d2b0faec28f1c19862a6ff660500cb0918c02"
+    },
+    {
       "path": "scripts/data/rebuild_japanese_family_q.py",
-      "bytes": 6895,
-      "sha256": "e283eeb57ee1a4db4fedc6374821130a47a3899d6f0061510f534f80ce8f0e01"
+      "bytes": 6915,
+      "sha256": "9a372b708c65b0eeea6a4afe5518f2a24185fd6699de10cb28ca29cbd82980d2"
     },
     {
       "path": "scripts/native/Apply-Patches.ps1",
@@ -2834,13 +2909,13 @@
     },
     {
       "path": "scripts/rebuild_profiles.py",
-      "bytes": 15002,
-      "sha256": "a14e24a903d7f7b61b69b5dbbe0d5bcbf5d1adfdeaded1f96642d64f5279f1d3"
+      "bytes": 20160,
+      "sha256": "94e768e16a893ef2c8dd44c08d22967fefa9314efdf792258b3f755fac76c3e0"
     },
     {
       "path": "scripts/schemes/Prepare-ValidationEngines.ps1",
-      "bytes": 3853,
-      "sha256": "7d2d5f227c6dff4f788f53f3343b7f4e13c7120349d1831e0efccf1bd5125c7d"
+      "bytes": 5041,
+      "sha256": "200fdfb32e12200869a30d9a245bfdebb0845bb0efb190d4331099ec1038bf2d"
     },
     {
       "path": "scripts/schemes/Test-DlcRuntime.ps1",
@@ -2864,8 +2939,8 @@
     },
     {
       "path": "scripts/verify_release.py",
-      "bytes": 13506,
-      "sha256": "74251dfeda4997f3e3e7027fb0fd7aa9036368035ff00df7d5b955d53ea79037"
+      "bytes": 13973,
+      "sha256": "5016c9d48f1d98bdce3bb6368832f96825d1028fb98c2bb3673f4f4de5b14aa8"
     },
     {
       "path": "sources/base-build.json",
@@ -2906,6 +2981,16 @@
       "path": "sources/quality/dictionary-integrity.json",
       "bytes": 2193,
       "sha256": "7c2b008f85e63452c7faeb84f7477cae1d137bef17fa8a854e611acc55704902"
+    },
+    {
+      "path": "sources/spelling/README.md",
+      "bytes": 2226,
+      "sha256": "617cfdec0dc8100bd5f618d1aafabf3e78a36ac0413475eab79e1828e8371cb6"
+    },
+    {
+      "path": "sources/spelling/cn-syllables.txt",
+      "bytes": 1797,
+      "sha256": "ddd9b253b4f3412d17ed1c119d9d3b36f1153e7c3ff7f62e20e59cdfd1856689"
     },
     {
       "path": "tests/Probe-Configuration.ps1",
@@ -2949,23 +3034,23 @@
     },
     {
       "path": "tests/schemes/Test-ChineseDlc.ps1",
-      "bytes": 13260,
-      "sha256": "ee696c28ae89174e18b7a6b9c84fedd8165ac6391fe9cf9ffd9ed24395d877d5"
+      "bytes": 13413,
+      "sha256": "4f906f9022d3ff133eea5cad7ffd93bb3e5ab64a3fedcc5a589e57d1e36b825d"
     },
     {
       "path": "tests/schemes/Test-DlcProfile.ps1",
-      "bytes": 15343,
-      "sha256": "29d55346424d8e7336db1e5e5db0842adbdef70a4ba68101eb2402964d59e4cc"
+      "bytes": 15312,
+      "sha256": "c6b69ef1454f28d55b6716c98e02fbcbe6458f42eac909019ee0bd3c50850154"
     },
     {
       "path": "tests/schemes/Test-EnglishDlc.ps1",
-      "bytes": 14408,
-      "sha256": "14aa01609061e84acd4666ee72e3470eca370eb47f7cb9e5927016cb613ba012"
+      "bytes": 14372,
+      "sha256": "2d7efcc0ee087cf347a8dd9552a52f6c9d1db7ece88a7f9cf6c2238a04919090"
     },
     {
       "path": "tests/schemes/Test-ExactSyllable.ps1",
-      "bytes": 27141,
-      "sha256": "8527f2fe7a75980ee49044d51dd0115f533e3f3147c3f46cd2911545468447f6"
+      "bytes": 27216,
+      "sha256": "864370be35eb2b1ed639a334ddf8d4662e63562ae4f1df2328de8535deacbf7b"
     },
     {
       "path": "tests/schemes/Test-OfficialChinese.ps1",
@@ -2989,8 +3074,8 @@
     },
     {
       "path": "tests/schemes/Test-ShardedDlc.ps1",
-      "bytes": 5527,
-      "sha256": "934ae81f4711821b60e9d653754c3ee76c4398595e3959938d89f5c28bc51b44"
+      "bytes": 5625,
+      "sha256": "e54e113c56f1210641a236915d81e1840a47b7e5f782eaf14b69adf3650d7432"
     },
     {
       "path": "tests/schemes/exact_syllable/observer.lua",
@@ -2999,13 +3084,28 @@
     },
     {
       "path": "tests/schemes/exact_syllable/processor_unit.lua",
-      "bytes": 8421,
-      "sha256": "c61a29bab47821b6cb594102a57f2702dd58dd214cbf1e840ec68c8e65cce6ed"
+      "bytes": 8431,
+      "sha256": "a23a049619acdf67043d85d5edc4a3c32402254431f9f63932c85616feb4ec42"
     },
     {
       "path": "tests/schemes/exact_syllable/unit_runner.lua",
-      "bytes": 3421,
-      "sha256": "3b393737d023ca78b7f654da64da51304ca215bce043a11187bc98c2c1863bf5"
+      "bytes": 3778,
+      "sha256": "da46e2ed02522098b05dace7f8468ca9d7868ed1af9ed79a5b44823826691f8d"
+    },
+    {
+      "path": "tests/schemes/fixtures/legacy_dlc/README.md",
+      "bytes": 444,
+      "sha256": "db311bdffee48df41806ea6f2b9e386e4f67602a4d2a404db6e8c15a299e3b0e"
+    },
+    {
+      "path": "tests/schemes/fixtures/legacy_dlc/cn_dlc.lua",
+      "bytes": 1056,
+      "sha256": "39dbb3c34abee5eb42eab971cef2717e865d443681edeecfdfc7fbbfe2d50fd5"
+    },
+    {
+      "path": "tests/schemes/fixtures/legacy_dlc/stellae_dlc.lua",
+      "bytes": 16548,
+      "sha256": "46d095545476651bff19235ba19d29f0fa1e9025ad0fa91ca3956a8f26b78299"
     },
     {
       "path": "tests/schemes/fixtures/sharded_dlc_test.lua",

@@ -3,13 +3,13 @@
   "date": "2026-11-25",
   "status": "source-inputs-pinned; validation is recorded in docs/BUILD.md",
   "productComposition": {
-    "frontend": "0.17.4.61052; TSF/legacy IME/Server/Deployer/Setup; x64 and Win32",
+    "frontend": "0.17.4.61052; x64 Server/Deployer with x64/x86 TSF and legacy IME application clients",
     "runtimeEngineX64": "N01 with full Lua garbage collection",
-    "runtimeEngineX86": "R5 with full Lua garbage collection",
-    "frontendBuildSdk": "R5 for complete frontend builds; fixed librime C API headers and published engine export tables for frontend image updates",
+    "frontendBuildSdk": "Fixed librime C API headers and published x64 engine export tables; compatibility clients do not build an engine",
     "installerProvided": true,
-    "bundledInputSchemes": false,
-    "promptTraceCompiled": false
+    "bundledInputSchemes": true,
+    "promptTraceCompiled": false,
+    "legacyRuntimeRecipes": "R5 x64/x86 and complete dual-runtime frontend builds require explicit opt-in"
   },
   "sources": {
     "weasel": {
@@ -226,6 +226,11 @@
       "scope": "Fixed synthetic native and installer regression fixture"
     },
     {
+      "path": "native/tests/installer/Test-BundleSourceLayout.ps1",
+      "scope": "Current x64 backend, application-client and source-layout upgrade regression fixture",
+      "sha256": "4a698433cc62c8739f8a9e9ab6da2eab2ac5d4748d95baecb0c0e36172cd9777"
+    },
+    {
       "path": "native/tests/installer/Test-InstallerPolicy.ps1",
       "sha256": "39997a074be1bc79aa83b183a8ad32fe32a8d333153965e3463977f42dd3715e",
       "scope": "Fixed synthetic native and installer regression fixture"
@@ -236,6 +241,16 @@
       "scope": "Fixed synthetic native and installer regression fixture"
     },
     {
+      "path": "native/tests/jp-comment/Run-SchemaAliasTests.ps1",
+      "sha256": "43008c46d2bfb86ae87d5f4e0f5bf28f8d5205ec459640b2d97ff3726b626e7f",
+      "scope": "Fixed synthetic JP schema naming compatibility fixture"
+    },
+    {
+      "path": "native/tests/jp-comment/schema_alias.cpp",
+      "sha256": "1e9b658edba240101a87e2df1b7c8d895229465366766dbb02a581db8e257b82",
+      "scope": "Fixed synthetic JP schema naming compatibility fixture"
+    },
+    {
       "path": "native/tests/key-pairing/ControlledReadGrant.inc",
       "sha256": "0d95e50844a8f251677349dee7e70f97d5e043b49e8c16f532cd595e0789ff6c",
       "scope": "Fixed synthetic native and installer regression fixture"
@@ -243,6 +258,31 @@
     {
       "path": "native/tests/key-pairing/Deploy-PublicFixture.py",
       "sha256": "2978e418c5f32f0da0694be246491301844d137d06771d005738038968d5848e",
+      "scope": "Fixed synthetic native and installer regression fixture"
+    },
+    {
+      "path": "native/tests/key-pairing/Invoke-KeyPairingTests.ps1",
+      "sha256": "b3ecfed7e168b254c195bf0d01aed2a718b4c5489e77ae80aaf00f9c28bce8ed",
+      "scope": "Fixed synthetic native and installer regression fixture"
+    },
+    {
+      "path": "native/tests/key-pairing/ProductHostFixture.h",
+      "sha256": "b44f001a7c1442e429003434b839200e3bf7dd6a4695f22be6ca6f6527c0a284",
+      "scope": "Fixed synthetic native and installer regression fixture"
+    },
+    {
+      "path": "native/tests/key-pairing/ResponseOwnerProductTests.cpp",
+      "sha256": "2430fa691f94333879cc791cd9ceb57f73c2911c9befb498b2ecc68c02267b61",
+      "scope": "Fixed synthetic native and installer regression fixture"
+    },
+    {
+      "path": "native/tests/key-pairing/Run-ControlledKeys.ps1",
+      "sha256": "40f92b6a362f5e21d7c6a8a3df0ae72803807062095989e4acafde88e56bd184",
+      "scope": "Fixed synthetic native and installer regression fixture"
+    },
+    {
+      "path": "native/tests/key-pairing/SelectionControlledModes.inc",
+      "sha256": "ad079211a014049d6abf71066920016dc04ba41d3a8f0fd9fe4c9df8e874d144",
       "scope": "Fixed synthetic native and installer regression fixture"
     },
     {
@@ -266,29 +306,14 @@
       "scope": "Fixed synthetic native and installer regression fixture"
     },
     {
-      "path": "native/tests/key-pairing/Invoke-KeyPairingTests.ps1",
-      "sha256": "b3ecfed7e168b254c195bf0d01aed2a718b4c5489e77ae80aaf00f9c28bce8ed",
-      "scope": "Fixed synthetic native and installer regression fixture"
+      "path": "native/tests/package/test_bundle_architecture.py",
+      "scope": "Current x64 backend, application-client and source-layout upgrade regression fixture",
+      "sha256": "6ce2fb028eece6e0263212bcb9a31f88ab80bb2070da19c171e0d7c9b7ba3756"
     },
     {
-      "path": "native/tests/key-pairing/ProductHostFixture.h",
-      "sha256": "b44f001a7c1442e429003434b839200e3bf7dd6a4695f22be6ca6f6527c0a284",
-      "scope": "Fixed synthetic native and installer regression fixture"
-    },
-    {
-      "path": "native/tests/key-pairing/ResponseOwnerProductTests.cpp",
-      "sha256": "2430fa691f94333879cc791cd9ceb57f73c2911c9befb498b2ecc68c02267b61",
-      "scope": "Fixed synthetic native and installer regression fixture"
-    },
-    {
-      "path": "native/tests/key-pairing/Run-ControlledKeys.ps1",
-      "sha256": "13eee3460475cd2f954541338d7668176428dca791c4f2ac85467a216236469a",
-      "scope": "Fixed synthetic native and installer regression fixture"
-    },
-    {
-      "path": "native/tests/key-pairing/SelectionControlledModes.inc",
-      "sha256": "ad079211a014049d6abf71066920016dc04ba41d3a8f0fd9fe4c9df8e874d144",
-      "scope": "Fixed synthetic native and installer regression fixture"
+      "path": "native/tests/package/test_source_privacy.py",
+      "scope": "Current x64 backend, application-client and source-layout upgrade regression fixture",
+      "sha256": "0155073f4a820c2098f33314c2adfacc7432f121a408203c9a568bb9b92732c5"
     },
     {
       "path": "native/tests/preedit_spacing_tests.cc",
@@ -304,16 +329,6 @@
       "path": "native/tests/shift/ShiftKeySnapshotTests.cpp",
       "sha256": "bedb6d25c5e7fd054e3730f42e13e7902d414fd3bc96aee220b974ea9d4eef41",
       "scope": "Fixed synthetic native and installer regression fixture"
-    },
-    {
-      "path": "native/tests/jp-comment/schema_alias.cpp",
-      "sha256": "1e9b658edba240101a87e2df1b7c8d895229465366766dbb02a581db8e257b82",
-      "scope": "Fixed synthetic JP schema naming compatibility fixture"
-    },
-    {
-      "path": "native/tests/jp-comment/Run-SchemaAliasTests.ps1",
-      "sha256": "43008c46d2bfb86ae87d5f4e0f5bf28f8d5205ec459640b2d97ff3726b626e7f",
-      "scope": "Fixed synthetic JP schema naming compatibility fixture"
     }
   ],
   "toolchain": {
@@ -328,16 +343,17 @@
     "The source manifest identifies inputs; actual build and test results are recorded separately.",
     "Engine third-party dependency archives are official prebuilt inputs with pinned hashes.",
     "Source assembly, compilation, controlled tests and real application input acceptance are different checks.",
-    "The complete frontend patch preserves the adopted product source. The final no-scheme installer recipe and profile policy are separate public sources applied during packaging.",
+    "The complete frontend patch preserves the adopted product source. The current bundle installer recipe and profile policy are separate public sources applied during packaging.",
     "Build inputs are identified by the fixed source and asset inventories.",
-    "Only x64 and Win32 products are built; retained ARM source entry points are not a support claim."
+    "Current installers use an x64 backend and x64/x86 application clients. Retained ARM and legacy dual-runtime recipes are not current platform support claims."
   ],
   "frontendSourceFiles": "native/frontend-source-files.json",
   "installerSource": {
     "recipe": "installer/install.nsi",
-    "overlaysAppliedAt": "scripts/package/Prepare-Package.ps1",
+    "overlaysAppliedAt": "scripts/package/Build-Bundle.ps1",
     "includesWindowsProfilePolicy": true,
     "nativePatchContainsPriorInstallerBaseline": true,
-    "finalInstallerSourceIsSeparate": true
+    "finalInstallerSourceIsSeparate": true,
+    "legacyOverlaysAppliedAt": "scripts/package/Prepare-Package.ps1 -LegacyDualRuntime"
   }
 }

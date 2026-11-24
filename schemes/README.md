@@ -24,7 +24,7 @@
 - [官方 Weasel 方案 ZIP](https://github.com/unknownnumbers/rime-stellae/releases/latest).
 - [完整方案使用說明](docs/PC.md)、[官方方案安裝及合併](docs/official-weasel.md)、[DLC 來源](docs/dlc-sources.md).
 
-共用維護源位於 [config/pc](config/pc), [config/official-weasel](config/official-weasel) 由同一源碼及明確的引擎設定生成. 修改共用源後使用 `python scripts/rebuild_profiles.py --refresh-official`, 並以 `--check` 核對派生結果. 安裝到已有資料夾時, 先備份同名配置並依說明合併, 保留用戶詞庫.
+共用維護源位於 [config/pc](config/pc), [config/official-weasel](config/official-weasel) 由同一源碼及明確的引擎設定生成. 核對修改後執行 `python scripts/rebuild_profiles.py --refresh-source-manifest`, 再用 `--refresh-official` 及 `--check` 生成並核對派生結果. [結構說明](docs/STRUCTURE.md)介紹配置模組、Lua 分組和資料重建. 安裝到已有資料夾時, 先備份同名配置並依說明合併, 保留用戶詞庫.
 
 2026.11.14.2 詩詞 DLC 需要 2026.11.14.2 或更新的方案基座. 詞表由倉庫中的固定來源及構建程式生成, 可直接下載 Release 的模組 ZIP. 讀音與異文採自動處理及有限校核, 尚未逐句審校, 詳見 [DLC 來源與限制](docs/dlc-sources.md).
 

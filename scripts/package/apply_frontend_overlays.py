@@ -9,6 +9,8 @@ import shutil
 import struct
 from zipfile import ZIP_DEFLATED, ZipFile
 
+from bundle_architecture import ENGINES, client_architectures, excluded_native_paths, excluded_native_records, runtime_engines
+
 
 PRODUCTS = {
     'x64': ('stellaex64.dll', 'stellaex64.ime', 'StellaeServer.exe', 'StellaeDeployer.exe'),
@@ -16,7 +18,6 @@ PRODUCTS = {
 }
 CLIENT_PRODUCTS = {'x86': ('stellae.dll', 'stellae.ime')}
 MACHINES = {'x64': 0x8664, 'x86': 0x014c}
-ENGINES = {'x64': ('engine-n01', 'rime.dll'), 'x86': ('engine-r5', 'Win32/rime.dll')}
 
 
 def digest(path):
@@ -49,9 +50,7 @@ def unique(root, name):
 
 
 def frontend_products(specification):
-    clients = specification.get('clientOnlyArchitectures', [])
-    if not isinstance(clients, list) or clients not in ([], ['x86']):
-        raise ValueError('Only the x86 frontend may use the client-only build scope')
+    clients = client_architectures({'nativeFrontend': specification})
     return {arch: CLIENT_PRODUCTS[arch] if arch in clients else paths
             for arch, paths in PRODUCTS.items()}
 
@@ -192,17 +191,16 @@ def apply(stage, products, sources, source_ref, engines=None, native_manifest=No
         raise ValueError('Use the exact frontend source revision')
     inputs = load(stage / 'bundle-inputs.json')
     engine_spec = inputs.get('nativeEngines')
+    selected_engines = runtime_engines(inputs)
     previous_build = inputs.get('previousRuntimeBuild')
     if previous_build is not None and (
-            engine_spec is None or set(previous_build['runtimeSha256']) != set(ENGINES)
+            engine_spec is None or not set(selected_engines).issubset(previous_build['runtimeSha256'])
             or any(not re.fullmatch('[a-f0-9]{64}', sha) for sha in
                    (previous_build['manifestSha256'], *previous_build['runtimeSha256'].values()))
             or ('licenseIndexSha256' in previous_build and
                 not re.fullmatch('[a-f0-9]{64}', previous_build['licenseIndexSha256']))):
-        raise ValueError('Previously built runtime hashes must be pinned for both architectures')
-    expected_engine_spec = {arch: variant for arch, (variant, _) in ENGINES.items()}
-    if (('nativeEngines' in inputs and engine_spec != expected_engine_spec)
-            or (engine_spec is None and any(value is not None for value in (engines, native_manifest, engine_sources)))
+        raise ValueError('Previously built runtime hashes must pin every selected backend architecture')
+    if ((engine_spec is None and any(value is not None for value in (engines, native_manifest, engine_sources)))
             or (engine_spec is not None and any(value is None for value in (engines, native_manifest, engine_sources)))):
         raise ValueError('Runtime engine artifacts and the exact nativeEngines declaration are required together')
     source_files = inputs['nativeFrontend']['sourceFiles']
@@ -212,8 +210,12 @@ def apply(stage, products, sources, source_ref, engines=None, native_manifest=No
     provenance_path = stage / 'bundle-provenance.json'
     provenance = load(provenance_path)
     base = load(stage / 'base-package-license-index.json')
+    excluded = excluded_native_paths(inputs)
+    excluded_records = excluded_native_records(inputs, base['files'])
+    if provenance.get('excludedNativeImages', []) != excluded_records:
+        raise ValueError('The excluded legacy backend provenance differs')
     base_images = {row['path']: row['sha256'] for row in base['files']
-                   if Path(row['path']).suffix.lower() in {'.exe', '.dll', '.ime'}}
+                   if Path(row['path']).suffix.lower() in {'.exe', '.dll', '.ime'} and row['path'] not in excluded}
     staged = {path.relative_to(stage).as_posix(): digest(path)
               for path in stage.rglob('*') if path.is_file()
               and path.suffix.lower() in {'.exe', '.dll', '.ime'}}
@@ -244,7 +246,7 @@ def apply(stage, products, sources, source_ref, engines=None, native_manifest=No
     engine_inputs = {}
     if engine_spec:
         engine_sources.mkdir()
-        for arch, (variant, name) in ENGINES.items():
+        for arch, (variant, name) in selected_engines.items():
             path, details = checked_engine(engines / arch, arch, variant, native_manifest,
                                            engine_sources, previous_build)
             engine_inputs[arch] = (name, path, details)
@@ -269,6 +271,9 @@ def apply(stage, products, sources, source_ref, engines=None, native_manifest=No
               'nativeImages': len(base_images),
               'unchangedNativeImages': len(base_images) - len(changes) - len(engine_changes),
               'runtimeEnginesPreserved': not engine_changes}
+    if excluded_records:
+        result.update(backendArchitecture='x64', compatibilityClientArchitectures=['x86'],
+                      excludedNativeImages=excluded_records)
     if engine_changes:
         result['rebuiltRuntimeEngines'] = engine_changes
     save(stage / 'server-overlay-verification.json', result)

@@ -10,6 +10,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 INDEX = ROOT / 'licenses/file-licenses.json'
+LAYOUT = ROOT / 'licenses/layout-records.json'
 IGNORED = {'.git', '__pycache__', 'out', 'work', '.venv', '.pytest_cache'}
 ORIGINAL_PROSE = {
     'kind': 'project-explanatory-document',
@@ -27,6 +28,14 @@ ORIGINAL_PROGRAM = {
 
 
 def upstream_configuration(path: str) -> dict | None:
+    if path == 'config/pc/default.yaml':
+        return {
+            'kind': 'program-or-configuration',
+            'source_ids': ['prelude', 'project'],
+            'retained_upstream_terms': ['LGPL-3.0', 'rime-prelude AUTHORS'],
+            'license_scope': 'Upstream prelude defaults with project schema selection and native product/personal patch wiring; original upstream terms and attribution retained.',
+            'references': ['LICENSE', 'licenses/shared-config/prelude-LICENSE.txt', 'licenses/shared-config/prelude-AUTHORS.txt', 'docs/sources/shared-config-sources.md'],
+        }
     if path in {'config/pc/opencc/TSCharacters.ocd2', 'config/pc/opencc/TSPhrases.ocd2',
                 'config/pc/opencc/STCharacters.ocd2', 'config/pc/opencc/STPhrases.ocd2',
                 'config/pc/opencc/s2t.json'}:
@@ -37,7 +46,7 @@ def upstream_configuration(path: str) -> dict | None:
             'license_scope': 'Unmodified OpenCC conversion data, Apache-2.0; source attribution and notice retained.',
             'references': ['licenses/OpenCC-LICENSE.txt', 'docs/sources/shared-config-sources.md'],
         }
-    if path in {'config/pc/default.yaml', 'config/pc/key_bindings.yaml',
+    if path in {'config/pc/key_bindings.yaml',
                 'config/pc/punctuation.yaml', 'config/pc/symbols.yaml'}:
         return {
             'kind': 'program-or-configuration',
@@ -97,7 +106,9 @@ def official_record(path: str, old: dict[str, dict]) -> dict:
     raise SystemExit(f'Unreviewed official-profile source: {path}')
 
 
-def classify(path: str, old: dict[str, dict]) -> dict:
+def classify(path: str, old: dict[str, dict], layout: dict[str, dict]) -> dict:
+    if path in layout:
+        return copy.deepcopy(layout[path])
     if path in {
         'config/pc/assets/status/generate.py',
         'config/pc/assets/status/smart-english.svg',
@@ -118,9 +129,9 @@ def classify(path: str, old: dict[str, dict]) -> dict:
         return official_record(path, old)
     if path in old:
         return copy.deepcopy(old[path])
-    if path == 'config/pc/lua/scheme_data.lua':
+    if path == 'config/pc/lua/shared/scheme_data.lua':
         return copy.deepcopy(ORIGINAL_PROGRAM)
-    if path in {'config/profiles.json', 'config/pc/source-dependencies.json'}:
+    if path in {'config/profiles.json', 'config/pc/source-dependencies.json', 'licenses/layout-records.json'}:
         return {
             'kind': 'project-metadata',
             'project_license': 'GPL-3.0-only',
@@ -177,6 +188,14 @@ def main() -> None:
         'The JP master snapshot has a recorded content hash but no exact upstream commit established. '
         'Standard conversions shipped with the official profile are indexed separately as opencc_weasel.')
     old = {record['path']: record for record in index['files']}
+    layout_payload = json.loads(LAYOUT.read_text(encoding='utf-8'))
+    if layout_payload['format'] != 'stellae-layout-license-records-v1':
+        raise SystemExit('Unknown source-layout license record format.')
+    layout = {record['path']: record for record in layout_payload['files']}
+    if len(layout) != len(layout_payload['files']):
+        raise SystemExit('Duplicate source-layout license record.')
+    reference_moves = {record['previous_path']: record['path'] for record in layout.values()
+                       if record.get('previous_path') and not (ROOT / record['previous_path']).exists()}
     paths = []
     for file in sorted(ROOT.rglob('*')):
         if not file.is_file() or any(part in IGNORED for part in file.relative_to(ROOT).parts):
@@ -187,10 +206,12 @@ def main() -> None:
     reviewed = dict(old)
     for path in paths:
         if not path.startswith('config/official-weasel/'):
-            reviewed[path] = classify(path, old)
+            reviewed[path] = classify(path, old, layout)
     records = []
     for path in paths:
         record = official_record(path, reviewed) if path.startswith('config/official-weasel/') else reviewed[path]
+        record['references'] = [reference_moves.get(reference, reference)
+                                for reference in record.get('references', [])]
         record['path'] = path
         records.append(record)
     index['files'] = records

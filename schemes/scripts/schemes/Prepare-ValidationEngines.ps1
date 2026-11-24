@@ -1,7 +1,13 @@
 # SPDX-License-Identifier: GPL-3.0-only
 # Download and extract fixed public runtimes; never run either installer.
-param([Parameter(Mandatory=$true)][string]$OutputDirectory)
+param(
+    [Parameter(Mandatory=$true)][string]$OutputDirectory,
+    [ValidateSet('all','official','stellae')][string]$Source='all',
+    [switch]$LegacyWin32,
+    [string]$InputDirectory
+)
 $ErrorActionPreference = 'Stop'
+$Source = $Source.ToLowerInvariant()
 $out = [IO.Path]::GetFullPath($OutputDirectory)
 if (Test-Path -LiteralPath $out) { throw 'Choose a fresh runtime output directory.' }
 New-Item -ItemType Directory -Path $out | Out-Null
@@ -21,14 +27,22 @@ function Machine([string]$path) {
 }
 $records = @()
 foreach ($asset in $assets) {
+    if ($Source -cne 'all' -and $asset.Id -cne $Source) { continue }
     $archive = Join-Path $out ($asset.Id + '.exe')
-    Invoke-WebRequest -Uri $asset.Url -OutFile $archive -UseBasicParsing
+    if ($InputDirectory) {
+        $names = @(($asset.Id + '.exe'), [IO.Path]::GetFileName(([uri]$asset.Url).AbsolutePath))
+        $cached = @($names | ForEach-Object { Join-Path $InputDirectory $_ } | Where-Object { Test-Path -LiteralPath $_ -PathType Leaf })
+        if (-not $cached.Count) { throw ('Missing fixed offline input: ' + $asset.Id) }
+        Copy-Item -LiteralPath $cached[0] -Destination $archive
+    } else { Invoke-WebRequest -Uri $asset.Url -OutFile $archive -UseBasicParsing }
     $actualHash = (Get-FileHash -LiteralPath $archive -Algorithm SHA256).Hash.ToLowerInvariant()
     if ($actualHash -cne $asset.Hash) { throw ('Download hash mismatch: ' + $asset.Id) }
     $extract = Join-Path $out ($asset.Id + '-extracted')
-    & $archiveTool x $archive ('-o'+$extract) -aou -y | Out-Null
+    $members = if ($asset.Id -ceq 'official') { @('rime.dll','data/*') } else { @('rime.dll') }
+    & $archiveTool x $archive ('-o'+$extract) @members -aou -y | Out-Null
     if ($LASTEXITCODE -ne 0) { throw ('Extraction failed: ' + $asset.Id) }
-    $machines = if ($asset.Id -eq 'official') { @{x64=0x8664} } else { @{x64=0x8664;Win32=0x14c} }
+    $machines = @{x64=0x8664}
+    if ($asset.Id -ceq 'stellae' -and $LegacyWin32) { $machines.Win32=0x14c }
     foreach ($architecture in $machines.Keys) {
         $matches = @(Get-ChildItem -LiteralPath $extract -Recurse -File -Filter 'rime*.dll' | Where-Object { (Machine $_.FullName) -eq $machines[$architecture] -and (Get-FileHash -LiteralPath $_.FullName -Algorithm SHA256).Hash.ToLowerInvariant() -ceq $asset.Runtime[$architecture] })
         if (-not $matches.Count) { throw ('Pinned runtime not found for ' + $asset.Id + '/' + $architecture) }
@@ -37,11 +51,18 @@ foreach ($asset in $assets) {
         Copy-Item -LiteralPath $matches[0].FullName -Destination (Join-Path $engineDir 'rime.dll')
         $records += [pscustomobject]@{Source=$asset.Id;Architecture=$architecture;ArchiveSha256=$actualHash;RuntimeSha256=(Get-FileHash -LiteralPath (Join-Path $engineDir 'rime.dll') -Algorithm SHA256).Hash.ToLowerInvariant()}
     }
+    # NSIS can expose duplicate runtime filenames during extraction. Only the
+    # explicitly selected, hash-checked engine directories are validation inputs.
+    foreach ($image in @(Get-ChildItem -LiteralPath $extract -Recurse -File -Filter 'rime*.dll')) {
+        Remove-Item -LiteralPath $image.FullName
+    }
 }
 $officialShared = Join-Path $out 'official-extracted/data'
-foreach ($required in @('default.yaml','pinyin.yaml','stroke.schema.yaml','stroke.dict.yaml','key_bindings.yaml','punctuation.yaml','symbols.yaml')) {
-    if (-not (Test-Path -LiteralPath (Join-Path $officialShared $required))) { throw ('Missing shared data: ' + $required) }
+if ($Source -cne 'stellae') {
+    foreach ($required in @('default.yaml','pinyin.yaml','stroke.schema.yaml','stroke.dict.yaml','key_bindings.yaml','punctuation.yaml','symbols.yaml')) {
+        if (-not (Test-Path -LiteralPath (Join-Path $officialShared $required))) { throw ('Missing shared data: ' + $required) }
+    }
 }
-[pscustomobject]@{Format='rymcp-validation-runtimes-v1';InstallersExecuted=$false;Runtimes=$records} |
+[pscustomobject]@{Format='rymcp-validation-runtimes-v1';InstallersExecuted=$false;Source=$Source;LegacyWin32Requested=[bool]$LegacyWin32;Runtimes=$records} |
     ConvertTo-Json -Depth 5 | Set-Content -LiteralPath (Join-Path $out 'runtimes.json') -Encoding UTF8
 Write-Output 'Fixed public runtimes and official shared data extracted.'

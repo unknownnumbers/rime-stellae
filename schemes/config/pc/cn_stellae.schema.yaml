@@ -109,5 +109,9 @@ __patch:
   - stellae_dlc/physics/words.dict:/patch?
   - stellae_dlc/computer/words.dict:/patch?
   - stellae_dlc/poetry/words.dict:/patch?
-  # 用家自選配置
+  - stellae/chinese:/patch
+  - stellae/english:/patch
+  - stellae/tools:/patch
+  - stellae/appearance:/chinese
+  # Personal overrides apply after product defaults and optional modules.
   - cn_stellae.custom:/patch?

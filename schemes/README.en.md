@@ -24,7 +24,7 @@ A fresh Stellae profile defaults to SC output, five horizontal Chinese candidate
 - [Official Weasel scheme ZIP](https://github.com/unknownnumbers/rime-stellae/releases/latest).
 - [Stellae profile guide](docs/PC.md), [official profile installation and merging](docs/official-weasel.md), and [DLC sources](docs/dlc-sources.md).
 
-The common maintained source is [config/pc](config/pc). [config/official-weasel](config/official-weasel) is generated from it with explicit engine capability settings. After editing the common source, run `python scripts/rebuild_profiles.py --refresh-official` and verify the result with `--check`. Back up matching configuration files before merging into an existing user directory, and retain user dictionaries.
+The common maintained source is [config/pc](config/pc). [config/official-weasel](config/official-weasel) is generated from it with explicit engine capability settings. After reviewing source edits, run `python scripts/rebuild_profiles.py --refresh-source-manifest`, then `--refresh-official` and `--check`. The [structure guide](docs/STRUCTURE.md) describes configuration modules, Lua groups and data reconstruction. Back up matching configuration files before merging into an existing user directory, and retain user dictionaries.
 
 The 2026.11.14.2 poetry DLC requires scheme base 2026.11.14.2 or later. Catalogs are generated from the repository's fixed source inputs and build scripts; module ZIPs are available in Releases. Readings and text variants use automated processing with bounded checks and have not been reviewed line by line. See [DLC sources and limitations](docs/dlc-sources.md).
 

@@ -1,0 +1,62 @@
+# Stellae tools defaults.
+patch:
+  stellae_symbols:
+    dictionary: stellae_symbols
+    user_dict: research_greek
+    enable_completion: true
+    enable_sentence: false
+    enable_user_dict: true
+    initial_quality: 0
+  research_stroke:
+    dictionary: stroke
+    prism: stroke
+    tag: u_lookup
+    enable_user_dict: false
+    enable_encoder: false
+    encode_commit_history: false
+    enable_sentence: false
+    enable_completion: true
+    sentence_over_completion: false
+    contextual_suggestions: false
+    initial_quality: 0
+  research_radical:
+    dictionary: project_radical
+    prism: project_radical
+    tag: u_lookup
+    enable_user_dict: false
+    enable_encoder: false
+    encode_commit_history: false
+    enable_sentence: false
+    enable_completion: true
+    sentence_over_completion: false
+    contextual_suggestions: false
+    initial_quality: 0
+
+  research_radical_parts:
+    dictionary: project_radical_parts
+    prism: project_radical_parts
+    tag: u_lookup
+    delimiter: " '"
+    enable_user_dict: false
+    enable_encoder: false
+    encode_commit_history: false
+    enable_sentence: false
+    enable_completion: true
+    enable_word_completion: false
+    enable_correction: false
+    contextual_suggestions: false
+    # Keep the sentence graph empty; component lookup must return one entry.
+    max_homophones: 0
+    spelling_hints: 99
+    always_show_comments: true
+    initial_quality: 0
+
+
+# Pending spelling only. Mode prefixes and reading suffixes are separate.
+draft_limits:
+  chinese: 48
+  english: 64
+  calculator: 256
+  radical: 64
+  unicode: 6
+  japanese: 48

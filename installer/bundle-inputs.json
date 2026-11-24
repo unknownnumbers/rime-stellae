@@ -1,6 +1,6 @@
 {
   "format": "stellae-bundle-inputs-v2",
-  "bundleVersion": "2026.11.25.4",
+  "bundleVersion": "2026.11.25.5",
   "frontendVersion": "0.17.4.61052",
   "frontendInstaller": {
     "url": "https://github.com/unknownnumbers/rime-stellae/releases/download/v0.17.4.61052/stellae-0.17.4.61052-installer.exe",
@@ -17,11 +17,10 @@
   "schemes": {
     "sourceDirectory": "schemes",
     "profile": "stellae",
-    "version": "2026.11.25.4"
+    "version": "2026.11.25.5"
   },
   "nativeEngines": {
-    "x64": "engine-n01",
-    "x86": "engine-r5"
+    "x64": "engine-n01"
   },
   "previousRuntimeBuild": {
     "manifestSha256": "add89088f607a821dc864d42ea8ee6b4573062e309f28c4c43f3e13ff00956a9",
@@ -32,6 +31,9 @@
     }
   },
   "nativeFrontend": {
+    "clientOnlyArchitectures": [
+      "x86"
+    ],
     "sourceFiles": {
       "RimeWithWeasel/RimeWithWeasel.cpp": "e254f6c792dac9d486340e3c82ca3e8842cffc81147d6789583161b76d7eece9",
       "WeaselDeployer/Configurator.cpp": "3609bac39e0634c49b3510b216ec2a79c7b458794c932e12580e2c0bbf912178",

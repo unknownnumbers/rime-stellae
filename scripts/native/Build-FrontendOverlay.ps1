@@ -5,8 +5,11 @@ param(
     [Parameter(Mandatory)][string]$CacheDirectory,
     [Parameter(Mandatory)][string]$OutputDirectory,
     [switch]$DeployerOnly,
-    [switch]$ClientOnly
+    [switch]$ClientOnly,
+    [switch]$LegacyDualRuntime
 )
+if ($Architecture -ceq 'x86' -and -not $LegacyDualRuntime) { $ClientOnly = $true }
+if ($LegacyDualRuntime -and ($Architecture -cne 'x86' -or $ClientOnly)) { throw 'The historical full frontend scope targets x86 only.' }
 if ($DeployerOnly -and $ClientOnly) { throw 'Select either the settings component or client images.' }
 if ($ClientOnly -and $Architecture -cne 'x86') { throw 'The compatibility client build targets x86.' }
 . (Join-Path $PSScriptRoot 'Common.ps1')

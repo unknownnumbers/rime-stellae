@@ -20,7 +20,7 @@ JMdict來源為[官方JMdict_e.gz](https://www.edrdg.org/pub/Nihongo/JMdict_e.gz
 
 ## 單字讀音與字形家族
 
-`config/pc/lua/jp_family_data.lua`的`q_codes`由[單字讀音資料](jp-v-sources.md)及現用`japanese-q-canonical.json`生成, 使用與q詞庫相同的羅馬字算法. 13,136筆字元資料中的34,245個讀音生成12,390字、38,503個查詢碼. 字形家族、別名與其他讀音欄位保持原有內容. 讀音衍生資料保留EDRDG、Unicode及OpenCC的相應來源條款, 生成程式採GPL-3.0-only.
+`config/pc/lua/data/jp_family_data.lua`的`q_codes`由[單字讀音資料](jp-v-sources.md)及現用`japanese-q-canonical.json`生成, 使用與q詞庫相同的羅馬字算法. 13,136筆字元資料中的34,245個讀音生成12,390字、38,503個查詢碼. 字形家族、別名與其他讀音欄位保持原有內容. 讀音衍生資料保留EDRDG、Unicode及OpenCC的相應來源條款, 生成程式採GPL-3.0-only.
 
 執行`python scripts/data/rebuild_japanese_family_q.py --check`可核對隨附結果; 使用`--output <new-file>`可另存新結果, 輸出摘要記錄來源與結果的SHA256.
 
