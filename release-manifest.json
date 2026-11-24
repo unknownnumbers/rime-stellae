@@ -3817,8 +3817,8 @@
     },
     {
       "path": "scripts/package/Update-Settings.ps1",
-      "bytes": 8243,
-      "sha256": "83a5e60591adb9b6f3c3dfa7aa67f8756cfd7f11605230d486480b5da3b57007"
+      "bytes": 8257,
+      "sha256": "56e2a37eb4705d1ee457f0e6cf9c222fbd38195fafb579e6d10ff2f92d650837"
     },
     {
       "path": "scripts/package/apply_frontend_overlays.py",

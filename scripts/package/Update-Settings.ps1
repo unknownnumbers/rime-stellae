@@ -42,7 +42,7 @@ function Write-Atomic([string]$Path,[byte[]]$Bytes){
  $null=New-Item -ItemType Directory -Path $parent -Force
  $temporary=Join-Path $parent ('.'+(Split-Path $Path -Leaf)+'.settings-'+[guid]::NewGuid().ToString('N')+'.tmp')
  [IO.File]::WriteAllBytes($temporary,$Bytes)
- if(Test-Path -LiteralPath $Path){[IO.File]::Replace($temporary,$Path,$null)}else{[IO.File]::Move($temporary,$Path)}
+ if(Test-Path -LiteralPath $Path){[IO.File]::Replace($temporary,$Path,[NullString]::Value)}else{[IO.File]::Move($temporary,$Path)}
 }
 if(-not [Environment]::Is64BitOperatingSystem -or -not (Test-Path -LiteralPath $program -PathType Container)){throw 'An installed x64 frontend is required.'}
 Require-X64 (Child $program 'StellaeServer.exe')
