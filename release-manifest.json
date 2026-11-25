@@ -127,8 +127,8 @@
     },
     {
       "path": "installer/BundleData.ps1",
-      "bytes": 16414,
-      "sha256": "40145a931404ed3452f7cf85b8ea1599d5ea506372585806b599e7a338bf0772"
+      "bytes": 16739,
+      "sha256": "beaf734e14736c3fc340a27abff3b40b621f46e499d5d22e4d763d2e4a9955cd"
     },
     {
       "path": "installer/InstallProfilePolicy.ps1",
@@ -517,8 +517,8 @@
     },
     {
       "path": "native/source-manifest.json",
-      "bytes": 13997,
-      "sha256": "ddbe94e21ac891d222a258ffb7202d7d7a1b5a90f0cc432230c214dfc46b3dd7"
+      "bytes": 14250,
+      "sha256": "9bea483697943cedf398e3164779d9e9eb7f685d86c50f87bd46165ba3495812"
     },
     {
       "path": "native/tests/appearance/Add-PaintTrace.ps1",
@@ -567,8 +567,8 @@
     },
     {
       "path": "native/tests/installer/Test-BundleNotices.ps1",
-      "bytes": 5967,
-      "sha256": "6322de4a530768ace6f00eb356001d0c348fcd272cf093c480f43ddaf8220ab1"
+      "bytes": 9206,
+      "sha256": "512c52c06294545536f0652b499350b779bed914a2edabc1eb1cc45c98c8c649"
     },
     {
       "path": "native/tests/installer/Test-BundlePresetPriority.ps1",

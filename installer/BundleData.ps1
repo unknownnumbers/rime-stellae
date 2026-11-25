@@ -53,8 +53,12 @@ function Hash([string]$Path){
 function Read-NoticesPackage([string]$Path){
   if(-not $Path -or -not (Test-Path -LiteralPath $Path -PathType Leaf)){return $null}
   $package=Get-Content -LiteralPath $Path -Raw|ConvertFrom-Json
-  if($package.format -cnotin @('stellae-package-v2','stellae-rymcp-package-v1') -or
-     -not $package.inputSchemesBundled){throw 'Unexpected installed package ownership manifest'}
+  $bundled=$package.PSObject.Properties['inputSchemesBundled']
+  # The bare frontend declares no scheme ownership and has no format field.
+  if($bundled -and $bundled.Value -is [bool] -and -not $bundled.Value){return $null}
+  $format=$package.PSObject.Properties['format']
+  if(-not $format -or $format.Value -cnotin @('stellae-package-v2','stellae-rymcp-package-v1') -or
+     -not $bundled -or $bundled.Value -isnot [bool] -or -not $bundled.Value){throw 'Unexpected installed package ownership manifest'}
   $records=@()
   $names=@{}
   foreach($entry in $package.files){

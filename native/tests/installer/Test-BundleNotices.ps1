@@ -70,6 +70,43 @@ Check 'Uninstall removes owned current archive' (-not(Test-Path -LiteralPath (Jo
 Check 'Uninstall removes unchanged document' (-not(Test-Path -LiteralPath (Join-Path $notices 'README.md')))
 Check 'Uninstall retains modified and unknown documents' ((Test-Path -LiteralPath (Join-Path $notices 'docs/modified.md')) -and (Test-Path -LiteralPath (Join-Path $notices 'custom/keep.txt')))
 Check 'Uninstall does not touch learning outside notices' ((Get-FileHash -LiteralPath $outside).Hash -ceq $outsideHash)
+
+# The pinned bare 61052 package explicitly has no schemes and no format field.
+$bareNotices=Join-Path $root 'bare-installed/scheme-notices'
+$barePayload=Join-Path $root 'bare-payload'
+Write-Fixture (Join-Path $bareNotices 'README.md') 'unowned modified bare document'
+Write-Fixture (Join-Path $bareNotices 'private/keep.txt') 'unknown bare document'
+Write-Fixture (Join-Path $barePayload 'README.md') 'current bundled document'
+Write-Fixture (Join-Path $barePayload 'docs/new-notice.txt') 'current owned notice'
+$barePrevious=Join-Path $root 'bare-package.json'
+[ordered]@{version='0.17.4.61052';inputSchemesBundled=$false;files=@()}|ConvertTo-Json -Depth 7|Set-Content -LiteralPath $barePrevious -Encoding UTF8
+$bareCurrent=Join-Path $root 'bare-to-bundle-package.json'
+Package $bareCurrent 'stellae-package-v2' @(
+  Record 'README.md' (Join-Path $barePayload 'README.md')
+  Record 'docs/new-notice.txt' (Join-Path $barePayload 'docs/new-notice.txt')
+)
+$bareReport=Join-Path $root 'bare-to-bundle.json'
+& $helper -Action InstallNotices -SharedDirectory $bareNotices -PayloadDirectory $barePayload -CurrentPackageManifest $bareCurrent -PreviousPackageManifest $barePrevious -ReportFile $bareReport
+$bareResult=Get-Content -LiteralPath $bareReport -Raw|ConvertFrom-Json
+Check 'Bare package without format can upgrade to bundled notices' ($bareResult.passed -and (Test-Path -LiteralPath (Join-Path $bareNotices 'docs/new-notice.txt')))
+Check 'Bare package claims no unknown or modified notices' ((Get-Content -LiteralPath (Join-Path $bareNotices 'README.md') -Raw) -ceq 'unowned modified bare document' -and (Get-Content -LiteralPath (Join-Path $bareNotices 'private/keep.txt') -Raw) -ceq 'unknown bare document')
+Check 'Unowned bare notice collision is reported' ('README.md' -in $bareResult.sharedConflicts)
+$rejected=$false
+try{& $helper -Action InstallNotices -SharedDirectory $bareNotices -PayloadDirectory $barePayload -CurrentPackageManifest $barePrevious}catch{$rejected=$true}
+Check 'Bare package cannot be the current notices payload' $rejected
+foreach($invalid in @(
+  [ordered]@{inputSchemesBundled=$true;bundleVersion='invalid';files=@()}
+  [ordered]@{format='unknown-package';inputSchemesBundled=$true;bundleVersion='invalid';files=@()}
+  [ordered]@{format='stellae-package-v2';inputSchemesBundled='false';bundleVersion='invalid';files=@()}
+  [ordered]@{format='stellae-package-v2';inputSchemesBundled=0;bundleVersion='invalid';files=@()}
+)){
+  $invalidPath=Join-Path $root 'invalid-bundle-package.json'
+  $invalid|ConvertTo-Json -Depth 7|Set-Content -LiteralPath $invalidPath -Encoding UTF8
+  $rejected=$false
+  try{& $helper -Action UninstallNotices -SharedDirectory $bareNotices -PreviousPackageManifest $invalidPath}catch{$rejected=$true}
+  Check 'Missing/unknown bundle format and non-boolean ownership remain rejected' $rejected
+}
+Check 'Rejected notice manifests preserve existing files' ((Get-Content -LiteralPath (Join-Path $bareNotices 'README.md') -Raw) -ceq 'unowned modified bare document' -and (Get-Content -LiteralPath (Join-Path $bareNotices 'private/keep.txt') -Raw) -ceq 'unknown bare document' -and (Get-Content -LiteralPath (Join-Path $bareNotices 'docs/new-notice.txt') -Raw) -ceq 'current owned notice')
 $unsafe=Join-Path $root 'unsafe-package.json'
 Package $unsafe 'stellae-package-v2' @([ordered]@{path='scheme-notices/../outside';installed_path='scheme-notices/../outside';sha256=('0'*64)})
 $rejected=$false

@@ -226,6 +226,11 @@
       "scope": "Fixed synthetic native and installer regression fixture"
     },
     {
+      "path": "native/tests/installer/Test-BundleNotices.ps1",
+      "sha256": "512c52c06294545536f0652b499350b779bed914a2edabc1eb1cc45c98c8c649",
+      "scope": "Current scheme notice ownership and bare-package upgrade regression fixture"
+    },
+    {
       "path": "native/tests/installer/Test-BundleSourceLayout.ps1",
       "scope": "Current x64 backend, application-client and source-layout upgrade regression fixture",
       "sha256": "4a698433cc62c8739f8a9e9ab6da2eab2ac5d4748d95baecb0c0e36172cd9777"
