@@ -359,6 +359,41 @@ class ServerOverlayTests(unittest.TestCase):
             self.assertEqual(row['rebuild_source_ref'], SOURCE_REF)
             self.assertEqual(row['rebuild_run_id'], RUN_ID)
 
+    def test_renamed_frontend_config_retains_its_exact_original_license(self):
+        original = b'config_version: synthetic\n'
+        generated = original + b'# Stellae appearance adaptation\n'
+        path = self.stage / 'shared-payload/data/stellae.yaml'
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_bytes(generated)
+        source_record = {'path': 'data/weasel.yaml', 'bytes': len(original),
+                         'sha256': digest(original), 'source_ids': ['weasel'],
+                         'references': ['licenses/weasel.txt'],
+                         'retained_terms': 'Original upstream configuration license'}
+        base_path = self.stage / 'base-package-license-index.json'
+        base = json.loads(base_path.read_text('utf-8'))
+        base['files'].append(source_record)
+        save(base_path, base)
+        provenance_path = self.stage / 'bundle-provenance.json'
+        provenance = json.loads(provenance_path.read_text('utf-8'))
+        provenance['files'].append({
+            'installed_path': 'data/stellae.yaml', 'original_installed_path': 'data/weasel.yaml',
+            'archive_member': 'data/weasel.yaml', 'source': 'frontendInstaller',
+            'sha256': digest(generated), 'original_sha256': digest(original),
+            'transformation': 'rename config ID and apply project defaults',
+            'generated_source_ids': ['project-code'],
+        })
+        save(provenance_path, provenance)
+        result = subprocess.run([sys.executable, str(REPOSITORY / 'scripts/package/index_bundle.py'),
+                                 '--stage', str(self.stage), '--ref', SOURCE_REF],
+                                capture_output=True, text=True, encoding='utf-8', errors='replace')
+        self.assertEqual(result.returncode, 0, result.stderr)
+        index = json.loads((self.stage / 'package-license-index.json').read_text('utf-8'))
+        row = next(row for row in index['files'] if row['installed_path'] == 'data/stellae.yaml')
+        self.assertEqual(row['license_record'], source_record)
+        self.assertEqual(row['source_ids'], ['project-code', 'weasel'])
+        self.assertEqual(row['original_sha256'], digest(original))
+        self.assertEqual(row['generated_license'], 'GPL-3.0-only')
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -1,6 +1,6 @@
 {
   "format": "rymcp-public-config-v2",
-  "scheme_version": "2026.11.25.5",
+  "scheme_version": "2026.11.26.1",
   "allowlisted_source_files": 196,
   "source_files": [
     {
@@ -734,6 +734,11 @@
       "sha256": "91998bdd6681f33ce9e6b342b92965b061df124ab46a3a2299361292257522cc"
     },
     {
+      "path": "stellae.custom.yaml",
+      "bytes": 111,
+      "sha256": "fde02f813ea018515f14aba62d476d4de8a2bf4c0b8f56a219fd60a4bda6fcb0"
+    },
+    {
       "path": "stellae_dlc_computer.dict.yaml",
       "bytes": 179,
       "sha256": "7ac080ee1a66f93cd4bdf76a9699eabced3b51c7134cfb14fb78fce89af9f6e0"
@@ -957,11 +962,6 @@
       "path": "u_readings.tsv",
       "bytes": 556891,
       "sha256": "67f8f2b4ecfbdddc3b4e6d238f093ad68a6aab944767832e38d0dc5ad36a0d8d"
-    },
-    {
-      "path": "weasel.custom.yaml",
-      "bytes": 111,
-      "sha256": "fde02f813ea018515f14aba62d476d4de8a2bf4c0b8f56a219fd60a4bda6fcb0"
     },
     {
       "path": "zh-hant-t-essay-bgw-compact.gram",

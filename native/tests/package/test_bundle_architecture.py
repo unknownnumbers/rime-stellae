@@ -87,7 +87,7 @@ class BundleArchitectureStagingTests(unittest.TestCase):
                 'default.yaml': (b'config_version: synthetic\n\n__patch:\n'
                                  b'  - stellae/defaults:/patch\n  - default.custom:/patch?\n'),
                 'default.custom.yaml': b'patch:\n',
-                'weasel.custom.yaml': b'patch:\n  style/font_point: 12\n',
+                'stellae.custom.yaml': b'patch:\n  style/font_point: 12\n',
             }
             source_manifest = {'source_files': [record(name, raw) for name, raw in profile.items()],
                                'generated_files': []}
@@ -125,6 +125,13 @@ class BundleArchitectureStagingTests(unittest.TestCase):
             self.assertEqual(default.count('__patch:'), 1)
             self.assertEqual(default.count('default.custom:/patch?'), 1)
             self.assertTrue(default.endswith('  - default.custom:/patch?\n'))
+            appearance = (stage / 'shared-payload/data/stellae.yaml').read_text()
+            self.assertIn('stellae_bundle_appearance:/patch', appearance)
+            self.assertTrue(appearance.endswith('  - stellae.custom:/patch?\n'))
+            self.assertTrue((stage / 'shared-payload/data/stellae_bundle_appearance.yaml').is_file())
+            self.assertFalse((stage / 'shared-payload/data/weasel.yaml').exists())
+            self.assertFalse((stage / 'shared-payload/data/weasel.custom.yaml').exists())
+            self.assertTrue((stage / 'AppearanceConfig.ps1').is_file())
             provenance = json.loads((stage / 'bundle-provenance.json').read_text())
             self.assertEqual({row['installed_path'] for row in provenance['excludedNativeImages']},
                              set(LEGACY_X86_BACKEND))

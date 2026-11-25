@@ -241,7 +241,7 @@ def main():
     if args.write_manifest:
         manifest = {
             'format': 'stellae-schemes-source-v1',
-            'date': '2026-11-24',
+            'date': json.loads((ROOT / 'config/pc/config-source-manifest.json').read_bytes())['scheme_version'][:10].replace('.', '-'),
             'kind': 'source-configuration-data-snapshot',
             'nativeBinariesIncluded': False,
             'personalLearningIncluded': False,

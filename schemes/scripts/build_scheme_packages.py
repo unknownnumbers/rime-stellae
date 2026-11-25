@@ -117,6 +117,9 @@ def package(profile, output_dir, version, source_ref):
     source_index = json.loads(source_file('licenses/file-licenses.json').read_text('utf-8'))
     license_records = {record['path']: record for record in source_index['files']}
     mappings = profile_files(profile)
+    for name in ('LearningStore.ps1', 'LearningStoreNative.cs', 'LearningStore.lua',
+                 'DlcNamespace.ps1', 'README.md'):
+        mappings.append(('tools/upgrade/' + name, 'scripts/upgrade/' + name))
     if profile == 'stellae':
         mappings.append(('source-config-manifest.json', 'config/pc/config-source-manifest.json'))
     for name in ('LICENSE', 'THIRD_PARTY_NOTICES.md', 'README.md', 'README.en.md', 'README.zh-SC.md'):

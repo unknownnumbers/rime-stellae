@@ -59,7 +59,7 @@ Build the DLC catalogs before running `scripts/schemes/Test-DlcRuntime.ps1` with
 Refresh `licenses/file-licenses.json` with `python licenses/build_index.py`, then record the reviewed source snapshot with `python scripts/verify_release.py --write-manifest --require-yaml`. Run the verifier again without `--write-manifest` before packaging.
 
 ```sh
-python scripts/build_scheme_packages.py --profile all --version 2026.11.25.5 --source-ref FULL_COMMIT_SHA --output-dir out/schemes
+python scripts/build_scheme_packages.py --profile all --version 2026.11.26.1 --source-ref FULL_COMMIT_SHA --output-dir out/schemes
 ```
 
 The source ref must identify the reviewed rime-stellae commit. Run this command from the schemes directory. Archives are named `stellae-VERSION-schemes.zip` and `stellae-VERSION-official-weasel-schemes.zip`. Both ZIPs include per-file license records and pinned source provenance. The latest Stellae frontend source and installer build are maintained in [rime-stellae](https://github.com/unknownnumbers/rime-stellae). The retained [native recipes](../native/BUILD.md) document earlier native source inputs. Source preparation, native compilation, runtime checks, installer validation and physical-host acceptance remain separate results.

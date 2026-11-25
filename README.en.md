@@ -8,15 +8,16 @@ Stellae provides a Windows Rime frontend and input schemes. The frontend handles
 
 ## Installation and use
 
-- [Stellae frontend and complete scheme installer](https://github.com/unknownnumbers/rime-stellae/releases/download/v2026.11.24.1/stellae-2026.11.24.1-installer.exe).
-- [Complete Stellae scheme ZIP](https://github.com/unknownnumbers/rime-stellae/releases/download/v2026.11.24.1/stellae-2026.11.24.1-schemes.zip), for an existing Stellae installation.
-- [Official Weasel scheme ZIP](https://github.com/unknownnumbers/rime-stellae/releases/download/v2026.11.24.1/stellae-2026.11.24.1-official-weasel-schemes.zip), with [installation and merge instructions](schemes/docs/official-weasel.md).
-- x64 and Win32 are supported, including 32-bit applications on x64 Windows.
-- The frontend version is `0.17.4.61052`. The current package and scheme version is `2026.11.24.1`.
+- [Stellae frontend and complete scheme installer](https://github.com/unknownnumbers/rime-stellae/releases/download/v2026.11.26.1/stellae-2026.11.26.1-installer.exe).
+- [Complete Stellae scheme ZIP](https://github.com/unknownnumbers/rime-stellae/releases/download/v2026.11.26.1/stellae-2026.11.26.1-schemes.zip), for an existing Stellae installation.
+- [Official Weasel scheme ZIP](https://github.com/unknownnumbers/rime-stellae/releases/download/v2026.11.26.1/stellae-2026.11.26.1-official-weasel-schemes.zip), with [installation and merge instructions](schemes/docs/official-weasel.md).
+- Supports 64-bit Windows, with compatibility clients for 32-bit applications.
+- The frontend version is `0.17.4.61052`. The current package and scheme version is `2026.11.26.1`.
 - A fresh profile defaults to SC output, five horizontal Chinese candidates and six vertical English candidates, with TC/SC switching.
 - The installer includes the Noto Sans CJK Regular collection. The SC or TC selection sets the initial candidate font. Use Stellae's appearance settings to switch among TC, HK and SC. Upgrades retain your font choice. [Candidate font guide](docs/PC.md#候選窗字體)
 - The bundled scheme uses a blue En status icon for English mode.
 - `Ctrl+Space` cancels the pending draft and switches between red A and the preceding Chinese or English mode. The integrated installer can add the English spelling correction index to an existing older math DLC.
+- Stellae appearance overrides use `stellae.custom.yaml`; official Weasel keeps `weasel.custom.yaml`. The installer migrates the previous Stellae file without rewriting its contents. Merge differing old and new files before upgrading.
 - Upgrades preserve user customization and learning. Check and merge conflicting custom files using the [user guide](docs/PC.md).
 
 [Complete scheme features](schemes/docs/PC.md) | [Optional vocabulary and DLC](schemes/docs/dlc-sources.md) | [Build](docs/BUILD.md) | [Sources](docs/SOURCES.md) | [TODO](TODO.md)

@@ -22,6 +22,8 @@
 
 ## 更新與合併
 
-保留用戶學習庫. 已有 `default.custom.yaml`、`weasel.custom.yaml`、`rime.lua` 或同名方案自訂時, 先備份並對照新範例合併. 同名自訂可能覆蓋新預設, 重新部署後核對方案清單、Lua 入口與候選布局.
+保留用戶學習庫. 墨芯的外觀自訂使用 `stellae.custom.yaml`, 官方 Weasel 使用 `weasel.custom.yaml`. 已有 `default.custom.yaml`、外觀自訂、`rime.lua` 或同名方案自訂時, 先備份並對照新範例合併. 同名自訂可能覆蓋新預設, 重新部署後核對方案清單、Lua 入口與候選布局.
+
+本版墨芯方案 ZIP 配合 `2026.11.26.1` 或更新的墨芯前端使用. 較早的墨芯安裝請先更新整合安裝器, 由安裝器遷移外觀入口、舊學習庫名稱及 DLC 資料夾. 官方 Weasel 依其[獨立安裝及合併說明](official-weasel.md)更新.
 
 原始字典、資料通知與完整授權隨源碼提供. [構建](BUILD.md) | [授權](../THIRD_PARTY_NOTICES.md)

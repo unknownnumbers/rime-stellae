@@ -8,6 +8,8 @@ import argparse, hashlib, json, os, re, shutil, struct, subprocess, zipfile
 ROOT = Path(__file__).resolve().parents[2]
 THEMES = ('reference_gray', 'stellae_sakura', 'stellae_lavender',
           'stellae_night', 'stellae_crimson', 'stellae_mono')
+APPEARANCE_PRESET = 'data/stellae_bundle_appearance.yaml'
+LEGACY_APPEARANCE_PRESET = 'data/stellae_bundle_weasel.yaml'
 
 
 def digest(path):
@@ -23,6 +25,36 @@ def appearance_preset(raw):
     if len(parts) != 2 or any(line and not line.startswith('  ') for line in parts[1].splitlines()):
         raise ValueError('Use the reviewed final Weasel appearance section')
     return ('# Derived from stellae/appearance.yaml.\npatch:\n' + parts[1]).encode('utf-8')
+
+
+def baseline_predecessors(baseline, current_preset):
+    """Retain historical evidence while resolving its former installed name."""
+    assert baseline['format'] == 'stellae-settings-baseline-v1'
+    original = {row['path']: row['sha256'] for row in baseline['files']}
+    previous = {}
+    def add(path, checksum):
+        assert re.fullmatch('[0-9a-f]{64}', checksum)
+        target = APPEARANCE_PRESET if path == LEGACY_APPEARANCE_PRESET else path
+        hashes = previous.setdefault(target, [])
+        if checksum not in hashes:
+            hashes.append(checksum)
+    for path, checksum in original.items():
+        add(path, checksum)
+    expected_paths = {'StellaeDeployer.exe', APPEARANCE_PRESET}
+    expected_paths.update('data/preview/color_scheme_' + name + '.png' for name in THEMES)
+    expected_paths.update('data/preview/candidate_font' + suffix + '.png'
+                          for suffix in ('', '_default', '_sc', '_tc', '_hk'))
+    for component in baseline.get('previousComponents', []):
+        assert re.fullmatch('[0-9a-f]{40}', component['sourceRef'])
+        assert re.fullmatch('[0-9a-f]{64}', component['manifestSha256'])
+        assert len(component['files']) == 13
+        targets = {APPEARANCE_PRESET if row['path'] == LEGACY_APPEARANCE_PRESET
+                   else row['path'] for row in component['files']}
+        assert targets == expected_paths
+        for row in component['files']:
+            add(row['path'], row['sha256'])
+    add(APPEARANCE_PRESET, current_preset)
+    return original, previous
 
 
 def main():
@@ -63,27 +95,10 @@ def main():
                 assert hashlib.sha256(z.read(row['path'])).hexdigest() == row['sha256']
 
     baseline = json.loads(source('installer/settings-update-baseline.json'))
-    assert baseline['format'] == 'stellae-settings-baseline-v1'
-    original = {r['path']: r['sha256'] for r in baseline['files']}
-    previous = {path: [value] for path, value in original.items()}
-    expected_paths = {'StellaeDeployer.exe', 'data/stellae_bundle_weasel.yaml'}
-    expected_paths.update('data/preview/color_scheme_' + name + '.png' for name in THEMES)
-    expected_paths.update('data/preview/candidate_font' + suffix + '.png'
-                          for suffix in ('', '_default', '_sc', '_tc', '_hk'))
-    for component in baseline.get('previousComponents', []):
-        assert re.fullmatch('[0-9a-f]{40}', component['sourceRef'])
-        assert re.fullmatch('[0-9a-f]{64}', component['manifestSha256'])
-        assert len(component['files']) == 13
-        assert {row['path'] for row in component['files']} == expected_paths
-        for row in component['files']:
-            assert re.fullmatch('[0-9a-f]{64}', row['sha256'])
-            hashes = previous.setdefault(row['path'], [])
-            if row['sha256'] not in hashes:
-                hashes.append(row['sha256'])
     # The integrated package stores the current include-based preset under this
     # name; it is also a reviewed predecessor of the self-contained component.
-    current_preset = hashlib.sha256(source('schemes/config/pc/weasel.custom.yaml')).hexdigest()
-    previous.setdefault('data/stellae_bundle_weasel.yaml', []).append(current_preset)
+    current_preset = hashlib.sha256(source('schemes/config/pc/stellae.custom.yaml')).hexdigest()
+    original, previous = baseline_predecessors(baseline, current_preset)
     updater = source('scripts/package/Update-Settings.ps1')
     inputs = json.loads(source('installer/bundle-inputs.json'))
     out = a.output.resolve()
@@ -99,7 +114,7 @@ def main():
                      'previousSha256': previous.get(relative, [])})
 
     add('StellaeDeployer.exe', raw)
-    add('data/stellae_bundle_weasel.yaml', appearance_preset(source('schemes/config/pc/stellae/appearance.yaml')))
+    add('data/stellae_bundle_appearance.yaml', appearance_preset(source('schemes/config/pc/stellae/appearance.yaml')))
     names = ['color_scheme_' + t + '.png' for t in THEMES]
     names += ['candidate_font' + s + '.png' for s in ('', '_default', '_sc', '_tc', '_hk')]
     for name in names:

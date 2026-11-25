@@ -1,6 +1,6 @@
 {
   "format": "stellae-schemes-source-v1",
-  "date": "2026-11-24",
+  "date": "2026-11-26",
   "kind": "source-configuration-data-snapshot",
   "nativeBinariesIncluded": false,
   "personalLearningIncluded": false,
@@ -710,7 +710,7 @@
     {
       "path": "config/official-weasel/profile-manifest.json",
       "bytes": 31963,
-      "sha256": "d0c18ae4be43e79ff762d995780e19fdce909b2cf2b4dca9b688e279ee77f5c8"
+      "sha256": "3dd2c74d423c872358ee70f63cb336216b77b29705e7ba9d06cf912ae18eff4b"
     },
     {
       "path": "config/official-weasel/project_radical.dict.yaml",
@@ -1074,8 +1074,8 @@
     },
     {
       "path": "config/pc/config-source-manifest.json",
-      "bytes": 32027,
-      "sha256": "54dd410944fd02df8392f0c93a44920468bd83c989b83f9b28a0897c48dcd50b"
+      "bytes": 32028,
+      "sha256": "78cc3e9d6debc0a58eab0104ee8ba10a731dcfb0cfa5754fef34f622cbf67cfc"
     },
     {
       "path": "config/pc/default.custom.yaml",
@@ -1748,6 +1748,11 @@
       "sha256": "cd834c85a83878313e052fa41e58eadae6addaf1bb08ba4a2a03cf7ba61699a6"
     },
     {
+      "path": "config/pc/stellae.custom.yaml",
+      "bytes": 111,
+      "sha256": "fde02f813ea018515f14aba62d476d4de8a2bf4c0b8f56a219fd60a4bda6fcb0"
+    },
+    {
       "path": "config/pc/stellae/appearance.yaml",
       "bytes": 7628,
       "sha256": "b3f48ca2fdfc81461d803482fd6071a409984e708b20a1ac047a5c19a9ca1829"
@@ -2008,11 +2013,6 @@
       "sha256": "67f8f2b4ecfbdddc3b4e6d238f093ad68a6aab944767832e38d0dc5ad36a0d8d"
     },
     {
-      "path": "config/pc/weasel.custom.yaml",
-      "bytes": 111,
-      "sha256": "fde02f813ea018515f14aba62d476d4de8a2bf4c0b8f56a219fd60a4bda6fcb0"
-    },
-    {
       "path": "config/pc/zh-hant-t-essay-bgw-compact.gram",
       "bytes": 41415724,
       "sha256": "0488ebd6688f900a39200f2b794f2f99bcbf1e8fc27280ae4a2324b08b1559c1"
@@ -2200,17 +2200,17 @@
     {
       "path": "docs/BUILD.md",
       "bytes": 6002,
-      "sha256": "50a51a33fa7079705066d7a335e28732405a10962200c9bad7c7597ba6b5320a"
+      "sha256": "b94bf773f5db5a3ed9e9be1727f0abab0c534562053c0990b1147b5c8421d830"
     },
     {
       "path": "docs/PC.md",
-      "bytes": 2551,
-      "sha256": "e02b51185d2fa058410654e56eeb43407b63ebe4c07995f62f96f1b1c5477414"
+      "bytes": 2912,
+      "sha256": "1c28cc594ff019bbf9729e7308dc54810f750a5fdf57794d47a0fb22b60fbada"
     },
     {
       "path": "docs/STRUCTURE.md",
-      "bytes": 4877,
-      "sha256": "ad19d506a8617111ce4ba36404c4ffebdd0c42b90b946eb2750fd5e3423263df"
+      "bytes": 5198,
+      "sha256": "288b13a5ea8ee5bf82218ca48c639c785993347432bbf57f944b4839d68bff14"
     },
     {
       "path": "docs/dlc-sources.md",
@@ -2219,8 +2219,8 @@
     },
     {
       "path": "docs/official-weasel.md",
-      "bytes": 2506,
-      "sha256": "790f06c150781bad8291cbcadccddf7c7bc107ef4013d386438a4a2ed1806f8e"
+      "bytes": 3121,
+      "sha256": "cd63ffe84f300ac19cb9612fc66c25b9f6d5647945784a7f04caf1933da8c68d"
     },
     {
       "path": "docs/sources/README.md",
@@ -2349,8 +2349,8 @@
     },
     {
       "path": "licenses/build_index.py",
-      "bytes": 12177,
-      "sha256": "3d5bdbe76f75dd743d48a8fe603df511ef08e985b3459011ba0200275cd876b0"
+      "bytes": 12259,
+      "sha256": "05a7aff11c32c067119f4680b9c4536a84f8653b061b9f7072dbee226468cfb3"
     },
     {
       "path": "licenses/english-core/CC-BY-3.0-legalcode.txt",
@@ -2404,13 +2404,13 @@
     },
     {
       "path": "licenses/file-licenses.json",
-      "bytes": 249963,
-      "sha256": "0df2dd69eed7559667349fcb2f661f64f819cc22730982782e2de071f71463ff"
+      "bytes": 251893,
+      "sha256": "002c1d35a74f77d5c5562dfa70554f43fecef816dd3d2028ced0a89bacedf5d1"
     },
     {
       "path": "licenses/layout-records.json",
-      "bytes": 25543,
-      "sha256": "04a2f4b4b91150960ce80b724aaa72f414daa3fbcb71c7c15294123a7c79aebd"
+      "bytes": 25964,
+      "sha256": "7fc9aece86623919fbf3d381cf087bfa2af530381b0577d62cc77ad49fd62770"
     },
     {
       "path": "licenses/luna-compact-model-LGPL-3.0.txt",
@@ -2824,8 +2824,8 @@
     },
     {
       "path": "scripts/build_scheme_packages.py",
-      "bytes": 14100,
-      "sha256": "53c9b72baa16a66c2037047b368cb13eec97ccc15a489c73d9b7d0c7c6bb94b0"
+      "bytes": 14314,
+      "sha256": "2d31e5f9a5aa9bc75d50bf666a1a152cb4a1b981ddc2cd65b260682cc6891a9e"
     },
     {
       "path": "scripts/data/build_dlc_english_index.py",
@@ -2909,8 +2909,8 @@
     },
     {
       "path": "scripts/rebuild_profiles.py",
-      "bytes": 20160,
-      "sha256": "94e768e16a893ef2c8dd44c08d22967fefa9314efdf792258b3f755fac76c3e0"
+      "bytes": 20448,
+      "sha256": "c601f13fa7042f0e57335e2a6467536358f6ffd3bf1b40ebab46939a02264f29"
     },
     {
       "path": "scripts/schemes/Prepare-ValidationEngines.ps1",
@@ -2938,9 +2938,34 @@
       "sha256": "fe44c1ef6bc3afcdd683f7f797df6145e1521dc4df7debfb2e621b138d28d5af"
     },
     {
+      "path": "scripts/upgrade/DlcNamespace.ps1",
+      "bytes": 17089,
+      "sha256": "ad5fa573f6fa50c109158944492ad7c748ad4bbf40d02bd9d5bb8f290bc2ed19"
+    },
+    {
+      "path": "scripts/upgrade/LearningStore.lua",
+      "bytes": 1914,
+      "sha256": "f11a69c604ab358b2bc01ba732234d96fd616d7cb49c9b780d449086b4390fb1"
+    },
+    {
+      "path": "scripts/upgrade/LearningStore.ps1",
+      "bytes": 18950,
+      "sha256": "da0def05b711306a13ae6763efbb7e7d40828b0fcc2f1d845e8912455bb0cfd0"
+    },
+    {
+      "path": "scripts/upgrade/LearningStoreNative.cs",
+      "bytes": 4068,
+      "sha256": "460bc903f23b2010a35a1507679065ea4daaeddbfb27189f85a2c0965be1c80a"
+    },
+    {
+      "path": "scripts/upgrade/README.md",
+      "bytes": 4714,
+      "sha256": "ad2c36b2d2311d6239a44b88475fa8ab65bd20b6b997f7cf3ce237541dbba5ae"
+    },
+    {
       "path": "scripts/verify_release.py",
-      "bytes": 13973,
-      "sha256": "5016c9d48f1d98bdce3bb6368832f96825d1028fb98c2bb3673f4f4de5b14aa8"
+      "bytes": 14075,
+      "sha256": "df869300d7e8df8fce065add1a1619d4f283f2927f205cc37ccd5b21db925f98"
     },
     {
       "path": "sources/base-build.json",

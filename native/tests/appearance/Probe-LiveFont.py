@@ -331,7 +331,7 @@ def font_item(items, family):
 
 
 def configuration_snapshot(profile):
-    paths = list(profile.glob('*.yaml')) + [profile / 'build/weasel.yaml']
+    paths = list(profile.glob('*.yaml')) + [profile / 'build/stellae.yaml']
     return {str(path.relative_to(profile)): (digest(path), path.stat().st_mtime_ns)
             for path in paths if path.is_file()}
 
@@ -339,7 +339,7 @@ def configuration_snapshot(profile):
 def next_configuration_second(profile, report, operation):
     # Pinned librime's ConfigNeedsUpdate compares whole-second source mtimes.
     # Keep this rapid synthetic sequence distinct under that upstream contract.
-    custom = profile / 'weasel.custom.yaml'
+    custom = profile / 'stellae.custom.yaml'
     previous = custom.stat().st_mtime_ns // 1_000_000_000
     delay = previous + 1.05 - time.time()
     require(delay < 5, 'The fixture configuration timestamp is ahead of the runner clock')
@@ -353,7 +353,7 @@ def next_configuration_second(profile, report, operation):
 
 
 def record_configuration_write(profile, event):
-    actual = (profile / 'weasel.custom.yaml').stat().st_mtime_ns // 1_000_000_000
+    actual = (profile / 'stellae.custom.yaml').stat().st_mtime_ns // 1_000_000_000
     event['writtenSourceSecond'] = actual
     require(actual >= event['readySecond'] and actual > event['previousSourceSecond'],
             'The fixture configuration write reused its previous cached timestamp')
@@ -380,7 +380,7 @@ def theme_asset(installation, profile, theme):
 
 def compiled_themes(profile):
     import yaml
-    config = yaml.safe_load((profile / 'build/weasel.yaml').read_text(encoding='utf-8-sig'))
+    config = yaml.safe_load((profile / 'build/stellae.yaml').read_text(encoding='utf-8-sig'))
     themes = config['preset_color_schemes']
     require(set(themes) == {*BUILTIN_THEMES, CUSTOM_THEME},
             'The installed themes differ from the six builtins and retained custom fixture')
@@ -425,7 +425,7 @@ def effective_dark_reader(engine, shared, profile, logs):
                 return c.CFUNCTYPE(result, *parameters)(getattr(api, name))
             def read():
                 settings = lever('custom_settings_init', c.c_void_p, (c.c_char_p, c.c_char_p))(
-                    b'weasel', b'appearance-fixture')
+                    b'stellae', b'appearance-fixture')
                 require(settings, 'The fixture could not create native CustomSettings')
                 try:
                     require(lever('load_settings', c.c_int, (c.c_void_p,))(settings),
@@ -657,7 +657,7 @@ def apply_theme_through_settings(installation, profile, theme, report, preceding
             require(process.wait(timeout=90) == 0, 'The native theme selection did not apply')
             record_configuration_write(profile, clock)
             report['applyMilliseconds'] = round((time.monotonic() - start) * 1000)
-            compiled = yaml.safe_load((profile / 'build/weasel.yaml').read_text('utf-8-sig'))
+            compiled = yaml.safe_load((profile / 'build/stellae.yaml').read_text('utf-8-sig'))
             require(compiled['style']['color_scheme'] == theme,
                     'The compiled appearance did not select the requested theme')
             require(compiled['style']['color_scheme_dark'] == theme,
@@ -674,7 +674,7 @@ def verify_custom_font_defaults(installation, profile, report):
     """Use fixed CI-only custom values, then restore the fixture configuration."""
     import yaml
 
-    custom = profile / 'weasel.custom.yaml'
+    custom = profile / 'stellae.custom.yaml'
     original = custom.read_bytes()
     custom_stack = 'Microsoft YaHei, Noto Sans CJK TC'
     deployer = installation / 'StellaeDeployer.exe'
@@ -686,7 +686,7 @@ def verify_custom_font_defaults(installation, profile, report):
                        check=True, timeout=90)
 
     def style():
-        return yaml.safe_load((profile / 'build/weasel.yaml').read_text(encoding='utf-8-sig'))['style']
+        return yaml.safe_load((profile / 'build/stellae.yaml').read_text(encoding='utf-8-sig'))['style']
 
     def write_custom(content, operation):
         clock = next_configuration_second(profile, report, operation)
@@ -700,7 +700,7 @@ def verify_custom_font_defaults(installation, profile, report):
     def remove_baseline_dark():
         changed = []
         for directory in (installation / 'data', profile):
-            for filename in ('weasel.yaml', 'stellae_bundle_weasel.yaml',
+            for filename in ('stellae.yaml', 'stellae_bundle_appearance.yaml',
                              'rymcp_candidate_font.yaml', 'stellae_candidate_font.yaml',
                              'stellae/appearance.yaml'):
                 path = directory / filename
@@ -848,7 +848,7 @@ def scheme_snapshot(installation, profile):
     folders = {'compiled': profile / 'build', 'shared': installation / 'data'}
     for category, folder in folders.items():
         for path in folder.rglob('*'):
-            if path.is_file() and path.name != 'weasel.yaml':
+            if path.is_file() and path.name != 'stellae.yaml':
                 relative = path.relative_to(folder).as_posix()
                 stat = path.stat()
                 entries[f'{category}/{relative}'] = (digest(path), stat.st_size, stat.st_mtime_ns)
@@ -900,7 +900,7 @@ def validate(args, report):
         default_stat = default.stat()
         os.utime(default, ns=(default_stat.st_atime_ns, default_stat.st_mtime_ns + 10_000_000_000))
         files_before = scheme_snapshot(installation, profile)
-        appearance_before = digest(profile / 'build/weasel.yaml')
+        appearance_before = digest(profile / 'build/stellae.yaml')
         offset = len(read_frames(trace))
         report['phase'] = 'preview without applying, then cancel'
         preview_and_cancel(installation, profile, initial_font, report)
@@ -958,7 +958,7 @@ def validate(args, report):
         report['schemeFilesChecked'] = len(files_before)
         report['changedSchemeFiles'] = changed
         require(not changed, 'Appearance changed scheme or dictionary artifacts')
-        require(digest(profile / 'build/weasel.yaml') != appearance_before,
+        require(digest(profile / 'build/stellae.yaml') != appearance_before,
                 'Appearance compilation did not update its own output')
 
         report['phase'] = 'commit retained draft'

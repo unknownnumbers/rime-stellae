@@ -14,7 +14,8 @@ $checks=@()
 function Check([string]$Name,[bool]$Passed){$script:checks+=@([ordered]@{name=$Name;passed=$Passed});if(-not $Passed){throw $Name}}
 function Set-SyntheticFile([string]$Path,[string]$Value){$null=New-Item -ItemType Directory -Path (Split-Path $Path) -Force;[IO.File]::WriteAllText($Path,$Value)}
 function Manifest {
-  $files=@(Get-ChildItem -LiteralPath (Join-Path $payload 'data') -Recurse -File|ForEach-Object{[ordered]@{path=[IO.Path]::GetRelativePath((Join-Path $payload 'data'),$_.FullName).Replace('\','/');sha256=(Get-FileHash -LiteralPath $_.FullName).Hash.ToLowerInvariant()}})
+  $dataRoot=(Join-Path $payload 'data')
+  $files=@(Get-ChildItem -LiteralPath $dataRoot -Recurse -File|ForEach-Object{[ordered]@{path=$_.FullName.Substring($dataRoot.Length+1).Replace('\','/');sha256=(Get-FileHash -LiteralPath $_.FullName).Hash.ToLowerInvariant()}})
   [ordered]@{bundleVersion='synthetic';files=$files}|ConvertTo-Json -Depth 5|Set-Content -LiteralPath (Join-Path $payload 'shared-manifest.json') -Encoding UTF8
 }
 Set-SyntheticFile (Join-Path $payload 'data/rime.lua') 'return {}'
@@ -23,7 +24,7 @@ Set-SyntheticFile (Join-Path $payload 'data/obsolete.yaml') 'version: 1'
 Set-SyntheticFile (Join-Path $user 'rime.lua') '-- synthetic user entry'
 Set-SyntheticFile (Join-Path $user 'lua/test.lua') '-- synthetic user override'
 Set-SyntheticFile (Join-Path $user 'default.custom.yaml') 'patch: {}'
-Set-SyntheticFile (Join-Path $user 'weasel.custom.yaml') 'patch: {}'
+Set-SyntheticFile (Join-Path $user 'stellae.custom.yaml') 'patch: {}'
 Set-SyntheticFile (Join-Path $user 'fixture.userdb/record') 'synthetic learning sentinel'
 Manifest
 & $helper -Action Install -SharedDirectory $shared -PayloadDirectory $payload -UserDirectory $user -ReportFile (Join-Path $root 'first.json')
@@ -31,7 +32,7 @@ $first=Get-Content -LiteralPath (Join-Path $root 'first.json') -Raw|ConvertFrom-
 Check 'Fresh shared nested files installed' (Test-Path -LiteralPath (Join-Path $shared 'lua/test.lua'))
 Check 'User rime.lua override reported' ('rime.lua' -in $first.userOverrides)
 Check 'User Lua override reported' ('lua/test.lua' -in $first.userOverrides)
-Check 'User default and UI custom paths reported without shared custom files' ('default.custom.yaml' -in $first.userOverrides -and 'weasel.custom.yaml' -in $first.userOverrides)
+Check 'User default and UI custom paths reported without shared custom files' ('default.custom.yaml' -in $first.userOverrides -and 'stellae.custom.yaml' -in $first.userOverrides)
 Check 'User learning sentinel preserved' ((Get-Content -LiteralPath (Join-Path $user 'fixture.userdb/record') -Raw) -eq 'synthetic learning sentinel')
 Set-SyntheticFile (Join-Path $shared 'lua/test.lua') '-- locally modified shared source'
 Set-SyntheticFile (Join-Path $shared 'custom/unknown.yaml') 'unknown: retained'
@@ -91,5 +92,47 @@ $compatReport=Join-Path $root 'without-hash-cmdlet.json'
 & "$env:WINDIR/System32/WindowsPowerShell/v1.0/powershell.exe" -NoProfile -NonInteractive -ExecutionPolicy Bypass -File $compat -Helper $helper -Payload $payload -Shared (Join-Path $root 'without-hash-shared') -User $user -Report $compatReport
 $compatExit=$LASTEXITCODE
 Check 'Windows PowerShell helper works without Get-FileHash' ($compatExit -eq 0 -and (Get-Content -LiteralPath $compatReport -Raw|ConvertFrom-Json).passed)
+function Math-Case([string]$Name,[switch]$ChangedCatalog,[switch]$CurrentIndex,[switch]$ModifiedIndex,[switch]$Defer){
+  $case=Join-Path $root ('math-'+$Name);$userRoot=Join-Path $case 'user';$sharedRoot=Join-Path $case 'shared';$inputRoot=Join-Path $case 'payload'
+  $null=New-Item -ItemType Directory -Path $sharedRoot,(Join-Path $inputRoot 'data') -Force
+  Set-SyntheticFile (Join-Path $inputRoot 'data/default.yaml') 'config_version: synthetic-math'
+  $rows=@([ordered]@{path='default.yaml';sha256=(Get-FileHash -LiteralPath (Join-Path $inputRoot 'data/default.yaml')).Hash.ToLowerInvariant()})
+  [ordered]@{bundleVersion='synthetic-math';files=$rows}|ConvertTo-Json -Depth 5|Set-Content -LiteralPath (Join-Path $inputRoot 'shared-manifest.json') -Encoding UTF8
+  $math=Join-Path $userRoot 'stellae_dlc/math';Set-SyntheticFile (Join-Path $math 'english.tsv') 'fixed synthetic English catalog'
+  $catalogHash=(Get-FileHash -LiteralPath (Join-Path $math 'english.tsv')).Hash.ToLowerInvariant()
+  $oldManifest=Join-Path $case 'original-manifest.tsv';Set-SyntheticFile $oldManifest 'previous Chinese header namespace'
+  $oldManifestHash=(Get-FileHash -LiteralPath $oldManifest).Hash.ToLowerInvariant()
+  Set-SyntheticFile (Join-Path $math 'manifest.tsv') 'new Chinese header namespace'
+  if($ChangedCatalog){Set-SyntheticFile (Join-Path $math 'english.tsv') 'personal changed English catalog'}
+  $indexes=@()
+  foreach($name in @('keys.bin','postings.bin','words.txt')){
+    $file=Join-Path $inputRoot ('migrations/math/english_index/'+$name);Set-SyntheticFile $file ('prepared fixed '+$name)
+    $indexes+=@([ordered]@{name=$name;sha256=(Get-FileHash -LiteralPath $file).Hash.ToLowerInvariant()})
+    if($CurrentIndex){Set-SyntheticFile (Join-Path $math ('english_index/'+$name)) ('prepared fixed '+$name)}
+  }
+  if($ModifiedIndex){Set-SyntheticFile (Join-Path $math 'english_index/keys.bin') 'personal existing index'}
+  [ordered]@{format='stellae-bundle-user-upgrade-v1';previousLua=@();math=[ordered]@{catalogSha256=$catalogHash;manifestSha256=$oldManifestHash;index=$indexes}}|ConvertTo-Json -Depth 8|Set-Content -LiteralPath (Join-Path $inputRoot 'migrations/upgrade.json') -Encoding UTF8
+  $report=Join-Path $case 'install.json'
+  & $helper -Action Install -SharedDirectory $sharedRoot -PayloadDirectory $inputRoot -UserDirectory $userRoot -DeferMathIndex:$Defer -ReportFile $report
+  $result=Get-Content -LiteralPath $report -Raw|ConvertFrom-Json
+  if($Defer){
+    Check 'formal install can defer the prepared index until namespace finalization' ($result.mathIndex -ceq 'deferred' -and -not (Test-Path -LiteralPath (Join-Path $math 'english_index')))
+    $ownershipHash=(Get-FileHash -LiteralPath (Join-Path $sharedRoot 'stellae-managed-files.json')).Hash
+    $report=Join-Path $case 'ensure.json'
+    & $helper -Action EnsureMathIndex -SharedDirectory $sharedRoot -PayloadDirectory $inputRoot -UserDirectory $userRoot -ReportFile $report
+    $result=Get-Content -LiteralPath $report -Raw|ConvertFrom-Json
+    Check 'index-only completion does not reinstall or alter shared ownership' ((Get-FileHash -LiteralPath (Join-Path $sharedRoot 'stellae-managed-files.json')).Hash -ceq $ownershipHash -and $result.installed.Count -eq 0)
+  }
+  $expected=if($ChangedCatalog){'preserved-catalog'}elseif($ModifiedIndex){'preserved-index'}elseif($CurrentIndex){'current'}else{'installed'}
+  Check ($Name+' uses the prepared index only for its exact English catalog') ($result.mathIndex -ceq $expected)
+  if($ChangedCatalog){Check 'different English catalog creates no prepared index files' (-not (Test-Path -LiteralPath (Join-Path $math 'english_index')))}
+  elseif($ModifiedIndex){Check 'unknown existing index is retained byte-exactly' ((Get-Content -LiteralPath (Join-Path $math 'english_index/keys.bin') -Raw) -ceq 'personal existing index' -and -not (Test-Path -LiteralPath (Join-Path $math 'english_index/postings.bin')))}
+  else{foreach($entry in $indexes){Check ($Name+' retains prepared bytes '+$entry.name) ((Get-FileHash -LiteralPath (Join-Path $math ('english_index/'+$entry.name))).Hash.ToLowerInvariant() -ceq $entry.sha256)}}
+}
+Math-Case namespace-only-manifest-change
+Math-Case changed-catalog -ChangedCatalog
+Math-Case existing-prepared-index -CurrentIndex
+Math-Case personal-index -ModifiedIndex
+Math-Case deferred-index -Defer
 [ordered]@{passed=$true;syntheticFixtureOnly=$true;checks=$checks}|ConvertTo-Json -Depth 6|Set-Content -LiteralPath (Join-Path $root 'result.json') -Encoding UTF8
 Write-Output ('PASS shared installation policy: '+$checks.Count)

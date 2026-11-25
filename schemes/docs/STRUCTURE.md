@@ -19,6 +19,8 @@ The two profiles use one maintained implementation. `config/pc` supplies the com
 
 Composition uses Rime's native [`__include` and `__patch` directives](https://github.com/rime/home/wiki/Configuration). Chinese and Japanese personal overrides are last in their schema patch lists. The shared default configuration also applies `default.custom` after the product defaults. The appearance sample includes the shared appearance defaults before its overrides.
 
+Stellae reads and saves appearance overrides through `stellae.custom.yaml`. The official Weasel adapter keeps `weasel.custom.yaml` under its native configuration ID. The installer migrates the previous Stellae appearance file without rewriting its contents; differing old and new files require a merge before upgrading.
+
 For example, replace the empty `patch: {}` in `cn_stellae.custom.yaml` with:
 
 ```yaml

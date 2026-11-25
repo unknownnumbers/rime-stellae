@@ -1,4 +1,4 @@
-﻿# SPDX-License-Identifier: GPL-3.0-only
+# SPDX-License-Identifier: GPL-3.0-only
 param(
   [Parameter(Mandatory)][string]$EngineDll,
   [Parameter(Mandatory)][string]$SharedData,
@@ -14,7 +14,7 @@ New-Item -ItemType Directory -Path $out | Out-Null
 $dll=[IO.Path]::GetFullPath($EngineDll)
 $shared=[IO.Path]::GetFullPath($SharedData)
 $scheme=[IO.Path]::GetFullPath($SchemeSource)
-foreach($name in @('stellae_bundle_default.yaml','stellae_bundle_weasel.yaml')){
+foreach($name in @('stellae_bundle_default.yaml','stellae_bundle_appearance.yaml')){
   if(-not(Test-Path -LiteralPath (Join-Path $shared $name))){throw 'Missing namespaced bundle preset.'}
 }
 if($Case -eq 'All'){
@@ -54,7 +54,7 @@ if($SeedBuildDirectory){
 }
 $utf8=[Text.UTF8Encoding]::new($false)
 if($Case -eq 'Empty'){
-  foreach($name in @('default.custom.yaml','weasel.custom.yaml')){[IO.File]::WriteAllBytes((Join-Path $user $name),[byte[]]@())}
+  foreach($name in @('default.custom.yaml','stellae.custom.yaml')){[IO.File]::WriteAllBytes((Join-Path $user $name),[byte[]]@())}
 }elseif($Case -eq 'Override'){
   $custom=@'
 patch:
@@ -66,7 +66,7 @@ patch:
     - {when: always, accept: F9, toggle: ascii_punct}
 '@
   [IO.File]::WriteAllText((Join-Path $user 'default.custom.yaml'),$custom,$utf8)
-  [IO.File]::WriteAllText((Join-Path $user 'weasel.custom.yaml'),"patch:`n  style/font_point: 17`n",$utf8)
+  [IO.File]::WriteAllText((Join-Path $user 'stellae.custom.yaml'),"patch:`n  style/font_point: 17`n",$utf8)
 }
 $source=[IO.File]::ReadAllText((Join-Path $scheme 'tests/RimeProbe.cs'))
 Add-Type -TypeDefinition $source.Replace('__RIME_ENGINE_DLL__',$dll)
@@ -143,8 +143,8 @@ try{
   [RimeProbe]::RimeInitialize([ref]$traits)
   [RimeProbe]::RimeDeployerInitialize([ref]$traits)
   Check 'workspace-deploy-returned' ([bool][RimeProbe]::RimeDeployWorkspace())
-  Check 'weasel-config-deploy-returned' ([BundlePresetConfigApi]::DeployConfig('weasel.yaml'))
-  foreach($name in @('default.yaml','weasel.yaml','cn_stellae.schema.yaml','jp_stellae.schema.yaml')){
+  Check 'weasel-config-deploy-returned' ([BundlePresetConfigApi]::DeployConfig('stellae.yaml'))
+  foreach($name in @('default.yaml','stellae.yaml','cn_stellae.schema.yaml','jp_stellae.schema.yaml')){
     $file=Join-Path $build $name
     Check ('compiled-'+$name) (Test-Path -LiteralPath $file)
     $text=[IO.File]::ReadAllText($file)
@@ -159,10 +159,10 @@ try{
   Check 'one-switcher-hotkey' ([BundlePresetConfigApi]::Count('default','switcher/hotkeys') -eq 1)
   Check 'expected-switcher-hotkey' ([BundlePresetConfigApi]::Text('default','switcher/hotkeys/@0') -ceq $hotkey)
   $font=if($Case -eq 'Override'){17}else{14}
-  Check 'expected-font-point' ([BundlePresetConfigApi]::Number('weasel','style/font_point') -eq $font)
-  Check 'preserved-bundle-color' ([BundlePresetConfigApi]::Text('weasel','style/color_scheme') -ceq 'reference_gray')
-  Check 'preserved-bundle-preedit' (-not [BundlePresetConfigApi]::Flag('weasel','style/inline_preedit'))
-  Check 'preserved-bundle-global-ascii' ([BundlePresetConfigApi]::Flag('weasel','global_ascii'))
+  Check 'expected-font-point' ([BundlePresetConfigApi]::Number('stellae','style/font_point') -eq $font)
+  Check 'preserved-bundle-color' ([BundlePresetConfigApi]::Text('stellae','style/color_scheme') -ceq 'reference_gray')
+  Check 'preserved-bundle-preedit' (-not [BundlePresetConfigApi]::Flag('stellae','style/inline_preedit'))
+  Check 'preserved-bundle-global-ascii' ([BundlePresetConfigApi]::Flag('stellae','global_ascii'))
   $bindingCount=[BundlePresetConfigApi]::Count('default','key_binder/bindings')
   $accepts=@(for($index=0;$index -lt $bindingCount;$index++){[BundlePresetConfigApi]::Text('default',('key_binder/bindings/@'+$index+'/accept'))})
   Check 'Chinese-shortcut-applied-once' (@($accepts|Where-Object {$_ -ceq 'Control+r'}).Count -eq 1)
@@ -196,7 +196,7 @@ try{
   Check 'actual-Japanese-candidate' ((Query 'qtaberu').Candidates -ccontains '食べる')
   if($Case -eq 'Empty'){
     Check 'empty-default-custom-preserved' ((Get-Item -LiteralPath (Join-Path $user 'default.custom.yaml')).Length -eq 0)
-    Check 'empty-weasel-custom-preserved' ((Get-Item -LiteralPath (Join-Path $user 'weasel.custom.yaml')).Length -eq 0)
+    Check 'empty-weasel-custom-preserved' ((Get-Item -LiteralPath (Join-Path $user 'stellae.custom.yaml')).Length -eq 0)
   }
 }catch{$errorText=$_.Exception.Message}
 finally{

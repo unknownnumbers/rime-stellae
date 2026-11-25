@@ -18,6 +18,8 @@
 
 若已有 `default.custom.yaml`、`weasel.custom.yaml` 或 `rime.lua`, 對照範例合併其內容, 再重新部署. 更新舊版方案時, 對照新版範例合併 `rime.lua` 中的查字與工具入口. 編譯結果及既有學習資料由本機 Rime 管理.
 
+舊版的中文、英文及漢字學習庫名稱分別為 `luna_pinyin`、`pc_english`、`jp_family`, 新版使用 `cn_stellae`、`en_intelligence`、`jp_kanji`. 舊 DLC 資料夾 `rymcp_dlc` 改為 `stellae_dlc`. ZIP 的 `tools/upgrade/` 提供離線遷移工具及步驟, 使用官方 Weasel 自己的引擎, 不需要安裝墨芯前端. 先備份並退出官方 Weasel, 依[遷移說明](../scripts/upgrade/README.md)處理資料及合併配置後再啟動. 工具保留學習記錄值、詞表正文及既有英文索引; 遇到新舊資料並存或仍引用舊名稱的自訂時, 保留原件並提示合併.
+
 ## 可選詞彙
 
 可選模組為 `math`、`physics`、`computer` 及 `poetry`. 數學及物理包提供廣泛學科詞彙, 詩詞包遍歷固定來源的全量唐詩、宋詩、宋詞及配套選集.

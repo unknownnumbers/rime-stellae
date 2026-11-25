@@ -21,7 +21,7 @@ logs.mkdir(parents=True, exist_ok=True)
 report = dict(PublicFixtureOnly=True, Engine=str(engine), Shared=str(shared),
     User=str(user), Logs=str(logs), UiDeployerUsed=False,
     WorkspaceDeployReturned=None, ExplicitSchemaDeployReturned=None,
-    WeaselConfigDeployReturned=None, CompiledSchemaList=[], RequiredFiles={},
+    AppearanceConfigDeployReturned=None, CompiledSchemaList=[], RequiredFiles={},
     DeploymentPassed=False, Error=None)
 header = Path(args.header).read_text(encoding='utf-8-sig')
 body = header.split('typedef struct RIME_FLAVORED(rime_api_t) {', 1)[1].split('} RIME_FLAVORED(RimeApi);', 1)[0]
@@ -49,7 +49,7 @@ try:
         traits.shared_data_dir = str(shared).encode()
         traits.user_data_dir = str(user).encode()
         traits.distribution_name = b'Public native fixture'
-        traits.distribution_code_name = b'weasel'
+        traits.distribution_code_name = b'stellae'
         traits.distribution_version = b'0.17.4'
         traits.app_name = b'rime.public_native_fixture'
         traits.log_dir = str(logs).encode()
@@ -61,8 +61,8 @@ try:
         report['WorkspaceDeployReturned'] = bool(C.CFUNCTYPE(C.c_int)(api.deploy)())
         report['ExplicitSchemaDeployReturned'] = True if args.empty else bool(C.CFUNCTYPE(C.c_int, C.c_char_p)(api.deploy_schema)(
             str(user / 'gui_test.schema.yaml').encode()))
-        report['WeaselConfigDeployReturned'] = bool(C.CFUNCTYPE(C.c_int, C.c_char_p, C.c_char_p)(
-            api.deploy_config_file)(b'weasel.yaml', b'config_version'))
+        report['AppearanceConfigDeployReturned'] = bool(C.CFUNCTYPE(C.c_int, C.c_char_p, C.c_char_p)(
+            api.deploy_config_file)(b'stellae.yaml', b'config_version'))
         config = Config()
         opened = bool(C.CFUNCTYPE(C.c_int, C.c_char_p, C.POINTER(Config))(api.config_open)(b'default', C.byref(config)))
         report['CompiledDefaultOpened'] = opened
@@ -76,12 +76,12 @@ try:
                     report['CompiledSchemaList'].append(value.value.decode() if ok else None)
             finally:
                 C.CFUNCTYPE(C.c_int, C.POINTER(Config))(api.config_close)(C.byref(config))
-        required = ['build/default.yaml', 'build/weasel.yaml'] if args.empty else ['build/gui_test.schema.yaml', 'build/default.yaml', 'build/weasel.yaml',
+        required = ['build/default.yaml', 'build/stellae.yaml'] if args.empty else ['build/gui_test.schema.yaml', 'build/default.yaml', 'build/stellae.yaml',
             'build/b01_public_fixture.table.bin', 'build/b01_public_fixture.prism.bin',
             'build/b01_public_fixture.reverse.bin']
         report['RequiredFiles'] = {name: (user / name).is_file() for name in required}
         report['DeploymentPassed'] = all(report[key] for key in [
-            'WorkspaceDeployReturned', 'ExplicitSchemaDeployReturned', 'WeaselConfigDeployReturned']) and \
+            'WorkspaceDeployReturned', 'ExplicitSchemaDeployReturned', 'AppearanceConfigDeployReturned']) and \
             report['CompiledSchemaList'] == ([] if args.empty else ['gui_test']) and all(report['RequiredFiles'].values())
 except Exception as error:
     report['Error'] = str(error)

@@ -43,7 +43,8 @@ foreach($name in $products){
 $data=Join-Path $payload 'data'
 $null=New-Item -ItemType Directory -Path $data -Force
 foreach($name in @('weasel.yaml','key_bindings.yaml','punctuation.yaml','symbols.yaml')){
-  Copy-Item -LiteralPath (Join-Path $officialOutput "data/$name") -Destination $data
+  $targetName=if($name -eq 'weasel.yaml'){'stellae.yaml'}else{$name}
+  Copy-Item -LiteralPath (Join-Path $officialOutput "data/$name") -Destination (Join-Path $data $targetName)
 }
 foreach($folder in @('opencc','preview')){
   $target=Join-Path $data $folder
@@ -68,8 +69,9 @@ Copy-Item -LiteralPath (Join-Path $repository 'licenses') -Destination $payload 
 if($LASTEXITCODE){throw 'Installed documentation rendering failed.'}
 & python (Join-Path $PSScriptRoot 'index_payload.py') --root $payload --repository $repository --prepare-metadata
 if($LASTEXITCODE){throw 'Installed license reference preparation failed.'}
-foreach($name in @('install.nsi','InstallProfilePolicy.ps1','NativeProfileSnapshot.ps1','stellae_identity.nsh')){
-  Copy-Item -LiteralPath (Join-Path $repository "installer/$name") -Destination $payload
+foreach($name in @('install.nsi','AppearanceConfig.ps1','LearningStore.ps1','LearningStoreNative.cs','LearningStore.lua','DlcNamespace.ps1','InstallProfilePolicy.ps1','NativeProfileSnapshot.ps1','stellae_identity.nsh')){
+  $sourceDirectory=if($name.StartsWith('LearningStore',[StringComparison]::Ordinal) -or $name -ceq 'DlcNamespace.ps1'){'schemes/scripts/upgrade'}else{'installer'}
+  Copy-Item -LiteralPath (Join-Path $repository "$sourceDirectory/$name") -Destination $payload
 }
 $resource=Join-Path $OutputDirectory 'stage/resource'
 $null=New-Item -ItemType Directory -Path $resource

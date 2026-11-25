@@ -35,6 +35,10 @@ After a reviewed source change, update the file license index with `python licen
 [Source inputs](SOURCES.md) | [User guide](PC.md)
 
 
+
+Stellae uses the frontend configuration ID `stellae`. Its base appearance file is `stellae.yaml`, and native levers reads and saves user overrides in `stellae.custom.yaml`. The official Weasel scheme adapter retains its native `weasel` ID and `weasel.custom.yaml`. Installer preflight checks the previous Stellae appearance file before replacing the frontend; migration preserves its contents and requires a manual merge when old and new files differ.
+
+
 ## Static appearance previews
 
 The appearance dialog uses the upstream static PNG preview mechanism. Each of the six bundled themes has a candidate-window preview. A separate, neutral font preview compares Default (Microsoft YaHei), SC, TC and HK using the same Unicode sample. The selected font highlights its row. Theme and font previews update independently; browsing does not deploy a scheme.

@@ -8,6 +8,13 @@
 
 Unicode true
 Var ProfilePolicyPowerShell
+Var LearningNeedsMigration
+Var LearningPrepared
+Var LearningMutexHandle
+Var LearningEngineDirectory
+Var DlcNeedsMigration
+Var DlcPrepared
+Var UserDataDeployed
 !ifdef STELLAE_BUNDLE
 Var BundleTraceFile
 !endif
@@ -167,7 +174,78 @@ LangString AUTOCHKUPDATE ${LANG_ENGLISH} "Automatically check for updates?"
 
 ;--------------------------------
 
+Function ReleaseLearningGuard
+  ${If} $LearningMutexHandle != "0"
+  ${AndIf} $LearningMutexHandle != ""
+    System::Call 'kernel32::CloseHandle(p $LearningMutexHandle) i.r8'
+    StrCpy $LearningMutexHandle "0"
+  ${EndIf}
+FunctionEnd
+
+Function PrepareUserDataUpgrade
+  ${If} $LearningNeedsMigration == "1"
+  ${AndIf} $LearningPrepared != "1"
+    ClearErrors
+    ExecWait '"$ProfilePolicyPowerShell" -NoProfile -NonInteractive -ExecutionPolicy Bypass -File "$PLUGINSDIR\profile-policy\LearningStore.ps1" -Action Prepare -EngineDirectory "$LearningEngineDirectory" -WorkDirectory "$PLUGINSDIR\learning-upgrade" -ReportFile "$PLUGINSDIR\profile-policy\learning-prepared.json"' $R4
+    ${If} ${Errors}
+      Call ReleaseLearningGuard
+      Abort "The previous learning stores could not be prepared. Their original files were preserved."
+    ${EndIf}
+    ${If} $R4 != 0
+      Call ReleaseLearningGuard
+      Abort "The previous learning stores could not be prepared. Their original files were preserved."
+    ${EndIf}
+    StrCpy $LearningPrepared "1"
+  ${EndIf}
+  ${If} $DlcNeedsMigration == "1"
+  ${AndIf} $DlcPrepared != "1"
+    ClearErrors
+    ExecWait '"$ProfilePolicyPowerShell" -NoProfile -NonInteractive -ExecutionPolicy Bypass -File "$PLUGINSDIR\profile-policy\DlcNamespace.ps1" -Action Prepare -StateFile "$PLUGINSDIR\dlc-upgrade-state.json"' $R4
+    ${If} ${Errors}
+      Call ReleaseLearningGuard
+      Abort "The retained DLC could not be prepared. Original module contents were preserved."
+    ${EndIf}
+    ${If} $R4 != 0
+      Call ReleaseLearningGuard
+      Abort "The retained DLC could not be prepared. Original module contents were preserved."
+    ${EndIf}
+    StrCpy $DlcPrepared "1"
+  ${EndIf}
+FunctionEnd
+
+Function .onInstFailed
+  Call RollbackUserDataUpgrade
+  Call ReleaseLearningGuard
+FunctionEnd
+
+Function .onUserAbort
+  Call RollbackUserDataUpgrade
+  Call ReleaseLearningGuard
+FunctionEnd
+
+Function RollbackUserDataUpgrade
+  ; Helpers remove only their own unchanged new copies. Retired originals or
+  ; user edits prevent automatic rollback and remain available for recovery.
+  ${If} $UserDataDeployed == "1"
+    Return
+  ${EndIf}
+  ${If} $LearningPrepared == "1"
+    ExecWait '"$ProfilePolicyPowerShell" -NoProfile -NonInteractive -ExecutionPolicy Bypass -File "$PLUGINSDIR\profile-policy\LearningStore.ps1" -Action Rollback -EngineDirectory "$LearningEngineDirectory" -WorkDirectory "$PLUGINSDIR\learning-upgrade" -ReportFile "$PLUGINSDIR\profile-policy\learning-rollback.json"' $R9
+    !insertmacro BundleTrace "learning-rollback exit=$R9"
+  ${EndIf}
+  ${If} $DlcPrepared == "1"
+    ExecWait '"$ProfilePolicyPowerShell" -NoProfile -NonInteractive -ExecutionPolicy Bypass -File "$PLUGINSDIR\profile-policy\DlcNamespace.ps1" -Action Rollback -StateFile "$PLUGINSDIR\dlc-upgrade-state.json"' $R9
+    !insertmacro BundleTrace "dlc-rollback exit=$R9"
+  ${EndIf}
+FunctionEnd
+
 Function .onInit
+  StrCpy $LearningNeedsMigration "0"
+  StrCpy $LearningPrepared "0"
+  StrCpy $LearningMutexHandle "0"
+  StrCpy $DlcNeedsMigration "0"
+  StrCpy $DlcPrepared "0"
+  StrCpy $UserDataDeployed "0"
 !ifdef STELLAE_X64_BACKEND
   ${IfNot} ${IsNativeAMD64}
     Abort "This bundle requires x64 Windows. It includes compatibility clients for 32-bit applications."
@@ -246,6 +324,15 @@ skip:
   SetOutPath "$PLUGINSDIR\profile-policy"
   File "InstallProfilePolicy.ps1"
   File "NativeProfileSnapshot.ps1"
+  File "AppearanceConfig.ps1"
+  File "LearningStore.ps1"
+  File "LearningStoreNative.cs"
+  File "LearningStore.lua"
+  File "DlcNamespace.ps1"
+!ifdef STELLAE_BUNDLE
+  File /oname=appearance-shared-manifest.json "shared-payload\shared-manifest.json"
+  File /oname=source-layout.json "shared-payload\migrations\source-layout.json"
+!endif
   StrCpy $ProfilePolicyPowerShell "$SYSDIR\WindowsPowerShell\v1.0\powershell.exe"
   ${If} ${RunningX64}
     StrCpy $ProfilePolicyPowerShell "$WINDIR\Sysnative\WindowsPowerShell\v1.0\powershell.exe"
@@ -259,6 +346,67 @@ profile_capture_failed:
   Abort "Could not read the current Windows input settings. No installation changes were made."
 profile_capture_ready:
   !insertmacro BundleTrace "profile-capture-ready"
+  ClearErrors
+  ExecWait '"$ProfilePolicyPowerShell" -NoProfile -NonInteractive -ExecutionPolicy Bypass -File "$PLUGINSDIR\profile-policy\LearningStore.ps1" -Action Preflight -EngineDirectory "$INSTDIR" -WorkDirectory "$PLUGINSDIR\learning-upgrade" -ReportFile "$PLUGINSDIR\profile-policy\learning-preflight.json"' $R4
+  IfErrors learning_preflight_failed
+  IntCmp $R4 0 learning_preflight_ready
+learning_preflight_failed:
+  !insertmacro BundleTrace "learning-preflight-failed exit=$R4"
+  Abort "The old and new learning stores need a manual merge. Their original files, the installed program and service were preserved."
+learning_preflight_ready:
+  IfFileExists "$PLUGINSDIR\learning-upgrade\required.flag" 0 dlc_preflight_start
+  StrCpy $LearningNeedsMigration "1"
+dlc_preflight_start:
+  ClearErrors
+  ExecWait '"$ProfilePolicyPowerShell" -NoProfile -NonInteractive -ExecutionPolicy Bypass -File "$PLUGINSDIR\profile-policy\DlcNamespace.ps1" -Action Preflight -StateFile "$PLUGINSDIR\dlc-upgrade-state.json" -RequiredFlag "$PLUGINSDIR\dlc-upgrade-required.flag"' $R4
+  IfErrors dlc_preflight_failed
+  IntCmp $R4 0 dlc_preflight_ready
+dlc_preflight_failed:
+  !insertmacro BundleTrace "dlc-preflight-failed exit=$R4"
+  Abort "The old and new DLC modules need a manual merge. Their contents, the installed program and service were preserved."
+dlc_preflight_ready:
+  IfFileExists "$PLUGINSDIR\dlc-upgrade-required.flag" 0 user_upgrade_guard_check
+  StrCpy $DlcNeedsMigration "1"
+user_upgrade_guard_check:
+  ${If} $LearningNeedsMigration == "0"
+  ${AndIf} $DlcNeedsMigration == "0"
+    Goto learning_guard_ready
+  ${EndIf}
+  ; Retain the frontend's existing singleton while its old process exits, so
+  ; an application or autorun cannot reopen a store during the offline copy.
+  System::Call 'advapi32::GetUserNameW(w .r6, *i ${NSIS_MAX_STRLEN}) i.r7'
+  StrCmp $7 "0" learning_guard_failed
+  System::Call 'kernel32::CreateMutexW(p 0, i 0, w "RimeStellaeServer-$6") p .s'
+  Pop $LearningMutexHandle
+  StrCmp $LearningMutexHandle "0" learning_guard_failed learning_guard_ready
+learning_guard_failed:
+  Abort "The learning upgrade could not reserve the frontend service. No installed files were changed."
+learning_guard_ready:
+  ; Reject appearance conflicts before stopping the service or replacing files.
+  ClearErrors
+!ifdef STELLAE_BUNDLE
+  ExecWait '"$ProfilePolicyPowerShell" -NoProfile -NonInteractive -ExecutionPolicy Bypass -File "$PLUGINSDIR\profile-policy\AppearanceConfig.ps1" -Action Preflight -SharedDirectory "$INSTDIR\data" -SharedManifest "$PLUGINSDIR\profile-policy\appearance-shared-manifest.json" -SourceLayout "$PLUGINSDIR\profile-policy\source-layout.json" -ReportFile "$PLUGINSDIR\profile-policy\appearance-preflight.json"' $R4
+!else
+  ExecWait '"$ProfilePolicyPowerShell" -NoProfile -NonInteractive -ExecutionPolicy Bypass -File "$PLUGINSDIR\profile-policy\AppearanceConfig.ps1" -Action Preflight -SharedDirectory "$INSTDIR\data" -ReportFile "$PLUGINSDIR\profile-policy\appearance-preflight.json"' $R4
+!endif
+  IfErrors appearance_preflight_failed
+  IntCmp $R4 0 appearance_preflight_ready
+appearance_preflight_failed:
+  !insertmacro BundleTrace "appearance-preflight-failed exit=$R4"
+  Abort "Appearance settings need a manual merge. Resolve weasel.custom.yaml and stellae.custom.yaml or modified shared appearance files before upgrading. The installed program and service were preserved."
+appearance_preflight_ready:
+  !insertmacro BundleTrace "appearance-preflight-ready"
+  ; Stage a byte-exact copy; the previous frontend keeps its original settings
+  ; until the new appearance configuration has compiled successfully.
+  ClearErrors
+  ExecWait '"$ProfilePolicyPowerShell" -NoProfile -NonInteractive -ExecutionPolicy Bypass -File "$PLUGINSDIR\profile-policy\AppearanceConfig.ps1" -Action Migrate -SharedDirectory "$INSTDIR\data" -PreflightReport "$PLUGINSDIR\profile-policy\appearance-preflight.json" -ReportFile "$PLUGINSDIR\profile-policy\appearance-staged.json"' $R4
+  IfErrors appearance_migration_failed
+  IntCmp $R4 0 appearance_migration_ready
+appearance_migration_failed:
+  !insertmacro BundleTrace "appearance-migration-failed exit=$R4"
+  Abort "The appearance settings could not be prepared. Their original files and the installed program were preserved."
+appearance_migration_ready:
+  !insertmacro BundleTrace "appearance-migration-ready"
   ReadRegStr $R0 HKLM \
   "Software\Microsoft\Windows\CurrentVersion\Uninstall\${STELLAE_NAMESPACE}" \
   "UninstallString"
@@ -294,6 +442,8 @@ upgrade_own_directory:
 
 call_uninstaller:
   ExecWait '"$R1\${STELLAE_SERVER_EXE}" /quit'
+  StrCpy $LearningEngineDirectory $R1
+  Call PrepareUserDataUpgrade
   ExecWait '"$R1\${STELLAE_SETUP_EXE}" /u'
   ; Remove registry keys
   DeleteRegKey HKLM "${STELLAE_REG_KEY}"
@@ -387,6 +537,11 @@ program_files:
   File "THIRD_PARTY_NOTICES.md"
   File "package-manifest.json"
   File "package-license-index.json"
+  File "AppearanceConfig.ps1"
+  File "LearningStore.ps1"
+  File "LearningStoreNative.cs"
+  File "LearningStore.lua"
+  File "DlcNamespace.ps1"
   SetOutPath "$INSTDIR\licenses"
   File /r "licenses\*"
   SetOutPath $INSTDIR
@@ -454,7 +609,7 @@ program_files:
   ; shared data files
   SetOutPath $INSTDIR\data
   File "data\default.yaml"
-  File "data\weasel.yaml"
+  File "data\stellae.yaml"
   File "data\key_bindings.yaml"
   File "data\punctuation.yaml"
   File "data\symbols.yaml"
@@ -492,6 +647,10 @@ program_files:
   SetOutPath $INSTDIR
 
   ; /T selects the Traditional installation profile (HK).
+  ; A new program can prepare retained user stores when no older program was
+  ; installed. The singleton remains reserved before any engine deployment.
+  StrCpy $LearningEngineDirectory $INSTDIR
+  Call PrepareUserDataUpgrade
   !insertmacro BundleTrace "program-copy-ready"
   StrCpy $R2 "/i"
   ; Retain this product's registered language when upgrading silently.
@@ -565,7 +724,7 @@ notices_install_failed:
 notices_install_ready:
   !insertmacro BundleTrace "notices-helper-ready"
   ClearErrors
-  ExecWait '"$ProfilePolicyPowerShell" -NoProfile -NonInteractive -ExecutionPolicy Bypass -File "$INSTDIR\BundleData.ps1" -Action Install -SharedDirectory "$INSTDIR\data" -PayloadDirectory "$PLUGINSDIR\shared-payload" -ReportFile "$INSTDIR\scheme-status.json"' $R4
+  ExecWait '"$ProfilePolicyPowerShell" -NoProfile -NonInteractive -ExecutionPolicy Bypass -File "$INSTDIR\BundleData.ps1" -Action Install -SharedDirectory "$INSTDIR\data" -PayloadDirectory "$PLUGINSDIR\shared-payload" -DeferMathIndex -ReportFile "$INSTDIR\scheme-status.json"' $R4
   IfErrors bundle_install_failed
   IntCmp $R4 0 bundle_install_ready
 bundle_install_failed:
@@ -619,7 +778,26 @@ default_font_ready:
   ${EndIf}
 !endif
   ; Deploy the installed shared configuration without a selection dialog.
-!ifdef STELLAE_BUNDLE
+  ${If} $DlcNeedsMigration == "1"
+    ClearErrors
+    ExecWait '"$ProfilePolicyPowerShell" -NoProfile -NonInteractive -ExecutionPolicy Bypass -File "$INSTDIR\DlcNamespace.ps1" -Action Apply -StateFile "$PLUGINSDIR\dlc-upgrade-state.json"' $R4
+    ${If} ${Errors}
+      Abort "The verified DLC could not be installed. Original modules and backups were preserved."
+    ${EndIf}
+    ${If} $R4 != 0
+      Abort "The verified DLC could not be installed. Original modules and backups were preserved."
+    ${EndIf}
+  ${EndIf}
+  ${If} $LearningNeedsMigration == "1"
+    ClearErrors
+    ExecWait '"$ProfilePolicyPowerShell" -NoProfile -NonInteractive -ExecutionPolicy Bypass -File "$INSTDIR\LearningStore.ps1" -Action Apply -EngineDirectory "$INSTDIR" -WorkDirectory "$PLUGINSDIR\learning-upgrade" -ReportFile "$INSTDIR\learning-upgrade-applied.json"' $R4
+    ${If} ${Errors}
+      Abort "The verified learning copies could not be installed. Original stores and backups were preserved."
+    ${EndIf}
+    ${If} $R4 != 0
+      Abort "The verified learning copies could not be installed. Original stores and backups were preserved."
+    ${EndIf}
+  ${EndIf}
   ClearErrors
   ExecWait '"$INSTDIR\${STELLAE_DEPLOYER_EXE}" /deploy' $R4
   IfErrors bundle_deploy_failed
@@ -629,9 +807,49 @@ bundle_deploy_failed:
   Abort "Scheme deployment did not complete. Existing user data was preserved."
 bundle_deploy_ready:
   !insertmacro BundleTrace "deploy-ready"
-!else
-  ExecWait '"$INSTDIR\${STELLAE_DEPLOYER_EXE}" /deploy'
+  StrCpy $UserDataDeployed "1"
+  ClearErrors
+  ExecWait '"$ProfilePolicyPowerShell" -NoProfile -NonInteractive -ExecutionPolicy Bypass -File "$INSTDIR\AppearanceConfig.ps1" -Action Finalize -SharedDirectory "$INSTDIR\data" -PreflightReport "$PLUGINSDIR\profile-policy\appearance-preflight.json" -ReportFile "$INSTDIR\appearance-migration-status.json"' $R4
+  IfErrors appearance_finalize_failed
+  IntCmp $R4 0 appearance_finalize_ready
+appearance_finalize_failed:
+  !insertmacro BundleTrace "appearance-finalize-failed exit=$R4"
+  Abort "The new appearance settings could not be verified. Previous settings and backups were preserved."
+appearance_finalize_ready:
+  !insertmacro BundleTrace "appearance-finalize-ready"
+  ${If} $DlcNeedsMigration == "1"
+    ClearErrors
+    ExecWait '"$ProfilePolicyPowerShell" -NoProfile -NonInteractive -ExecutionPolicy Bypass -File "$INSTDIR\DlcNamespace.ps1" -Action Finalize -StateFile "$PLUGINSDIR\dlc-upgrade-state.json"' $R4
+    ${If} ${Errors}
+      Abort "The previous DLC namespace could not be archived. Original and migrated modules were preserved."
+    ${EndIf}
+    ${If} $R4 != 0
+      Abort "The previous DLC namespace could not be archived. Original and migrated modules were preserved."
+    ${EndIf}
+  ${EndIf}
+!ifdef STELLAE_BUNDLE
+  ; Add the existing prepared English index only after namespace verification
+  ; has finished. No scheme copy or deployment is repeated here.
+  ClearErrors
+  ExecWait '"$ProfilePolicyPowerShell" -NoProfile -NonInteractive -ExecutionPolicy Bypass -File "$INSTDIR\BundleData.ps1" -Action EnsureMathIndex -SharedDirectory "$INSTDIR\data" -PayloadDirectory "$PLUGINSDIR\shared-payload" -ReportFile "$INSTDIR\math-index-status.json"' $R4
+  IfErrors math_index_failed
+  IntCmp $R4 0 math_index_ready
+math_index_failed:
+  Abort "The prepared math index could not be installed. Original catalogs and existing indexes were preserved."
+math_index_ready:
+  !insertmacro BundleTrace "math-index-ready"
 !endif
+  ${If} $LearningNeedsMigration == "1"
+    ClearErrors
+    ExecWait '"$ProfilePolicyPowerShell" -NoProfile -NonInteractive -ExecutionPolicy Bypass -File "$INSTDIR\LearningStore.ps1" -Action Finalize -EngineDirectory "$INSTDIR" -WorkDirectory "$PLUGINSDIR\learning-upgrade" -ReportFile "$INSTDIR\learning-upgrade-status.json"' $R4
+    ${If} ${Errors}
+      Abort "The old learning stores could not be archived. Both generations were preserved."
+    ${EndIf}
+    ${If} $R4 != 0
+      Abort "The old learning stores could not be archived. Both generations were preserved."
+    ${EndIf}
+  ${EndIf}
+  Call ReleaseLearningGuard
 
   ; don't redirect on 64 bit system for auto run setting
   ${If} ${IsNativeARM64}

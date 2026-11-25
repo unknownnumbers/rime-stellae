@@ -1,9 +1,10 @@
 # SPDX-License-Identifier: GPL-3.0-only
 param(
-  [Parameter(Mandatory)][ValidateSet('Install','Uninstall','InstallNotices','UninstallNotices')][string]$Action,
+  [Parameter(Mandatory)][ValidateSet('Install','Uninstall','InstallNotices','UninstallNotices','EnsureMathIndex')][string]$Action,
   [Parameter(Mandatory)][string]$SharedDirectory,
   [string]$PayloadDirectory,
   [string]$UserDirectory,
+  [switch]$DeferMathIndex,
   [string]$ReportFile,
   [string]$CurrentPackageManifest,
   [string]$PreviousPackageManifest
@@ -82,8 +83,9 @@ function Add-LegacyMathIndex($Migration,$MigrationDirectory,[string]$UserRoot){
   $manifest=Resolve-Child $math 'manifest.tsv'
   if(-not (Test-Path -LiteralPath $catalog -PathType Leaf) -or
      -not (Test-Path -LiteralPath $manifest -PathType Leaf)){return 'not-present'}
-  if((Hash $catalog) -cne $Migration.catalogSha256 -or
-     (Hash $manifest) -cne $Migration.manifestSha256){return 'preserved-catalog'}
+  # The prepared English index depends on this exact catalog; Chinese header
+  # namespace changes may legitimately alter the module's file manifest.
+  if((Hash $catalog) -cne $Migration.catalogSha256){return 'preserved-catalog'}
 
   $index=Resolve-Child $math 'english_index'
   if((Test-Path -LiteralPath $index) -and -not (Test-Path -LiteralPath $index -PathType Container)){
@@ -139,6 +141,25 @@ function Add-LegacyMathIndex($Migration,$MigrationDirectory,[string]$UserRoot){
   return 'installed'
 }
 $report=[ordered]@{format=$(if($notices){'stellae-notices-update-v1'}else{'stellae-shared-update-v1'});action=$Action;passed=$false;sharedConflicts=@();userOverrides=@();removed=@();installed=@();upgradedUserLua=@();mathIndex='not-requested';retiredUserSources=@();userSourceConflicts=@();compatibilitySourcesRetained=@();manualMergeRequired=$false}
+if($Action -in @('Install','EnsureMathIndex') -and -not $UserDirectory){
+  $base=[Microsoft.Win32.RegistryKey]::OpenBaseKey([Microsoft.Win32.RegistryHive]::CurrentUser,[Microsoft.Win32.RegistryView]::Registry32)
+  try{$key=$base.OpenSubKey('Software\RimeStellae');try{if($key){$UserDirectory=[string]$key.GetValue('RimeUserDir','')}}finally{if($key){$key.Dispose()}}}finally{$base.Dispose()}
+  if(-not $UserDirectory){$UserDirectory=Join-Path $env:APPDATA 'RimeStellae'}
+}
+if($Action -eq 'EnsureMathIndex'){
+  if(-not $PayloadDirectory){throw 'A prepared index payload is required'}
+  $migrationDirectory=Resolve-Child ([IO.Path]::GetFullPath($PayloadDirectory)) 'migrations'
+  $migrationPath=Resolve-Child $migrationDirectory 'upgrade.json'
+  if(Test-Path -LiteralPath $migrationPath -PathType Leaf){
+    $migration=Get-Content -LiteralPath $migrationPath -Raw|ConvertFrom-Json
+    if($migration.format -cne 'stellae-bundle-user-upgrade-v1'){throw 'Unexpected user upgrade format'}
+    $report.mathIndex=Add-LegacyMathIndex $migration.math $migrationDirectory $UserDirectory
+  }
+  $report.format='stellae-math-index-update-v1';$report.passed=$true
+  if($ReportFile){$report|ConvertTo-Json -Depth 10|Set-Content -LiteralPath $ReportFile -Encoding UTF8}
+  Write-Output ('Prepared math index: '+$report.mathIndex)
+  return
+}
 if($operation -eq 'Uninstall'){
   foreach($entry in $previous.Values){
     $path=Resolve-Child $shared $entry.path
@@ -160,11 +181,6 @@ if($operation -eq 'Uninstall'){
   $retireUserSources=@()
   $retainLegacyLua=$false
   if(-not $notices){
-    if(-not $UserDirectory){
-      $base=[Microsoft.Win32.RegistryKey]::OpenBaseKey([Microsoft.Win32.RegistryHive]::CurrentUser,[Microsoft.Win32.RegistryView]::Registry32)
-      try{$key=$base.OpenSubKey('Software\RimeStellae');try{if($key){$UserDirectory=[string]$key.GetValue('RimeUserDir','')}}finally{if($key){$key.Dispose()}}}finally{$base.Dispose()}
-      if(-not $UserDirectory){$UserDirectory=Join-Path $env:APPDATA 'RimeStellae'}
-    }
     $migrationDirectory=Resolve-Child $payload 'migrations'
     $layoutPath=Resolve-Child $migrationDirectory 'source-layout.json'
     if(Test-Path -LiteralPath $layoutPath -PathType Leaf){
@@ -179,10 +195,18 @@ if($operation -eq 'Uninstall'){
            ($entry.group -ceq 'lua' -and $entry.path -cne 'rime.lua' -and $entry.path -cnotmatch '^lua/[A-Za-z0-9_]+\.lua$') -or
            ($entry.group -ceq 'configuration' -and $entry.path -cnotmatch '\.yaml$')){throw 'Invalid source layout record'}
         $layoutFiles[$entry.path]=$entry
+        # AppearanceConfig retains the old custom file until the new frontend
+        # configuration has compiled, including unchanged former presets.
+        if($entry.path -ceq 'weasel.custom.yaml' -and $incoming.ContainsKey('stellae.yaml')){continue}
         $target=Resolve-Child $UserDirectory $entry.path
         if(Test-Path -LiteralPath $target -PathType Leaf){
           $current=Hash $target
-          if($current -ceq $entry.sha256){$retireUserSources+=@($entry)}
+          $previousPath=if($entry.path -ceq 'default.custom.yaml'){'stellae_bundle_default.yaml'}else{$entry.path}
+          $knownPrevious=($previous.ContainsKey($entry.path) -and $current -ceq $previous[$entry.path].sha256) -or
+            ($previous.ContainsKey($previousPath) -and $current -ceq $previous[$previousPath].sha256)
+          if($current -ceq $entry.sha256 -or $knownPrevious){
+            $retireUserSources+=@([pscustomobject]@{path=$entry.path;sha256=$current;group=$entry.group})
+          }
           elseif(-not $incoming.ContainsKey($entry.path) -or $current -cne $incoming[$entry.path]){
             $report.userSourceConflicts+=@($entry.path)
             if($entry.group -ceq 'lua'){$retainLegacyLua=$true}
@@ -194,7 +218,8 @@ if($operation -eq 'Uninstall'){
           $legacy=Resolve-Child $shared $entry.path
           if(Test-Path -LiteralPath $legacy -PathType Leaf){
             $current=Hash $legacy
-            if($current -cne $entry.sha256 -and (-not $incoming.ContainsKey($entry.path) -or $current -cne $incoming[$entry.path])){
+            $knownPrevious=$previous.ContainsKey($entry.path) -and $current -ceq $previous[$entry.path].sha256
+            if($current -cne $entry.sha256 -and -not $knownPrevious -and (-not $incoming.ContainsKey($entry.path) -or $current -cne $incoming[$entry.path])){
               $retainLegacyLua=$true
               $report.sharedConflicts+=@($entry.path)
             }
@@ -288,10 +313,10 @@ if($operation -eq 'Uninstall'){
         $report.upgradedUserLua+=@($entry.path)
       }finally{[IO.File]::Delete($stage)}
     }
-    $report.mathIndex=Add-LegacyMathIndex $migration.math $migrationDirectory $UserDirectory
+    $report.mathIndex=if($DeferMathIndex){'deferred'}else{Add-LegacyMathIndex $migration.math $migrationDirectory $UserDirectory}
   }
   # Only test source/configuration path presence. Never open a learning database.
-  $overridePaths=@('default.custom.yaml','weasel.custom.yaml')+@($spec.files|ForEach-Object {$_.path})
+  $overridePaths=@('default.custom.yaml','stellae.custom.yaml')+@($spec.files|ForEach-Object {$_.path})
   foreach($relative in @($overridePaths|Sort-Object -Unique)){
     $path=Resolve-Child $UserDirectory $relative
     if(Test-Path -LiteralPath $path -PathType Leaf){$report.userOverrides+=@($relative)}

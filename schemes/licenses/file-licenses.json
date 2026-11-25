@@ -2318,7 +2318,8 @@
       "references": [
         "LICENSE",
         "docs/sources/official-weasel-sources.md"
-      ]
+      ],
+      "previous_path": "config/pc/weasel.custom.yaml"
     },
     {
       "kind": "project-metadata",
@@ -4620,6 +4621,17 @@
       "previous_path": "config/pc/cn_stellae.custom.yaml"
     },
     {
+      "path": "config/pc/stellae.custom.yaml",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "LICENSE"
+      ],
+      "previous_path": "config/pc/weasel.custom.yaml"
+    },
+    {
       "path": "config/pc/stellae_dlc_computer.dict.yaml",
       "kind": "program-or-configuration",
       "project_license": "GPL-3.0-only",
@@ -5022,16 +5034,6 @@
       "license_scope": "Unicode License V3 data; own display transformation GPLv3",
       "references": [
         "docs/sources/u-readings-sources.md"
-      ]
-    },
-    {
-      "path": "config/pc/weasel.custom.yaml",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
-      "retained_upstream_terms": [],
-      "references": [
-        "LICENSE"
       ]
     },
     {
@@ -6963,6 +6965,56 @@
         "LICENSE"
       ],
       "path": "scripts/schemes/Test-SharedProfile.ps1"
+    },
+    {
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "LICENSE"
+      ],
+      "path": "scripts/upgrade/DlcNamespace.ps1"
+    },
+    {
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "LICENSE"
+      ],
+      "path": "scripts/upgrade/LearningStore.lua"
+    },
+    {
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "LICENSE"
+      ],
+      "path": "scripts/upgrade/LearningStore.ps1"
+    },
+    {
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "LICENSE"
+      ],
+      "path": "scripts/upgrade/LearningStoreNative.cs"
+    },
+    {
+      "kind": "project-explanatory-document",
+      "project_license": "CC-BY-SA-4.0",
+      "license_scope": "Original explanatory prose; quotations, attribution statements and code/data excerpts retain their own terms.",
+      "references": [
+        "THIRD_PARTY_NOTICES.md",
+        "licenses/CC-BY-SA-4.0.txt"
+      ],
+      "path": "scripts/upgrade/README.md"
     },
     {
       "path": "scripts/verify_release.py",

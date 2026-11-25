@@ -39,7 +39,7 @@ if ($Case -ne 'Absent') {
   [IO.File]::WriteAllText((Join-Path $user 'rymcp_candidate_font.yaml'), "patch:`n  style/font_face: $font`n", $utf8)
 }
 $expectedSize = '14'
-$custom = Join-Path $user 'weasel.custom.yaml'
+$custom = Join-Path $user 'stellae.custom.yaml'
 $customValue = "# Existing user override.`npatch:`n  style/font_face: Consolas`n  style/font_point: 17`n"
 if ($Case -eq 'Override') {
   [IO.File]::WriteAllText($custom, $customValue, $utf8)
@@ -65,7 +65,7 @@ public static class FontPresetProbe {
             throw new InvalidOperationException("Deploy command unavailable");
         IntPtr function = Marshal.ReadIntPtr(api, offset);
         if (function == IntPtr.Zero) throw new InvalidOperationException("Deploy command unavailable");
-        return ((Deploy)Marshal.GetDelegateForFunctionPointer(function, typeof(Deploy)))("weasel.yaml", "config_version") != 0;
+        return ((Deploy)Marshal.GetDelegateForFunctionPointer(function, typeof(Deploy)))("stellae.yaml", "config_version") != 0;
     }
 }
 '@
@@ -88,7 +88,7 @@ try {
     if ($pointer -ne [IntPtr]::Zero) { [Runtime.InteropServices.Marshal]::FreeHGlobal($pointer) }
   }
 }
-$compiled = [IO.File]::ReadAllText((Join-Path $build 'weasel.yaml'))
+$compiled = [IO.File]::ReadAllText((Join-Path $build 'stellae.yaml'))
 function Value([string]$name) {
   $match = [regex]::Match($compiled, ('(?m)^  ' + [regex]::Escape($name) + ':[ \t]*([^\r\n]+)\r?$'))
   if (-not $match.Success) { throw ('Compiled style is missing ' + $name) }

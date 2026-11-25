@@ -15,7 +15,7 @@ import re
 FORBIDDEN_PARTS = {'.git', '.codex', '.agents', 'build', 'sync', 'logs', 'backups', '__pycache__'}
 FORBIDDEN_NAMES = {'user.yaml', 'installation.yaml'}
 REQUIRED_INPUTS = {
-    'default.custom.yaml', 'cn_stellae.custom.yaml', 'jp_stellae.schema.yaml', 'rime.lua', 'weasel.custom.yaml',
+    'default.custom.yaml', 'cn_stellae.custom.yaml', 'jp_stellae.schema.yaml', 'rime.lua', 'stellae.custom.yaml',
     'stellae/defaults.yaml', 'stellae/chinese.yaml', 'stellae/english.yaml',
     'stellae/japanese.yaml', 'stellae/tools.yaml', 'stellae/appearance.yaml', 'stellae/spelling.yaml',
     'key_bindings.yaml', 'punctuation.yaml', 'symbols.yaml',
@@ -204,6 +204,10 @@ def adapt_profile(inputs, name, specification):
     if name == 'official-weasel':
         if specification['stock_word_completion'] is not True or specification['ctrl_space_owner'] != 'official-client':
             raise ValueError('Unexpected official capability specification.')
+        # The official host retains its native frontend configuration ID.
+        if 'weasel.custom.yaml' in result:
+            raise ValueError('The common profile must have one appearance override entrypoint.')
+        result['weasel.custom.yaml'] = result.pop('stellae.custom.yaml')
         result['stellae/chinese.yaml'] = edit_text(result['stellae/chinese.yaml'], official_pc_settings)
         result['stellae/appearance.yaml'] = edit_text(result['stellae/appearance.yaml'], official_appearance)
         result['stellae/defaults.yaml'] = edit_text(result['stellae/defaults.yaml'],

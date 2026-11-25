@@ -906,6 +906,15 @@
       ]
     },
     {
+      "path": "installer/AppearanceConfig.ps1",
+      "source_ids": [
+        "project-code"
+      ],
+      "references": [
+        "LICENSE"
+      ]
+    },
+    {
       "path": "installer/bundle-inputs.json",
       "source_ids": [
         "project-code"
@@ -1542,7 +1551,25 @@
       ]
     },
     {
+      "path": "native/tests/installer/Probe-InstalledClient.ps1",
+      "source_ids": [
+        "project-code"
+      ],
+      "references": [
+        "LICENSE"
+      ]
+    },
+    {
       "path": "native/tests/installer/Probe-InstalledEngine.py",
+      "source_ids": [
+        "project-code"
+      ],
+      "references": [
+        "LICENSE"
+      ]
+    },
+    {
+      "path": "native/tests/installer/Test-AppearanceConfig.ps1",
       "source_ids": [
         "project-code"
       ],
@@ -1605,6 +1632,15 @@
       ]
     },
     {
+      "path": "native/tests/installer/Test-DlcNamespace.ps1",
+      "source_ids": [
+        "project-code"
+      ],
+      "references": [
+        "LICENSE"
+      ]
+    },
+    {
       "path": "native/tests/installer/Test-FontInstallerE2E.ps1",
       "source_ids": [
         "project-code"
@@ -1633,6 +1669,33 @@
     },
     {
       "path": "native/tests/installer/Test-InstallerPolicy.ps1",
+      "source_ids": [
+        "project-code"
+      ],
+      "references": [
+        "LICENSE"
+      ]
+    },
+    {
+      "path": "native/tests/installer/Test-LearningStore.ps1",
+      "source_ids": [
+        "project-code"
+      ],
+      "references": [
+        "LICENSE"
+      ]
+    },
+    {
+      "path": "native/tests/installer/Test-PublicUpgrade.ps1",
+      "source_ids": [
+        "project-code"
+      ],
+      "references": [
+        "LICENSE"
+      ]
+    },
+    {
+      "path": "native/tests/installer/Test-PublicUpgradeLearning.ps1",
       "source_ids": [
         "project-code"
       ],
@@ -1713,7 +1776,7 @@
       ]
     },
     {
-      "path": "native/tests/key-pairing/fixture/weasel.yaml",
+      "path": "native/tests/key-pairing/fixture/stellae.yaml",
       "source_ids": [
         "project-code"
       ],
@@ -1821,6 +1884,15 @@
       ]
     },
     {
+      "path": "native/tests/package/test_appearance_profile.py",
+      "source_ids": [
+        "project-code"
+      ],
+      "references": [
+        "LICENSE"
+      ]
+    },
+    {
       "path": "native/tests/package/test_bundle_architecture.py",
       "source_ids": [
         "project-code"
@@ -1849,6 +1921,15 @@
     },
     {
       "path": "native/tests/package/test_server_overlays.py",
+      "source_ids": [
+        "project-code"
+      ],
+      "references": [
+        "LICENSE"
+      ]
+    },
+    {
+      "path": "native/tests/package/test_settings_update.py",
       "source_ids": [
         "project-code"
       ],
@@ -3956,6 +4037,7 @@
         "schemes/LICENSE",
         "schemes/docs/sources/official-weasel-sources.md"
       ],
+      "previous_path": "config/pc/weasel.custom.yaml",
       "source_ids": []
     },
     {
@@ -6401,6 +6483,18 @@
       "source_ids": []
     },
     {
+      "path": "schemes/config/pc/stellae.custom.yaml",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "schemes/LICENSE"
+      ],
+      "previous_path": "config/pc/weasel.custom.yaml",
+      "source_ids": []
+    },
+    {
       "path": "schemes/config/pc/stellae_dlc_computer.dict.yaml",
       "kind": "program-or-configuration",
       "project_license": "GPL-3.0-only",
@@ -6844,17 +6938,6 @@
       "references": [
         "schemes/docs/sources/u-readings-sources.md"
       ]
-    },
-    {
-      "path": "schemes/config/pc/weasel.custom.yaml",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
-      "retained_upstream_terms": [],
-      "references": [
-        "schemes/LICENSE"
-      ],
-      "source_ids": []
     },
     {
       "path": "schemes/config/pc/zh-hant-t-essay-bgw-compact.gram",
@@ -8929,6 +9012,61 @@
         "schemes/LICENSE"
       ],
       "path": "schemes/scripts/schemes/Test-SharedProfile.ps1",
+      "source_ids": []
+    },
+    {
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "schemes/LICENSE"
+      ],
+      "path": "schemes/scripts/upgrade/DlcNamespace.ps1",
+      "source_ids": []
+    },
+    {
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "schemes/LICENSE"
+      ],
+      "path": "schemes/scripts/upgrade/LearningStore.lua",
+      "source_ids": []
+    },
+    {
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "schemes/LICENSE"
+      ],
+      "path": "schemes/scripts/upgrade/LearningStore.ps1",
+      "source_ids": []
+    },
+    {
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "schemes/LICENSE"
+      ],
+      "path": "schemes/scripts/upgrade/LearningStoreNative.cs",
+      "source_ids": []
+    },
+    {
+      "kind": "project-explanatory-document",
+      "project_license": "CC-BY-SA-4.0",
+      "license_scope": "Original explanatory prose; quotations, attribution statements and code/data excerpts retain their own terms.",
+      "references": [
+        "schemes/THIRD_PARTY_NOTICES.md",
+        "schemes/licenses/CC-BY-SA-4.0.txt"
+      ],
+      "path": "schemes/scripts/upgrade/README.md",
       "source_ids": []
     },
     {

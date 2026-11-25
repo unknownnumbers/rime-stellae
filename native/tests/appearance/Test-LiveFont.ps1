@@ -155,9 +155,9 @@ import json,sys,time,yaml
 from pathlib import Path
 profile=Path(sys.argv[1]);report=Path(sys.argv[2])
 expected={'reference_gray','stellae_sakura','stellae_lavender','stellae_night','stellae_crimson','stellae_mono'}
-compiled=yaml.safe_load((profile/'build/weasel.yaml').read_text('utf-8-sig'))
+compiled=yaml.safe_load((profile/'build/stellae.yaml').read_text('utf-8-sig'))
 assert set(compiled['preset_color_schemes'])==expected,'The fresh appearance configuration retained old builtin themes'
-custom=profile/'weasel.custom.yaml';data=yaml.safe_load(custom.read_text('utf-8-sig')) or {}
+custom=profile/'stellae.custom.yaml';data=yaml.safe_load(custom.read_text('utf-8-sig')) or {}
 time.sleep(max(0,custom.stat().st_mtime_ns//1_000_000_000+1.05-time.time()))
 data.setdefault('patch',{})['preset_color_schemes/ci_custom_theme']={'name':'CI custom theme','author':'Synthetic fixture','color_format':'abgr','back_color':0xff292b30,'candidate_text_color':0xfff5f5f5,'hilited_candidate_back_color':0xff735345,'hilited_candidate_text_color':0xffffffff}
 custom.write_text(yaml.safe_dump(data,allow_unicode=True,sort_keys=False),encoding='utf-8')
@@ -165,7 +165,7 @@ report.write_text(json.dumps({'freshBuiltinThemeIds':sorted(expected),'customThe
 '@
   Invoke-FixtureStep $python @('-c', $seedTheme, $profileDirectory,
     (Join-Path $reportRoot 'upgrade-theme.json')) 'seed-custom-theme' 30000
-  $customPath = Join-Path $profileDirectory 'weasel.custom.yaml'
+  $customPath = Join-Path $profileDirectory 'stellae.custom.yaml'
   $customBeforeUpgrade = (Get-FileHash -LiteralPath $customPath).Hash
   if ($settingsPayload) {
     Invoke-SettingsComponent 'coverage-settings-update'

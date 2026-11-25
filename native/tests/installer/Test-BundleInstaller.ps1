@@ -44,6 +44,18 @@ function Run([string]$File,[string]$Arguments){
     }
   }finally{$process.Dispose()}
 }
+function Reject-Upgrade([string]$Reason){
+  $serverHash=(Get-FileHash -LiteralPath (Join-Path $root 'StellaeServer.exe')).Hash
+  $setupHash=(Get-FileHash -LiteralPath (Join-Path $root 'StellaeSetup.exe')).Hash
+  $registry=(Get-ItemProperty 'HKLM:/Software/WOW6432Node/RimeStellae').InstallDir
+  $process=Start-Process -FilePath $installer -ArgumentList '/S' -PassThru -WindowStyle Hidden
+  try{
+    if(-not $process.WaitForExit(120000)){throw 'Appearance conflict rejection timed out'}
+    Check ($Reason+' rejects upgrade') ($process.ExitCode -notin @(0,3010))
+  }finally{$process.Dispose()}
+  Check ($Reason+' preserves the old server and setup') ((Get-FileHash -LiteralPath (Join-Path $root 'StellaeServer.exe')).Hash -ceq $serverHash -and (Get-FileHash -LiteralPath (Join-Path $root 'StellaeSetup.exe')).Hash -ceq $setupHash)
+  Check ($Reason+' preserves the installation registration') ((Get-ItemProperty 'HKLM:/Software/WOW6432Node/RimeStellae').InstallDir -ceq $registry)
+}
 function Snapshot([string]$Name){
   $path=Join-Path $out ($Name+'.json')
   & "$env:WINDIR/System32/WindowsPowerShell/v1.0/powershell.exe" -NoProfile -ExecutionPolicy Bypass -File (Join-Path $PSScriptRoot 'NativeProfileSnapshot.ps1') -OutputFile $path|Out-Null
@@ -93,6 +105,20 @@ $bareUser=Join-Path $user 'bare-user-sentinel.txt'
 [IO.File]::WriteAllText($bareUser,'synthetic user file retained from bare installation')
 [IO.File]::WriteAllText((Join-Path $user 'weasel.custom.yaml'),"patch:`n  style/font_point: 17`n")
 $bareUserConfigHash=(Get-FileHash -LiteralPath (Join-Path $user 'weasel.custom.yaml')).Hash
+$newCustom=Join-Path $user 'stellae.custom.yaml'
+[IO.File]::WriteAllText($newCustom,"patch:`n  style/font_point: 19`n")
+$conflictingHash=(Get-FileHash -LiteralPath $newCustom).Hash
+Reject-Upgrade 'Different old and new appearance settings'
+Check 'Conflicting custom files remain byte-exact after rejection' ((Get-FileHash -LiteralPath $newCustom).Hash -ceq $conflictingHash -and (Get-FileHash -LiteralPath (Join-Path $user 'weasel.custom.yaml')).Hash -ceq $bareUserConfigHash)
+Copy-Item -LiteralPath $newCustom -Destination (Join-Path $out 'synthetic-conflicting-custom.yaml')
+Remove-Item -LiteralPath $newCustom
+$legacyAppearance=Join-Path $shared 'weasel.yaml'
+$legacyAppearanceBytes=[IO.File]::ReadAllBytes($legacyAppearance)
+[IO.File]::AppendAllText($legacyAppearance,"`n# Synthetic modified shared appearance`n")
+$modifiedAppearanceHash=(Get-FileHash -LiteralPath $legacyAppearance).Hash
+Reject-Upgrade 'Modified former shared appearance settings'
+Check 'Modified shared appearance remains byte-exact after rejection' ((Get-FileHash -LiteralPath $legacyAppearance).Hash -ceq $modifiedAppearanceHash)
+[IO.File]::WriteAllBytes($legacyAppearance,$legacyAppearanceBytes)
 Add-Content -LiteralPath (Join-Path $shared 'symbols.yaml') -Value '# synthetic shared modification retained from bare installation'
 $bareSymbolsHash=(Get-FileHash -LiteralPath (Join-Path $shared 'symbols.yaml')).Hash
 $null=New-Item -ItemType Directory -Path (Join-Path $shared 'unmanaged') -Force
@@ -103,12 +129,16 @@ Check 'Existing official input profiles preserved' (@($foreign|Where-Object {$_ 
 Check 'Bundled schemas installed in shared data' ((Test-Path -LiteralPath (Join-Path $shared 'cn_stellae.schema.yaml')) -and (Test-Path -LiteralPath (Join-Path $shared 'jp_stellae.schema.yaml')))
 Check 'Bare empty shared default replaced by full bundle default' ((Get-FileHash -LiteralPath (Join-Path $shared 'default.yaml')).Hash -cne $bareDefaultHash -and (Get-FileHash -LiteralPath (Join-Path $shared 'default.yaml')).Hash -ceq (Get-FileHash -LiteralPath (Join-Path $package 'stage/output/shared-payload/data/default.yaml')).Hash)
 Check 'Bare user sentinel preserved by migration' ((Get-Content -LiteralPath $bareUser -Raw) -ceq 'synthetic user file retained from bare installation')
-Check 'Bare user UI customization preserved by migration' ((Get-FileHash -LiteralPath (Join-Path $user 'weasel.custom.yaml')).Hash -ceq $bareUserConfigHash)
+Check 'Bare user UI customization migrated byte-exactly' ((Get-FileHash -LiteralPath (Join-Path $user 'stellae.custom.yaml')).Hash -ceq $bareUserConfigHash -and -not (Test-Path -LiteralPath (Join-Path $user 'weasel.custom.yaml')))
+Check 'New appearance compiled and former compiled ID retired' ((Test-Path -LiteralPath (Join-Path $user 'build/stellae.yaml')) -and -not (Test-Path -LiteralPath (Join-Path $user 'build/weasel.yaml')))
+Check 'Former shared appearance paths retired after successful deployment' (-not (Test-Path -LiteralPath (Join-Path $shared 'weasel.yaml')) -and -not (Test-Path -LiteralPath (Join-Path $shared 'stellae_bundle_weasel.yaml')))
+$appearanceStatus=Get-Content -LiteralPath (Join-Path $root 'appearance-migration-status.json') -Raw|ConvertFrom-Json
+Check 'Installer records a byte-exact original appearance backup outside the runtime profile' (@($appearanceStatus.backups|Where-Object {($_.path -notlike ($user+'\*')) -and ((Get-FileHash -LiteralPath $_.path).Hash -ieq $bareUserConfigHash)}).Count -gt 0)
 Check 'Bare modified shared file preserved by migration' ((Get-FileHash -LiteralPath (Join-Path $shared 'symbols.yaml')).Hash -ceq $bareSymbolsHash)
 Check 'Bare unknown shared nested file preserved by migration' ((Get-Content -LiteralPath (Join-Path $shared 'unmanaged/bare-keep.txt') -Raw) -ceq 'synthetic unknown nested file retained from bare installation')
 $migration=Get-Content -LiteralPath (Join-Path $root 'scheme-status.json') -Raw|ConvertFrom-Json
 Check 'Bare default is adopted while modified shared file is reported' ('default.yaml' -notin $migration.sharedConflicts -and 'symbols.yaml' -in $migration.sharedConflicts)
-Check 'User default and UI custom files remain reported after preset rename' ('default.custom.yaml' -in $migration.userOverrides -and 'weasel.custom.yaml' -in $migration.userOverrides)
+Check 'User default and UI custom files remain reported after preset rename' ('default.custom.yaml' -in $migration.userOverrides -and 'stellae.custom.yaml' -in $migration.userOverrides)
 Check 'Core frontend version remains 61052' ((Get-Item -LiteralPath (Join-Path $root 'StellaeServer.exe')).VersionInfo.FileVersion -eq '0.17.4.61052')
 foreach($name in @('stellae.dll','stellaex64.dll','stellae.ime','stellaex64.ime','StellaeServer.exe','StellaeDeployer.exe','StellaeSetup.exe','rime.dll')){
   Check ('Installed production bytes match pinned 61052 '+$name) ((Get-FileHash -LiteralPath (Join-Path $root $name)).Hash -ceq (Get-FileHash -LiteralPath (Join-Path $package ('stage/output/'+$name))).Hash)
@@ -141,7 +171,7 @@ if($LASTEXITCODE){throw 'Synthetic pre-upgrade input failed'}
 & python (Join-Path $PSScriptRoot 'Export-SyntheticLearning.py') --engine (Join-Path $root 'rime.dll') --header $api --shared $shared --user $user --output (Join-Path $out 'learning-before.tsv')
 if($LASTEXITCODE){throw 'Synthetic learning export failed'}
 $protected=@{}
-foreach($name in @('default.custom.yaml','weasel.custom.yaml','rime.lua','lua/ui/select_hanzi.lua','bare-user-sentinel.txt')){$protected[$name]=(Get-FileHash -LiteralPath (Join-Path $user $name)).Hash}
+foreach($name in @('default.custom.yaml','stellae.custom.yaml','rime.lua','lua/ui/select_hanzi.lua','bare-user-sentinel.txt')){$protected[$name]=(Get-FileHash -LiteralPath (Join-Path $user $name)).Hash}
 $modified=Join-Path $shared 'lua/ui/select_hanzi.lua'
 Add-Content -LiteralPath $modified -Value '-- synthetic local shared modification'
 $modifiedHash=(Get-FileHash -LiteralPath $modified).Hash

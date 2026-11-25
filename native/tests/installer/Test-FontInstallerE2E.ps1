@@ -162,8 +162,9 @@ patch:
   [IO.File]::WriteAllText((Join-Path $user 'weasel.custom.yaml'), $style)
   [IO.File]::AppendAllText((Join-Path $user 'default.custom.yaml'), [Environment]::NewLine + '# Synthetic upgrade sentinel' + [Environment]::NewLine)
   [IO.File]::WriteAllText((Join-Path $user 'appearance-test-local.txt'), 'Synthetic user file')
-  $preservedPaths = @('rymcp_candidate_font.yaml','weasel.custom.yaml','default.custom.yaml','appearance-test-local.txt')
+  $preservedPaths = @('rymcp_candidate_font.yaml','default.custom.yaml','appearance-test-local.txt')
   $preserved = Get-PreservedHashes $preservedPaths
+  $appearanceHash=(Get-FileHash -LiteralPath (Join-Path $user 'weasel.custom.yaml') -Algorithm SHA256).Hash
 
   $phase = 'upgrade legacy font installation to TTC'
   Invoke-Installer $installerPath '/S' 'ttc-upgrade'
@@ -178,7 +179,10 @@ patch:
   Assert-Preserved $preserved (Get-PreservedHashes $preservedPaths) 'upgrade'
   Assert-Result ((Get-ItemPropertyValue -LiteralPath $productKey -Name Hant) -eq $expectedHant) `
     'existing output profile retained on upgrade'
-  $compiled = [IO.File]::ReadAllText((Join-Path $user 'build/weasel.yaml'))
+  Assert-Result ((Get-FileHash -LiteralPath (Join-Path $user 'stellae.custom.yaml') -Algorithm SHA256).Hash -ceq $appearanceHash -and -not (Test-Path -LiteralPath (Join-Path $user 'weasel.custom.yaml'))) 'legacy appearance file migrated byte-exactly'
+  $preservedPaths+=@('stellae.custom.yaml')
+  $preserved=Get-PreservedHashes $preservedPaths
+  $compiled = [IO.File]::ReadAllText((Join-Path $user 'build/stellae.yaml'))
   Assert-Result ($compiled -match '(?m)^  font_face: *["'']?Microsoft YaHei["'']?\s*$' -and
     $compiled -match '(?m)^  font_point: *17\s*$' -and
     $compiled -match '(?m)^  horizontal: *true\s*$') 'existing appearance overrides retained in compiled style'

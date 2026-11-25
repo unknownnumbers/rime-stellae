@@ -1,9 +1,9 @@
 {
   "format": "stellae-source-release-v1",
-  "date": "2026-11-25",
+  "date": "2026-11-26",
   "kind": "frontend-and-input-scheme-source",
   "frontendVersion": "0.17.4.61052",
-  "bundleVersion": "2026.11.25.5",
+  "bundleVersion": "2026.11.26.1",
   "nativeBinariesIncluded": false,
   "personalLearningIncluded": false,
   "productionInputSchemesIncluded": true,
@@ -17,8 +17,8 @@
     },
     {
       "path": ".github/workflows/bundle.yml",
-      "bytes": 28539,
-      "sha256": "51dc0007b6ae13df0d7dac722c8580bedee0bbaf0366470db8797ea91d50786e"
+      "bytes": 33739,
+      "sha256": "c57246dbd2cb32aee66b501a014cf793c6fc788905dab2b8cd084440bca2814f"
     },
     {
       "path": ".github/workflows/native.yml",
@@ -52,18 +52,18 @@
     },
     {
       "path": "README.en.md",
-      "bytes": 3027,
-      "sha256": "4e7374abc43e964ca12a07da75fcc7697ea6f67825c22118022eee13ba0a41b3"
+      "bytes": 3264,
+      "sha256": "ee8c11de0a0c8eb4e479947824880ac1912c4f7cdcae2c101837e1ec536dda96"
     },
     {
       "path": "README.md",
-      "bytes": 2621,
-      "sha256": "037ad45fc513de0ce16311f9dca26a9b3873569cbab29ee10b3a1025a1f1e970"
+      "bytes": 2804,
+      "sha256": "6a65686a985d1ab859ad4c78f35b27542c8f4ff84b54372869f0e0ae38e19e25"
     },
     {
       "path": "README.zh-SC.md",
-      "bytes": 2633,
-      "sha256": "2c9a50ad2ebdae8e6e6c921c2477f36e0a1dd63eb043e26e95ab3ab8fb07d945"
+      "bytes": 2816,
+      "sha256": "217dfb0e937a21ccd8ccf00b6a51e4e078e1f60c7a4a898bbc293601b677c2c6"
     },
     {
       "path": "THIRD_PARTY_NOTICES.md",
@@ -112,8 +112,8 @@
     },
     {
       "path": "docs/BUILD.md",
-      "bytes": 6557,
-      "sha256": "421e55ae2dfb718fb6f8f53cbb8dc170919373b296284abc14f83afb2046d81e"
+      "bytes": 7012,
+      "sha256": "6c8ec1eb3dadc68f9fc36e7046085b02bd96f5c22aa65d3c24889145dc4da215"
     },
     {
       "path": "docs/PC.md",
@@ -126,9 +126,14 @@
       "sha256": "0f893f602efa1b29b7aa0f443effa8fcc6a761a6294b074078e901c2cb4c0966"
     },
     {
+      "path": "installer/AppearanceConfig.ps1",
+      "bytes": 13987,
+      "sha256": "e9d884609a77f46b656cf112bf9d5f8fcd8cf2a35d79eaa7e227f9be1eb97824"
+    },
+    {
       "path": "installer/BundleData.ps1",
-      "bytes": 16739,
-      "sha256": "beaf734e14736c3fc340a27abff3b40b621f46e499d5d22e4d763d2e4a9955cd"
+      "bytes": 18623,
+      "sha256": "4ebf352c6d8d5e773e04a9eb47844dd8cf339ddfda5a4a500e6943284e064a9c"
     },
     {
       "path": "installer/InstallProfilePolicy.ps1",
@@ -143,7 +148,7 @@
     {
       "path": "installer/bundle-inputs.json",
       "bytes": 5521,
-      "sha256": "b775310317e9c6b32c2a6d7c003509e89de0213214be3f9f68bb5d35a90c4950"
+      "sha256": "4473496208888dd9561a104a94a3fe2f7b9a28581a233caa7b11694610f28c26"
     },
     {
       "path": "installer/bundle.nsi",
@@ -172,13 +177,13 @@
     },
     {
       "path": "installer/install.nsi",
-      "bytes": 29816,
-      "sha256": "e04c3f6a0d99b85fd146f7d8c0c0824d9735185c279633d1514f69666865775e"
+      "bytes": 41875,
+      "sha256": "cc88dddcc9a098af28543993ae5b982d30658875a8e0d9226673878aac2d7d95"
     },
     {
       "path": "installer/migrations/source-layout.json",
-      "bytes": 20906,
-      "sha256": "7f37dc317e94370b230c4b38720324e301441f383edcf2c7e1233cc08c3ca592"
+      "bytes": 28806,
+      "sha256": "e8ed540ec0671ae30573b15b9bf6c6937134a5688eb19d51ffd990f9032883a7"
     },
     {
       "path": "installer/migrations/upgrade.json",
@@ -217,8 +222,8 @@
     },
     {
       "path": "licenses/file-licenses.json",
-      "bytes": 325759,
-      "sha256": "37707dbe80d0ec37eafeaed2099c809a81423a3f480ad0796f27394c0fb14b4f"
+      "bytes": 329499,
+      "sha256": "50762b054f27594a030155ced8e7f747bf3c28fc15792c8324dd7c53323b42b8"
     },
     {
       "path": "licenses/native-dependencies/boost/LICENSE_1_0.txt",
@@ -342,8 +347,8 @@
     },
     {
       "path": "licenses/package-sources.json",
-      "bytes": 14868,
-      "sha256": "e98cd6c31333c8d12293f70b9c32500fdb86fc20f091e586ecf0c96f32c364b7"
+      "bytes": 15493,
+      "sha256": "9805b420a091374d9e899f5c34c555939b5b5869133ed5830c809d530378c5e3"
     },
     {
       "path": "licenses/package/7zip-LICENSE.txt",
@@ -508,7 +513,7 @@
     {
       "path": "native/frontend-source-files.json",
       "bytes": 22632,
-      "sha256": "d92b41a9f5cdcebc47fbf6883977af270e696a2918ee590155e69491dfb55714"
+      "sha256": "96ef105fe66f553185ebe89e2757c607f3200b11ed6bb32eb3f5282f6689eb86"
     },
     {
       "path": "native/notification-inputs.json",
@@ -518,7 +523,7 @@
     {
       "path": "native/source-manifest.json",
       "bytes": 14250,
-      "sha256": "9bea483697943cedf398e3164779d9e9eb7f685d86c50f87bd46165ba3495812"
+      "sha256": "554fb64be44c55eb4734ef9fa0132bc9e21bedd46d34362cc34b9b4e1b0dcec9"
     },
     {
       "path": "native/tests/appearance/Add-PaintTrace.ps1",
@@ -532,13 +537,13 @@
     },
     {
       "path": "native/tests/appearance/Probe-LiveFont.py",
-      "bytes": 54430,
-      "sha256": "0afdada589cb2c255d23502a94cda80553ede7c30d2790ce6ef3efb5f7bd6a5f"
+      "bytes": 54446,
+      "sha256": "12dba41f77d0000223dd37db80490940296e73cf82647191487ef8d7b2b9239e"
     },
     {
       "path": "native/tests/appearance/Test-LiveFont.ps1",
-      "bytes": 11834,
-      "sha256": "bfb95cf7cbed52738910e1849d0fd81efec9247145c21cbb9b7d853338e38eb9"
+      "bytes": 11837,
+      "sha256": "14263929dc0cedc0f3c52243f7e9ac1d8e3215f8364ad23a3617431579973946"
     },
     {
       "path": "native/tests/installer/Export-SyntheticLearning.py",
@@ -551,19 +556,29 @@
       "sha256": "a08e1a573d5aa2598a8110c72771e720f6cd59bad0efed92da0e508f0fd59dd2"
     },
     {
+      "path": "native/tests/installer/Probe-InstalledClient.ps1",
+      "bytes": 2391,
+      "sha256": "c39167ae2e3af95060e24630a44b00bf17cb311297c7f646542129e99a1467b2"
+    },
+    {
       "path": "native/tests/installer/Probe-InstalledEngine.py",
       "bytes": 5204,
       "sha256": "f1e77d90461836b54d314d4c1fd31244c6567ed739db47f6f7a2e087ab0936b4"
     },
     {
+      "path": "native/tests/installer/Test-AppearanceConfig.ps1",
+      "bytes": 13924,
+      "sha256": "963a82571cba8eca72c5d1a07a5d213d033b5f182892dd967a0adf12c3cc0525"
+    },
+    {
       "path": "native/tests/installer/Test-BundleData.ps1",
-      "bytes": 8917,
-      "sha256": "70bf1e050bd0145fb5a55fdf95f83d35150906d0e9b2f844ca047aeed3dd6d9c"
+      "bytes": 13255,
+      "sha256": "f889c3e47834dda7a5fd1e4de0b1ec5fe62c2909d1472c35c36f8fa34673c111"
     },
     {
       "path": "native/tests/installer/Test-BundleInstaller.ps1",
-      "bytes": 17573,
-      "sha256": "36c488475ed4298bd557b0d8c3ad02154683efb3410efcd1736b27aa3e5cbecd"
+      "bytes": 20604,
+      "sha256": "c2cc1f942dd8e113f93cc223a92e6da601a3571a8bc3f5d0710dca69e3c1d19b"
     },
     {
       "path": "native/tests/installer/Test-BundleNotices.ps1",
@@ -572,8 +587,8 @@
     },
     {
       "path": "native/tests/installer/Test-BundlePresetPriority.ps1",
-      "bytes": 13466,
-      "sha256": "bc0359d1a076a57204bd47e93346f3367f78cbb9321a0301f3f0197ee0861935"
+      "bytes": 13476,
+      "sha256": "eb489d5e791e75b9fc5606111cdc4a36fbaa6878da05d179bbcd27d092d0ec25"
     },
     {
       "path": "native/tests/installer/Test-BundleShared.ps1",
@@ -582,18 +597,23 @@
     },
     {
       "path": "native/tests/installer/Test-BundleSourceLayout.ps1",
-      "bytes": 6113,
-      "sha256": "4a698433cc62c8739f8a9e9ab6da2eab2ac5d4748d95baecb0c0e36172cd9777"
+      "bytes": 7750,
+      "sha256": "b950c11e26a6f773e70e8d60e755e4099230a0f8c18c6ed822e9fff3c42fcf4a"
+    },
+    {
+      "path": "native/tests/installer/Test-DlcNamespace.ps1",
+      "bytes": 15393,
+      "sha256": "21e51661ee6f08ab44a9f4a23037806cd28717e5a278f826fc4dddbbb3718367"
     },
     {
       "path": "native/tests/installer/Test-FontInstallerE2E.ps1",
-      "bytes": 9714,
-      "sha256": "062faca8d337c74108280939e104378f47ee2619fa8cdb44b493544d6ddc07d2"
+      "bytes": 10146,
+      "sha256": "07b7b4ca53ecb345572fa6341701357e8b67e44b1f4c2333b839a1194b7addb1"
     },
     {
       "path": "native/tests/installer/Test-FontPresetPriority.ps1",
-      "bytes": 5396,
-      "sha256": "590f9f2cbaba3949cfb529eaa11695c769d4782769271f6e84ceb0a689bc3809"
+      "bytes": 5399,
+      "sha256": "d0ffac7bd97bfb2391267925bcbf9b0f4b8b8da73131f594a2bc6d2b32698bc4"
     },
     {
       "path": "native/tests/installer/Test-InstalledBundleReady.ps1",
@@ -604,6 +624,21 @@
       "path": "native/tests/installer/Test-InstallerPolicy.ps1",
       "bytes": 14814,
       "sha256": "39997a074be1bc79aa83b183a8ad32fe32a8d333153965e3463977f42dd3715e"
+    },
+    {
+      "path": "native/tests/installer/Test-LearningStore.ps1",
+      "bytes": 11141,
+      "sha256": "7f1a63ca08f5db69ce833a5a5ba7a3fac85c417586f773a792c8c06486381dd0"
+    },
+    {
+      "path": "native/tests/installer/Test-PublicUpgrade.ps1",
+      "bytes": 11562,
+      "sha256": "30522d6a8b84f829e074ca9b72d94a2eea8cfa6d1577f90b48480bff18b883c2"
+    },
+    {
+      "path": "native/tests/installer/Test-PublicUpgradeLearning.ps1",
+      "bytes": 5793,
+      "sha256": "0746cd83c78ddd41a7eac6dbfdfcd4f08aae3e69a6d91d35a7e8349180349629"
     },
     {
       "path": "native/tests/installer/Test-Win11EquivalentPolicy.ps1",
@@ -627,8 +662,8 @@
     },
     {
       "path": "native/tests/key-pairing/Deploy-PublicFixture.py",
-      "bytes": 5230,
-      "sha256": "2978e418c5f32f0da0694be246491301844d137d06771d005738038968d5848e"
+      "bytes": 5246,
+      "sha256": "0a5bee7e07699d77221b25f0619f2ef18f5c798050fc3cf97035015541c382f7"
     },
     {
       "path": "native/tests/key-pairing/Invoke-KeyPairingTests.ps1",
@@ -671,7 +706,7 @@
       "sha256": "fa0ca63077994110547b422967b7ae50906c93632db494ae02e97acf6e16cfe4"
     },
     {
-      "path": "native/tests/key-pairing/fixture/weasel.yaml",
+      "path": "native/tests/key-pairing/fixture/stellae.yaml",
       "bytes": 204,
       "sha256": "9f2910f4bc2ca5072bf0717d202fa6528a0c50c363066cdaa95e5417d43949e1"
     },
@@ -706,9 +741,14 @@
       "sha256": "46b98d4b953225d8ff94aaff6118ff1c04ab212ca0ee826992f13926bed56828"
     },
     {
+      "path": "native/tests/package/test_appearance_profile.py",
+      "bytes": 1739,
+      "sha256": "191509a9f46e765c4236d6b4e8f10f404b79cad13342a94eb3576f7d2feaff8d"
+    },
+    {
       "path": "native/tests/package/test_bundle_architecture.py",
-      "bytes": 7753,
-      "sha256": "409995334fe31ee82c503fbd2701f7b938ad9b35ddb5ebd63780bc1b6edb64a6"
+      "bytes": 8338,
+      "sha256": "67962b9614244e74209f342f10e6ab0991722c33fac057e22e4fb2d2eb551469"
     },
     {
       "path": "native/tests/package/test_runtime_engines.py",
@@ -722,8 +762,13 @@
     },
     {
       "path": "native/tests/package/test_server_overlays.py",
-      "bytes": 19388,
-      "sha256": "fa9a56e1d6a85bfa3f25e0cb4542b98f97311ebfc0e220319c1ecd68946c0728"
+      "bytes": 21658,
+      "sha256": "543f1db658a1f27ef275d873ef111b91193f49ff5d1db8a9dbf0bbb4bec8ec61"
+    },
+    {
+      "path": "native/tests/package/test_settings_update.py",
+      "bytes": 2297,
+      "sha256": "26001559c8cc8a3831ceea9a02073d278eb88abd58b899a857bc2f68a335f638"
     },
     {
       "path": "native/tests/package/test_source_privacy.py",
@@ -762,8 +807,8 @@
     },
     {
       "path": "native/weasel/stellae-61052.patch",
-      "bytes": 976382,
-      "sha256": "bedcf923697a65fa2194dc156d923ad7dc592ffcc869d47540f7bcc9a1411a6c"
+      "bytes": 977862,
+      "sha256": "1a3be906efc5800c154743f2868f17d61f3c552ecc9fb737f014cd9d9213f3bd"
     },
     {
       "path": "schemes/.gitattributes",
@@ -1468,7 +1513,7 @@
     {
       "path": "schemes/config/official-weasel/profile-manifest.json",
       "bytes": 31963,
-      "sha256": "d0c18ae4be43e79ff762d995780e19fdce909b2cf2b4dca9b688e279ee77f5c8"
+      "sha256": "3dd2c74d423c872358ee70f63cb336216b77b29705e7ba9d06cf912ae18eff4b"
     },
     {
       "path": "schemes/config/official-weasel/project_radical.dict.yaml",
@@ -1832,8 +1877,8 @@
     },
     {
       "path": "schemes/config/pc/config-source-manifest.json",
-      "bytes": 32027,
-      "sha256": "54dd410944fd02df8392f0c93a44920468bd83c989b83f9b28a0897c48dcd50b"
+      "bytes": 32028,
+      "sha256": "78cc3e9d6debc0a58eab0104ee8ba10a731dcfb0cfa5754fef34f622cbf67cfc"
     },
     {
       "path": "schemes/config/pc/default.custom.yaml",
@@ -2506,6 +2551,11 @@
       "sha256": "cd834c85a83878313e052fa41e58eadae6addaf1bb08ba4a2a03cf7ba61699a6"
     },
     {
+      "path": "schemes/config/pc/stellae.custom.yaml",
+      "bytes": 111,
+      "sha256": "fde02f813ea018515f14aba62d476d4de8a2bf4c0b8f56a219fd60a4bda6fcb0"
+    },
+    {
       "path": "schemes/config/pc/stellae/appearance.yaml",
       "bytes": 7628,
       "sha256": "b3f48ca2fdfc81461d803482fd6071a409984e708b20a1ac047a5c19a9ca1829"
@@ -2766,11 +2816,6 @@
       "sha256": "67f8f2b4ecfbdddc3b4e6d238f093ad68a6aab944767832e38d0dc5ad36a0d8d"
     },
     {
-      "path": "schemes/config/pc/weasel.custom.yaml",
-      "bytes": 111,
-      "sha256": "fde02f813ea018515f14aba62d476d4de8a2bf4c0b8f56a219fd60a4bda6fcb0"
-    },
-    {
       "path": "schemes/config/pc/zh-hant-t-essay-bgw-compact.gram",
       "bytes": 41415724,
       "sha256": "0488ebd6688f900a39200f2b794f2f99bcbf1e8fc27280ae4a2324b08b1559c1"
@@ -2958,17 +3003,17 @@
     {
       "path": "schemes/docs/BUILD.md",
       "bytes": 6002,
-      "sha256": "50a51a33fa7079705066d7a335e28732405a10962200c9bad7c7597ba6b5320a"
+      "sha256": "b94bf773f5db5a3ed9e9be1727f0abab0c534562053c0990b1147b5c8421d830"
     },
     {
       "path": "schemes/docs/PC.md",
-      "bytes": 2551,
-      "sha256": "e02b51185d2fa058410654e56eeb43407b63ebe4c07995f62f96f1b1c5477414"
+      "bytes": 2912,
+      "sha256": "1c28cc594ff019bbf9729e7308dc54810f750a5fdf57794d47a0fb22b60fbada"
     },
     {
       "path": "schemes/docs/STRUCTURE.md",
-      "bytes": 4877,
-      "sha256": "ad19d506a8617111ce4ba36404c4ffebdd0c42b90b946eb2750fd5e3423263df"
+      "bytes": 5198,
+      "sha256": "288b13a5ea8ee5bf82218ca48c639c785993347432bbf57f944b4839d68bff14"
     },
     {
       "path": "schemes/docs/dlc-sources.md",
@@ -2977,8 +3022,8 @@
     },
     {
       "path": "schemes/docs/official-weasel.md",
-      "bytes": 2506,
-      "sha256": "790f06c150781bad8291cbcadccddf7c7bc107ef4013d386438a4a2ed1806f8e"
+      "bytes": 3121,
+      "sha256": "cd63ffe84f300ac19cb9612fc66c25b9f6d5647945784a7f04caf1933da8c68d"
     },
     {
       "path": "schemes/docs/sources/README.md",
@@ -3107,8 +3152,8 @@
     },
     {
       "path": "schemes/licenses/build_index.py",
-      "bytes": 12177,
-      "sha256": "3d5bdbe76f75dd743d48a8fe603df511ef08e985b3459011ba0200275cd876b0"
+      "bytes": 12259,
+      "sha256": "05a7aff11c32c067119f4680b9c4536a84f8653b061b9f7072dbee226468cfb3"
     },
     {
       "path": "schemes/licenses/english-core/CC-BY-3.0-legalcode.txt",
@@ -3162,13 +3207,13 @@
     },
     {
       "path": "schemes/licenses/file-licenses.json",
-      "bytes": 249963,
-      "sha256": "0df2dd69eed7559667349fcb2f661f64f819cc22730982782e2de071f71463ff"
+      "bytes": 251893,
+      "sha256": "002c1d35a74f77d5c5562dfa70554f43fecef816dd3d2028ced0a89bacedf5d1"
     },
     {
       "path": "schemes/licenses/layout-records.json",
-      "bytes": 25543,
-      "sha256": "04a2f4b4b91150960ce80b724aaa72f414daa3fbcb71c7c15294123a7c79aebd"
+      "bytes": 25964,
+      "sha256": "7fc9aece86623919fbf3d381cf087bfa2af530381b0577d62cc77ad49fd62770"
     },
     {
       "path": "schemes/licenses/luna-compact-model-LGPL-3.0.txt",
@@ -3577,8 +3622,8 @@
     },
     {
       "path": "schemes/release-manifest.json",
-      "bytes": 109907,
-      "sha256": "6bb982c4045bb81f5905d4461683c7981b8eb9118b1b89e58bc27b227a7f544c"
+      "bytes": 110746,
+      "sha256": "11d44740d690451e285dd90cfdf3421ce1291807190cc736e9ddf49d14e1c054"
     },
     {
       "path": "schemes/scripts/build_dlc.py",
@@ -3587,8 +3632,8 @@
     },
     {
       "path": "schemes/scripts/build_scheme_packages.py",
-      "bytes": 14100,
-      "sha256": "53c9b72baa16a66c2037047b368cb13eec97ccc15a489c73d9b7d0c7c6bb94b0"
+      "bytes": 14314,
+      "sha256": "2d31e5f9a5aa9bc75d50bf666a1a152cb4a1b981ddc2cd65b260682cc6891a9e"
     },
     {
       "path": "schemes/scripts/data/build_dlc_english_index.py",
@@ -3672,8 +3717,8 @@
     },
     {
       "path": "schemes/scripts/rebuild_profiles.py",
-      "bytes": 20160,
-      "sha256": "94e768e16a893ef2c8dd44c08d22967fefa9314efdf792258b3f755fac76c3e0"
+      "bytes": 20448,
+      "sha256": "c601f13fa7042f0e57335e2a6467536358f6ffd3bf1b40ebab46939a02264f29"
     },
     {
       "path": "schemes/scripts/schemes/Prepare-ValidationEngines.ps1",
@@ -3701,9 +3746,34 @@
       "sha256": "fe44c1ef6bc3afcdd683f7f797df6145e1521dc4df7debfb2e621b138d28d5af"
     },
     {
+      "path": "schemes/scripts/upgrade/DlcNamespace.ps1",
+      "bytes": 17089,
+      "sha256": "ad5fa573f6fa50c109158944492ad7c748ad4bbf40d02bd9d5bb8f290bc2ed19"
+    },
+    {
+      "path": "schemes/scripts/upgrade/LearningStore.lua",
+      "bytes": 1914,
+      "sha256": "f11a69c604ab358b2bc01ba732234d96fd616d7cb49c9b780d449086b4390fb1"
+    },
+    {
+      "path": "schemes/scripts/upgrade/LearningStore.ps1",
+      "bytes": 18950,
+      "sha256": "da0def05b711306a13ae6763efbb7e7d40828b0fcc2f1d845e8912455bb0cfd0"
+    },
+    {
+      "path": "schemes/scripts/upgrade/LearningStoreNative.cs",
+      "bytes": 4068,
+      "sha256": "460bc903f23b2010a35a1507679065ea4daaeddbfb27189f85a2c0965be1c80a"
+    },
+    {
+      "path": "schemes/scripts/upgrade/README.md",
+      "bytes": 4714,
+      "sha256": "ad2c36b2d2311d6239a44b88475fa8ab65bd20b6b997f7cf3ce237541dbba5ae"
+    },
+    {
       "path": "schemes/scripts/verify_release.py",
-      "bytes": 13973,
-      "sha256": "5016c9d48f1d98bdce3bb6368832f96825d1028fb98c2bb3673f4f4de5b14aa8"
+      "bytes": 14075,
+      "sha256": "df869300d7e8df8fce065add1a1619d4f283f2927f205cc37ccd5b21db925f98"
     },
     {
       "path": "schemes/sources/base-build.json",
@@ -3942,8 +4012,8 @@
     },
     {
       "path": "scripts/package/Prepare-Package.ps1",
-      "bytes": 11097,
-      "sha256": "0438cc6c5e86a24d7584df9d4c538dbb2c08b70e2bb81ed0514c6461a1ac78b6"
+      "bytes": 11467,
+      "sha256": "0517c6fdac220444ef4fb6e3c1d3b1db5addb4e85368c6705000c633169e889b"
     },
     {
       "path": "scripts/package/Update-Frontend.ps1",
@@ -3952,8 +4022,8 @@
     },
     {
       "path": "scripts/package/Update-Settings.ps1",
-      "bytes": 8267,
-      "sha256": "b41a480cff13451f6d4810d8bac2299a8a8b0aad842355c4ffdbe3050b31530d"
+      "bytes": 8481,
+      "sha256": "4f56e010095406730e0a8de5625bbc3172e086da202e3a9b8b520942524ea10f"
     },
     {
       "path": "scripts/package/apply_frontend_overlays.py",
@@ -3972,8 +4042,8 @@
     },
     {
       "path": "scripts/package/index_bundle.py",
-      "bytes": 9383,
-      "sha256": "f9cb658aee61a9e4ca009e040f390ab8cb03f58bde71adfbdf13eadd0f97923d"
+      "bytes": 9470,
+      "sha256": "621e87886e5e98bc9551c42ff76bbc047b858133ad0388a459dba78a5a5b6fa8"
     },
     {
       "path": "scripts/package/index_payload.py",
@@ -3982,8 +4052,8 @@
     },
     {
       "path": "scripts/package/prepare_bundle.py",
-      "bytes": 19093,
-      "sha256": "6c52a3a8bddc966390d8868ae365b33c2d2931e35307794780489ca14344f1f6"
+      "bytes": 19637,
+      "sha256": "5b39f0aa9848ae37c63a6bae4c025f58b7e51c107c57a733e8ebc83c5ebfcd40"
     },
     {
       "path": "scripts/package/render_installed_docs.py",
@@ -3997,8 +4067,8 @@
     },
     {
       "path": "scripts/package/stage_settings_update.py",
-      "bytes": 7028,
-      "sha256": "45ed70755bc70852165b0c140f5908eed1de37f8a10cd23ef28eda8bcb715263"
+      "bytes": 7589,
+      "sha256": "4e634d6e1720699ac8a46981fc6ae4a73aa2ef5f0e9d1457c4bd6cf2035ef644"
     },
     {
       "path": "scripts/package/verify_bundle.py",

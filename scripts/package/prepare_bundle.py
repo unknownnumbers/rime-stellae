@@ -178,11 +178,15 @@ def main():
             continue
         if entry['sha256'] not in by_hash:
             raise SystemExit('Missing original installer bytes: '+name)
-        target = payload/name[5:] if name.startswith('data/') else stage/name
+        installed_name = 'data/stellae.yaml' if name == 'data/weasel.yaml' else name
+        target = payload/installed_name[5:] if installed_name.startswith('data/') else stage/installed_name
         target.parent.mkdir(parents=True, exist_ok=True)
         shutil.copyfile(by_hash[entry['sha256']], target)
-        provenance.append({'installed_path': name, 'archive_member': name,
+        provenance.append({'installed_path': installed_name, 'archive_member': name,
                            'source': 'frontendInstaller', 'sha256': entry['sha256']})
+        if installed_name != name:
+            provenance[-1]['original_installed_path'] = name
+            provenance[-1]['transformation'] = 'byte-exact rename to the Stellae frontend configuration ID'
     # Original data remains available without importing unrelated input schemes.
     for name in ['pinyin.yaml', 'stroke.schema.yaml', 'stroke.dict.yaml']:
         source = a.official/'data'/name
@@ -209,9 +213,9 @@ def main():
                                                   else 'scheme-notices/'+name),
                                'source': 'schemes', 'archive_member': name, 'sha256': digest(target)})
     shutil.copyfile(a.schemes, stage/'scheme-notices'/a.schemes.name)
-    # The frontend creates empty user default/weasel custom files. Keep bundle
+    # The frontend creates empty user default/stellae custom files. Keep bundle
     # presets separate so those empty user files do not hide the base defaults.
-    for config, alias in [('default', 'stellae_bundle_default'), ('weasel', 'stellae_bundle_weasel')]:
+    for config, alias in [('default', 'stellae_bundle_default'), ('stellae', 'stellae_bundle_appearance')]:
         custom = payload/(config+'.custom.yaml')
         renamed = payload/(alias+'.yaml')
         if renamed.exists() or not custom.is_file():
@@ -232,7 +236,7 @@ def main():
                 any(line.startswith('__patch:') for line in text.splitlines()) and not native_defaults):
             raise SystemExit('The fixed shared base needs a reviewed patch layout.')
         font_layer = ('  - rymcp_candidate_font:/patch?\n  - stellae_candidate_font:/patch?\n'
-                      if config == 'weasel' and a.default_font_directory is not None else '')
+                      if config == 'stellae' and a.default_font_directory is not None else '')
         extension = ('' if native_defaults else
                      '\n# Stellae defaults followed by optional user overrides.\n__patch:\n'
                      f'  - {alias}:/patch\n{font_layer}  - {config}.custom:/patch?\n').encode('utf-8')
@@ -252,7 +256,7 @@ def main():
     source_profile.write_bytes(profile_raw)
     profile = json.loads(profile_raw)
     renames = {'default.custom.yaml': 'stellae_bundle_default.yaml',
-               'weasel.custom.yaml': 'stellae_bundle_weasel.yaml'}
+               'stellae.custom.yaml': 'stellae_bundle_appearance.yaml'}
     for group in ['source_files', 'generated_files']:
         for entry in profile[group]:
             original_name = entry['path']
@@ -291,9 +295,11 @@ def main():
     provenance.append({'installed_path': 'scheme-notices/archive-profile-manifest.json',
                        'source': 'schemes', 'archive_member': 'UserProfile/config-source-manifest.json',
                        'sha256': hashlib.sha256(profile_raw).hexdigest()})
-    for name in ['install.nsi', 'bundle.nsi', 'BundleData.ps1', 'InstallProfilePolicy.ps1',
+    for name in ['install.nsi', 'bundle.nsi', 'BundleData.ps1', 'AppearanceConfig.ps1', 'InstallProfilePolicy.ps1',
                  'NativeProfileSnapshot.ps1', 'stellae_identity.nsh', 'bundle-inputs.json']:
         shutil.copyfile(repo/'installer'/name, stage/name)
+    for name in ['LearningStore.ps1', 'LearningStoreNative.cs', 'LearningStore.lua', 'DlcNamespace.ps1']:
+        shutil.copyfile(repo/'schemes/scripts/upgrade'/name, stage/name)
     write_json(stage/'bundle-inputs.json', inputs)
     (stage/'bundle_architecture.nsh').write_text(
         '; Generated from bundle-inputs.json architecture roles.\n'

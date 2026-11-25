@@ -542,6 +542,42 @@
       "source_ids": [
         "project-code"
       ]
+    },
+    {
+      "pattern": "data/stellae.yaml",
+      "source_ids": [
+        "weasel"
+      ]
+    },
+    {
+      "pattern": "AppearanceConfig.ps1",
+      "source_ids": [
+        "project-code"
+      ]
+    },
+    {
+      "pattern": "LearningStore.ps1",
+      "source_ids": [
+        "project-code"
+      ]
+    },
+    {
+      "pattern": "LearningStoreNative.cs",
+      "source_ids": [
+        "project-code"
+      ]
+    },
+    {
+      "pattern": "LearningStore.lua",
+      "source_ids": [
+        "project-code"
+      ]
+    },
+    {
+      "pattern": "DlcNamespace.ps1",
+      "source_ids": [
+        "project-code"
+      ]
     }
   ],
   "default_action": "reject-unmapped"

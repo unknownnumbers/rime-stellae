@@ -1,7 +1,7 @@
 {
   "format": "rymcp-official-profile-v2",
-  "version": "2026.11.25.5",
-  "maintenance_source_manifest_sha256": "54dd410944fd02df8392f0c93a44920468bd83c989b83f9b28a0897c48dcd50b",
+  "version": "2026.11.26.1",
+  "maintenance_source_manifest_sha256": "78cc3e9d6debc0a58eab0104ee8ba10a731dcfb0cfa5754fef34f622cbf67cfc",
   "files": [
     {
       "path": "JAPANESE.md",

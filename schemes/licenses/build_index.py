@@ -78,6 +78,8 @@ def official_record(path: str, old: dict[str, dict]) -> dict:
     relative = path.removeprefix('config/official-weasel/')
     if relative.startswith('samples/'):
         relative = relative.removeprefix('samples/')
+    if relative == 'weasel.custom.yaml':
+        relative = 'stellae.custom.yaml'
     base = old.get('config/pc/' + relative)
     if base:
         record = copy.deepcopy(base)

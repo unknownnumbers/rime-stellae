@@ -602,6 +602,253 @@
       "path": "weasel.custom.yaml",
       "sha256": "3a1848f077b03c7480da0571ca1f448e93284da52a25f9cca1058a6c4dbb489a",
       "group": "configuration"
+    },
+    {
+      "path": "jp_sela.custom.yaml",
+      "sha256": "657084d0f0290e091056cb6ecadd120ea4261584daea6289d31dcacfd24624d9",
+      "group": "configuration"
+    },
+    {
+      "path": "jp_sela.schema.yaml",
+      "sha256": "d594e133a08d23d81fc798106684c085ed2d301d9399fde350e921592fec8471",
+      "group": "configuration"
+    },
+    {
+      "path": "jp_sela_custom.dict.yaml",
+      "sha256": "941578997bc9c43bd31e2f4d1f890cf8fe3737051dfe432f3928440bf1146ec1",
+      "group": "configuration"
+    },
+    {
+      "path": "lua/mixed_data.lua",
+      "sha256": "198cbd6676a00bc5e6b96dfe7b65d0210ec4ca8386dd8ad5e0bcacedddca0d51",
+      "group": "lua"
+    },
+    {
+      "path": "lua/mixed_translator.lua",
+      "sha256": "f878f62589653baf0d9a37b45114a7307ba9304fe7754f97b8890726426bafed",
+      "group": "lua"
+    },
+    {
+      "path": "lua/rymcp_dlc.lua",
+      "sha256": "71592167ae7731c2a64fdc527599d7418396b744d129c90659da606d33832d3f",
+      "group": "lua"
+    },
+    {
+      "path": "luna_pinyin.research.dict.yaml",
+      "sha256": "79467679c0eac919afc7d18b84dd7d375522ab4c11133b01c9cb29bdb7ff2c53",
+      "group": "configuration"
+    },
+    {
+      "path": "mixed_full.dict.yaml",
+      "sha256": "e5af1476aae799206e9fe20920b121e617021d079f001d94720f4a7c4da80f9a",
+      "group": "configuration"
+    },
+    {
+      "path": "mixed_full.schema.yaml",
+      "sha256": "e74e7ed78acd17bfcd5b528f90930dbf3414ecc6e794d0fe85fb1a25abf534ef",
+      "group": "configuration"
+    },
+    {
+      "path": "pc_research.custom.yaml",
+      "sha256": "6230c7d728b386a64b4999e15910db8d31e486c4d3ce26316b8177777d98057a",
+      "group": "configuration"
+    },
+    {
+      "path": "pc_research.schema.yaml",
+      "sha256": "a64f83793e94c3d52b021d84fc847406749e30cfe76e4c20ca414dd83de61548",
+      "group": "configuration"
+    },
+    {
+      "path": "research_greek.dict.yaml",
+      "sha256": "2654b1d6d8195feab5eb85fdf8bb9d26dd58712b143293f0cdb601f2eb7d3fe9",
+      "group": "configuration"
+    },
+    {
+      "path": "rymcp_dlc_computer.dict.yaml",
+      "sha256": "7f7fe7ed21298462b7266a933640d24acd24f0803271bb69ded1c30ff8e4dcbc",
+      "group": "configuration"
+    },
+    {
+      "path": "rymcp_dlc_math.dict.yaml",
+      "sha256": "8699bcdb8052c78cbab46b2e655b7af91f83b40df93bdc93eaa9ebfb382b2307",
+      "group": "configuration"
+    },
+    {
+      "path": "rymcp_dlc_physics.dict.yaml",
+      "sha256": "144de58f53f4b8f9fcee9ff1c80484903ba23eb65d1a8372ceaf8b21b3bd590e",
+      "group": "configuration"
+    },
+    {
+      "path": "rymcp_dlc_poetry.dict.yaml",
+      "sha256": "bc7ff6628072ee38945a3a957f399f968aab276211b26f7a4c3c1e5d4828cec9",
+      "group": "configuration"
+    },
+    {
+      "path": "rymcp_dlc_poetry_00.dict.yaml",
+      "sha256": "954fa5f7031d7a9bd590bce188ff30f6911a69dcf32243bf40783673e33e0044",
+      "group": "configuration"
+    },
+    {
+      "path": "rymcp_dlc_poetry_01.dict.yaml",
+      "sha256": "4da1a5620f57f239a388c0866e411f6cec553b2709d54dbf83f3970ea1c8e32d",
+      "group": "configuration"
+    },
+    {
+      "path": "rymcp_dlc_poetry_02.dict.yaml",
+      "sha256": "7a5ea296425bb52ee58629871df4a79e8da7f432b2ff507e6afa45d4e467610e",
+      "group": "configuration"
+    },
+    {
+      "path": "rymcp_dlc_poetry_03.dict.yaml",
+      "sha256": "c69a834140df01384a0bc24cecb1243ef48e7d5fcf79dce715f4a558c5532abd",
+      "group": "configuration"
+    },
+    {
+      "path": "rymcp_dlc_poetry_04.dict.yaml",
+      "sha256": "075a625ed333233578e529248787aa5b10700f1f1392d8f2476fd6cf08deb83f",
+      "group": "configuration"
+    },
+    {
+      "path": "rymcp_dlc_poetry_05.dict.yaml",
+      "sha256": "da0ff8824e115a176e690d389400ea39f779d1d8f0c7778aaef1e3fd49ed055c",
+      "group": "configuration"
+    },
+    {
+      "path": "rymcp_dlc_poetry_06.dict.yaml",
+      "sha256": "064037b299870818892956794414cc91f4c5f7bdb3f58074ccf6263b1bb75404",
+      "group": "configuration"
+    },
+    {
+      "path": "rymcp_dlc_poetry_07.dict.yaml",
+      "sha256": "0b0ff96221615557af08b645be16d0b08ae159f426147deee3fc63ec24dc5020",
+      "group": "configuration"
+    },
+    {
+      "path": "rymcp_dlc_poetry_08.dict.yaml",
+      "sha256": "f9c5a1e44603799897da76eb69a86a49ffb55dc17d023e11ffe0571c1194f2ea",
+      "group": "configuration"
+    },
+    {
+      "path": "rymcp_dlc_poetry_09.dict.yaml",
+      "sha256": "0906920319aea28a6cee6f98ba12d59b3e7d396f4f4cfa090aca091facadda97",
+      "group": "configuration"
+    },
+    {
+      "path": "rymcp_dlc_poetry_10.dict.yaml",
+      "sha256": "0c520b0ab5edd2107fbb75380819ff87ac1dae69cd5a1d5685531742edeb5d9a",
+      "group": "configuration"
+    },
+    {
+      "path": "rymcp_dlc_poetry_11.dict.yaml",
+      "sha256": "42fa5f46f93af3e3d98b99c5154a6abb9b7374019ea7cd6fdf071998f6a5fb7b",
+      "group": "configuration"
+    },
+    {
+      "path": "rymcp_dlc_poetry_12.dict.yaml",
+      "sha256": "df0c55fd1ece10ad276663ed95c3af6e93dfb8a7e522a8f24c5274463fe9a217",
+      "group": "configuration"
+    },
+    {
+      "path": "rymcp_dlc_poetry_13.dict.yaml",
+      "sha256": "8f9c8710f9fb087d7728f87cd17416cb2c352296153ea6b380d716edac953dc3",
+      "group": "configuration"
+    },
+    {
+      "path": "rymcp_dlc_poetry_14.dict.yaml",
+      "sha256": "808fe14d3b50cf31322725bb006604984e7853149f31820d63bcbbb1d1fefdc3",
+      "group": "configuration"
+    },
+    {
+      "path": "rymcp_dlc_poetry_15.dict.yaml",
+      "sha256": "29aa4406717990a53449ee675156e084b7b1bcb678d1bbf5db3156dcd0b916c1",
+      "group": "configuration"
+    },
+    {
+      "path": "rymcp_dlc_poetry_16.dict.yaml",
+      "sha256": "0853079000011a046e655a40fa198414b3e7e4ec459bbd904e166720e87ec74d",
+      "group": "configuration"
+    },
+    {
+      "path": "rymcp_dlc_poetry_17.dict.yaml",
+      "sha256": "662881cb418d23298cc0138099a83ec3115b4eee8fa94583f5d70ea978b30073",
+      "group": "configuration"
+    },
+    {
+      "path": "rymcp_dlc_poetry_18.dict.yaml",
+      "sha256": "db980bf851d8a9ceaf5da7df02534f50dfde0361dee6ed2154ef49fe10854c0b",
+      "group": "configuration"
+    },
+    {
+      "path": "rymcp_dlc_poetry_19.dict.yaml",
+      "sha256": "ad3911d9d425727d291afbf734a29dd4451eb7ee02a9ac27ff23c6633d79c719",
+      "group": "configuration"
+    },
+    {
+      "path": "rymcp_dlc_poetry_20.dict.yaml",
+      "sha256": "76687eca08dc15b6969cb98f612f2b610e976751790172c458f33f0c3c1dbc0d",
+      "group": "configuration"
+    },
+    {
+      "path": "rymcp_dlc_poetry_21.dict.yaml",
+      "sha256": "3035d7cfce757001a71ec39a37ece29bf0b5ea491d349a71ceef01150b885cb4",
+      "group": "configuration"
+    },
+    {
+      "path": "rymcp_dlc_poetry_22.dict.yaml",
+      "sha256": "16622a09ed60e6fb9445d572c5022fefc657ecc9c02048b08ebc760e613dabee",
+      "group": "configuration"
+    },
+    {
+      "path": "rymcp_dlc_poetry_23.dict.yaml",
+      "sha256": "59980eb2db00bd83b492d2546b103e8ed45c4817316b86afaebd680965440709",
+      "group": "configuration"
+    },
+    {
+      "path": "rymcp_dlc_poetry_24.dict.yaml",
+      "sha256": "ff62b7bcf8716b550e03b38300e360b61b14ae5c19c6029cd8e51a75574cfec9",
+      "group": "configuration"
+    },
+    {
+      "path": "rymcp_dlc_poetry_25.dict.yaml",
+      "sha256": "b0b4bccccebc52e12bae5b6d1a30f33f136c6fc4f50f72b53d89d06a78c168cc",
+      "group": "configuration"
+    },
+    {
+      "path": "rymcp_dlc_poetry_26.dict.yaml",
+      "sha256": "642bd080a2a075a599873d3645de6f994984cdb723979c607b29eeb9916a7cf1",
+      "group": "configuration"
+    },
+    {
+      "path": "rymcp_dlc_poetry_27.dict.yaml",
+      "sha256": "4f89db57f19f69853cab894b84ee7cd2f35c9c09e2cdf343fe096e413d2d4a12",
+      "group": "configuration"
+    },
+    {
+      "path": "rymcp_dlc_poetry_28.dict.yaml",
+      "sha256": "037133541ee8e80284b4a8785a61416567d74693c9fc74e85c5026df689c083b",
+      "group": "configuration"
+    },
+    {
+      "path": "rymcp_dlc_poetry_29.dict.yaml",
+      "sha256": "4f729b190416df080c4d5715d4ad998795836dc4e26a74eeeff6c7e5d293a6cb",
+      "group": "configuration"
+    },
+    {
+      "path": "rymcp_dlc_poetry_30.dict.yaml",
+      "sha256": "5e362e8aa4ecab11596e056d3dcb51dd7c0d7a59f29523fa88b93b2fad7dd990",
+      "group": "configuration"
+    },
+    {
+      "path": "rymcp_dlc_poetry_31.dict.yaml",
+      "sha256": "bab3940ba3d96465a0dcf92816a57528bec3740f14fa661559642d046b576e34",
+      "group": "configuration"
+    }
+  ],
+  "additionalPreviousSources": [
+    {
+      "sourceRef": "d5230f72ef5c09b14bbdc3247d372e2497811b79",
+      "schemeVersion": "2026.11.24.1",
+      "scope": "Additional retired source paths from the published predecessor."
     }
   ]
 }

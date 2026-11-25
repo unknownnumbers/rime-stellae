@@ -688,6 +688,17 @@
         "LICENSE"
       ],
       "previous_path": "config/pc/lua/stellae_dlc.lua"
+    },
+    {
+      "path": "config/pc/stellae.custom.yaml",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "LICENSE"
+      ],
+      "previous_path": "config/pc/weasel.custom.yaml"
     }
   ]
 }

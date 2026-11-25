@@ -1,5 +1,5 @@
 diff --git a/RimeWithWeasel/RimeWithWeasel.cpp b/RimeWithWeasel/RimeWithWeasel.cpp
-index 3f4e59d..ebfeb85 100644
+index 3f4e59d9f410c79ad605460c5492314d71bdfb65..5ffdbfa2283dbedf3b1ab71931336f54f25db91f 100644
 --- a/RimeWithWeasel/RimeWithWeasel.cpp
 +++ b/RimeWithWeasel/RimeWithWeasel.cpp
 @@ -1,4 +1,4 @@
@@ -116,6 +116,15 @@ index 3f4e59d..ebfeb85 100644
    std::string log_dir = WeaselLogPath().u8string();
    weasel_traits.log_dir = log_dir.c_str();
    rime_api->setup(&weasel_traits);
+@@ -160,7 +243,7 @@ void RimeWithWeaselHandler::Initialize() {
+   CleanOldLogs();
+ 
+   RimeConfig config = {NULL};
+-  if (rime_api->config_open("weasel", &config)) {
++  if (rime_api->config_open("stellae", &config)) {
+     if (m_ui) {
+       _UpdateUIStyle(&config, m_ui, true);
+       _UpdateShowNotifications(&config, true);
 @@ -189,6 +272,8 @@ void RimeWithWeaselHandler::Initialize() {
  }
  
@@ -193,7 +202,7 @@ index 3f4e59d..ebfeb85 100644
 -        }
 -      }
 -      m_base_style = m_ui->style();
-+  if (!rime_api->config_open("weasel", &config))
++  if (!rime_api->config_open("stellae", &config))
 +    return false;
 +
 +  _UpdateUIStyle(&config, m_ui, true);
@@ -595,6 +604,15 @@ index 3f4e59d..ebfeb85 100644
    UIStyle& style = session_status.style;
    // load schema color style config
    const int BUF_SIZE = 255;
+@@ -631,7 +871,7 @@ void RimeWithWeaselHandler::_LoadSchemaSpecificSettings(
+       rime_api->config_end(&preset);
+     } else {
+       RimeConfig weaselconfig;
+-      if (rime_api->config_open("weasel", &weaselconfig)) {
++      if (rime_api->config_open("stellae", &weaselconfig)) {
+         _UpdateUIStyleColor(&weaselconfig, style, color_name);
+         rime_api->config_close(&weaselconfig);
+       }
 @@ -643,31 +883,79 @@ void RimeWithWeaselHandler::_LoadSchemaSpecificSettings(
      update_color_scheme();
    // load schema icon start
@@ -930,7 +948,7 @@ index 9a07343..76c3f16 100644
  }
  
 diff --git a/WeaselDeployer/Configurator.cpp b/WeaselDeployer/Configurator.cpp
-index 1502322..7d1fa01 100644
+index 15023226746b715a55935d8d043762348b3acc42..11cda807776c3c71b4891e729c0d31b99b5deabe 100644
 --- a/WeaselDeployer/Configurator.cpp
 +++ b/WeaselDeployer/Configurator.cpp
 @@ -1,4 +1,5 @@
@@ -949,7 +967,7 @@ index 1502322..7d1fa01 100644
 +Configurator::Configurator(bool create_custom_files) {
 +  if (create_custom_files) {
 +    CreateFileIfNotExist("default.custom.yaml");
-+    CreateFileIfNotExist("weasel.custom.yaml");
++    CreateFileIfNotExist("stellae.custom.yaml");
 +  }
  }
  
@@ -1019,6 +1037,15 @@ index 1502322..7d1fa01 100644
      client.StartMaintenance();
    }
  
+@@ -143,7 +155,7 @@ int Configurator::UpdateWorkspace(bool report_errors) {
+     // initialize default config, preset schemas
+     rime->deploy();
+     // initialize weasel config
+-    rime->deploy_config_file("weasel.yaml", "config_version");
++    rime->deploy_config_file("stellae.yaml", "config_version");
+   }
+ 
+   CloseHandle(hMutex);  // should be closed before resuming service.
 @@ -155,10 +167,30 @@ int Configurator::UpdateWorkspace(bool report_errors) {
    return 0;
  }
@@ -1032,7 +1059,7 @@ index 1502322..7d1fa01 100644
 +    return 1;
 +  }
 +  const bool compiled =
-+      rime_get_api()->deploy_config_file("weasel.yaml", "config_version");
++      rime_get_api()->deploy_config_file("stellae.yaml", "config_version");
 +  CloseHandle(mutex);
 +  if (!compiled)
 +    return 1;
@@ -1355,10 +1382,10 @@ index 587cbc7..48cbd11 100644
    if (ret == ERROR_SUCCESS) {
      WCHAR value[MAX_PATH];
 diff --git a/WeaselDeployer/UIStyleSettings.cpp b/WeaselDeployer/UIStyleSettings.cpp
-index 22e7380..d6e512f 100644
+index 22e7380a70240b15fbf0406243d8daa5fc5b0064..6329b01cb4dd9aee59b16cbb6a53ee4b00045d98 100644
 --- a/WeaselDeployer/UIStyleSettings.cpp
 +++ b/WeaselDeployer/UIStyleSettings.cpp
-@@ -1,7 +1,39 @@
+@@ -1,10 +1,42 @@
  #include "stdafx.h"
  #include <WeaselUtility.h>
 +#include <dwrite.h>
@@ -1397,7 +1424,11 @@ index 22e7380..d6e512f 100644
 +
  UIStyleSettings::UIStyleSettings() {
    api_ = (RimeLeversApi*)rime_get_api()->find_module("levers")->get_api();
-   settings_ = api_->custom_settings_init("weasel", "Weasel::UIStyleSettings");
+-  settings_ = api_->custom_settings_init("weasel", "Weasel::UIStyleSettings");
++  settings_ = api_->custom_settings_init("stellae", "Weasel::UIStyleSettings");
+ }
+ 
+ bool UIStyleSettings::GetPresetColorSchemes(
 @@ -50,12 +82,35 @@ std::string UIStyleSettings::GetColorSchemePreview(
      const std::string& color_scheme_id) {
    std::string shared_dir = rime_get_api()->get_shared_data_dir();

@@ -166,7 +166,7 @@ jobs:
           $shared=Join-Path $output 'data'
           $null=New-Item -ItemType Directory -Path $shared -Force
           Copy-Item -LiteralPath installer/default.yaml -Destination $shared
-          Copy-Item -LiteralPath native/tests/key-pairing/fixture/weasel.yaml -Destination $shared
+          Copy-Item -LiteralPath native/tests/key-pairing/fixture/stellae.yaml -Destination $shared
           foreach($name in @('key_bindings.yaml','punctuation.yaml','symbols.yaml')){
             Copy-Item -LiteralPath (Join-Path 'schemes/config/pc' $name) -Destination $shared
           }
@@ -276,6 +276,27 @@ jobs:
         run: ./native/tests/installer/Test-BundleNotices.ps1 -OutputDirectory (Join-Path $env:RUNNER_TEMP 'notices-policy')
       - name: Test source layout migration and modified user sources
         run: ./native/tests/installer/Test-BundleSourceLayout.ps1 -OutputDirectory (Join-Path $env:RUNNER_TEMP 'source-layout-policy')
+      - name: Test appearance configuration migration with PowerShell 7
+        run: ./native/tests/installer/Test-AppearanceConfig.ps1 -OutputDirectory (Join-Path $env:RUNNER_TEMP 'appearance-config-policy')
+      - name: Test appearance configuration migration with Windows PowerShell 5
+        run: |
+          $ps5=Join-Path $env:WINDIR 'System32/WindowsPowerShell/v1.0/powershell.exe'
+          & $ps5 -NoProfile -NonInteractive -ExecutionPolicy Bypass -File native/tests/installer/Test-AppearanceConfig.ps1 -OutputDirectory (Join-Path $env:RUNNER_TEMP 'appearance-config-policy-ps5')
+          if($LASTEXITCODE){throw 'Windows PowerShell 5 appearance migration tests failed'}
+      - name: Test native learning store migration with PowerShell 7
+        run: ./native/tests/installer/Test-LearningStore.ps1 -EngineDirectory (Join-Path $env:RUNNER_TEMP 'runtime-engines/x64/dist/lib') -OutputDirectory (Join-Path $env:RUNNER_TEMP 'learning-store-policy')
+      - name: Test native learning store migration with Windows PowerShell 5
+        run: |
+          $ps5=Join-Path $env:WINDIR 'System32/WindowsPowerShell/v1.0/powershell.exe'
+          & $ps5 -NoProfile -NonInteractive -ExecutionPolicy Bypass -File native/tests/installer/Test-LearningStore.ps1 -EngineDirectory (Join-Path $env:RUNNER_TEMP 'runtime-engines/x64/dist/lib') -OutputDirectory (Join-Path $env:RUNNER_TEMP 'learning-store-policy-ps5')
+          if($LASTEXITCODE){throw 'Windows PowerShell 5 learning migration tests failed'}
+      - name: Test DLC namespace migration with PowerShell 7
+        run: ./native/tests/installer/Test-DlcNamespace.ps1 -OutputDirectory (Join-Path $env:RUNNER_TEMP 'dlc-namespace-policy')
+      - name: Test DLC namespace migration with Windows PowerShell 5
+        run: |
+          $ps5=Join-Path $env:WINDIR 'System32/WindowsPowerShell/v1.0/powershell.exe'
+          & $ps5 -NoProfile -NonInteractive -ExecutionPolicy Bypass -File native/tests/installer/Test-DlcNamespace.ps1 -OutputDirectory (Join-Path $env:RUNNER_TEMP 'dlc-namespace-policy-ps5')
+          if($LASTEXITCODE){throw 'Windows PowerShell 5 DLC namespace tests failed'}
       - name: Provision the pinned NSIS compiler
         run: |
           $root=Join-Path ${env:ProgramFiles(x86)} 'NSIS'
@@ -359,6 +380,9 @@ jobs:
         if: ${{ !startsWith(github.ref_name, 'ci/settings-') }}
         run: |
           $checks=@((Join-Path $env:RUNNER_TEMP 'shared-policy/result.json'),(Join-Path $env:RUNNER_TEMP 'installer-validation/result.json'),(Join-Path $env:RUNNER_TEMP 'installer-validation/installed-ready/result.json'),(Join-Path $env:RUNNER_TEMP 'profile-policy/win11-equivalent-policy-result.json'),(Join-Path $env:RUNNER_TEMP 'bundle/stage/output/server-overlay-verification.json'),(Join-Path $env:RUNNER_TEMP 'source-profile-tests/proof.json'))
+          $checks+=@((Join-Path $env:RUNNER_TEMP 'appearance-config-policy/result.json'),(Join-Path $env:RUNNER_TEMP 'appearance-config-policy-ps5/result.json'))
+          $checks+=@((Join-Path $env:RUNNER_TEMP 'learning-store-policy/result.json'),(Join-Path $env:RUNNER_TEMP 'learning-store-policy-ps5/result.json'))
+          $checks+=@((Join-Path $env:RUNNER_TEMP 'dlc-namespace-policy/result.json'),(Join-Path $env:RUNNER_TEMP 'dlc-namespace-policy-ps5/result.json'))
           foreach($path in $checks){$report=Get-Content -LiteralPath $path -Raw|ConvertFrom-Json;if(-not $report.passed){throw 'A required validation failed'}}
           $release=Join-Path $env:RUNNER_TEMP 'bundle/release'
           $overlay=Get-Content -LiteralPath (Join-Path $release 'frontend-overlay-verification.json') -Raw|ConvertFrom-Json
@@ -393,6 +417,12 @@ jobs:
             ${{ runner.temp }}/shared-policy/*.json
             ${{ runner.temp }}/notices-policy/*.json
             ${{ runner.temp }}/source-layout-policy/**/*.json
+            ${{ runner.temp }}/appearance-config-policy/**/*.json
+            ${{ runner.temp }}/appearance-config-policy-ps5/**/*.json
+            ${{ runner.temp }}/learning-store-policy/**/*.json
+            ${{ runner.temp }}/learning-store-policy-ps5/**/*.json
+            ${{ runner.temp }}/dlc-namespace-policy/**/*.json
+            ${{ runner.temp }}/dlc-namespace-policy-ps5/**/*.json
             ${{ runner.temp }}/installer-validation/*.json
             ${{ runner.temp }}/installer-validation/*.log
             ${{ runner.temp }}/installer-validation/installed-ready/*.json
@@ -401,6 +431,51 @@ jobs:
             ${{ runner.temp }}/source-profile-tests/proof.json
             ${{ runner.temp }}/source-profile-tests/rebuilt-binaries.json
             ${{ github.workspace }}/policy-diagnostics/*.json
+          if-no-files-found: warn
+          retention-days: 14
+
+  public-upgrade:
+    needs: bundle
+    runs-on: windows-2022
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        configuration: [Personal, ProductCopy]
+    name: Published bundle upgrade (${{ matrix.configuration }})
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: frontend
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/download-artifact@v4
+        with:
+          name: appearance-test-input
+          path: ${{ runner.temp }}/appearance-test-input
+      - name: Verify the current installer input
+        run: |
+          $inputRoot=Join-Path $env:RUNNER_TEMP 'appearance-test-input'
+          $index=Get-Content -LiteralPath (Join-Path $inputRoot 'input-proof.json') -Raw|ConvertFrom-Json
+          if($index.sourceRef -cne $env:GITHUB_SHA){throw 'The current installer belongs to another source snapshot'}
+          $entry=@($index.files|Where-Object {$_.path -ceq 'stellae-installer.exe'})
+          if($entry.Count -ne 1 -or (Get-FileHash -LiteralPath (Join-Path $inputRoot 'stellae-installer.exe')).Hash.ToLowerInvariant() -cne $entry[0].sha256){throw 'The current installer differs from its build proof'}
+      - name: Upgrade the actual preceding published installer and preserve learning
+        env:
+          PUBLIC_UPGRADE_CONFIGURATION: ${{ matrix.configuration }}
+          STELLAE_INSTALLER_POLICY_TRACE: '1'
+        run: |
+          ./native/tests/installer/Test-PublicUpgrade.ps1 -NewInstaller (Join-Path $env:RUNNER_TEMP 'appearance-test-input/stellae-installer.exe') -SchemeSource (Join-Path $env:GITHUB_WORKSPACE 'frontend/schemes') -Configuration $env:PUBLIC_UPGRADE_CONFIGURATION -OutputDirectory (Join-Path $env:RUNNER_TEMP 'public-upgrade')
+      - name: Preserve published upgrade evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: public-upgrade-${{ matrix.configuration }}
+          path: |
+            ${{ runner.temp }}/public-upgrade/**/*.json
+            ${{ runner.temp }}/public-upgrade/*.log
           if-no-files-found: warn
           retention-days: 14
 

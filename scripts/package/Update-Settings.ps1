@@ -12,7 +12,7 @@ $program=[IO.Path]::GetFullPath($ProgramDirectory).TrimEnd([char[]]'\/')
 $payload=[IO.Path]::GetFullPath($PayloadDirectory).TrimEnd([char[]]'\/')
 $baselineDeployer='d5d9330446fa233b04e143e53a6d2a0d9499adfc107544915d6dd1a58cb026f6'
 $themeIds=@('reference_gray','stellae_sakura','stellae_lavender','stellae_night','stellae_crimson','stellae_mono')
-$allowed=@('StellaeDeployer.exe','data/stellae_bundle_weasel.yaml')+
+$allowed=@('StellaeDeployer.exe','data/stellae_bundle_appearance.yaml')+
  @($themeIds|ForEach-Object {'data/preview/color_scheme_'+$_.ToString()+'.png'})+
  @('candidate_font','candidate_font_default','candidate_font_sc','candidate_font_tc','candidate_font_hk'|ForEach-Object {'data/preview/'+$_.ToString()+'.png'})
 $retired=@('default','sc','tc','hk'|ForEach-Object {'data/preview/color_scheme_reference_gray_'+$_.ToString()+'.png'})
@@ -45,6 +45,7 @@ function Write-Atomic([string]$Path,[byte[]]$Bytes){
  if(Test-Path -LiteralPath $Path){[IO.File]::Replace($temporary,$Path,[NullString]::Value)}else{[IO.File]::Move($temporary,$Path)}
 }
 if(-not [Environment]::Is64BitOperatingSystem -or -not (Test-Path -LiteralPath $program -PathType Container)){throw 'An installed x64 frontend is required.'}
+if(-not (Test-Path -LiteralPath (Child $program 'data/stellae.yaml') -PathType Leaf)){throw 'Use the complete Stellae installer to migrate the appearance configuration before applying a settings-only update.'}
 Require-X64 (Child $program 'StellaeServer.exe')
 Require-X64 (Child $program 'StellaeDeployer.exe')
 if(@(Get-Process StellaeDeployer -ErrorAction SilentlyContinue).Count){throw 'Close the appearance/settings tool before updating it.'}

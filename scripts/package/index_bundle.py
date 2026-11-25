@@ -64,6 +64,7 @@ for path in sorted(root.rglob('*')):
             row['generated_source_ids']=origin['generated_source_ids']
             row['generated_license']='GPL-3.0-only'
             row['generated_references']=['LICENSE.txt']
+    base_path=origin.get('original_installed_path',installed) if origin else installed
     if origin and origin['source']=='schemes':
         name=origin['archive_member']
         if name in incoming:
@@ -81,11 +82,11 @@ for path in sorted(root.rglob('*')):
         if original_license.get('project_license')=='GPL-3.0-only' and 'project' not in scheme_ids:scheme_ids.append('project')
         row['source_ids']=origin.get('generated_source_ids',[])+['scheme:'+key for key in scheme_ids]
         row['resolved_references']=[scheme_reference(name) for name in row['license_record'].get('license',row['license_record']).get('references',[])]
-    elif origin and origin['source'] in {'frontendInstaller','rebuiltServer','rebuiltFrontend','rebuiltRuntimeEngine'} and installed in old and old[installed]['sha256']==origin.get('original_sha256',digest):
-        row['license_record']=old[installed]
+    elif origin and origin['source'] in {'frontendInstaller','rebuiltServer','rebuiltFrontend','rebuiltRuntimeEngine'} and base_path in old and old[base_path]['sha256']==origin.get('original_sha256',digest):
+        row['license_record']=old[base_path]
         row['license_reference_root']='.'
         row['license_index']='base-package-license-index.json'
-        row['source_ids']=list(dict.fromkeys(origin.get('generated_source_ids',[])+old[installed].get('source_ids',[])))
+        row['source_ids']=list(dict.fromkeys(origin.get('generated_source_ids',[])+old[base_path].get('source_ids',[])))
         if origin['source'] in {'rebuiltServer','rebuiltFrontend','rebuiltRuntimeEngine'}:
             row['corresponding_source']=origin['corresponding_source']
             row['rebuild_source_ref']=origin['source_ref']
