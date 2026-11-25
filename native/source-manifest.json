@@ -277,7 +277,7 @@
     },
     {
       "path": "native/tests/key-pairing/Run-ControlledKeys.ps1",
-      "sha256": "40f92b6a362f5e21d7c6a8a3df0ae72803807062095989e4acafde88e56bd184",
+      "sha256": "1c066fbc8490ebba4e72e9f742670a0e0c0b435d6901bc2057aa315bb168ff2d",
       "scope": "Fixed synthetic native and installer regression fixture"
     },
     {
@@ -308,7 +308,7 @@
     {
       "path": "native/tests/package/test_bundle_architecture.py",
       "scope": "Current x64 backend, application-client and source-layout upgrade regression fixture",
-      "sha256": "6ce2fb028eece6e0263212bcb9a31f88ab80bb2070da19c171e0d7c9b7ba3756"
+      "sha256": "409995334fe31ee82c503fbd2701f7b938ad9b35ddb5ebd63780bc1b6edb64a6"
     },
     {
       "path": "native/tests/package/test_source_privacy.py",

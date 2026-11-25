@@ -27,6 +27,45 @@ def save(path, raw):
 
 
 class BundleArchitectureStagingTests(unittest.TestCase):
+    def test_nsis_backend_condition_preserves_function_and_section_boundaries(self):
+        source = (REPO / 'installer/install.nsi').read_text('utf-8-sig')
+        for x64_only in (False, True):
+            with self.subTest(x64_only=x64_only):
+                definitions = {'STELLAE_BUNDLE', 'STELLAE_FONT_DLC', 'WEASEL_VERSION', 'WEASEL_BUILD'}
+                if x64_only:
+                    definitions.add('STELLAE_X64_BACKEND')
+                active, conditions, scope, backend_files = True, [], None, []
+                for line in source.splitlines():
+                    row = line.strip()
+                    if row.startswith(('!ifdef ', '!ifndef ')):
+                        directive, name = row.split()
+                        selected = (name in definitions) != (directive == '!ifndef')
+                        conditions.append((active, selected))
+                        active = active and selected
+                    elif row == '!else':
+                        parent, selected = conditions[-1]
+                        conditions[-1] = (parent, not selected)
+                        active = parent and not selected
+                    elif row == '!endif':
+                        active, _ = conditions.pop()
+                    elif active:
+                        if row.startswith(('Function ', 'Section ')):
+                            self.assertIsNone(scope, row)
+                            scope = row.split(' ', 1)[0]
+                        elif row in ('FunctionEnd', 'SectionEnd'):
+                            self.assertEqual(scope, row.removesuffix('End'), row)
+                            scope = None
+                        elif row.startswith('File ') and ('rime.dll' in row or 'STELLAE_SERVER_EXE' in row or 'STELLAE_DEPLOYER_EXE' in row):
+                            self.assertEqual(scope, 'Section', row)
+                            backend_files.append(row)
+                self.assertFalse(conditions)
+                self.assertIsNone(scope)
+                if x64_only:
+                    self.assertEqual(len(backend_files), 3)
+                    self.assertFalse(any('Win32' in row for row in backend_files))
+                else:
+                    self.assertTrue(any('Win32' in row for row in backend_files))
+
     def test_stages_only_x64_backend_and_applies_user_defaults_once(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

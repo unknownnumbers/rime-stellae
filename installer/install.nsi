@@ -220,10 +220,7 @@ toquit:
 choose_directory:
   ; The default installation directory
 !ifdef STELLAE_X64_BACKEND
-  ; Both application client architectures connect to this single x64 service.
-  File "${STELLAE_DEPLOYER_EXE}"
-  File "${STELLAE_SERVER_EXE}"
-  File "rime.dll"
+  StrCpy $INSTDIR "$PROGRAMFILES64\${STELLAE_PROGRAM_DIRECTORY}"
 !else
   ; Retained for explicitly selected historical dual-runtime packages.
   ; install x64 build for NativeARM64_WINDOWS11 and NativeAMD64_WINDOWS11
@@ -243,6 +240,7 @@ choose_directory:
       StrCpy $INSTDIR "$PROGRAMFILES\${STELLAE_PROGRAM_DIRECTORY}"
     ${Endif}
   ${Endif}
+!endif
 skip:
   InitPluginsDir
   SetOutPath "$PLUGINSDIR\profile-policy"
@@ -410,6 +408,13 @@ program_files:
   ${If} ${RunningX64}
     File "${STELLAE_BINARY_BASE}x64.ime"
   ${EndIf}
+!ifdef STELLAE_X64_BACKEND
+  ; Both application client architectures connect to this single x64 service.
+  File "${STELLAE_DEPLOYER_EXE}"
+  File "${STELLAE_SERVER_EXE}"
+  File "rime.dll"
+!else
+  ; Retained for explicitly selected historical dual-runtime packages.
   ; install x64 build for NativeARM64_WINDOWS11 and NativeAMD64_WINDOWS11
   ${If} ${AtLeastWin11} ; Windows 11 and above
     ${If} ${IsNativeARM64}

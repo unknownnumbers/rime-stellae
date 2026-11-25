@@ -61,6 +61,12 @@ function Run-Probe([string]$Mode,[string]$Group,[int]$Checks){
   if(-not $passed){throw "Controlled callback group failed: $Group"}
 }
 function Deploy([string]$User,[switch]$Empty){
+  if(-not $Empty){
+    # The synthetic profile changes from empty shared defaults to a user fixture.
+    # Invalidate only that phase-owned compiled default; checkout mtimes can match.
+    $cache=Join-Path $User 'build/default.yaml'
+    if(Test-Path -LiteralPath $cache -PathType Leaf){Remove-Item -LiteralPath $cache}
+  }
   $name=if($Empty){'empty'}else{'fixture'}
   $arguments=@((Join-Path $PSScriptRoot 'Deploy-PublicFixture.py'),'--engine',(Join-Path $output 'rime.dll'),'--header',(Join-Path $source 'include/rime_api.h'),'--shared',(Resolve-Path $SharedData).Path,'--user',$User,'--logs',(Join-Path $logs "$stem-$name-compiler"),'--report',(Join-Path $logs "$stem-$name-deploy.json"))
   if($Empty){$arguments+='--empty'}

@@ -172,8 +172,8 @@
     },
     {
       "path": "installer/install.nsi",
-      "bytes": 29640,
-      "sha256": "51c28c96acd22eb5cc797d812f279d61ba6b7f11b352a3a84b286d178130bc04"
+      "bytes": 29816,
+      "sha256": "e04c3f6a0d99b85fd146f7d8c0c0824d9735185c279633d1514f69666865775e"
     },
     {
       "path": "installer/migrations/source-layout.json",
@@ -518,7 +518,7 @@
     {
       "path": "native/source-manifest.json",
       "bytes": 13997,
-      "sha256": "008e59d348add28a517aa62801ac3148306186cf0b92cf8a01900457d38da56d"
+      "sha256": "ddbe94e21ac891d222a258ffb7202d7d7a1b5a90f0cc432230c214dfc46b3dd7"
     },
     {
       "path": "native/tests/appearance/Add-PaintTrace.ps1",
@@ -647,8 +647,8 @@
     },
     {
       "path": "native/tests/key-pairing/Run-ControlledKeys.ps1",
-      "bytes": 9544,
-      "sha256": "40f92b6a362f5e21d7c6a8a3df0ae72803807062095989e4acafde88e56bd184"
+      "bytes": 9867,
+      "sha256": "1c066fbc8490ebba4e72e9f742670a0e0c0b435d6901bc2057aa315bb168ff2d"
     },
     {
       "path": "native/tests/key-pairing/SelectionControlledModes.inc",
@@ -707,8 +707,8 @@
     },
     {
       "path": "native/tests/package/test_bundle_architecture.py",
-      "bytes": 5481,
-      "sha256": "6ce2fb028eece6e0263212bcb9a31f88ab80bb2070da19c171e0d7c9b7ba3756"
+      "bytes": 7753,
+      "sha256": "409995334fe31ee82c503fbd2701f7b938ad9b35ddb5ebd63780bc1b6edb64a6"
     },
     {
       "path": "native/tests/package/test_runtime_engines.py",
