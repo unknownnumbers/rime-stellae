@@ -522,8 +522,8 @@
     },
     {
       "path": "native/source-manifest.json",
-      "bytes": 14250,
-      "sha256": "554fb64be44c55eb4734ef9fa0132bc9e21bedd46d34362cc34b9b4e1b0dcec9"
+      "bytes": 14251,
+      "sha256": "0b3ca12f92168b15329b03c5a47364eb7acd6264df5981e8c1a4aa1a87a5573d"
     },
     {
       "path": "native/tests/appearance/Add-PaintTrace.ps1",

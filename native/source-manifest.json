@@ -233,7 +233,7 @@
     {
       "path": "native/tests/installer/Test-BundleSourceLayout.ps1",
       "scope": "Current x64 backend, application-client and source-layout upgrade regression fixture",
-      "sha256": "4a698433cc62c8739f8a9e9ab6da2eab2ac5d4748d95baecb0c0e36172cd9777"
+      "sha256": "b950c11e26a6f773e70e8d60e755e4099230a0f8c18c6ed822e9fff3c42fcf4a"
     },
     {
       "path": "native/tests/installer/Test-InstallerPolicy.ps1",
@@ -262,7 +262,7 @@
     },
     {
       "path": "native/tests/key-pairing/Deploy-PublicFixture.py",
-      "sha256": "2978e418c5f32f0da0694be246491301844d137d06771d005738038968d5848e",
+      "sha256": "0a5bee7e07699d77221b25f0619f2ef18f5c798050fc3cf97035015541c382f7",
       "scope": "Fixed synthetic native and installer regression fixture"
     },
     {
@@ -306,14 +306,14 @@
       "scope": "Fixed synthetic native and installer regression fixture"
     },
     {
-      "path": "native/tests/key-pairing/fixture/weasel.yaml",
+      "path": "native/tests/key-pairing/fixture/stellae.yaml",
       "sha256": "9f2910f4bc2ca5072bf0717d202fa6528a0c50c363066cdaa95e5417d43949e1",
       "scope": "Fixed synthetic native and installer regression fixture"
     },
     {
       "path": "native/tests/package/test_bundle_architecture.py",
       "scope": "Current x64 backend, application-client and source-layout upgrade regression fixture",
-      "sha256": "409995334fe31ee82c503fbd2701f7b938ad9b35ddb5ebd63780bc1b6edb64a6"
+      "sha256": "67962b9614244e74209f342f10e6ab0991722c33fac057e22e4fb2d2eb551469"
     },
     {
       "path": "native/tests/package/test_source_privacy.py",
