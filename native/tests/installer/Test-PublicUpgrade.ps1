@@ -17,14 +17,31 @@ if(-not $out.StartsWith(([IO.Path]::GetFullPath($env:RUNNER_TEMP).TrimEnd('\')+'
 $null=New-Item -ItemType Directory -Path $out
 $new=(Resolve-Path -LiteralPath $NewInstaller).Path
 $report=[ordered]@{passed=$false;configuration=$Configuration;previousVersion='2026.11.24.1';previousSource='d5230f72ef5c09b14bbdc3247d372e2497811b79';syntheticFixtureOnly=$true;physicalKeyboardTested=$false;checks=@()}
+$processLogDirectory=Join-Path $out 'processes'
+$null=New-Item -ItemType Directory -Path $processLogDirectory
+$script:PublicUpgradeProcessIndex=0
 $env:STELLAE_BUNDLE_TEST_TRACE=Join-Path $out 'installer.log'
 function Check([string]$Name,[bool]$Passed){$report.checks+=@([ordered]@{name=$Name;passed=$Passed});if(-not $Passed){throw $Name}}
 function Run([string]$File,[string[]]$Arguments,[string]$Name,[int]$Timeout=600000){
   $start=[Diagnostics.ProcessStartInfo]::new($File)
   $start.UseShellExecute=$false;$start.CreateNoWindow=$true
+  $start.RedirectStandardOutput=$true;$start.RedirectStandardError=$true
   foreach($argument in $Arguments){$start.ArgumentList.Add($argument)}
   $process=[Diagnostics.Process]::Start($start)
-  try{if(-not $process.WaitForExit($Timeout)){throw ($Name+' timed out')};if($process.ExitCode -notin @(0,3010)){throw ($Name+' failed, exit '+$process.ExitCode)}}finally{$process.Dispose()}
+  try{
+    $stdout=$process.StandardOutput.ReadToEndAsync();$stderr=$process.StandardError.ReadToEndAsync()
+    if(-not $process.WaitForExit($Timeout)){throw ($Name+' timed out')}
+    if(-not [Threading.Tasks.Task]::WaitAll([Threading.Tasks.Task[]]@($stdout,$stderr),15000)){throw ($Name+' output streams did not close')}
+    $script:PublicUpgradeProcessIndex++
+    $prefix=('{0:D2}-' -f $script:PublicUpgradeProcessIndex)+($Name -replace '[^A-Za-z0-9_.-]','-')
+    [IO.File]::WriteAllText((Join-Path $processLogDirectory ($prefix+'.stdout.log')),$stdout.GetAwaiter().GetResult(),[Text.UTF8Encoding]::new($false))
+    $errorOutput=$stderr.GetAwaiter().GetResult()
+    [IO.File]::WriteAllText((Join-Path $processLogDirectory ($prefix+'.stderr.log')),$errorOutput,[Text.UTF8Encoding]::new($false))
+    if($process.ExitCode -notin @(0,3010)){
+      if($errorOutput){Write-Host $errorOutput}
+      throw ($Name+' failed, exit '+$process.ExitCode)
+    }
+  }finally{$process.Dispose()}
 }
 function Stop-Frontend {
   if(Get-Process StellaeServer -ErrorAction SilentlyContinue){Run (Join-Path $program 'StellaeServer.exe') @('/quit') 'stop synthetic frontend' 30000}
@@ -108,7 +125,11 @@ out.write_text(json.dumps(rows,indent=2)+'\n',encoding='utf-8')
   if($Configuration -ceq 'Personal'){
     Check 'Personal default override bytes are preserved' ((Get-FileHash -LiteralPath (Join-Path $user 'default.custom.yaml')).Hash -ceq $defaultBefore)
   }else{
-    Check 'The former product default copy is retired' (-not (Test-Path -LiteralPath (Join-Path $user 'default.custom.yaml')))
+    $migration=Get-Content -LiteralPath (Join-Path $program 'scheme-status.json') -Raw|ConvertFrom-Json
+    Check 'The former product default copy is retired' ($migration.passed -and 'default.custom.yaml' -cin @($migration.retiredUserSources))
+    $defaultCustom=Join-Path $user 'default.custom.yaml'
+    # The upstream deployer creates an empty custom file when it is absent.
+    Check 'Any recreated default custom file contains no old patch' (-not (Test-Path -LiteralPath $defaultCustom) -or (Get-Item -LiteralPath $defaultCustom).Length -eq 0)
     Check 'The former product Lua entrypoint is retired' (-not (Test-Path -LiteralPath (Join-Path $user 'rime.lua')))
     $oldLua=@($copied|Where-Object {$_ -like 'lua/*.lua' -and (Test-Path -LiteralPath (Join-Path $user $_))})
     Check 'No old flat product modules shadow the current shared modules' ($oldLua.Count -eq 0)

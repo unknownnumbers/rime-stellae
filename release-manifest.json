@@ -557,8 +557,8 @@
     },
     {
       "path": "native/tests/installer/Probe-InstalledClient.ps1",
-      "bytes": 2391,
-      "sha256": "c39167ae2e3af95060e24630a44b00bf17cb311297c7f646542129e99a1467b2"
+      "bytes": 5093,
+      "sha256": "d3029e6fa43d76021e20f3a0cba2aae1ead2cb0551731fee33cbda12b9dea971"
     },
     {
       "path": "native/tests/installer/Probe-InstalledEngine.py",
@@ -632,8 +632,8 @@
     },
     {
       "path": "native/tests/installer/Test-PublicUpgrade.ps1",
-      "bytes": 11562,
-      "sha256": "30522d6a8b84f829e074ca9b72d94a2eea8cfa6d1577f90b48480bff18b883c2"
+      "bytes": 12991,
+      "sha256": "e200214de06e7c5913e122486f3bd1e1e3e6e560dc1e80db741fbb42e911d661"
     },
     {
       "path": "native/tests/installer/Test-PublicUpgradeLearning.ps1",
