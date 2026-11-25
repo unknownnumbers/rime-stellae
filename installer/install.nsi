@@ -2,6 +2,7 @@
 !include stellae_identity.nsh
 !include FileFunc.nsh
 !include LogicLib.nsh
+!define MUI_CUSTOMFUNCTION_ABORT StellaeUserAbort
 !include MUI2.nsh
 !include x64.nsh
 !include winVer.nsh
@@ -218,7 +219,7 @@ Function .onInstFailed
   Call ReleaseLearningGuard
 FunctionEnd
 
-Function .onUserAbort
+Function StellaeUserAbort
   Call RollbackUserDataUpgrade
   Call ReleaseLearningGuard
 FunctionEnd
