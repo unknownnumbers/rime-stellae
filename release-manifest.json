@@ -127,13 +127,13 @@
     },
     {
       "path": "installer/AppearanceConfig.ps1",
-      "bytes": 13987,
-      "sha256": "e9d884609a77f46b656cf112bf9d5f8fcd8cf2a35d79eaa7e227f9be1eb97824"
+      "bytes": 14145,
+      "sha256": "b700997d1c868ae6a3d9486cc5d8258307e77476a1f837a48a60dd4bb7934c51"
     },
     {
       "path": "installer/BundleData.ps1",
-      "bytes": 18623,
-      "sha256": "4ebf352c6d8d5e773e04a9eb47844dd8cf339ddfda5a4a500e6943284e064a9c"
+      "bytes": 18801,
+      "sha256": "76efe7d02a37cd199270f9dbbafc09c64572c8d683da1620d50d8419d986aa49"
     },
     {
       "path": "installer/InstallProfilePolicy.ps1",
@@ -523,7 +523,7 @@
     {
       "path": "native/source-manifest.json",
       "bytes": 14251,
-      "sha256": "0b3ca12f92168b15329b03c5a47364eb7acd6264df5981e8c1a4aa1a87a5573d"
+      "sha256": "355e3a6f844e1f6be31d7927a049d08b01a1bcdcfb1101a2e4f2e30628860e52"
     },
     {
       "path": "native/tests/appearance/Add-PaintTrace.ps1",
@@ -567,8 +567,8 @@
     },
     {
       "path": "native/tests/installer/Test-AppearanceConfig.ps1",
-      "bytes": 13924,
-      "sha256": "963a82571cba8eca72c5d1a07a5d213d033b5f182892dd967a0adf12c3cc0525"
+      "bytes": 14615,
+      "sha256": "df19d9e0287c6ac492e616ec03cc8ed648079d1808400aa6a91e182a7c02153b"
     },
     {
       "path": "native/tests/installer/Test-BundleData.ps1",
@@ -597,13 +597,13 @@
     },
     {
       "path": "native/tests/installer/Test-BundleSourceLayout.ps1",
-      "bytes": 7750,
-      "sha256": "b950c11e26a6f773e70e8d60e755e4099230a0f8c18c6ed822e9fff3c42fcf4a"
+      "bytes": 7932,
+      "sha256": "5d4534c09f613b37f71ab20b1691bd45980dc7df2810cc4e81707240c06aaaa5"
     },
     {
       "path": "native/tests/installer/Test-DlcNamespace.ps1",
-      "bytes": 15393,
-      "sha256": "21e51661ee6f08ab44a9f4a23037806cd28717e5a278f826fc4dddbbb3718367"
+      "bytes": 16134,
+      "sha256": "156499551a093853310839aecff721bf2dc4f6809fe2cc7be233852d5f79511b"
     },
     {
       "path": "native/tests/installer/Test-FontInstallerE2E.ps1",
@@ -627,8 +627,8 @@
     },
     {
       "path": "native/tests/installer/Test-LearningStore.ps1",
-      "bytes": 11141,
-      "sha256": "7f1a63ca08f5db69ce833a5a5ba7a3fac85c417586f773a792c8c06486381dd0"
+      "bytes": 11508,
+      "sha256": "7cdd974787dbabd8dd2412ab0bc872fa65cf4cd64937bce5aed08e6697eae5f3"
     },
     {
       "path": "native/tests/installer/Test-PublicUpgrade.ps1",
@@ -3623,7 +3623,7 @@
     {
       "path": "schemes/release-manifest.json",
       "bytes": 110746,
-      "sha256": "11d44740d690451e285dd90cfdf3421ce1291807190cc736e9ddf49d14e1c054"
+      "sha256": "ccaadd1c053d4f958d12245a9eb45673d92d61d96fb506add5d8afcf12155373"
     },
     {
       "path": "schemes/scripts/build_dlc.py",
@@ -3747,8 +3747,8 @@
     },
     {
       "path": "schemes/scripts/upgrade/DlcNamespace.ps1",
-      "bytes": 17089,
-      "sha256": "ad5fa573f6fa50c109158944492ad7c748ad4bbf40d02bd9d5bb8f290bc2ed19"
+      "bytes": 17292,
+      "sha256": "3e3a7722f3505e2ede68047266a7a7b2165ea4cb832832e5656db526710974a0"
     },
     {
       "path": "schemes/scripts/upgrade/LearningStore.lua",
@@ -3757,8 +3757,8 @@
     },
     {
       "path": "schemes/scripts/upgrade/LearningStore.ps1",
-      "bytes": 18950,
-      "sha256": "da0def05b711306a13ae6763efbb7e7d40828b0fcc2f1d845e8912455bb0cfd0"
+      "bytes": 19146,
+      "sha256": "b2eff9a13c6be77e63a95464ad65edc7ec6468f5466a82eeee799a49877f5b5b"
     },
     {
       "path": "schemes/scripts/upgrade/LearningStoreNative.cs",

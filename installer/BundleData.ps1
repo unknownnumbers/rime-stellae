@@ -203,7 +203,8 @@ if($operation -eq 'Uninstall'){
           $current=Hash $target
           $previousPath=if($entry.path -ceq 'default.custom.yaml'){'stellae_bundle_default.yaml'}else{$entry.path}
           $knownPrevious=($previous.ContainsKey($entry.path) -and $current -ceq $previous[$entry.path].sha256) -or
-            ($previous.ContainsKey($previousPath) -and $current -ceq $previous[$previousPath].sha256)
+            ($previous.ContainsKey($previousPath) -and $current -ceq $previous[$previousPath].sha256) -or
+            ($entry.path -ceq 'default.custom.yaml' -and $previous.ContainsKey('rymcp_bundle_default.yaml') -and $current -ceq $previous['rymcp_bundle_default.yaml'].sha256)
           if($current -ceq $entry.sha256 -or $knownPrevious){
             $retireUserSources+=@([pscustomobject]@{path=$entry.path;sha256=$current;group=$entry.group})
           }

@@ -19,7 +19,12 @@ $script:LearningMappings=@(
   [pscustomobject]@{oldName='pc_english';newName='en_intelligence'},
   [pscustomobject]@{oldName='jp_family';newName='jp_kanji'}
 )
-function Learning-Hash([string]$Path){return (Get-FileHash -LiteralPath $Path -Algorithm SHA256).Hash.ToLowerInvariant()}
+function Learning-Hash([string]$Path){
+  $algorithm=[Security.Cryptography.SHA256]::Create()
+  $stream=$null
+  try{$stream=[IO.File]::OpenRead($Path);return ([BitConverter]::ToString($algorithm.ComputeHash($stream))).Replace('-','').ToLowerInvariant()}
+  finally{if($stream){$stream.Dispose()};$algorithm.Dispose()}
+}
 function Learning-Json([string]$Path,$Value){
   $null=[IO.Directory]::CreateDirectory((Split-Path $Path -Parent))
   [IO.File]::WriteAllText($Path,($Value|ConvertTo-Json -Depth 14)+"`n",[Text.UTF8Encoding]::new($false))

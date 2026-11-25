@@ -113,6 +113,13 @@ function Probe([string]$User,[string]$Phase){
   & $exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File $PSCommandPath -EngineDirectory $engine -OutputDirectory $out -FixtureUser $User -ProbePhase $Phase
   if($LASTEXITCODE){throw ('Genuine learning completion probe failed: '+$Phase)}
 }
+$hashFixture=Join-Path $out 'sha256-fixture.txt'
+Write-Fixture $hashFixture 'abc'
+$withoutHashCmdlet=& {
+  function Get-FileHash {throw 'Get-FileHash is unavailable in this regression scope'}
+  Learning-Hash $hashFixture
+}
+Check 'learning SHA256 works without Get-FileHash' ($withoutHashCmdlet -ceq 'ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad')
 $fresh=Join-Path $out 'fresh-user';$null=[IO.Directory]::CreateDirectory($fresh)
 Run-Helper Preflight $fresh (Join-Path $out 'fresh-work') fresh
 Check 'fresh install needs no learning migration' (-not (Get-Content -LiteralPath (Join-Path $out 'fresh.json') -Raw|ConvertFrom-Json).needsMigration)

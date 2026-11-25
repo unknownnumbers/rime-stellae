@@ -32,6 +32,17 @@ function Module($Options,[string]$Id){
   Write-Fixture (Join-Path $module 'manifest.tsv') (($lines -join "`r`n")+"`r`n")
   return $body
 }
+$withoutCmdlet=Case 'without-hash-cmdlet';$null=Module $withoutCmdlet math
+$noticeHash=(Hash (Join-Path $withoutCmdlet.UserDirectory 'rymcp_dlc/math/NOTICE.txt')).ToLowerInvariant()
+$null=& $helper @withoutCmdlet
+$withoutCmdlet.Action='Prepare'
+$null=& {
+  function Get-FileHash {throw 'Get-FileHash is unavailable in this regression scope'}
+  & $helper @withoutCmdlet
+}
+$withoutState=Get-Content -LiteralPath $withoutCmdlet.StateFile -Raw|ConvertFrom-Json
+$notice=@($withoutState.files|Where-Object {$_.path -ceq 'NOTICE.txt'})
+Check 'DLC preparation computes SHA256 without Get-FileHash' ($withoutState.stage -ceq 'prepared' -and $notice.Count -eq 1 -and $notice[0].sha256 -ceq $noticeHash -and $notice[0].preparedSha256 -ceq $noticeHash)
 $fresh=Case fresh
 $null=& $helper @fresh
 Check 'fresh profile does not request migration' (-not (Test-Path -LiteralPath $fresh.RequiredFlag))

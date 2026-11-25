@@ -112,6 +112,7 @@ if($Action -eq 'Preflight' -and $SourceLayout){
     return ($former.ContainsKey($Relative) -and $former[$Relative] -ceq $Checksum) -or
       ($known.ContainsKey($Relative) -and $known[$Relative] -ceq $Checksum) -or
       ($known.ContainsKey($alias) -and $known[$alias] -ceq $Checksum) -or
+      ($Relative -ceq 'default.custom.yaml' -and $known.ContainsKey('rymcp_bundle_default.yaml') -and $known['rymcp_bundle_default.yaml'] -ceq $Checksum) -or
       ($incomingFiles.ContainsKey($Relative) -and $incomingFiles[$Relative] -ceq $Checksum) -or
       ($incomingFiles.ContainsKey($alias) -and $incomingFiles[$alias] -ceq $Checksum)
   }

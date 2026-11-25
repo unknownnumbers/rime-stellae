@@ -1,6 +1,6 @@
 {
   "schema": "stellae-native-sources/1",
-  "date": "2026-11-25",
+  "date": "2026-11-26",
   "status": "source-inputs-pinned; validation is recorded in docs/BUILD.md",
   "productComposition": {
     "frontend": "0.17.4.61052; x64 Server/Deployer with x64/x86 TSF and legacy IME application clients",
@@ -233,7 +233,7 @@
     {
       "path": "native/tests/installer/Test-BundleSourceLayout.ps1",
       "scope": "Current x64 backend, application-client and source-layout upgrade regression fixture",
-      "sha256": "b950c11e26a6f773e70e8d60e755e4099230a0f8c18c6ed822e9fff3c42fcf4a"
+      "sha256": "5d4534c09f613b37f71ab20b1691bd45980dc7df2810cc4e81707240c06aaaa5"
     },
     {
       "path": "native/tests/installer/Test-InstallerPolicy.ps1",

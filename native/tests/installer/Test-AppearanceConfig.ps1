@@ -112,7 +112,7 @@ foreach($kind in @('owned','modified','unknown','bare')){
   }
   Preserved $options $kind
 }
-foreach($kind in @('known-default','modified-default','old-user-dict','nested-old-user-dict','obsolete-page-size-cn','obsolete-page-size-jp','base-dictionary','old-flat-lua','old-flat-shared-lua','old-entrypoint','current-custom')){
+foreach($kind in @('known-default','known-legacy-default','modified-default','old-user-dict','nested-old-user-dict','obsolete-page-size-cn','obsolete-page-size-jp','base-dictionary','old-flat-lua','old-flat-shared-lua','old-entrypoint','current-custom')){
   $options=Case ('source-'+$kind)
   $caseRoot=Split-Path $options.UserDirectory -Parent
   $options.SourceLayout=Join-Path $caseRoot 'source-layout.json'
@@ -127,9 +127,10 @@ foreach($kind in @('known-default','modified-default','old-user-dict','nested-ol
     [ordered]@{path='rime.lua';sha256=(Hash $oldEntry);group='lua'},
     [ordered]@{path='lua/cn_translator.lua';sha256=(Hash $oldModule);group='lua'}
   )}|ConvertTo-Json -Depth 6|Set-Content -LiteralPath $options.SourceLayout -Encoding UTF8
-  [ordered]@{format='stellae-managed-shared-v1';files=@([ordered]@{path='stellae_bundle_default.yaml';sha256=(Hash $publicFile)})}|ConvertTo-Json -Depth 5|Set-Content -LiteralPath (Join-Path $options.SharedDirectory 'stellae-managed-files.json') -Encoding UTF8
+  $defaultAlias=if($kind -eq 'known-legacy-default'){'rymcp_bundle_default.yaml'}else{'stellae_bundle_default.yaml'}
+  [ordered]@{format='stellae-managed-shared-v1';files=@([ordered]@{path=$defaultAlias;sha256=(Hash $publicFile)})}|ConvertTo-Json -Depth 5|Set-Content -LiteralPath (Join-Path $options.SharedDirectory 'stellae-managed-files.json') -Encoding UTF8
   [ordered]@{files=@([ordered]@{path='rime.lua';sha256=('b'*64)},[ordered]@{path='lua/cn/cn_translator.lua';sha256=('c'*64)})}|ConvertTo-Json -Depth 5|Set-Content -LiteralPath $options.SharedManifest -Encoding UTF8
-  if($kind -eq 'known-default'){Write-Fixture (Join-Path $options.UserDirectory 'default.custom.yaml') $publicDefault}
+  if($kind -in @('known-default','known-legacy-default')){Write-Fixture (Join-Path $options.UserDirectory 'default.custom.yaml') $publicDefault}
   if($kind -eq 'modified-default'){Write-Fixture (Join-Path $options.UserDirectory 'default.custom.yaml') ($publicDefault+"`n# Personal change")}
   if($kind -eq 'old-user-dict'){Write-Fixture (Join-Path $options.UserDirectory 'cn_stellae.custom.yaml') "patch:`n  translator/user_dict: luna_pinyin`n"}
   if($kind -eq 'nested-old-user-dict'){Write-Fixture (Join-Path $options.UserDirectory 'jp_stellae.custom.yaml') "patch:`n  jp_family:`n    user_dict: jp_family`n"}
@@ -150,10 +151,18 @@ foreach($kind in @('known-default','modified-default','old-user-dict','nested-ol
   foreach($path in Get-ChildItem -LiteralPath $options.UserDirectory -File -Recurse){$protected[$path.FullName]=Hash $path.FullName}
   $failed=$false
   try{$null=& $helper @options}catch{$failed=$true}
-  $allowed=$kind -in @('known-default','base-dictionary','current-custom')
+  $allowed=$kind -in @('known-default','known-legacy-default','base-dictionary','current-custom')
   Check "$kind source preflight matches its compatibility boundary" ($failed -ne $allowed)
   foreach($path in $protected.Keys){Check "$kind preflight preserves every original user file" ((Hash $path) -ceq $protected[$path])}
   Check "$kind source preflight has no backup side effect" (-not (Test-Path -LiteralPath $options.BackupDirectory))
+  if($kind -eq 'known-legacy-default'){
+    $personal=Join-Path $options.UserDirectory 'default.custom.yaml'
+    Write-Fixture $personal ($publicDefault+"`n# Personal change")
+    $before=Hash $personal;$failed=$false
+    try{$null=& $helper @options}catch{$failed=$true}
+    Check 'modified legacy-alias defaults still require a manual merge' ($failed -and (Hash $personal) -ceq $before)
+    Check 'modified legacy-alias preflight does not create backups' (-not (Test-Path -LiteralPath $options.BackupDirectory))
+  }
 }
 $installer=[IO.File]::ReadAllText((Join-Path $PSScriptRoot '../../../installer/install.nsi'))
 Check 'formal installer preflights before stopping its old service' ($installer.IndexOf('-Action Preflight') -lt $installer.IndexOf('call_uninstaller:'))

@@ -10,7 +10,7 @@ $checks=@()
 function Check([string]$Name,[bool]$Passed){$script:checks+=@([ordered]@{name=$Name;passed=$Passed});if(-not $Passed){throw $Name}}
 function Write-Fixture([string]$Path,[string]$Text){$null=New-Item -ItemType Directory -Path (Split-Path $Path) -Force;[IO.File]::WriteAllText($Path,$Text)}
 function Hash([string]$Path){(Get-FileHash -LiteralPath $Path).Hash.ToLowerInvariant()}
-function Run-Case([string]$Name,[switch]$ModifyLua,[switch]$ModifyCustom,[switch]$ModifySharedLua,[switch]$PreviousManagedRevision){
+function Run-Case([string]$Name,[switch]$ModifyLua,[switch]$ModifyCustom,[switch]$ModifySharedLua,[switch]$PreviousManagedRevision,[switch]$LegacyDefaultAlias){
   $case=Join-Path $root $Name
   $shared=Join-Path $case 'shared'
   $user=Join-Path $case 'user'
@@ -28,8 +28,9 @@ function Run-Case([string]$Name,[switch]$ModifyLua,[switch]$ModifyCustom,[switch
     Write-Fixture (Join-Path $shared 'default.custom.yaml') 'patch: {schema_list: [{schema: another_public_revision}]}'
     Write-Fixture (Join-Path $user 'default.custom.yaml') 'patch: {schema_list: [{schema: another_public_revision}]}'
   }
-  $owned=@(foreach($entry in $records){[ordered]@{path=$(if($entry.path -ceq 'default.custom.yaml'){'stellae_bundle_default.yaml'}else{$entry.path});sha256=(Hash (Join-Path $shared $entry.path));group=$entry.group}})
-  [IO.File]::Move((Join-Path $shared 'default.custom.yaml'),(Join-Path $shared 'stellae_bundle_default.yaml'))
+  $defaultAlias=if($LegacyDefaultAlias){'rymcp_bundle_default.yaml'}else{'stellae_bundle_default.yaml'}
+  $owned=@(foreach($entry in $records){[ordered]@{path=$(if($entry.path -ceq 'default.custom.yaml'){$defaultAlias}else{$entry.path});sha256=(Hash (Join-Path $shared $entry.path));group=$entry.group}})
+  [IO.File]::Move((Join-Path $shared 'default.custom.yaml'),(Join-Path $shared $defaultAlias))
   [ordered]@{format='stellae-managed-shared-v1';bundleVersion='previous';files=$owned}|ConvertTo-Json -Depth 6|Set-Content -LiteralPath (Join-Path $shared 'stellae-managed-files.json') -Encoding UTF8
   Write-Fixture (Join-Path $user 'fixture.userdb/record') 'synthetic learning'
   Write-Fixture (Join-Path $user 'stellae_dlc/custom/manifest.tsv') 'synthetic DLC'
@@ -80,6 +81,7 @@ Run-Case custom -ModifyCustom
 Run-Case lua -ModifyLua
 Run-Case shared-lua -ModifySharedLua
 Run-Case prior-public-revision -PreviousManagedRevision
+Run-Case prior-public-legacy-default -PreviousManagedRevision -LegacyDefaultAlias
 Run-Case modified-prior-public-revision -PreviousManagedRevision -ModifySharedLua
 [ordered]@{passed=$true;syntheticFixtureOnly=$true;checks=$checks}|ConvertTo-Json -Depth 6|Set-Content -LiteralPath (Join-Path $root 'result.json') -Encoding UTF8
 Write-Output ('PASS source layout installation policy: '+$checks.Count)

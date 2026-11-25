@@ -2939,8 +2939,8 @@
     },
     {
       "path": "scripts/upgrade/DlcNamespace.ps1",
-      "bytes": 17089,
-      "sha256": "ad5fa573f6fa50c109158944492ad7c748ad4bbf40d02bd9d5bb8f290bc2ed19"
+      "bytes": 17292,
+      "sha256": "3e3a7722f3505e2ede68047266a7a7b2165ea4cb832832e5656db526710974a0"
     },
     {
       "path": "scripts/upgrade/LearningStore.lua",
@@ -2949,8 +2949,8 @@
     },
     {
       "path": "scripts/upgrade/LearningStore.ps1",
-      "bytes": 18950,
-      "sha256": "da0def05b711306a13ae6763efbb7e7d40828b0fcc2f1d845e8912455bb0cfd0"
+      "bytes": 19146,
+      "sha256": "b2eff9a13c6be77e63a95464ad65edc7ec6468f5466a82eeee799a49877f5b5b"
     },
     {
       "path": "scripts/upgrade/LearningStoreNative.cs",

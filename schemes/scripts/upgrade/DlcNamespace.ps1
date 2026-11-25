@@ -32,7 +32,12 @@ function Save-State($Value){
   $null=New-Item -ItemType Directory -Path $parent -Force
   [IO.File]::WriteAllText($statePath,($Value|ConvertTo-Json -Depth 12),[Text.UTF8Encoding]::new($false))
 }
-function Hash([string]$Path){(Get-FileHash -LiteralPath $Path -Algorithm SHA256).Hash.ToLowerInvariant()}
+function Hash([string]$Path){
+  $algorithm=[Security.Cryptography.SHA256]::Create()
+  $stream=$null
+  try{$stream=[IO.File]::OpenRead($Path);return ([BitConverter]::ToString($algorithm.ComputeHash($stream))).Replace('-','').ToLowerInvariant()}
+  finally{if($stream){$stream.Dispose()};$algorithm.Dispose()}
+}
 if($Action -eq 'Preflight'){
   $modules=@()
   foreach($id in $known){
