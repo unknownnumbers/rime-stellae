@@ -532,8 +532,8 @@
     },
     {
       "path": "native/tests/appearance/Probe-LiveFont.py",
-      "bytes": 54316,
-      "sha256": "1a7953b8e28c0e8ae91537fb72357fcf7fcb3678530c3bf5ee3e9f1f2a2025ea"
+      "bytes": 54430,
+      "sha256": "0afdada589cb2c255d23502a94cda80553ede7c30d2790ce6ef3efb5f7bd6a5f"
     },
     {
       "path": "native/tests/appearance/Test-LiveFont.ps1",

@@ -701,7 +701,8 @@ def verify_custom_font_defaults(installation, profile, report):
         changed = []
         for directory in (installation / 'data', profile):
             for filename in ('weasel.yaml', 'stellae_bundle_weasel.yaml',
-                             'rymcp_candidate_font.yaml', 'stellae_candidate_font.yaml'):
+                             'rymcp_candidate_font.yaml', 'stellae_candidate_font.yaml',
+                             'stellae/appearance.yaml'):
                 path = directory / filename
                 if not path.is_file():
                     continue
@@ -710,7 +711,8 @@ def verify_custom_font_defaults(installation, profile, report):
                 # normalize that separator only in the stricter parser's copy.
                 baseline = yaml.safe_load(raw.replace(b'\t#', b' #')) or {}
                 removed = False
-                for scope in (baseline, baseline.get('patch', {})):
+                for scope in (baseline, baseline.get('patch', {}),
+                              baseline.get('weasel', {})):
                     if not isinstance(scope, dict):
                         continue
                     if 'style/color_scheme_dark' in scope:
