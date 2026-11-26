@@ -441,6 +441,32 @@ try{
   Learn-Symbol '∫' 12
   Symbol-Rank 'learned prefix can exceed learned exact symbol' '∫' '∈'
   Symbol-Rank 'native learning reorders symbol prefixes' '∫' '∞'
+  $numericErrors=@(foreach($mode in 'Chinese','En','Japanese'){
+    foreach($lock in 0,2){
+      $schema=if($mode -eq 'Japanese'){'jp_stellae'}else{'cn_stellae'}
+      [void][RimeProbe]::RimeSelectSchema($session,$schema)
+      [RimeProbe]::RimeSetOption($session,'ascii_mode',0)
+      [RimeProbe]::RimeSetOption($session,'research_english',[int]($mode -eq 'En'))
+      [RimeProbe]::RimeClearComposition($session)
+      [void][RimeProbe]::ReadCommit($session)
+      if($lock){[void](Press 0xffe5 0 2)}
+      $output=''
+      foreach($letter in '1.5'.ToCharArray()){
+        $key=Press ([int]$letter) $lock
+        if(-not $key.Down){$output+=$letter}
+        $output+=[RimeProbe]::ReadCommit($session)
+        if($letter -ceq '1' -and ($output -cne '1' -or [RimeProbe]::Input($session))){"$mode/$lock digit did not go directly into the text"}
+        if($letter -ceq '.' -and $mode -eq 'Japanese'){
+          $point=[RimeProbe]::Snapshot($session,6)
+          if($output -cne '1' -or [RimeProbe]::Input($session) -cne '.' -or '．' -cnotin $point.Candidates -or '。' -cnotin $point.Candidates){"$mode/$lock missing ordinary punctuation candidates"}
+        }
+      }
+      if($mode -eq 'Japanese'){
+        if($output -cne '1' -or [RimeProbe]::Input($session) -cne '.') {"$mode/$lock period did not stay in the ordinary candidate menu"}
+      }elseif($output -cne '1.5' -or [RimeProbe]::Input($session)){"$mode/$lock expected literal 1.5"}
+    }
+  })
+  Record 'Punctuation after a digit follows the current input mode' (-not $numericErrors.Count) $numericErrors
   $sourceChanged=@($sourceRows|Where-Object { $_.Sha256 -cne (Get-FileHash -LiteralPath (Join-Path $user $_.Path)).Hash.ToLowerInvariant() })
   Record 'source files unchanged by native deployment and tests' ($sourceChanged.Count -eq 0) @($sourceChanged.Path)
   $luaErrors=@(Get-ChildItem -LiteralPath $out -File -Filter '*.log*'|Select-String -Pattern 'stack traceback|Lua(?:Processor|Translator|Segmentor|Filter)::.*(?:error|failed)' -CaseSensitive:$false|Select-Object -First 12|ForEach-Object Line)

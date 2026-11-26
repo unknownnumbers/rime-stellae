@@ -1,6 +1,7 @@
 # Shared Chinese defaults. Frontend capabilities are adapted during profile generation.
 patch:
   schema/name: 墨芯基底
+  punctuator/digit_separators: ""
   switches:
     - { name: ascii_mode, reset: 0 }
     - { name: full_shape, reset: 0 }

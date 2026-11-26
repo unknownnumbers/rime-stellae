@@ -705,8 +705,8 @@
     },
     {
       "path": "stellae/chinese.yaml",
-      "bytes": 3368,
-      "sha256": "bcce27d0293ab92bcaec49e1dabe3da74083cc9927eb028b372025d72ed41452"
+      "bytes": 3402,
+      "sha256": "d16024ee6595e68e38d11364563d2f2e1cea9852cc08d9941cc569d792c06721"
     },
     {
       "path": "stellae/defaults.yaml",
@@ -720,8 +720,8 @@
     },
     {
       "path": "stellae/japanese.yaml",
-      "bytes": 3905,
-      "sha256": "2d5c8207e909b30bc20894a3d0c6cae81ed64e51b81c2cde523982bf186c6f35"
+      "bytes": 3930,
+      "sha256": "acb79a8a20bc6b500812bec7d76e2d1dc80076b73e286a78051b948422b72e95"
     },
     {
       "path": "stellae/spelling.yaml",

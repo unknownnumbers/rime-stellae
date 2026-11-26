@@ -18,7 +18,7 @@
     {
       "path": ".github/workflows/bundle.yml",
       "bytes": 34453,
-      "sha256": "8c1ccbb62cab9ef1b911ffaa0ead295fd133f3aeff3acefb3505fbcc91d1fd8d"
+      "sha256": "5cb40e7513f2d1f28c3e9ccae2e58aaa879f29d45bd179a344e7d543838fe756"
     },
     {
       "path": ".github/workflows/native.yml",
@@ -1538,7 +1538,7 @@
     {
       "path": "schemes/config/official-weasel/profile-manifest.json",
       "bytes": 31963,
-      "sha256": "d902ae9e4288150858f9f7bc9bfebe02830e74f1043baeb44a7dff86ef1a1096"
+      "sha256": "a5003c88c2456297181c45e55419a1f92e9e89d8c4fdeb8588737dd76376fbf1"
     },
     {
       "path": "schemes/config/official-weasel/project_radical.dict.yaml",
@@ -1602,8 +1602,8 @@
     },
     {
       "path": "schemes/config/official-weasel/stellae/chinese.yaml",
-      "bytes": 3367,
-      "sha256": "7e8006d7c82e995fe7205c0cf2340216d4e902d9d9f6de914b2cf1cd4b45efbc"
+      "bytes": 3401,
+      "sha256": "33d30da299516ddd1fd0533cef479df415a1be1cdb27d7203df723b7dcb91bff"
     },
     {
       "path": "schemes/config/official-weasel/stellae/defaults.yaml",
@@ -1617,8 +1617,8 @@
     },
     {
       "path": "schemes/config/official-weasel/stellae/japanese.yaml",
-      "bytes": 3905,
-      "sha256": "2d5c8207e909b30bc20894a3d0c6cae81ed64e51b81c2cde523982bf186c6f35"
+      "bytes": 3930,
+      "sha256": "acb79a8a20bc6b500812bec7d76e2d1dc80076b73e286a78051b948422b72e95"
     },
     {
       "path": "schemes/config/official-weasel/stellae/spelling.yaml",
@@ -1903,7 +1903,7 @@
     {
       "path": "schemes/config/pc/config-source-manifest.json",
       "bytes": 32028,
-      "sha256": "5f4c5784be60fd4f1a7b6fe6bb6d9bc7a1a001f3447b0a95ded300f37e03f35c"
+      "sha256": "7ffea8c7f45ceda00466aa97045dda546c0289daafb9dd933be10cc3bc20dc00"
     },
     {
       "path": "schemes/config/pc/default.custom.yaml",
@@ -2587,8 +2587,8 @@
     },
     {
       "path": "schemes/config/pc/stellae/chinese.yaml",
-      "bytes": 3368,
-      "sha256": "bcce27d0293ab92bcaec49e1dabe3da74083cc9927eb028b372025d72ed41452"
+      "bytes": 3402,
+      "sha256": "d16024ee6595e68e38d11364563d2f2e1cea9852cc08d9941cc569d792c06721"
     },
     {
       "path": "schemes/config/pc/stellae/defaults.yaml",
@@ -2602,8 +2602,8 @@
     },
     {
       "path": "schemes/config/pc/stellae/japanese.yaml",
-      "bytes": 3905,
-      "sha256": "2d5c8207e909b30bc20894a3d0c6cae81ed64e51b81c2cde523982bf186c6f35"
+      "bytes": 3930,
+      "sha256": "acb79a8a20bc6b500812bec7d76e2d1dc80076b73e286a78051b948422b72e95"
     },
     {
       "path": "schemes/config/pc/stellae/spelling.yaml",
@@ -3648,7 +3648,7 @@
     {
       "path": "schemes/release-manifest.json",
       "bytes": 110746,
-      "sha256": "3e7dad8a16c7180c917e9b8c6743426f92719a959f8b72f2e736b9248768e468"
+      "sha256": "d9275782e690301ba1876bb2682817c9db8c54bed2bdad4d423430744205c01f"
     },
     {
       "path": "schemes/scripts/build_dlc.py",
@@ -3877,8 +3877,8 @@
     },
     {
       "path": "schemes/tests/rebuilt-profile/Test-RebuiltProfile.ps1",
-      "bytes": 28115,
-      "sha256": "3208ca49d8e36c47aad2ed72a53da21546a18092d996e3cb67aa706a8c5fa11a"
+      "bytes": 29678,
+      "sha256": "9cb37f04942f25ab15a4bfc8bb90eb37170e49944311e59ecf1cbd516a33aa95"
     },
     {
       "path": "schemes/tests/schemes/Check-ChineseDlcTables.py",
