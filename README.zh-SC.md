@@ -8,11 +8,11 @@
 
 ## 安装与使用
 
-- [墨芯前端与完整方案安装器](https://github.com/unknownnumbers/rime-stellae/releases/download/v2026.11.26.1/stellae-2026.11.26.1-installer.exe).
-- [墨芯完整方案 ZIP](https://github.com/unknownnumbers/rime-stellae/releases/download/v2026.11.26.1/stellae-2026.11.26.1-schemes.zip), 用于已有的墨芯安装.
-- [官方 Weasel 方案 ZIP](https://github.com/unknownnumbers/rime-stellae/releases/download/v2026.11.26.1/stellae-2026.11.26.1-official-weasel-schemes.zip), 依[安装与合并说明](schemes/docs/official-weasel.md)使用.
+- [墨芯前端与完整方案安装器](https://github.com/unknownnumbers/rime-stellae/releases/download/v2026.11.27.3/stellae-2026.11.27.3-installer.exe).
+- [墨芯完整方案 ZIP](https://github.com/unknownnumbers/rime-stellae/releases/download/v2026.11.27.3/stellae-2026.11.27.1-schemes.zip), 用于已有的墨芯安装.
+- [官方 Weasel 方案 ZIP](https://github.com/unknownnumbers/rime-stellae/releases/download/v2026.11.27.3/stellae-2026.11.27.3-official-weasel-schemes.zip), 依[安装与合并说明](schemes/docs/official-weasel.md)使用.
 - 支持 64-bit Windows, 并附 32-bit 应用兼容组件.
-- 前端版本为 `0.17.4.61052`. 本轮整合包及方案版本为 `2026.11.26.1`.
+- 前端版本为 `0.17.4.61052`. 整合包版本为 `2026.11.27.3`, 内含 `2026.11.27.1` 版方案基底.
 - 整合方案新装默认 SC 输出, 中文横排 5 项、英文直排 6 项, 保留 TC/SC 切换.
 - 安装器附 Noto Sans CJK Regular 字体合集. 首装选 SC 或 TC 会设定相应的候选窗字体. 可在墨芯外观设置切换 TC、HK、SC, 升级保留已选字体. [候选窗字体说明](docs/PC.md#候選窗字體)
 - 配套方案的英文模式使用蓝色 En 状态图标.

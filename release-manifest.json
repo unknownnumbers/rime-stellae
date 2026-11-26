@@ -52,18 +52,18 @@
     },
     {
       "path": "README.en.md",
-      "bytes": 3264,
-      "sha256": "ee8c11de0a0c8eb4e479947824880ac1912c4f7cdcae2c101837e1ec536dda96"
+      "bytes": 3291,
+      "sha256": "d77767d8e0c28a5104dda9a405b63848fa1f701940c5ff2d4824c4a0b95da877"
     },
     {
       "path": "README.md",
-      "bytes": 2804,
-      "sha256": "6a65686a985d1ab859ad4c78f35b27542c8f4ff84b54372869f0e0ae38e19e25"
+      "bytes": 2828,
+      "sha256": "c690b35682ebac23183f9e62c3b0538e25f07438f841da62944f522a6a4a61bc"
     },
     {
       "path": "README.zh-SC.md",
-      "bytes": 2816,
-      "sha256": "217dfb0e937a21ccd8ccf00b6a51e4e078e1f60c7a4a898bbc293601b677c2c6"
+      "bytes": 2840,
+      "sha256": "e25d75da9d2180c3d491894d139cfe4c768bbead3faba9a514a9c64930ae54c5"
     },
     {
       "path": "THIRD_PARTY_NOTICES.md",
