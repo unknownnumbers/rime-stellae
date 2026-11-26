@@ -3,7 +3,7 @@
   "date": "2026-11-27",
   "kind": "frontend-and-input-scheme-source",
   "frontendVersion": "0.17.4.61052",
-  "bundleVersion": "2026.11.27.2",
+  "bundleVersion": "2026.11.27.3",
   "nativeBinariesIncluded": false,
   "personalLearningIncluded": false,
   "productionInputSchemesIncluded": true,
@@ -148,7 +148,7 @@
     {
       "path": "installer/bundle-inputs.json",
       "bytes": 5847,
-      "sha256": "3e3176f848fd9bb2ffaa1d56936bacc03db0ac6d005f469bf9f2dd23f1b4993b"
+      "sha256": "bc9b56b15bcdac90b790ab8f50c78c02b5b4491a4ba47efdbfc0cd09c99a3c13"
     },
     {
       "path": "installer/bundle.nsi",
@@ -513,7 +513,7 @@
     {
       "path": "native/frontend-source-files.json",
       "bytes": 23032,
-      "sha256": "54e4bd757b49e8651910d31ce7cf45543d21877d0927396e689335c88dd0bee3"
+      "sha256": "52f9db99daa19526bf4eaccc6f8504587aefc37dad8c12c4103187b6fc4cb2f4"
     },
     {
       "path": "native/notification-inputs.json",
@@ -523,7 +523,7 @@
     {
       "path": "native/source-manifest.json",
       "bytes": 14730,
-      "sha256": "3db5185a26a3889da2b0ccc6941753ce1a1aa3457a4c64eb546641d4ae0632e2"
+      "sha256": "94aeb807a77e8b9e291e0ab903081e57f0378b6e4337bc61ae8a3b61c2aff100"
     },
     {
       "path": "native/tests/appearance/Add-PaintTrace.ps1",
@@ -832,8 +832,8 @@
     },
     {
       "path": "native/weasel/stellae-61052.patch",
-      "bytes": 998516,
-      "sha256": "6613aaeff9b20f0122c549a06ab8e67e7dc4543531451ac3290f35a781155334"
+      "bytes": 998873,
+      "sha256": "718820f1cefb82e58db0dca9eecf19fe680553b2cbfef1733b5040240476804a"
     },
     {
       "path": "schemes/.gitattributes",

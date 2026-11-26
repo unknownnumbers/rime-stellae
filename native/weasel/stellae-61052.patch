@@ -9568,10 +9568,10 @@ index d030666..886e872 100644
 +  LONG _refCount;
 +};
 diff --git a/WeaselTSF/Composition.cpp b/WeaselTSF/Composition.cpp
-index e94cea0a57575bf0f9fbe9742a7eaaf6d7b6fd3b..40f5badc97e3be70684fa2e723898c0cfe6098d3 100644
+index e94cea0a57575bf0f9fbe9742a7eaaf6d7b6fd3b..7f0f1e304ccc6c47d22b6bffc98cf22d5d999b2f 100644
 --- a/WeaselTSF/Composition.cpp
 +++ b/WeaselTSF/Composition.cpp
-@@ -1,421 +1,1001 @@
+@@ -1,421 +1,1002 @@
 -#include "stdafx.h"
 -#include "WeaselTSF.h"
 -#include "EditSession.h"
@@ -10203,6 +10203,7 @@ index e94cea0a57575bf0f9fbe9742a7eaaf6d7b6fd3b..40f5badc97e3be70684fa2e723898c0c
 +}
 +
 +STDAPI CIdleCaretEditSession::DoEditSession(TfEditCookie ec) {
++  request_->read_started = true;
 +  const HRESULT result = ReadCaret(ec);
 +  if (result != S_OK && Current()) _pTextService->_InvalidateModePosition(false);
 +  return result;
@@ -15226,10 +15227,10 @@ index 0000000..6ab46ee
 +
 +}  // namespace response_owner
 diff --git a/WeaselTSF/TextEditSink.cpp b/WeaselTSF/TextEditSink.cpp
-index a6bc1f0..b0a3227 100644
+index a6bc1f02d6202f2cd8670039f86478f9fa9447fc..038136fd69827f60afb2506c50ebfe3f0c5fd05b 100644
 --- a/WeaselTSF/TextEditSink.cpp
 +++ b/WeaselTSF/TextEditSink.cpp
-@@ -1,118 +1,279 @@
+@@ -1,118 +1,285 @@
  #include "stdafx.h"
  #include "WeaselTSF.h"
 +#include "CandidateList.h"
@@ -15396,8 +15397,7 @@ index a6bc1f0..b0a3227 100644
 +      // Native termination does not prove that the logical endpoint moved.
 +      // Use its captured range, never this notification's new selection.
 +      range = intent->range ? intent->range : intent->initialPoint;
-     }
--    pEnumTextChanges->Release();
++    }
 +    const auto rangeCurrent = [&]() {
 +      return current() && (!selectionState ||
 +          (intent->selection == selectionState &&
@@ -15414,7 +15414,8 @@ index a6bc1f0..b0a3227 100644
 +      // observer's loss of its grant-time selection option.
 +      _AbortComposition(true, intent);
 +      return S_OK;
-+    }
+     }
+-    pEnumTextChanges->Release();
 +    if (range_result != S_OK || !range) return S_OK;
 +
 +    TF_SELECTION tfSelection = {};
@@ -15455,6 +15456,9 @@ index a6bc1f0..b0a3227 100644
 -                                 TfLayoutCode lcode,
 -                                 ITfContextView* pContextView) {
 -  if (!_IsComposing())
+-    return S_OK;
+-
+-  if (pContext != _pTextEditSinkContext)
 +STDAPI WeaselTSF::OnLayoutChange(ITfContext* context,
 +                                 TfLayoutCode code,
 +                                 ITfContextView* view) {
@@ -15467,12 +15471,15 @@ index a6bc1f0..b0a3227 100644
 +  const bool same = response_owner::SameIdentity(context, binding->context);
 +  if (!current() || !same) return S_OK;
 +  if (!_IsComposing() && !_HasCurrentPreedit()) {
-+    if (code == TF_LC_CHANGE) _RefreshIdleModePosition(context);
-+    else if (code == TF_LC_DESTROY) _InvalidateModePosition(!_producerResponse);
++    if (code == TF_LC_CHANGE) {
++      const auto pending = _modeCaretRequest;
++      // A queued read will measure the latest layout when the host grants it.
++      if (!_IsCurrentModeCaret(pending) || pending->read_started)
++        _RefreshIdleModePosition(context);
++    } else if (code == TF_LC_DESTROY) {
++      _InvalidateModePosition(!_producerResponse);
++    }
      return S_OK;
--
--  if (pContext != _pTextEditSinkContext)
--    return S_OK;
 -
 -  if (lcode == TF_LC_CHANGE)
 -    _UpdateCompositionWindow(pContext);
@@ -16547,7 +16554,7 @@ index 590d3b8..8c283ca 100644
 +  return false;
 +}
 diff --git a/WeaselTSF/WeaselTSF.h b/WeaselTSF/WeaselTSF.h
-index 696d3cce4b9c394d2420ff1cae7cbbdbcb527a49..b49b1a675db74eabdfa32dc3947cd3ec0493dd1d 100644
+index 696d3cce4b9c394d2420ff1cae7cbbdbcb527a49..43d6b13cb7001c6f6cb72e1d4fc9a97850edc732 100644
 --- a/WeaselTSF/WeaselTSF.h
 +++ b/WeaselTSF/WeaselTSF.h
 @@ -3,10 +3,18 @@
@@ -16701,7 +16708,7 @@ index 696d3cce4b9c394d2420ff1cae7cbbdbcb527a49..b49b1a675db74eabdfa32dc3947cd3ec
    void HandleUICallback(size_t* const sel,
                          size_t* const hov,
                          bool* const next,
-@@ -154,66 +219,221 @@ class WeaselTSF : public ITfTextInputProcessorEx,
+@@ -154,66 +219,222 @@ class WeaselTSF : public ITfTextInputProcessorEx,
  
   private:
    /* ui callback functions private */
@@ -16755,6 +16762,7 @@ index 696d3cce4b9c394d2420ff1cae7cbbdbcb527a49..b49b1a675db74eabdfa32dc3947cd3ec
 +    std::uint64_t epoch = 0;
 +    bool enhanced = false, positioned = false, published = false;
 +    bool invalidate = false;
++    bool read_started = false;
 +    RECT rect = {};
 +  };
 +  bool _IsCurrentModeCaret(const std::shared_ptr<ModeCaretRequest>& request) const;
@@ -16966,7 +16974,7 @@ index 696d3cce4b9c394d2420ff1cae7cbbdbcb527a49..b49b1a675db74eabdfa32dc3947cd3ec
    com_ptr<CCandidateList> _cand;
  
    LONG _cRef;  // COM ref count
-@@ -223,14 +443,20 @@ class WeaselTSF : public ITfTextInputProcessorEx,
+@@ -223,14 +444,20 @@ class WeaselTSF : public ITfTextInputProcessorEx,
  
    /* Weasel Related */
    weasel::Client m_client;

@@ -1,7 +1,7 @@
 {
   "schema": "stellae-frontend-source-files/1",
   "upstreamCommit": "9cc96e20dc71b80876b12f689bb5863c76c2a7ed",
-  "patchSha256": "6613aaeff9b20f0122c549a06ab8e67e7dc4543531451ac3290f35a781155334",
+  "patchSha256": "718820f1cefb82e58db0dca9eecf19fe680553b2cbfef1733b5040240476804a",
   "files": [
     {
       "path": "RimeWithWeasel/RimeWithWeasel.cpp",
@@ -299,8 +299,8 @@
     },
     {
       "path": "WeaselTSF/Composition.cpp",
-      "sha256": "14ae152635bd03494b3a6730dae1ec9500920aa62585a00194c29683b30233c1",
-      "bytes": 47850,
+      "sha256": "7e625182e2ae09710179a1cd1a7a8b53bef828e6b46397d21b5ebb756f197348",
+      "bytes": 47884,
       "replayMatchesFrozen": true
     },
     {
@@ -371,8 +371,8 @@
     },
     {
       "path": "WeaselTSF/TextEditSink.cpp",
-      "sha256": "9282195a425e016ea2cde09fda5506f45de9a59a387bd37005ab5cf026dad975",
-      "bytes": 12325,
+      "sha256": "43eeb7d525837ebdb3f2bf69a3a8b493a25155a41481c374e6c6385dfb634539",
+      "bytes": 12542,
       "replayMatchesFrozen": true
     },
     {
@@ -389,8 +389,8 @@
     },
     {
       "path": "WeaselTSF/WeaselTSF.h",
-      "sha256": "ceff32ae4abe1a209caa37550c0f274458182e4e6a5e065b44c61d1622470ebc",
-      "bytes": 19400,
+      "sha256": "fe340ddc3ce7f80c3ca2ebbdbd3977b8f8b5855076d08bfe64b6fc7976db9fb9",
+      "bytes": 19432,
       "replayMatchesFrozen": true
     },
     {
