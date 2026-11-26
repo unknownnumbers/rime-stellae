@@ -126,7 +126,7 @@ LangString LNKFORAPPFOLDER ${LANG_TRADCHINESE} "【${STELLAE_DISPLAY_ZH}】程�
 LangString LNKFORUPDATER ${LANG_TRADCHINESE} "【${STELLAE_DISPLAY_ZH}】檢查新版本"
 LangString LNKFORSETUP ${LANG_TRADCHINESE} "【${STELLAE_DISPLAY_ZH}】安裝選項"
 LangString LNKFORUNINSTALL ${LANG_TRADCHINESE} "卸載${STELLAE_DISPLAY_ZH}"
-LangString CONFIRMATION ${LANG_TRADCHINESE} "安裝前，請先卸載舊版本的${STELLAE_DISPLAY_ZH}。$\n$\n按下「確定」移除舊版本，按下「取消」放棄本次安裝。"
+LangString CONFIRMATION ${LANG_TRADCHINESE} "按確定繼續升級${STELLAE_DISPLAY_ZH}. 選好安裝目錄後, 按安裝即可替換現有版本."
 LangString SYSTEMVERSIONNOTOK ${LANG_TRADCHINESE} "您的系统不被支持，最低系統要求:Windows 8.1!"
 LangString AUTOCHKUPDATE ${LANG_TRADCHINESE} "自動檢查版本更新？"
 
@@ -148,7 +148,7 @@ LangString LNKFORAPPFOLDER ${LANG_SIMPCHINESE} "【${STELLAE_DISPLAY_ZH}】程�
 LangString LNKFORUPDATER ${LANG_SIMPCHINESE} "【${STELLAE_DISPLAY_ZH}】检查新版本"
 LangString LNKFORSETUP ${LANG_SIMPCHINESE} "【${STELLAE_DISPLAY_ZH}】安装选项"
 LangString LNKFORUNINSTALL ${LANG_SIMPCHINESE} "卸载${STELLAE_DISPLAY_ZH}"
-LangString CONFIRMATION ${LANG_SIMPCHINESE} '安装前，请先卸载旧版本的${STELLAE_DISPLAY_ZH}。$\n$\n点击 "确定" 移除旧版本，或点击 "取消" 放弃本次安装。'
+LangString CONFIRMATION ${LANG_SIMPCHINESE} "按确定继续升级${STELLAE_DISPLAY_ZH}. 选好安装目录后, 按安装即可替换现有版本."
 LangString SYSTEMVERSIONNOTOK ${LANG_SIMPCHINESE} "您的系統不被支持，最低系统要求:Windows 8.1!"
 LangString AUTOCHKUPDATE ${LANG_SIMPCHINESE} "自动检查版本更新？"
 
@@ -170,7 +170,7 @@ LangString LNKFORAPPFOLDER ${LANG_ENGLISH} "${STELLAE_PRODUCT_NAME} App Folder"
 LangString LNKFORUPDATER ${LANG_ENGLISH} "${STELLAE_PRODUCT_NAME} Check for Updates"
 LangString LNKFORSETUP ${LANG_ENGLISH} "${STELLAE_PRODUCT_NAME} Installation Preference"
 LangString LNKFORUNINSTALL ${LANG_ENGLISH} "Uninstall ${STELLAE_PRODUCT_NAME}"
-LangString CONFIRMATION ${LANG_ENGLISH} "Before installation, please uninstall the old version of ${STELLAE_PRODUCT_NAME}.$\n$\nPress 'OK' to remove the old version, or 'Cancel' to abort installation."
+LangString CONFIRMATION ${LANG_ENGLISH} "Press OK to continue upgrading ${STELLAE_PRODUCT_NAME}. After choosing the installation folder, select Install to replace the current version."
 LangString SYSTEMVERSIONNOTOK ${LANG_ENGLISH} "Your system not supported, minimium system required: Windows 8.1!"
 LangString AUTOCHKUPDATE ${LANG_ENGLISH} "Automatically check for updates?"
 
