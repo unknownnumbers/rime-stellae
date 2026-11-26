@@ -549,17 +549,6 @@
       "path": "config/official-weasel/assets/status/smart-english.svg"
     },
     {
-      "path": "config/official-weasel/cn_stellae.custom.yaml",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
-      "retained_upstream_terms": [],
-      "references": [
-        "LICENSE",
-        "docs/sources/official-weasel-sources.md"
-      ]
-    },
-    {
       "path": "config/official-weasel/cn_stellae.dict.yaml",
       "kind": "program-or-configuration",
       "project_license": "GPL-3.0-only",
@@ -906,18 +895,6 @@
       "retained_upstream_terms": [],
       "references": [
         "LICENSE",
-        "docs/sources/official-weasel-sources.md"
-      ]
-    },
-    {
-      "path": "config/official-weasel/jp_stellae.custom.yaml",
-      "kind": "program-or-configuration",
-      "project_license": "GPL-3.0-only",
-      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms. Existing Rime spelling-rule source comments remain in the file.",
-      "retained_upstream_terms": [],
-      "references": [
-        "LICENSE",
-        "config/pc/JAPANESE.md",
         "docs/sources/official-weasel-sources.md"
       ]
     },
@@ -2288,6 +2265,17 @@
       ]
     },
     {
+      "path": "config/official-weasel/samples/cn_stellae.custom.yaml",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms.",
+      "retained_upstream_terms": [],
+      "references": [
+        "LICENSE",
+        "docs/sources/official-weasel-sources.md"
+      ]
+    },
+    {
       "path": "config/official-weasel/samples/default.custom.yaml",
       "kind": "program-or-configuration",
       "project_license": "GPL-3.0-only",
@@ -2295,6 +2283,18 @@
       "retained_upstream_terms": [],
       "references": [
         "LICENSE",
+        "docs/sources/official-weasel-sources.md"
+      ]
+    },
+    {
+      "path": "config/official-weasel/samples/jp_stellae.custom.yaml",
+      "kind": "program-or-configuration",
+      "project_license": "GPL-3.0-only",
+      "license_scope": "Original project additions and modifications; retained upstream expression keeps its original terms. Existing Rime spelling-rule source comments remain in the file.",
+      "retained_upstream_terms": [],
+      "references": [
+        "LICENSE",
+        "config/pc/JAPANESE.md",
         "docs/sources/official-weasel-sources.md"
       ]
     },

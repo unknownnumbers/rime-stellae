@@ -262,8 +262,11 @@ jobs:
           $spec=Get-Content -LiteralPath installer/bundle-inputs.json -Raw|ConvertFrom-Json
           python schemes/scripts/rebuild_profiles.py --check
           if($LASTEXITCODE){throw 'Maintained scheme derivation differs'}
-          python schemes/scripts/build_scheme_packages.py --profile all --version $spec.schemes.version --output-dir (Join-Path $env:RUNNER_TEMP 'scheme-input') --source-ref $env:GITHUB_SHA
-          if ($LASTEXITCODE) { throw 'Scheme archive build failed.' }
+          $schemeOutput=Join-Path $env:RUNNER_TEMP 'scheme-input'
+          python schemes/scripts/build_scheme_packages.py --profile stellae --version $spec.schemes.version --output-dir $schemeOutput --source-ref $env:GITHUB_SHA
+          if ($LASTEXITCODE) { throw 'Base scheme archive build failed.' }
+          python schemes/scripts/build_scheme_packages.py --profile official-weasel --version $spec.bundleVersion --output-dir $schemeOutput --source-ref $env:GITHUB_SHA
+          if ($LASTEXITCODE) { throw 'Official Weasel scheme archive build failed.' }
       - name: Verify the base scheme with the freshly built N01 engine
         run: |
           $generated=Join-Path $env:RUNNER_TEMP 'source-derived-profiles'

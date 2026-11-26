@@ -16,7 +16,7 @@
 
 `payload/` 為方案檔案, `samples/` 為新裝範例. 先備份同名配置. 合併範例中的方案清單、Lua 入口及外觀設定, 保留既有其他方案與用戶詞庫. 不直接以範例覆蓋整個用戶資料夾.
 
-若已有 `default.custom.yaml`、`weasel.custom.yaml` 或 `rime.lua`, 對照範例合併其內容, 再重新部署. 更新舊版方案時, 對照新版範例合併 `rime.lua` 中的查字與工具入口. 編譯結果及既有學習資料由本機 Rime 管理.
+保留既有的 `cn_stellae.custom.yaml` 和 `jp_stellae.custom.yaml`. 更新 `payload/` 後, 可對照 `samples/` 手動合併 `default.custom.yaml`、`weasel.custom.yaml` 的設定與 `rime.lua` 的查字及工具入口, 再重新部署. 編譯結果及既有學習資料由本機 Rime 管理.
 
 舊版的中文、英文及漢字學習庫名稱分別為 `luna_pinyin`、`pc_english`、`jp_family`, 新版使用 `cn_stellae`、`en_intelligence`、`jp_kanji`. 舊 DLC 資料夾 `rymcp_dlc` 改為 `stellae_dlc`. ZIP 的 `tools/upgrade/` 提供離線遷移工具及步驟, 使用官方 Weasel 自己的引擎, 不需要安裝墨芯前端. 先備份並退出官方 Weasel, 依[遷移說明](../scripts/upgrade/README.md)處理資料及合併配置後再啟動. 工具保留學習記錄值、詞表正文及既有英文索引; 遇到新舊資料並存或仍引用舊名稱的自訂時, 保留原件並提示合併.
 

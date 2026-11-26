@@ -73,11 +73,6 @@
       "sha256": "e0a059469ce1dcb2c050063a21fe2e6a668b716da778743a97f58115391b5563"
     },
     {
-      "path": "config/official-weasel/cn_stellae.custom.yaml",
-      "bytes": 138,
-      "sha256": "9ddaa3c67afe36a753d6c7a65b64b70842e43a69cc065d511d2480fec876fe63"
-    },
-    {
       "path": "config/official-weasel/cn_stellae.dict.yaml",
       "bytes": 167,
       "sha256": "534a918c6496d769cfd83803eeff7e862e0d77ef8cd8094ac22fa9377881fac6"
@@ -201,11 +196,6 @@
       "path": "config/official-weasel/jp_small_lookup.schema.yaml",
       "bytes": 398,
       "sha256": "bf00022bf2dcb0b06821c1e254e712ba61d5667fd73da6f8b1a6c5f6a0a95c4c"
-    },
-    {
-      "path": "config/official-weasel/jp_stellae.custom.yaml",
-      "bytes": 138,
-      "sha256": "9ddaa3c67afe36a753d6c7a65b64b70842e43a69cc065d511d2480fec876fe63"
     },
     {
       "path": "config/official-weasel/jp_stellae.schema.yaml",
@@ -709,8 +699,8 @@
     },
     {
       "path": "config/official-weasel/profile-manifest.json",
-      "bytes": 31963,
-      "sha256": "a5003c88c2456297181c45e55419a1f92e9e89d8c4fdeb8588737dd76376fbf1"
+      "bytes": 31979,
+      "sha256": "af5acd5d4961cbf00eeac0e7b73056b981ba3bb5b60d61218262d8fae94692e8"
     },
     {
       "path": "config/official-weasel/project_radical.dict.yaml",
@@ -748,7 +738,17 @@
       "sha256": "79f3578cded6d4f42adca0a3b37548bdfdcb5062f6aee11103671cfc9d4cc401"
     },
     {
+      "path": "config/official-weasel/samples/cn_stellae.custom.yaml",
+      "bytes": 138,
+      "sha256": "9ddaa3c67afe36a753d6c7a65b64b70842e43a69cc065d511d2480fec876fe63"
+    },
+    {
       "path": "config/official-weasel/samples/default.custom.yaml",
+      "bytes": 138,
+      "sha256": "9ddaa3c67afe36a753d6c7a65b64b70842e43a69cc065d511d2480fec876fe63"
+    },
+    {
+      "path": "config/official-weasel/samples/jp_stellae.custom.yaml",
       "bytes": 138,
       "sha256": "9ddaa3c67afe36a753d6c7a65b64b70842e43a69cc065d511d2480fec876fe63"
     },
@@ -2019,8 +2019,8 @@
     },
     {
       "path": "config/profiles.json",
-      "bytes": 930,
-      "sha256": "edeee437daefc9c66045ec9332d4721ed18e2e428f59acbd24e42b486231d8d5"
+      "bytes": 982,
+      "sha256": "c076b743da2be4741309f090738935cac18030d8132ac72f88b7b4c3ef7cb8fb"
     },
     {
       "path": "dlc/sources/CC-BY-SA-4.0.txt",
@@ -2219,8 +2219,8 @@
     },
     {
       "path": "docs/official-weasel.md",
-      "bytes": 3121,
-      "sha256": "cd63ffe84f300ac19cb9612fc66c25b9f6d5647945784a7f04caf1933da8c68d"
+      "bytes": 3156,
+      "sha256": "8929285d00105880d499c93b69d5f32924302de65c8dbf1c98bb94044a2b53cc"
     },
     {
       "path": "docs/sources/README.md",
@@ -2404,8 +2404,8 @@
     },
     {
       "path": "licenses/file-licenses.json",
-      "bytes": 251893,
-      "sha256": "002c1d35a74f77d5c5562dfa70554f43fecef816dd3d2028ced0a89bacedf5d1"
+      "bytes": 251909,
+      "sha256": "57b1792cd02baa02ea4e1aaf3e31e812ffa5058fb52514dbdde716dc242ea34e"
     },
     {
       "path": "licenses/layout-records.json",

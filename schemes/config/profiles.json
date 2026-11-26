@@ -13,7 +13,7 @@
       "stock_word_completion": true,
       "page_layout": "fixed-vertical-6-noninline",
       "ctrl_space_owner": "official-client",
-      "sample_files": ["default.custom.yaml", "rime.lua", "weasel.custom.yaml"]
+      "sample_files": ["cn_stellae.custom.yaml", "default.custom.yaml", "jp_stellae.custom.yaml", "rime.lua", "weasel.custom.yaml"]
     }
   },
   "pc_shift": "Left and right Shift toggle research_english through the shared coordinator; both native PC switch keys are noop.",
