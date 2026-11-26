@@ -597,8 +597,8 @@
     },
     {
       "path": "native/tests/installer/Test-BundlePresetPriority.ps1",
-      "bytes": 13476,
-      "sha256": "eb489d5e791e75b9fc5606111cdc4a36fbaa6878da05d179bbcd27d092d0ec25"
+      "bytes": 13600,
+      "sha256": "a86d1bd81719fde02309471e5e3902411c7e872b05f074f9c19cba8a89430b7f"
     },
     {
       "path": "native/tests/installer/Test-BundleShared.ps1",

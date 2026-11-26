@@ -155,9 +155,11 @@ try{
   Check 'exactly-two-schemas' ([BundlePresetConfigApi]::Count('default','schema_list') -eq 2)
   Check 'first-schema' ([BundlePresetConfigApi]::Text('default','schema_list/@0/schema') -ceq $first)
   Check 'second-schema' ([BundlePresetConfigApi]::Text('default','schema_list/@1/schema') -ceq $second)
-  $hotkey=if($Case -eq 'Override'){'F4'}else{'Control+grave'}
-  Check 'one-switcher-hotkey' ([BundlePresetConfigApi]::Count('default','switcher/hotkeys') -eq 1)
-  Check 'expected-switcher-hotkey' ([BundlePresetConfigApi]::Text('default','switcher/hotkeys/@0') -ceq $hotkey)
+  [string[]]$hotkeys = if ($Case -eq 'Override') { 'F4' } else { 'Control+grave', 'Control+Lock+grave' }
+  Check 'switcher-hotkey-count' ([BundlePresetConfigApi]::Count('default','switcher/hotkeys') -eq $hotkeys.Count)
+  foreach ($index in 0..($hotkeys.Count - 1)) {
+    Check "switcher-hotkey-$index" ([BundlePresetConfigApi]::Text('default',"switcher/hotkeys/@$index") -ceq $hotkeys[$index])
+  }
   $font=if($Case -eq 'Override'){17}else{14}
   Check 'expected-font-point' ([BundlePresetConfigApi]::Number('stellae','style/font_point') -eq $font)
   Check 'preserved-bundle-color' ([BundlePresetConfigApi]::Text('stellae','style/color_scheme') -ceq 'reference_gray')
