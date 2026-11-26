@@ -3074,8 +3074,8 @@
     },
     {
       "path": "tests/schemes/Test-ExactSyllable.ps1",
-      "bytes": 27216,
-      "sha256": "864370be35eb2b1ed639a334ddf8d4662e63562ae4f1df2328de8535deacbf7b"
+      "bytes": 27099,
+      "sha256": "f75e29a4d3a964b1ab2b225bda35738a85a7ca394f788dcb774f3e6b05770bdb"
     },
     {
       "path": "tests/schemes/Test-OfficialChinese.ps1",

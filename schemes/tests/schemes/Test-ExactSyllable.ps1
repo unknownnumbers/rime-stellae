@@ -67,9 +67,10 @@ punctuator:
  [IO.File]::WriteAllText((Join-Path $user 'exact_foreign.dict.yaml'),"---`nname: exact_foreign`nversion: '1'`n...`n$foreignWord`tkana`t100`n",$utf8)
 }
 $sourceHashes=[ordered]@{}
-foreach($name in @('cn_stellae.schema.yaml','cn_stellae.custom.yaml','lua/cn/cn_match.lua','lua/cn/cn_translator.lua','lua/cn/cn_preedit_spacing.lua','lua/cn/cn_exact_spelling.lua','lua/cn/cn_exact_processor.lua')){$sourceHashes[$name]=(Get-FileHash -LiteralPath (Join-Path $profile $name) -Algorithm SHA256).Hash.ToLowerInvariant()}
-$registrationSource=if(Test-Path -LiteralPath (Join-Path $profile 'samples/rime.lua')){'samples/rime.lua'}else{'rime.lua'}
-$sourceHashes[$registrationSource]=(Get-FileHash -LiteralPath (Join-Path $profile $registrationSource) -Algorithm SHA256).Hash.ToLowerInvariant()
+foreach($name in @('cn_stellae.schema.yaml','cn_stellae.custom.yaml','rime.lua','lua/cn/cn_match.lua','lua/cn/cn_translator.lua','lua/cn/cn_preedit_spacing.lua','lua/cn/cn_exact_spelling.lua','lua/cn/cn_exact_processor.lua')){
+    $sourceName=if(Test-Path -LiteralPath (Join-Path $profile "samples/$name") -PathType Leaf){"samples/$name"}else{$name}
+    $sourceHashes[$sourceName]=(Get-FileHash -LiteralPath (Join-Path $profile $sourceName) -Algorithm SHA256).Hash.ToLowerInvariant()
+}
 Add-Type -TypeDefinition ([IO.File]::ReadAllText((Join-Path $repo 'tests/RimeProbe.cs'),$utf8).Replace('__RIME_ENGINE_DLL__',$dll))
 $traits = New-Object RimeProbe+Traits
 $traits.data_size = [Runtime.InteropServices.Marshal]::SizeOf($traits) - 4

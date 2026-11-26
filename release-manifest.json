@@ -3648,7 +3648,7 @@
     {
       "path": "schemes/release-manifest.json",
       "bytes": 110761,
-      "sha256": "a91ee26e8905dfe12ca76de5267f7f67dc9738fd4b1ebbed3e7528475287982c"
+      "sha256": "11b0e37f5111bd0ea6f7d2a4229016b333ffe999696d482486c47cb502aed283"
     },
     {
       "path": "schemes/scripts/build_dlc.py",
@@ -3907,8 +3907,8 @@
     },
     {
       "path": "schemes/tests/schemes/Test-ExactSyllable.ps1",
-      "bytes": 27216,
-      "sha256": "864370be35eb2b1ed639a334ddf8d4662e63562ae4f1df2328de8535deacbf7b"
+      "bytes": 27099,
+      "sha256": "f75e29a4d3a964b1ab2b225bda35738a85a7ca394f788dcb774f3e6b05770bdb"
     },
     {
       "path": "schemes/tests/schemes/Test-OfficialChinese.ps1",
