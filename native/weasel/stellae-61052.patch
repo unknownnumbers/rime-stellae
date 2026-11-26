@@ -1,5 +1,5 @@
 diff --git a/RimeWithWeasel/RimeWithWeasel.cpp b/RimeWithWeasel/RimeWithWeasel.cpp
-index 3f4e59d9f410c79ad605460c5492314d71bdfb65..3d66f4e4c580de43e4b7214c503881975ab9c7a5 100644
+index 3f4e59d9f410c79ad605460c5492314d71bdfb65..f071caf5c0537333461edf6567dec228f01d0ca4 100644
 --- a/RimeWithWeasel/RimeWithWeasel.cpp
 +++ b/RimeWithWeasel/RimeWithWeasel.cpp
 @@ -1,4 +1,4 @@
@@ -272,10 +272,9 @@ index 3f4e59d9f410c79ad605460c5492314d71bdfb65..3d66f4e4c580de43e4b7214c50388197
 -  Bool handled = rime_api->process_key(session_id, keyEvent.keycode,
 -                                       expand_ibus_modifier(keyEvent.mask));
 +  const bool ascii_mode = rime_api->get_option(session_id, "ascii_mode");
-+  // Red A passes application keys through. Ctrl+Space still reaches the
-+  // schema binding, including the command produced by the TSF frontend.
++  // Caps Lock is a toggle state, separate from the Ctrl+Space binding.
 +  const bool ascii_toggle = keyEvent.keycode == ibus::space &&
-+                            keyEvent.mask == ibus::CONTROL_MASK;
++                            (keyEvent.mask & ~ibus::LOCK_MASK) == ibus::CONTROL_MASK;
 +  Bool handled = False;
 +  if (!ascii_mode || ascii_toggle) {
 +    // One property lifetime per actual process_key, including unwind.
@@ -294,8 +293,9 @@ index 3f4e59d9f410c79ad605460c5492314d71bdfb65..3d66f4e4c580de43e4b7214c50388197
 +      const std::string value = keyEvent.shift_snapshot.PropertyValue();
 +      rime_api->set_property(session_id, "weasel_shift_snapshot", value.c_str());
 +    }
++    const auto engine_mask = ascii_toggle ? ibus::CONTROL_MASK : keyEvent.mask;
 +    handled = rime_api->process_key(session_id, keyEvent.keycode,
-+                                    expand_ibus_modifier(keyEvent.mask));
++                                    expand_ibus_modifier(engine_mask));
 +  }
 +  if (ascii_toggle && handled &&
 +      ascii_mode != (rime_api->get_option(session_id, "ascii_mode") != 0)) {
@@ -4070,7 +4070,7 @@ index 1bba123..35aacd8 100644
 +  return Deserializer::Ptr(new Styler(pTarget));
 +}
 diff --git a/WeaselIPC/WeaselClientImpl.cpp b/WeaselIPC/WeaselClientImpl.cpp
-index 26122ad..bc85157 100644
+index 26122ad50a1550c4e4b8daccc5de5625141d33ee..afbde833ebd6dbc2d589d5ac13627872f951b01c 100644
 --- a/WeaselIPC/WeaselClientImpl.cpp
 +++ b/WeaselIPC/WeaselClientImpl.cpp
 @@ -1,5 +1,6 @@
@@ -4149,18 +4149,37 @@ index 26122ad..bc85157 100644
  }
  
  bool ClientImpl::CommitComposition() {
-@@ -126,6 +154,10 @@ void ClientImpl::UpdateInputPosition(RECT const& rc) {
-   int height = max(0, min(127, (rc.bottom - rc.top) >> hi_res));
+@@ -118,15 +146,26 @@ void ClientImpl::UpdateInputPosition(RECT const& rc) {
+   top:-4096~4094 = 12bit（有符号，舍弃低1位）
+   left:-4096~4094 = 12bit（有符号，舍弃低1位）
+   */
++  const auto full_height = static_cast<std::int64_t>(rc.bottom) - rc.top;
+   int hi_res =
+-      static_cast<int>(rc.bottom - rc.top >= 128 || rc.left < -2048 ||
++      static_cast<int>(full_height >= 128 || rc.left < -2048 ||
+                        rc.left >= 2048 || rc.top < -2048 || rc.top >= 2048);
+   int left = max(-2048, min(2047, rc.left >> hi_res));
+   int top = max(-2048, min(2047, rc.top >> hi_res));
+-  int height = max(0, min(127, (rc.bottom - rc.top) >> hi_res));
++  int height = static_cast<int>(max(std::int64_t{0}, min(std::int64_t{127}, full_height >> hi_res)));
    DWORD compressed_rect = ((hi_res & 0x01) << 31) | ((height & 0x7f) << 24) |
                            ((top & 0xfff) << 12) | (left & 0xfff);
+-  _SendMessage(WEASEL_IPC_UPDATE_INPUT_POS, compressed_rect, session_id);
 +  // Zero is reserved for invalidation. For an origin point that also encodes
 +  // to zero, the high-resolution bit alone decodes to the same point.
 +  if (compressed_rect == 0 && (rc.left || rc.top || rc.right || rc.bottom))
 +    compressed_rect = 0x80000000u;
-   _SendMessage(WEASEL_IPC_UPDATE_INPUT_POS, compressed_rect, session_id);
++  // Keep normal updates header-only. Supply the full rect in the same
++  // message when the legacy header clamps the caret to its limits.
++  std::string_view body;
++  if (rc.left < -4096 || rc.left > 4094 || rc.top < -4096 || rc.top > 4094 ||
++      full_height > 254)
++    body = {reinterpret_cast<const char*>(&rc), sizeof(rc)};
++  _SendMessageOutcome(WEASEL_IPC_UPDATE_INPUT_POS, compressed_rect, session_id, body);
  }
  
-@@ -142,13 +174,14 @@ void ClientImpl::TrayCommand(UINT menuId) {
+ void ClientImpl::FocusIn() {
+@@ -142,13 +181,14 @@ void ClientImpl::TrayCommand(UINT menuId) {
    _SendMessage(WEASEL_IPC_TRAY_COMMAND, menuId, session_id);
  }
  
@@ -4177,7 +4196,7 @@ index 26122ad..bc85157 100644
  }
  
  void ClientImpl::EndSession() {
-@@ -166,12 +199,45 @@ void ClientImpl::EndMaintenance() {
+@@ -166,12 +206,45 @@ void ClientImpl::EndMaintenance() {
    session_id = 0;
  }
  
@@ -4225,7 +4244,7 @@ index 26122ad..bc85157 100644
  }
  
  bool ClientImpl::GetResponseData(ResponseHandler const& handler) {
-@@ -182,6 +248,10 @@ bool ClientImpl::GetResponseData(ResponseHandler const& handler) {
+@@ -182,6 +255,10 @@ bool ClientImpl::GetResponseData(ResponseHandler const& handler) {
    return channel.HandleResponseData(handler);
  }
  
@@ -4236,7 +4255,7 @@ index 26122ad..bc85157 100644
  bool ClientImpl::_WriteClientInfo() {
    channel << L"action=session\n";
    channel << L"session.client_app=" << app_name.c_str() << L"\n";
-@@ -193,11 +263,27 @@ bool ClientImpl::_WriteClientInfo() {
+@@ -193,11 +270,27 @@ bool ClientImpl::_WriteClientInfo() {
  LRESULT ClientImpl::_SendMessage(WEASEL_IPC_COMMAND Msg,
                                   DWORD wParam,
                                   DWORD lParam) {
@@ -4245,7 +4264,7 @@ index 26122ad..bc85157 100644
 +}
 +
 +PipeChannel<PipeMessage>::Outcome ClientImpl::_SendMessageOutcome(
-+    WEASEL_IPC_COMMAND Msg, DWORD wParam, DWORD lParam) {
++    WEASEL_IPC_COMMAND Msg, DWORD wParam, DWORD lParam, std::string_view body) {
 +  if (!channel.Connected()) {
 +    channel.Disconnect();
 +    session_id = 0;
@@ -4259,7 +4278,7 @@ index 26122ad..bc85157 100644
 -    return channel.Transact(req);
 -  } catch (DWORD /* ex */) {
 -    return 0;
-+    const auto outcome = channel.TransactOutcome(request);
++    const auto outcome = channel.TransactOutcome(request, body);
 +    if (outcome.error != ERROR_SUCCESS) session_id = 0;
 +    return outcome;
 +  } catch (...) {
@@ -4268,7 +4287,7 @@ index 26122ad..bc85157 100644
    }
  }
  
-@@ -224,6 +310,10 @@ bool Client::ProcessKeyEvent(KeyEvent const& keyEvent) {
+@@ -224,6 +317,10 @@ bool Client::ProcessKeyEvent(KeyEvent const& keyEvent) {
    return m_pImpl->ProcessKeyEvent(keyEvent);
  }
  
@@ -4279,7 +4298,7 @@ index 26122ad..bc85157 100644
  bool Client::CommitComposition() {
    return m_pImpl->CommitComposition();
  }
-@@ -256,8 +346,8 @@ void Client::FocusOut() {
+@@ -256,8 +353,8 @@ void Client::FocusOut() {
    m_pImpl->FocusOut();
  }
  
@@ -4290,7 +4309,7 @@ index 26122ad..bc85157 100644
  }
  
  void Client::EndSession() {
-@@ -272,6 +362,10 @@ void Client::EndMaintenance() {
+@@ -272,6 +369,10 @@ void Client::EndMaintenance() {
    m_pImpl->EndMaintenance();
  }
  
@@ -4301,7 +4320,7 @@ index 26122ad..bc85157 100644
  void Client::TrayCommand(UINT menuId) {
    m_pImpl->TrayCommand(menuId);
  }
-@@ -280,6 +374,14 @@ bool Client::Echo() {
+@@ -280,6 +381,14 @@ bool Client::Echo() {
    return m_pImpl->Echo();
  }
  
@@ -4317,7 +4336,7 @@ index 26122ad..bc85157 100644
 +  return m_pImpl->ResponseGeneration();
 +}
 diff --git a/WeaselIPC/WeaselClientImpl.h b/WeaselIPC/WeaselClientImpl.h
-index 7602792..c0091c6 100644
+index 7602792869408ccf24b4e82ada2b8be8ec0f56ed..09ef9ea3ad38c6068e5ab077087082ce55a2557b 100644
 --- a/WeaselIPC/WeaselClientImpl.h
 +++ b/WeaselIPC/WeaselClientImpl.h
 @@ -12,12 +12,15 @@ class ClientImpl {
@@ -4349,12 +4368,12 @@ index 7602792..c0091c6 100644
  
    LRESULT _SendMessage(WEASEL_IPC_COMMAND Msg, DWORD wParam, DWORD lParam);
 +  PipeChannel<PipeMessage>::Outcome _SendMessageOutcome(
-+      WEASEL_IPC_COMMAND Msg, DWORD wParam, DWORD lParam);
++      WEASEL_IPC_COMMAND Msg, DWORD wParam, DWORD lParam, std::string_view body = {});
  
    bool _Connected() const { return channel.Connected(); }
    bool _Active() const { return channel.Connected() && session_id != 0; }
 diff --git a/WeaselIPCServer/WeaselServerImpl.cpp b/WeaselIPCServer/WeaselServerImpl.cpp
-index 11225c445de8cb3c8f10810cc988cbf33bfe7462..f59634e93249a4d7cea7cf02d5b8ecb0ce7d6b93 100644
+index 11225c445de8cb3c8f10810cc988cbf33bfe7462..087829713646dc26779d9958409decb94e4456d2 100644
 --- a/WeaselIPCServer/WeaselServerImpl.cpp
 +++ b/WeaselIPCServer/WeaselServerImpl.cpp
 @@ -1,26 +1,67 @@
@@ -4550,7 +4569,7 @@ index 11225c445de8cb3c8f10810cc988cbf33bfe7462..f59634e93249a4d7cea7cf02d5b8ecb0
      std::lock_guard guard(g_api_mutex);
 -    HandlePipeMessage(msg, resp);
 +    if (!channel->IsStopping()) {
-+      channel->PrepareRequest(request_body);
++      channel->PrepareRequest(msg.Msg == WEASEL_IPC_UPDATE_INPUT_POS ? nullptr : request_body);
 +      HandlePipeMessage(msg, resp, request_body);
 +    }
    };
@@ -4627,18 +4646,56 @@ index 11225c445de8cb3c8f10810cc988cbf33bfe7462..f59634e93249a4d7cea7cf02d5b8ecb0
  }
  
  DWORD ServerImpl::OnFocusOut(WEASEL_IPC_COMMAND uMsg,
-@@ -255,6 +361,11 @@ DWORD ServerImpl::OnUpdateInputPosition(WEASEL_IPC_COMMAND uMsg,
-                                         DWORD lParam) {
+@@ -250,11 +356,14 @@ DWORD ServerImpl::OnFocusOut(WEASEL_IPC_COMMAND uMsg,
+   return 0;
+ }
+ 
+-DWORD ServerImpl::OnUpdateInputPosition(WEASEL_IPC_COMMAND uMsg,
+-                                        DWORD wParam,
+-                                        DWORD lParam) {
++DWORD ServerImpl::OnUpdateInputPosition(DWORD packed, DWORD session_id, const char* body) {
    if (!m_pRequestHandler)
      return 0;
 +  // Preserve the client's empty-rectangle marker before decoding a caret.
-+  if (wParam == 0) {
-+    m_pRequestHandler->UpdateInputPosition(RECT{}, lParam);
++  if (packed == 0) {
++    m_pRequestHandler->UpdateInputPosition(RECT{}, session_id);
 +    return 0;
 +  }
    /*
     * 移位标志 = 1bit == 0
     * height: 0~127 = 7bit
+@@ -268,13 +377,15 @@ DWORD ServerImpl::OnUpdateInputPosition(WEASEL_IPC_COMMAND uMsg,
+    * left: -4096~4094 = 12bit（有符号，舍弃低1位）
+    */
+   RECT rc;
+-  int hi_res = (wParam >> 31) & 0x01;
+-  rc.left = ((wParam & 0x7ff) - (wParam & 0x800)) << hi_res;
+-  rc.top = (((wParam >> 12) & 0x7ff) - ((wParam >> 12) & 0x800)) << hi_res;
+-  const int width = 6;
+-  int height = ((wParam >> 24) & 0x7f) << hi_res;
+-  rc.right = rc.left + width;
+-  rc.bottom = rc.top + height;
++  if (body) {
++    memcpy(&rc, body, sizeof(rc));
++  } else {
++    const int scale = (packed >> 31) + 1;
++    rc.left = (int(packed & 0x7ff) - int(packed & 0x800)) * scale;
++    rc.top = (int((packed >> 12) & 0x7ff) - int((packed >> 12) & 0x800)) * scale;
++    rc.right = rc.left + 6;
++    rc.bottom = rc.top + int((packed >> 24) & 0x7f) * scale;
++  }
+ 
+   {
+     using PPTLPFPMDPI = BOOL(WINAPI*)(HWND, LPPOINT);
+@@ -288,7 +399,7 @@ DWORD ServerImpl::OnUpdateInputPosition(WEASEL_IPC_COMMAND uMsg,
+     rc = {lt.x, lt.y, rb.x, rb.y};
+   }
+ 
+-  m_pRequestHandler->UpdateInputPosition(rc, lParam);
++  m_pRequestHandler->UpdateInputPosition(rc, session_id);
+   return 0;
+ }
+ 
 @@ -308,6 +419,10 @@ DWORD ServerImpl::OnEndMaintenance(WEASEL_IPC_COMMAND uMsg,
    return 0;
  }
@@ -4650,7 +4707,7 @@ index 11225c445de8cb3c8f10810cc988cbf33bfe7462..f59634e93249a4d7cea7cf02d5b8ecb0
  DWORD ServerImpl::OnCommitComposition(WEASEL_IPC_COMMAND uMsg,
                                        DWORD wParam,
                                        DWORD lParam) {
-@@ -375,20 +490,28 @@ DWORD ServerImpl::OnChangePage(WEASEL_IPC_COMMAND uMsg,
+@@ -375,20 +490,31 @@ DWORD ServerImpl::OnChangePage(WEASEL_IPC_COMMAND uMsg,
    }
  
  template <typename _Resp>
@@ -4661,6 +4718,10 @@ index 11225c445de8cb3c8f10810cc988cbf33bfe7462..f59634e93249a4d7cea7cf02d5b8ecb0
 +  // A header-only old-client request has nullptr, even after a new Shift.
 +  if (pipe_msg.Msg == WEASEL_IPC_PROCESS_KEY_EVENT) {
 +    resp(OnKeyEvent(pipe_msg.Msg, pipe_msg.wParam, pipe_msg.lParam, request_body));
++    return;
++  }
++  if (pipe_msg.Msg == WEASEL_IPC_UPDATE_INPUT_POS) {
++    resp(OnUpdateInputPosition(pipe_msg.wParam, pipe_msg.lParam, request_body));
 +    return;
 +  }
    DWORD result;
@@ -4674,14 +4735,14 @@ index 11225c445de8cb3c8f10810cc988cbf33bfe7462..f59634e93249a4d7cea7cf02d5b8ecb0
    PIPE_MSG_HANDLE(WEASEL_IPC_SHUTDOWN_SERVER, OnShutdownServer)
    PIPE_MSG_HANDLE(WEASEL_IPC_FOCUS_IN, OnFocusIn)
    PIPE_MSG_HANDLE(WEASEL_IPC_FOCUS_OUT, OnFocusOut)
-   PIPE_MSG_HANDLE(WEASEL_IPC_UPDATE_INPUT_POS, OnUpdateInputPosition)
+-  PIPE_MSG_HANDLE(WEASEL_IPC_UPDATE_INPUT_POS, OnUpdateInputPosition)
    PIPE_MSG_HANDLE(WEASEL_IPC_START_MAINTENANCE, OnStartMaintenance)
    PIPE_MSG_HANDLE(WEASEL_IPC_END_MAINTENANCE, OnEndMaintenance)
 +  PIPE_MSG_HANDLE(WEASEL_IPC_RELOAD_APPEARANCE, OnReloadAppearance)
    PIPE_MSG_HANDLE(WEASEL_IPC_COMMIT_COMPOSITION, OnCommitComposition)
    PIPE_MSG_HANDLE(WEASEL_IPC_CLEAR_COMPOSITION, OnClearComposition);
    PIPE_MSG_HANDLE(WEASEL_IPC_SELECT_CANDIDATE_ON_CURRENT_PAGE,
-@@ -403,38 +526,228 @@ void ServerImpl::HandlePipeMessage(PipeMessage pipe_msg, _Resp resp) {
+@@ -403,38 +529,233 @@ void ServerImpl::HandlePipeMessage(PipeMessage pipe_msg, _Resp resp) {
  }
  
  PipeServer::PipeServer(std::wstring&& pn_cmd, SECURITY_ATTRIBUTES* s)
@@ -4734,12 +4795,13 @@ index 11225c445de8cb3c8f10810cc988cbf33bfe7462..f59634e93249a4d7cea7cf02d5b8ecb0
 +      error = failure;
 +    } catch (...) {
 +      std::lock_guard guard(state_mutex);
-+      _FinalizePipe(pipe);
+       _FinalizePipe(pipe);
 +      throw;
-+    }
+     }
+-    boost::this_thread::interruption_point();
 +    std::lock_guard guard(state_mutex);
 +    if (stopping) {
-       _FinalizePipe(pipe);
++      _FinalizePipe(pipe);
 +      return;
 +    }
 +    if (error != ERROR_SUCCESS && error != ERROR_PIPE_CONNECTED) {
@@ -4763,14 +4825,10 @@ index 11225c445de8cb3c8f10810cc988cbf33bfe7462..f59634e93249a4d7cea7cf02d5b8ecb0
 +    } catch (...) {
 +      _FinalizePipe(pipe);
 +      throw;
-     }
--    boost::this_thread::interruption_point();
-   }
- }
- 
--PipeServer::ServerRunner PipeServer::GetServerRunner(
--    ServerHandler const& handler) {
--  return [&handler, this]() { Listen(handler); };
++    }
++  }
++}
++
 +void PipeServer::Stop() {
 +  std::lock_guard guard(state_mutex);
 +  stopping = true;
@@ -4860,13 +4918,13 @@ index 11225c445de8cb3c8f10810cc988cbf33bfe7462..f59634e93249a4d7cea7cf02d5b8ecb0
 +  } catch (...) {
 +    ClearBufferStream();
 +    throw;
-+  }
+   }
 +  ClearBufferStream();
  }
  
--void PipeServer::_ProcessPipeThread(HANDLE pipe, ServerHandler const& handler) {
-+PipeServer::ServerRunner PipeServer::GetServerRunner(
-+    ServerHandler const& handler) {
+ PipeServer::ServerRunner PipeServer::GetServerRunner(
+     ServerHandler const& handler) {
+-  return [&handler, this]() { Listen(handler); };
 +  return [handler, this]() { Listen(handler); };
 +}
 +
@@ -4888,6 +4946,11 @@ index 11225c445de8cb3c8f10810cc988cbf33bfe7462..f59634e93249a4d7cea7cf02d5b8ecb0
 +  // _ReadPipe returns only SUCCESS/MORE_DATA and throws other errors.
 +  // Preserve the two message-mode reads and zero padding; cancellation
 +  // and completion draining belong to patch 70's overlapped helper.
++  if (message.Msg == WEASEL_IPC_UPDATE_INPUT_POS) {
++    const DWORD error = _ReadPipe(worker, worker->request_buffer.get(), sizeof(RECT), read);
++    if (error != ERROR_SUCCESS || read != sizeof(RECT)) throw DWORD(ERROR_INVALID_DATA);
++    return worker->request_buffer.get();
++  }
 +  memset(worker->request_buffer.get(), 0, buff_size);
 +  const DWORD body_error =
 +      _ReadPipe(worker, worker->request_buffer.get(),
@@ -4896,8 +4959,9 @@ index 11225c445de8cb3c8f10810cc988cbf33bfe7462..f59634e93249a4d7cea7cf02d5b8ecb0
 +  if (body_error != ERROR_SUCCESS)
 +    throw body_error;
 +  return worker->request_buffer.get();
-+}
-+
+ }
+ 
+-void PipeServer::_ProcessPipeThread(HANDLE pipe, ServerHandler const& handler) {
 +void PipeServer::_ProcessPipeThread(Worker* worker, ServerHandler handler) {
    try {
 -    for (;;) {
@@ -4926,7 +4990,7 @@ index 11225c445de8cb3c8f10810cc988cbf33bfe7462..f59634e93249a4d7cea7cf02d5b8ecb0
  }
  
  // weasel::Server
-@@ -466,6 +779,10 @@ void Server::AddMenuHandler(UINT uID, CommandHandler handler) {
+@@ -466,6 +787,10 @@ void Server::AddMenuHandler(UINT uID, CommandHandler handler) {
    m_pImpl->AddMenuHandler(uID, handler);
  }
  
@@ -4938,7 +5002,7 @@ index 11225c445de8cb3c8f10810cc988cbf33bfe7462..f59634e93249a4d7cea7cf02d5b8ecb0
    return m_pImpl->m_hWnd;
  }
 diff --git a/WeaselIPCServer/WeaselServerImpl.h b/WeaselIPCServer/WeaselServerImpl.h
-index a4d123ddb5a91fe663c94e164304dc67837cdf27..824adff3fb209e0f273ba05504977f631f3417a7 100644
+index a4d123ddb5a91fe663c94e164304dc67837cdf27..2bd578ad12c0fda6ed9c2ccd06348744478ac8fc 100644
 --- a/WeaselIPCServer/WeaselServerImpl.h
 +++ b/WeaselIPCServer/WeaselServerImpl.h
 @@ -5,6 +5,7 @@
@@ -4957,7 +5021,7 @@ index a4d123ddb5a91fe663c94e164304dc67837cdf27..824adff3fb209e0f273ba05504977f63
    END_MSG_MAP()
  
    LRESULT OnColorChange(UINT uMsg,
-@@ -46,11 +48,17 @@ class ServerImpl : public CWindowImpl<ServerImpl, CWindow, ServerWinTraits>
+@@ -46,19 +48,24 @@ class ServerImpl : public CWindowImpl<ServerImpl, CWindow, ServerWinTraits>
                               LPARAM lParam,
                               BOOL& bHandled);
    LRESULT OnCommand(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
@@ -4976,15 +5040,17 @@ index a4d123ddb5a91fe663c94e164304dc67837cdf27..824adff3fb209e0f273ba05504977f63
    DWORD OnShutdownServer(WEASEL_IPC_COMMAND uMsg, DWORD wParam, DWORD lParam);
    DWORD OnFocusIn(WEASEL_IPC_COMMAND uMsg, DWORD wParam, DWORD lParam);
    DWORD OnFocusOut(WEASEL_IPC_COMMAND uMsg, DWORD wParam, DWORD lParam);
-@@ -59,6 +67,7 @@ class ServerImpl : public CWindowImpl<ServerImpl, CWindow, ServerWinTraits>
-                               DWORD lParam);
+-  DWORD OnUpdateInputPosition(WEASEL_IPC_COMMAND uMsg,
+-                              DWORD wParam,
+-                              DWORD lParam);
++  DWORD OnUpdateInputPosition(DWORD packed, DWORD session_id, const char* body);
    DWORD OnStartMaintenance(WEASEL_IPC_COMMAND uMsg, DWORD wParam, DWORD lParam);
    DWORD OnEndMaintenance(WEASEL_IPC_COMMAND uMsg, DWORD wParam, DWORD lParam);
 +  DWORD OnReloadAppearance(WEASEL_IPC_COMMAND uMsg, DWORD wParam, DWORD lParam);
    DWORD OnCommitComposition(WEASEL_IPC_COMMAND uMsg,
                              DWORD wParam,
                              DWORD lParam);
-@@ -85,16 +94,22 @@ class ServerImpl : public CWindowImpl<ServerImpl, CWindow, ServerWinTraits>
+@@ -85,16 +92,22 @@ class ServerImpl : public CWindowImpl<ServerImpl, CWindow, ServerWinTraits>
    void AddMenuHandler(UINT uID, CommandHandler& handler) {
      m_MenuHandlers[uID] = handler;
    }
@@ -20407,10 +20473,10 @@ index 6fe8ade..6154d32 100644
    KeyEvent(UINT _keycode, UINT _mask) : keycode(_keycode), mask(_mask) {}
    KeyEvent(UINT x) { *reinterpret_cast<UINT*>(this) = x; }
 diff --git a/include/PipeChannel.h b/include/PipeChannel.h
-index bebc73a..de5ff7d 100644
+index bebc73a087ac2bf917b20751ed8a48a1e2fa6c45..dac6062e968309c6ff7cad4cbcec27babc0c58f9 100644
 --- a/include/PipeChannel.h
 +++ b/include/PipeChannel.h
-@@ -1,163 +1,235 @@
+@@ -1,163 +1,241 @@
 -#pragma once
 -#include <string>
 -#include <memory>
@@ -20576,6 +20642,7 @@ index bebc73a..de5ff7d 100644
 -};  // namespace weasel
 +#pragma once
 +#include <string>
++#include <string_view>
 +#include <memory>
 +#include <cstdint>
 +#include <windows.h>
@@ -20694,7 +20761,7 @@ index bebc73a..de5ff7d 100644
 +    return *this;
 +  }
 +
-+  Outcome TransactOutcome(Msg& msg) {
++  Outcome TransactOutcome(Msg& msg, std::string_view body = {}) {
 +    static_assert(_ResSize == sizeof(Res), "A reply header must be complete");
 +    Outcome outcome;
 +    response_data_valid = false;
@@ -20704,7 +20771,12 @@ index bebc73a..de5ff7d 100644
 +        return outcome;
 +      }
 +      *reinterpret_cast<Msg*>(buffer.get()) = msg;
-+      const size_t size = has_body ? buff_size : _MsgSize;
++      size_t size = has_body ? buff_size : _MsgSize;
++      if (!body.empty()) {
++        if (body.size() > buff_size - _MsgSize) throw DWORD(ERROR_INVALID_PARAMETER);
++        memcpy(SendBuffer(), body.data(), body.size());
++        size = _MsgSize + body.size();
++      }
 +      // From this point failure cannot prove that the server did not execute.
 +      outcome.phase = TransactionPhase::WriteAttempted;
 +      _WritePipe(hpipe, size, buffer.get());

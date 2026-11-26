@@ -117,7 +117,7 @@ try{
   Run-Probe 'truthful-key-nested' 'V18' 16
   Run-Probe 'truthful-key-repeat-space' 'V19' 34
   Run-Probe 'r2-caps-marker' 'R2' 35
-  Run-Probe 'idle-modifiers' 'IDLE-MODIFIERS' 13
+  Run-Probe 'idle-modifiers' 'IDLE-MODIFIERS' 19
 }catch{$report.Errors+=$_.Exception.Message}
 finally{
   foreach($process in @($child,$server)){try{if($process -and -not $process.HasExited){$process.Kill();$process.WaitForExit()}}catch{$report.RestoreErrors+=$_.Exception.Message}}

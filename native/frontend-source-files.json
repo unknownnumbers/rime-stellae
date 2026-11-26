@@ -1,12 +1,12 @@
 {
   "schema": "stellae-frontend-source-files/1",
   "upstreamCommit": "9cc96e20dc71b80876b12f689bb5863c76c2a7ed",
-  "patchSha256": "46c84930fb998947c77cc0446d4f2af8df4e0d69b4f1a2e9e279ab0bc3494b23",
+  "patchSha256": "512741694b68bf31fd48199bc710c2245ca777bb9c2589ece62dd77aafd9a450",
   "files": [
     {
       "path": "RimeWithWeasel/RimeWithWeasel.cpp",
-      "sha256": "cc947d95d8b0e478f9018238411e89cb32459db98b6120f4094c290eb81b1a0b",
-      "bytes": 72330,
+      "sha256": "482886f80090bae4182cb02afd0dcb469803794bdcf2193ee60123e7adfeb6a7",
+      "bytes": 72355,
       "replayMatchesFrozen": true
     },
     {
@@ -161,26 +161,26 @@
     },
     {
       "path": "WeaselIPC/WeaselClientImpl.cpp",
-      "sha256": "4a1e156b954449870e95d7d4f59da8cc846763863a0c770bb4e1b0c8370036cf",
-      "bytes": 10919,
+      "sha256": "6ef3343230ff13a4e85d4d279983c5a821e0fd9d9bc8dd4921f6233322e33429",
+      "bytes": 11400,
       "replayMatchesFrozen": true
     },
     {
       "path": "WeaselIPC/WeaselClientImpl.h",
-      "sha256": "4c9657f380d5016e8189706f2d7657eb4ced41eeb86eb15a51d861239fedd0ac",
-      "bytes": 1548,
+      "sha256": "98f58ae91196afad96935c79545217a67192541df509901f243fb88d214b0b4c",
+      "bytes": 1576,
       "replayMatchesFrozen": true
     },
     {
       "path": "WeaselIPCServer/WeaselServerImpl.cpp",
-      "sha256": "96dd3be134ec211554374d8295cbf45904fccfe7c219bca978c7aabdb01e7dd2",
-      "bytes": 26697,
+      "sha256": "61eb27b0e53d18aa64abc289215222e2e6b9e937c65e215118c69f7d59dab17f",
+      "bytes": 27075,
       "replayMatchesFrozen": true
     },
     {
       "path": "WeaselIPCServer/WeaselServerImpl.h",
-      "sha256": "1a4d05d581e570b76ce1d144ef82a50e6b490afce084c7f468fbf2b49bed5d3d",
-      "bytes": 4833,
+      "sha256": "2408c58ff15acf4c1f8231fb9c870c7b950524f5b13f7e295334a5dff2e11da8",
+      "bytes": 4768,
       "replayMatchesFrozen": true
     },
     {
@@ -551,8 +551,8 @@
     },
     {
       "path": "include/PipeChannel.h",
-      "sha256": "6d28bc03e9e70803e85b652d45ee257e6ddefb0c00a35cdc1799da4dfe8d3f3b",
-      "bytes": 7234,
+      "sha256": "ac7b53f292d9e9f6b080d375ad25912b4c48a36686f93c734917154111851db3",
+      "bytes": 7501,
       "replayMatchesFrozen": true
     },
     {

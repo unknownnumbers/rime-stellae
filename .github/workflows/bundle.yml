@@ -72,6 +72,8 @@ jobs:
           arch: ${{ matrix.architecture }}
       - name: Assemble pinned frontend source
         run: ./scripts/native/Prepare-Sources.ps1 -Variant stellae-61052 -Destination "$env:RUNNER_TEMP/frontend-source"
+      - name: Test mode hint coordinates across monitors
+        run: python native/tests/input-position/Run-InputPositionTests.py --source-root "$env:RUNNER_TEMP/frontend-source" --output "$env:RUNNER_TEMP/input-position-test"
       - name: Test tray refresh while the shell is busy
         if: matrix.architecture == 'x64'
         run: python native/tests/tray/Run-TrayRefreshTests.py --source-root "$env:RUNNER_TEMP/frontend-source" --output "$env:RUNNER_TEMP/tray-test"

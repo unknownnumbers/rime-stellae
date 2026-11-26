@@ -2026,6 +2026,26 @@ void SameOwnerFailedRequestProbe() {
             a_->synchronousReads == beforeAscii);
         const bool left = service_->_ProduceKeyResponse(a_, toggle);
         Check("control-space-leaves-ASCII", left && !service_->_status.ascii_mode);
+
+        const UINT lockedControl = ibus::CONTROL_MASK | ibus::LOCK_MASK;
+        const weasel::KeyEvent lockedToggle(ibus::space, lockedControl);
+        Check("locked-toggle-starts-with-draft", HasPreedit(Produce(a_, 'a'), L"a"));
+        const bool lockedEnter = service_->_ProduceKeyResponse(a_, lockedToggle);
+        Check("locked-control-space-cancels-draft-and-enters-ASCII",
+            lockedEnter && service_->_status.ascii_mode &&
+            EmptyEngineResponse(Record(service_->_lastResponse)));
+        for (auto extra : {ibus::SHIFT_MASK, ibus::ALT_MASK, ibus::RELEASE_MASK}) {
+          const bool handled = service_->_ProduceKeyResponse(
+              a_, weasel::KeyEvent(ibus::space, lockedControl | extra));
+          Check("locked-control-space-extra-modifier-or-release-passes-through",
+              !handled && service_->_status.ascii_mode);
+        }
+        const bool lockedLeave = service_->_ProduceKeyResponse(a_, lockedToggle);
+        SettleNormalDelivery("locked-control-space-roundtrip");
+        Check("locked-control-space-returns-to-empty-draft",
+            lockedLeave && !service_->_status.ascii_mode && !service_->_IsComposing() &&
+            EmptyEngineResponse(Record(service_->_lastResponse)) &&
+            a_->store->text == L"prefix|");
       });
       return;
     }

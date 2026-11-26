@@ -1533,6 +1533,24 @@
       ]
     },
     {
+      "path": "native/tests/input-position/InputPositionTests.cpp",
+      "source_ids": [
+        "project-code"
+      ],
+      "references": [
+        "LICENSE"
+      ]
+    },
+    {
+      "path": "native/tests/input-position/Run-InputPositionTests.py",
+      "source_ids": [
+        "project-code"
+      ],
+      "references": [
+        "LICENSE"
+      ]
+    },
+    {
       "path": "native/tests/installer/Export-SyntheticLearning.py",
       "source_ids": [
         "project-code"
