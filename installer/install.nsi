@@ -13,6 +13,7 @@ Var LearningNeedsMigration
 Var LearningPrepared
 Var LearningMutexHandle
 Var LearningEngineDirectory
+Var PreviousInstallRoot
 Var DlcNeedsMigration
 Var DlcPrepared
 Var UserDataDeployed
@@ -321,6 +322,38 @@ choose_directory:
   ${Endif}
 !endif
 skip:
+  ReadRegStr $R0 HKLM \
+  "Software\Microsoft\Windows\CurrentVersion\Uninstall\${STELLAE_NAMESPACE}" \
+  "UninstallString"
+  StrCmp $R0 "" init_complete
+!ifdef STELLAE_FONT_DLC
+  StrCpy $FreshFontProfile "0"
+!endif
+
+  IfSilent upgrade_accepted 0
+  MessageBox MB_OKCANCEL|MB_ICONINFORMATION "$(CONFIRMATION)" IDOK upgrade_accepted
+  Abort
+
+upgrade_accepted:
+  ReadRegStr $PreviousInstallRoot HKLM ${STELLAE_REG_KEY} "WeaselRoot"
+init_complete:
+!ifdef STELLAE_FONT_DLC
+  ${If} $ResumeInitialFont == "1"
+    StrCpy $FreshFontProfile "1"
+  ${EndIf}
+!endif
+  !insertmacro BundleTrace "init-ready"
+FunctionEnd
+
+Function PrepareInstallation
+  StrCpy $LearningEngineDirectory $INSTDIR
+  StrCmp $PreviousInstallRoot "" prepare_files
+  IfFileExists "$PreviousInstallRoot\${STELLAE_SETUP_EXE}" 0 prepare_files
+  IfFileExists "$PreviousInstallRoot\WeaselServer.exe" 0 previous_directory_valid
+  Abort "The registered directory also contains Weasel. Its files have been preserved."
+previous_directory_valid:
+  StrCpy $LearningEngineDirectory $PreviousInstallRoot
+prepare_files:
   InitPluginsDir
   SetOutPath "$PLUGINSDIR\profile-policy"
   File "InstallProfilePolicy.ps1"
@@ -348,7 +381,7 @@ profile_capture_failed:
 profile_capture_ready:
   !insertmacro BundleTrace "profile-capture-ready"
   ClearErrors
-  ExecWait '"$ProfilePolicyPowerShell" -NoProfile -NonInteractive -ExecutionPolicy Bypass -File "$PLUGINSDIR\profile-policy\LearningStore.ps1" -Action Preflight -EngineDirectory "$INSTDIR" -WorkDirectory "$PLUGINSDIR\learning-upgrade" -ReportFile "$PLUGINSDIR\profile-policy\learning-preflight.json"' $R4
+  ExecWait '"$ProfilePolicyPowerShell" -NoProfile -NonInteractive -ExecutionPolicy Bypass -File "$PLUGINSDIR\profile-policy\LearningStore.ps1" -Action Preflight -EngineDirectory "$LearningEngineDirectory" -WorkDirectory "$PLUGINSDIR\learning-upgrade" -ReportFile "$PLUGINSDIR\profile-policy\learning-preflight.json"' $R4
   IfErrors learning_preflight_failed
   IntCmp $R4 0 learning_preflight_ready
 learning_preflight_failed:
@@ -386,9 +419,9 @@ learning_guard_ready:
   ; Reject appearance conflicts before stopping the service or replacing files.
   ClearErrors
 !ifdef STELLAE_BUNDLE
-  ExecWait '"$ProfilePolicyPowerShell" -NoProfile -NonInteractive -ExecutionPolicy Bypass -File "$PLUGINSDIR\profile-policy\AppearanceConfig.ps1" -Action Preflight -SharedDirectory "$INSTDIR\data" -SharedManifest "$PLUGINSDIR\profile-policy\appearance-shared-manifest.json" -SourceLayout "$PLUGINSDIR\profile-policy\source-layout.json" -ReportFile "$PLUGINSDIR\profile-policy\appearance-preflight.json"' $R4
+  ExecWait '"$ProfilePolicyPowerShell" -NoProfile -NonInteractive -ExecutionPolicy Bypass -File "$PLUGINSDIR\profile-policy\AppearanceConfig.ps1" -Action Preflight -SharedDirectory "$LearningEngineDirectory\data" -SharedManifest "$PLUGINSDIR\profile-policy\appearance-shared-manifest.json" -SourceLayout "$PLUGINSDIR\profile-policy\source-layout.json" -ReportFile "$PLUGINSDIR\profile-policy\appearance-preflight.json"' $R4
 !else
-  ExecWait '"$ProfilePolicyPowerShell" -NoProfile -NonInteractive -ExecutionPolicy Bypass -File "$PLUGINSDIR\profile-policy\AppearanceConfig.ps1" -Action Preflight -SharedDirectory "$INSTDIR\data" -ReportFile "$PLUGINSDIR\profile-policy\appearance-preflight.json"' $R4
+  ExecWait '"$ProfilePolicyPowerShell" -NoProfile -NonInteractive -ExecutionPolicy Bypass -File "$PLUGINSDIR\profile-policy\AppearanceConfig.ps1" -Action Preflight -SharedDirectory "$LearningEngineDirectory\data" -ReportFile "$PLUGINSDIR\profile-policy\appearance-preflight.json"' $R4
 !endif
   IfErrors appearance_preflight_failed
   IntCmp $R4 0 appearance_preflight_ready
@@ -400,7 +433,7 @@ appearance_preflight_ready:
   ; Stage a byte-exact copy; the previous frontend keeps its original settings
   ; until the new appearance configuration has compiled successfully.
   ClearErrors
-  ExecWait '"$ProfilePolicyPowerShell" -NoProfile -NonInteractive -ExecutionPolicy Bypass -File "$PLUGINSDIR\profile-policy\AppearanceConfig.ps1" -Action Migrate -SharedDirectory "$INSTDIR\data" -PreflightReport "$PLUGINSDIR\profile-policy\appearance-preflight.json" -ReportFile "$PLUGINSDIR\profile-policy\appearance-staged.json"' $R4
+  ExecWait '"$ProfilePolicyPowerShell" -NoProfile -NonInteractive -ExecutionPolicy Bypass -File "$PLUGINSDIR\profile-policy\AppearanceConfig.ps1" -Action Migrate -SharedDirectory "$LearningEngineDirectory\data" -PreflightReport "$PLUGINSDIR\profile-policy\appearance-preflight.json" -ReportFile "$PLUGINSDIR\profile-policy\appearance-staged.json"' $R4
   IfErrors appearance_migration_failed
   IntCmp $R4 0 appearance_migration_ready
 appearance_migration_failed:
@@ -408,27 +441,9 @@ appearance_migration_failed:
   Abort "The appearance settings could not be prepared. Their original files and the installed program were preserved."
 appearance_migration_ready:
   !insertmacro BundleTrace "appearance-migration-ready"
-  ReadRegStr $R0 HKLM \
-  "Software\Microsoft\Windows\CurrentVersion\Uninstall\${STELLAE_NAMESPACE}" \
-  "UninstallString"
-  StrCmp $R0 "" done
-!ifdef STELLAE_FONT_DLC
-  StrCpy $FreshFontProfile "0"
-!endif
-
-  StrCpy $0 "Upgrade"
-  IfSilent uninst 0
-  MessageBox MB_OKCANCEL|MB_ICONINFORMATION "$(CONFIRMATION)" IDOK uninst
-  Abort
-
-uninst:
-  ; Backup data directory from previous installation, user files may exist
-  ReadRegStr $R1 HKLM ${STELLAE_REG_KEY} "WeaselRoot"
+  StrCpy $R1 $PreviousInstallRoot
   StrCmp $R1 "" done
   IfFileExists "$R1\${STELLAE_SETUP_EXE}" 0 done
-  IfFileExists "$R1\WeaselServer.exe" 0 upgrade_own_directory
-  Abort "The registered directory also contains Weasel. Its files have been preserved."
-upgrade_own_directory:
   !insertmacro BundleTrace "old-installation-removal"
 !ifdef STELLAE_BUNDLE
   ; Retain the previous package's ownership before replacing root metadata.
@@ -485,12 +500,6 @@ call_uninstaller:
   Sleep 800
 
 done:
-!ifdef STELLAE_FONT_DLC
-  ${If} $ResumeInitialFont == "1"
-    StrCpy $FreshFontProfile "1"
-  ${EndIf}
-!endif
-  !insertmacro BundleTrace "init-ready"
 FunctionEnd
 
 ; Registry key to check for directory (so if you install again, it will
@@ -507,6 +516,7 @@ Section "${STELLAE_PRODUCT_NAME}"
   IfFileExists "$INSTDIR\WeaselServer.exe" 0 own_directory
   Abort "This directory belongs to Weasel. Select a separate directory."
 own_directory:
+  Call PrepareInstallation
   !insertmacro BundleTrace "program-copy-start"
   ; Write the new installation path into the registry
   ; redirect on 64 bit system
@@ -868,7 +878,7 @@ math_index_ready:
   WriteRegStr HKCU "${STELLAE_REG_KEY}\Updates" "CheckForUpdates" "0"
 
   ; Prompt reboot
-  StrCmp $0 "Upgrade" 0 +2
+  StrCmp $PreviousInstallRoot "" +2
   SetRebootFlag true
   !insertmacro BundleTrace "install-ready"
 

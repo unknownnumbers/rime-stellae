@@ -177,8 +177,8 @@
     },
     {
       "path": "installer/install.nsi",
-      "bytes": 41929,
-      "sha256": "bf4fd320afb8a7d041603a4491b2a7868c0eaa1f6b8e45056208e41b5c53e299"
+      "bytes": 42361,
+      "sha256": "43ebc573e2330c8d3188e5895118385f6b7bf521464ad3aa8f3e2df2688d2b96"
     },
     {
       "path": "installer/migrations/source-layout.json",
