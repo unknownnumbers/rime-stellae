@@ -53,7 +53,7 @@
     {
       "id": "stellae61052",
       "path": "native/weasel/stellae-61052.patch",
-      "sha256": "864b6661d87e2a09a8da257f3956d2418516d08d4f50e71d913e3230b4c950a7",
+      "sha256": "fe962d8fc5f97eefa1f223308fe235a0eef7ea9e922b5d70a6332169aa75acb3",
       "source": "weasel"
     },
     {

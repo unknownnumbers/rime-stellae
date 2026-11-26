@@ -209,7 +209,7 @@ jobs:
           & $hostExe -NoProfile -ExecutionPolicy Bypass -File schemes/tests/rebuilt-profile/Test-RebuiltProfile.ps1 -Kind official-weasel -GeneratedProfile $official -EnginePath (Join-Path $runtime 'official-x64/rime.dll') -OutputPath (Join-Path $env:RUNNER_TEMP 'official-profile-tests')
           if($LASTEXITCODE){throw 'Official engine scheme checks failed'}
           $proof=Get-Content -LiteralPath (Join-Path $env:RUNNER_TEMP 'official-profile-tests/proof.json') -Raw|ConvertFrom-Json
-          if(-not $proof.Passed -or @($proof.Checks).Count -ne 76){throw 'Official engine evidence is incomplete'}
+          if(-not $proof.Passed -or @($proof.Checks).Count -ne 86){throw 'Official engine evidence is incomplete'}
       - name: Retain the official scheme checks
         if: always()
         uses: actions/upload-artifact@v4
@@ -276,7 +276,7 @@ jobs:
           & $hostExe -NoProfile -ExecutionPolicy Bypass -File schemes/tests/rebuilt-profile/Test-RebuiltProfile.ps1 -Kind pc -GeneratedProfile $profile -EnginePath $engine -OutputPath $reports
           if($LASTEXITCODE){throw 'Fresh N01 scheme checks failed'}
           $proof=Get-Content -LiteralPath (Join-Path $reports 'proof.json') -Raw|ConvertFrom-Json
-          if(-not $proof.Passed -or @($proof.Checks).Count -ne 76){throw 'Fresh N01 scheme evidence is incomplete'}
+          if(-not $proof.Passed -or @($proof.Checks).Count -ne 86){throw 'Fresh N01 scheme evidence is incomplete'}
       - name: Test shared file preservation with synthetic sources
         run: ./native/tests/installer/Test-BundleData.ps1 -OutputDirectory (Join-Path $env:RUNNER_TEMP 'shared-policy')
       - name: Test scheme notice upgrade ownership
@@ -395,7 +395,7 @@ jobs:
           $overlay=Get-Content -LiteralPath (Join-Path $release 'frontend-overlay-verification.json') -Raw|ConvertFrom-Json
           if ($overlay.runtimeEnginesPreserved -ne $false -or $overlay.rebuiltRuntimeEngines.Count -ne 1 -or $overlay.backendArchitecture -cne 'x64') { throw 'The installer must contain only the rebuilt x64 backend.' }
           $spec=Get-Content -LiteralPath installer/bundle-inputs.json -Raw|ConvertFrom-Json
-          [ordered]@{passed=$true;bundleVersion=$spec.bundleVersion;frontendVersion=$spec.frontendVersion;sourceRef=$env:GITHUB_SHA;backendArchitecture='x64';compatibilityClientArchitectures=@('x86');rebuiltImages=$overlay.rebuiltImages.Count;rebuiltRuntimeEngines=$overlay.rebuiltRuntimeEngines.Count;unchangedNativeImages=$overlay.unchangedNativeImages;sourceDerivedN01Checks=76;sharedOnlyN01InputTested=$true;bundlePresetAndUserPriorityTested=$true;actualInstalledProfileReadyWithoutTestRedeploy=$true;bare61052UpgradeTested=$true;installedUpgradeAndUninstallTested=$true;physicalKeyboardTested=$false;actualWindows11Tested=$false}|ConvertTo-Json|Set-Content -LiteralPath (Join-Path $release 'validation.json') -Encoding UTF8
+          [ordered]@{passed=$true;bundleVersion=$spec.bundleVersion;frontendVersion=$spec.frontendVersion;sourceRef=$env:GITHUB_SHA;backendArchitecture='x64';compatibilityClientArchitectures=@('x86');rebuiltImages=$overlay.rebuiltImages.Count;rebuiltRuntimeEngines=$overlay.rebuiltRuntimeEngines.Count;unchangedNativeImages=$overlay.unchangedNativeImages;sourceDerivedN01Checks=86;sharedOnlyN01InputTested=$true;bundlePresetAndUserPriorityTested=$true;actualInstalledProfileReadyWithoutTestRedeploy=$true;bare61052UpgradeTested=$true;installedUpgradeAndUninstallTested=$true;physicalKeyboardTested=$false;actualWindows11Tested=$false}|ConvertTo-Json|Set-Content -LiteralPath (Join-Path $release 'validation.json') -Encoding UTF8
           Get-ChildItem -LiteralPath $release -File|Where-Object {$_.Name -ne 'SHA256SUMS.txt'}|Sort-Object Name|ForEach-Object{(Get-FileHash -LiteralPath $_.FullName).Hash.ToLowerInvariant()+'  '+$_.Name}|Set-Content -LiteralPath (Join-Path $release 'SHA256SUMS.txt') -Encoding ASCII
       - name: Record settings trial validation
         if: startsWith(github.ref_name, 'ci/settings-')
@@ -405,7 +405,7 @@ jobs:
             if(-not $result.passed){throw 'A required settings trial check failed'}
           }
           $release=Join-Path $env:RUNNER_TEMP 'bundle/release'
-          [ordered]@{passed=$true;validationScope='settings-trial';sourceRef=$env:GITHUB_SHA;sourceDerivedN01Checks=76;fullInstallerMatrixTested=$false;appearanceAndDraftCheckedInSeparateJobs=$true}|ConvertTo-Json|Set-Content -LiteralPath (Join-Path $release 'validation.json') -Encoding utf8NoBOM
+          [ordered]@{passed=$true;validationScope='settings-trial';sourceRef=$env:GITHUB_SHA;sourceDerivedN01Checks=86;fullInstallerMatrixTested=$false;appearanceAndDraftCheckedInSeparateJobs=$true}|ConvertTo-Json|Set-Content -LiteralPath (Join-Path $release 'validation.json') -Encoding utf8NoBOM
           Get-ChildItem -LiteralPath $release -File|Where-Object {$_.Name -ne 'SHA256SUMS.txt'}|Sort-Object Name|ForEach-Object{(Get-FileHash -LiteralPath $_.FullName).Hash.ToLowerInvariant()+'  '+$_.Name}|Set-Content -LiteralPath (Join-Path $release 'SHA256SUMS.txt') -Encoding ASCII
       - uses: actions/upload-artifact@v4
         with:

@@ -13,6 +13,10 @@ def production_code(root, baseline):
     code = re.sub(r'^#(?:include|pragma once).*$', '', code, flags=re.M)
     if not baseline:
         handler = (root / 'RimeWithWeasel/RimeWithWeasel.cpp').read_text(encoding='utf-8-sig')
+        first = handler.index('static bool DismissSchemaMenu(')
+        setter = handler.index('static void SetSessionOption(', first)
+        last = handler.index('\n}', setter)
+        code += '\n' + handler[first:last + 2]
         first = handler.index('void RimeWithWeaselHandler::SetOption(')
         last = handler.index('\n}', first)
         code += '\n' + handler[first:last + 2]

@@ -1,12 +1,12 @@
 {
   "schema": "stellae-frontend-source-files/1",
   "upstreamCommit": "9cc96e20dc71b80876b12f689bb5863c76c2a7ed",
-  "patchSha256": "864b6661d87e2a09a8da257f3956d2418516d08d4f50e71d913e3230b4c950a7",
+  "patchSha256": "fe962d8fc5f97eefa1f223308fe235a0eef7ea9e922b5d70a6332169aa75acb3",
   "files": [
     {
       "path": "RimeWithWeasel/RimeWithWeasel.cpp",
-      "sha256": "8cd751bc86abafde22d8865f0e4f58a26e1349727e32cb85151011c9f2b055d5",
-      "bytes": 72433,
+      "sha256": "5733ee14ef35d732e7deaa012bc8282b6b09a6fe26f80634e5eac7301bec4db2",
+      "bytes": 73184,
       "replayMatchesFrozen": true
     },
     {

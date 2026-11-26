@@ -1,6 +1,6 @@
 {
   "format": "stellae-schemes-source-v1",
-  "date": "2026-11-26",
+  "date": "2026-11-27",
   "kind": "source-configuration-data-snapshot",
   "nativeBinariesIncluded": false,
   "personalLearningIncluded": false,
@@ -710,7 +710,7 @@
     {
       "path": "config/official-weasel/profile-manifest.json",
       "bytes": 31963,
-      "sha256": "3dd2c74d423c872358ee70f63cb336216b77b29705e7ba9d06cf912ae18eff4b"
+      "sha256": "d902ae9e4288150858f9f7bc9bfebe02830e74f1043baeb44a7dff86ef1a1096"
     },
     {
       "path": "config/official-weasel/project_radical.dict.yaml",
@@ -779,8 +779,8 @@
     },
     {
       "path": "config/official-weasel/stellae/defaults.yaml",
-      "bytes": 1321,
-      "sha256": "d71b4725c3298dd5aa66e57560deb18d4304051e3df80f172b2a6348e0dfd3b4"
+      "bytes": 3845,
+      "sha256": "16005cf6a62cb517350251cb72b9d7d178d03821ff41f736d886b32beda5af0c"
     },
     {
       "path": "config/official-weasel/stellae/english.yaml",
@@ -789,8 +789,8 @@
     },
     {
       "path": "config/official-weasel/stellae/japanese.yaml",
-      "bytes": 3725,
-      "sha256": "abdf9d354f774819ee069dff88e2e8a787000c427775e7296c7d8f7d4d0d1df4"
+      "bytes": 3905,
+      "sha256": "2d5c8207e909b30bc20894a3d0c6cae81ed64e51b81c2cde523982bf186c6f35"
     },
     {
       "path": "config/official-weasel/stellae/spelling.yaml",
@@ -1075,7 +1075,7 @@
     {
       "path": "config/pc/config-source-manifest.json",
       "bytes": 32028,
-      "sha256": "78cc3e9d6debc0a58eab0104ee8ba10a731dcfb0cfa5754fef34f622cbf67cfc"
+      "sha256": "5f4c5784be60fd4f1a7b6fe6bb6d9bc7a1a001f3447b0a95ded300f37e03f35c"
     },
     {
       "path": "config/pc/default.custom.yaml",
@@ -1764,8 +1764,8 @@
     },
     {
       "path": "config/pc/stellae/defaults.yaml",
-      "bytes": 1385,
-      "sha256": "e0ea2ce3a10a045a9124923575f6703be8911efbc0842af8f7cbb9a5aa4dfd4c"
+      "bytes": 3909,
+      "sha256": "157cf177b076c346ef743496379ed623c9a2abd7ce0b409c84a5d57a2c5b5f12"
     },
     {
       "path": "config/pc/stellae/english.yaml",
@@ -1774,8 +1774,8 @@
     },
     {
       "path": "config/pc/stellae/japanese.yaml",
-      "bytes": 3725,
-      "sha256": "abdf9d354f774819ee069dff88e2e8a787000c427775e7296c7d8f7d4d0d1df4"
+      "bytes": 3905,
+      "sha256": "2d5c8207e909b30bc20894a3d0c6cae81ed64e51b81c2cde523982bf186c6f35"
     },
     {
       "path": "config/pc/stellae/spelling.yaml",
@@ -3044,8 +3044,8 @@
     },
     {
       "path": "tests/rebuilt-profile/Test-RebuiltProfile.ps1",
-      "bytes": 20233,
-      "sha256": "a8892e281d34b4a5fc8134fccacb2fb55a0c999e954ad615fdccf704b039e78e"
+      "bytes": 28115,
+      "sha256": "3208ca49d8e36c47aad2ed72a53da21546a18092d996e3cb67aa706a8c5fa11a"
     },
     {
       "path": "tests/schemes/Check-ChineseDlcTables.py",

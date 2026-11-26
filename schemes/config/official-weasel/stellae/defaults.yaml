@@ -4,13 +4,14 @@ patch:
     - schema: cn_stellae
     - schema: jp_stellae
   menu/page_size: 6
-  switcher/hotkeys: [Control+grave]
+  switcher/hotkeys: [Control+grave, Control+Lock+grave]
   key_binder/bindings:
     - {when: has_menu, accept: minus, send: Page_Up}
     - {when: has_menu, accept: equal, send: Page_Down}
     - {when: composing, accept: ISO_Left_Tab, send: Shift+Left}
     - {when: composing, accept: Shift+Tab, send: Shift+Left}
     - {when: composing, accept: Tab, send: Shift+Right}
+    - {when: composing, accept: Lock+BackSpace, send: BackSpace}
     - {when: composing, accept: Control+g, send: BackSpace}
     - {when: composing, accept: Control+a, send: Left}
     - {when: composing, accept: Control+d, send: Right}
@@ -20,7 +21,44 @@ patch:
     - {when: always, accept: Control+r, select: cn_stellae}
     - {when: always, accept: Control+Shift+f, toggle: simplification}
     - {when: always, accept: Control+Shift+F, toggle: simplification}
-    - {when: always, accept: Control+period, toggle: ascii_punct}
+    # Caps Lock keeps the draft editable. Reuse the ordinary key or its binding's final action.
+    - {when: composing, accept: Lock+space, send: space}
+    - {when: composing, accept: Lock+Return, send: Return}
+    - {when: composing, accept: Control+Lock+Return, send: Control+Return}
+    - {when: composing, accept: Lock+Shift+Return, send: Shift+Return}
+    - {when: composing, accept: Control+Lock+Shift+Return, send: Control+Shift+Return}
+    - {when: composing, accept: Lock+Escape, send: Escape}
+    - {when: composing, accept: Lock+Delete, send: Delete}
+    - {when: composing, accept: Control+Lock+BackSpace, send: Control+BackSpace}
+    - {when: composing, accept: Lock+Shift+BackSpace, send: Shift+BackSpace}
+    - {when: composing, accept: Lock+Left, send: Left}
+    - {when: composing, accept: Lock+Right, send: Right}
+    - {when: composing, accept: Control+Lock+Left, send: Control+Left}
+    - {when: composing, accept: Control+Lock+Right, send: Control+Right}
+    - {when: composing, accept: Lock+Shift+Left, send: Shift+Left}
+    - {when: composing, accept: Lock+Shift+Right, send: Shift+Right}
+    - {when: composing, accept: Lock+Home, send: Home}
+    - {when: composing, accept: Lock+End, send: End}
+    - {when: composing, accept: Lock+Tab, send: Shift+Right}
+    - {when: composing, accept: Lock+Shift+Tab, send: Shift+Left}
+    - {when: composing, accept: Lock+ISO_Left_Tab, send: Shift+Left}
+    - {when: composing, accept: Control+Lock+G, send: BackSpace}
+    - {when: composing, accept: Control+Lock+A, send: Left}
+    - {when: composing, accept: Control+Lock+D, send: Right}
+    - {when: has_menu, accept: Control+Lock+W, send: Page_Up}
+    - {when: has_menu, accept: Control+Lock+S, send: Page_Down}
+    - {when: composing, accept: Lock+Up, send: Up}
+    - {when: composing, accept: Lock+Down, send: Down}
+    - {when: composing, accept: Lock+Page_Up, send: Page_Up}
+    - {when: composing, accept: Lock+Page_Down, send: Page_Down}
+    - {when: composing, accept: Control+Lock+Delete, send: Control+Delete}
+    - {when: composing, accept: Lock+Shift+Delete, send: Shift+Delete}
+    - {when: has_menu, accept: Lock+minus, send: Page_Up}
+    - {when: has_menu, accept: Lock+equal, send: Page_Down}
+    - {when: always, accept: Control+Lock+E, select: jp_stellae}
+    - {when: always, accept: Control+Lock+R, select: cn_stellae}
+    - {when: always, accept: Control+Lock+Shift+f, toggle: simplification}
+    - {when: always, accept: Control+Lock+Shift+F, toggle: simplification}
   ascii_composer:
     good_old_caps_lock: true
     switch_key:

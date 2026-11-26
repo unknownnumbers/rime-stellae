@@ -2,6 +2,7 @@
 #include <atomic>
 #include <chrono>
 #include <condition_variable>
+#include <cstring>
 #include <future>
 #include <functional>
 #include <iostream>
@@ -74,8 +75,23 @@ struct UI {
 }  // namespace weasel
 
 using WeaselSessionId = unsigned;
+using RimeSessionId = unsigned;
+namespace ibus { namespace Keycode { constexpr int Escape = 0xff1b; } }
 struct RimeApi {
   std::map<unsigned, bool> options;
+  std::map<unsigned, std::string> schemas;
+  std::map<unsigned, std::string> drafts;
+  bool get_current_schema(unsigned id, char* dest, size_t size) {
+    std::strncpy(dest, schemas[id].c_str(), size);
+    return true;
+  }
+  bool process_key(unsigned id, int key, int mask) {
+    if (schemas[id] != ".default" || key != ibus::Keycode::Escape || mask != 0)
+      throw std::logic_error("Unexpected synthetic cancel");
+    schemas[id] = "cn_stellae";
+    return true;
+  }
+  void clear_composition(unsigned id) { drafts[id].clear(); }
   void set_option(unsigned id, const char*, bool val) { options[id] = val; }
 } api;
 auto* rime_api = &api;
@@ -195,6 +211,19 @@ void test_option_target() {
   handler.SetOption(2, "ascii_mode", false);
   require(!api.options.at(101) && !api.options.at(102) && handler.refreshed == 1,
           "global option did not refresh the active session");
+  api.schemas[101] = ".default";
+  api.schemas[102] = ".defaultx";
+  api.drafts[101] = api.drafts[102] = "abc";
+  handler.SetOption(1, "ascii_mode", true);
+  require(api.schemas[101] == "cn_stellae" && api.drafts[101].empty() && api.options[101],
+          "global red A must cancel the switcher and its underlying draft");
+  require(api.schemas[102] == ".defaultx" && api.drafts[102] == "abc" && api.options[102],
+          "a similarly named user schema is not the switcher");
+  handler.m_global_ascii_mode = false;
+  api.schemas[102] = ".default";
+  handler.SetOption(2, "ascii_mode", true);
+  require(api.schemas[102] == "cn_stellae" && api.drafts[102].empty(),
+          "per-session red A must cancel the switcher");
 }
 #endif
 

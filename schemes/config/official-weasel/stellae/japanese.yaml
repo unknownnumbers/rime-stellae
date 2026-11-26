@@ -90,6 +90,9 @@ patch:
     - { when: always, accept: Control+e, select: cn_stellae }
     - { when: has_menu, accept: comma, send: Up }
     - { when: has_menu, accept: period, send: Down }
+    - { when: always, accept: Control+Lock+E, select: cn_stellae }
+    - { when: has_menu, accept: Lock+comma, send: Up }
+    - { when: has_menu, accept: Lock+period, send: Down }
 
   jp_family:
     dictionary: jp_v

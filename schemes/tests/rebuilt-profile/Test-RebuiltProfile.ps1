@@ -77,9 +77,9 @@ $report=[ordered]@{Kind=$Kind;Passed=$false;SourcePath=$user;EngineSha256=(Get-F
 function Record([string]$name,[bool]$passed,$evidence){
   $checks.Add([pscustomobject]@{Case=$name;Passed=$passed;Evidence=$evidence})
 }
-function Press([int]$code,[int]$mask=0){
+function Press([int]$code,[int]$mask=0,[int]$releaseMask=$mask){
   $down=[RimeProbe]::RimeProcessKey($script:session,$code,$mask)
-  $up=[RimeProbe]::RimeProcessKey($script:session,$code,($mask -bor 0x40000000))
+  $up=[RimeProbe]::RimeProcessKey($script:session,$code,($releaseMask -bor 0x40000000))
   return [pscustomobject]@{Down=$down;Up=$up}
 }
 function Type-Text([string]$raw){
@@ -113,6 +113,101 @@ function Open-PC {
   [RimeProbe]::RimeSetOption($session,'ascii_mode',0)
   [RimeProbe]::RimeSetOption($session,'research_english',0)
   [RimeProbe]::RimeSetOption($session,'simplification',1)
+}
+function Read-SyntheticLearning([string]$label){
+  [void][RimeProbe]::RimeDestroySession($session)
+  $script:session=[UIntPtr]::Zero
+  $file=Join-Path $out ('delete-'+$label+'.tsv')
+  if([RimeProbe]::ExportUserDict('cn_stellae',$file) -lt 0){throw 'Could not export synthetic deletion records.'}
+  Open-PC
+  $counts=@{}
+  foreach($line in [IO.File]::ReadLines($file)){
+    if($line -and -not $line.StartsWith('#')){
+      $row=$line.Split("`t")
+      $counts[$row[0]]+=[int]$row[2]
+    }
+  }
+  return $counts
+}
+function Test-CandidateDeletion {
+  # Each shortcut gets its own word, so a previous deletion cannot affect it.
+  $fixtures=@(@('gongren','工人',4),@('renmin','人民',6),@('anquan','安全',1),@('shanshui','山水',3))
+  foreach($f in $fixtures){
+    Compose $f[0];Select-Text $f[1]
+    if([RimeProbe]::ReadCommit($session) -cne $f[1]){throw 'Could not seed the deletion fixture.'}
+  }
+  $before=Read-SyntheticLearning 'before'
+  $errors=@(foreach($f in $fixtures){
+    Compose $f[0]
+    if($f[2] -band 2){[void](Press 0xffe5 0 2)}
+    $top=[RimeProbe]::Snapshot($session,1).Candidates[0]
+    $key=Press 0xffff $f[2]
+    if($top -cne $f[1] -or -not $key.Down -or $key.Up -or [RimeProbe]::ReadCommit($session)){
+      [pscustomobject]@{Word=$f[1];Top=$top;Delete=$key}
+    }
+  })
+  [RimeProbe]::RimeClearComposition($session)
+  $after=Read-SyntheticLearning 'after'
+  $errors
+  foreach($f in $fixtures){
+    $word=$f[1]
+    if($before[$word] -le 0 -or $after[$word] -gt 0){
+      [pscustomobject]@{Word=$word;Before=$before[$word];After=$after[$word]}
+    }
+  }
+}
+function Test-CapsDraft([string]$mode,[string]$text){
+  $keys=[ordered]@{Backspace=0xff08;Delete=0xffff;Left=0xff51;Right=0xff53;Home=0xff50;End=0xff57;Space=32;Return=0xff0d;Escape=0xff1b}
+  $modifiers=[ordered]@{CtrlReturn=4;ShiftReturn=1;CtrlShiftReturn=5;CtrlDelete=4}
+  if($mode -eq 'Chinese'){$modifiers.ShiftDelete=1}
+  foreach($name in $modifiers.Keys){$keys[$name]=if($name.EndsWith('Delete')){0xffff}else{0xff0d}}
+  $mismatches=@(foreach($entry in $keys.GetEnumerator()){
+    $modifier=[int]$modifiers[$entry.Key]
+    $lowercaseSample=$modifier -and $entry.Value -eq 0xff0d -and $mode -ne 'En'
+    $sample=if(-not $lowercaseSample){$text}elseif($mode -eq 'Chinese'){'nihao'}else{'vwo'}
+    $states=@(foreach($mask in 0,2){
+      [RimeProbe]::RimeClearComposition($session)
+      [void][RimeProbe]::ReadCommit($session)
+      if($lowercaseSample){Type-Text $sample}
+      if($mask){[void](Press 0xffe5 0 2)}
+      if(-not $lowercaseSample){
+        $letterMask=if($mask){2}else{1}
+        foreach($letter in $sample.ToCharArray()){[void](Press ([int]$letter) $letterMask)}
+      }
+      $started=[string][RimeProbe]::Input($session)
+      if($entry.Key -in 'Delete','Left','Right','Home','End'){[RimeProbe]::SetCaret($session,1)}
+      $key=Press $entry.Value ($mask -bor $modifier)
+      [pscustomobject]@{Started=$started;Down=$key.Down;Up=$key.Up;Raw=[string][RimeProbe]::Input($session);Caret=[RimeProbe]::Caret($session);Commit=[RimeProbe]::ReadCommit($session)}
+    })
+    if($states[0].Started -cne $sample -or (-not $modifier -and -not $states[0].Down) -or $states[0].Up -or
+        (ConvertTo-Json $states[0] -Compress) -cne (ConvertTo-Json $states[1] -Compress)){
+      [pscustomobject]@{Key=$entry.Key;CapsOff=$states[0];CapsOn=$states[1]}
+    }
+  })
+  [RimeProbe]::RimeClearComposition($session)
+  [void][RimeProbe]::ReadCommit($session)
+  $consumed=@(foreach($entry in $keys.GetEnumerator()){
+    $key=Press $entry.Value (2 -bor [int]$modifiers[$entry.Key])
+    if($key.Down -or $key.Up -or [RimeProbe]::ReadCommit($session)){$entry.Key}
+  })
+  $deleteErrors=@(if($mode -eq 'Chinese'){Test-CandidateDeletion})
+  Record ('Caps Lock draft editing and empty passthrough in '+$mode) (-not $mismatches.Count -and -not $consumed.Count -and -not $deleteErrors.Count) ([pscustomobject]@{Mismatches=$mismatches;ConsumedWhenEmpty=$consumed;DeleteErrors=$deleteErrors})
+  if($mode -in 'Chinese','Japanese'){
+    $errors=@(foreach($lock in 0,2){
+      Compose 'QQQZ'
+      $before=Snapshot
+      if($before.Raw -cne 'QQQZ' -or $before.Candidates.Count -or $before.EarlyCommit){'missing draft without candidates'}
+      foreach($key in @(@(0xff52,0),@(0xff54,0),@(0xff55,0),@(0xff56,0),@(0xffff,4),@(0xffff,1))){
+        $press=Press $key[0] ($lock -bor $key[1])
+        $after=Snapshot
+        if(-not $press.Down -or $press.Up -or $after.Raw -cne 'QQQZ' -or $after.Caret -ne $before.Caret -or $after.EarlyCommit){
+          [pscustomobject]@{Lock=$lock;Key=$key;Press=$press;After=$after}
+        }
+      }
+      [RimeProbe]::RimeClearComposition($session)
+    })
+    Record ('Unmatched draft keeps navigation and deletion keys in '+$mode) (-not $errors.Count) $errors
+  }
 }
 function Candidate-Case([string]$raw,[string[]]$want,[string[]]$exclude=@()){
   Compose $raw
@@ -195,18 +290,60 @@ try{
     [pscustomobject]@{Key=$key;English=[RimeProbe]::RimeGetOption($session,'research_english');Ascii=[RimeProbe]::RimeGetOption($session,'ascii_mode')}
   })
   Record 'both Shift taps use En including quick repeated taps' ((@($modeStates.English)-join ',') -ceq '1,0,1,0' -and @($modeStates|Where-Object Ascii -ne 0).Count -eq 0) $modeStates
+  foreach($english in 0,1){
+    [RimeProbe]::RimeSetOption($session,'research_english',$english)
+    [RimeProbe]::RimeClearComposition($session)
+    foreach($letter in 'ABC'.ToCharArray()){[void](Press ([int]$letter) 2)}
+    $draft=[string][RimeProbe]::Input($session)
+    $edits=@(foreach($expected in 'AB','A',''){
+      $key=Press 0xff08 2
+      $actual=[string][RimeProbe]::Input($session)
+      [pscustomobject]@{Draft=$actual;Down=$key.Down;Passed=($key.Down -ne 0 -and $actual -ceq $expected)}
+    })
+    $empty=Press 0xff08 2
+    $commit=[RimeProbe]::ReadCommit($session)
+    $mode=if($english){'En'}else{'Chinese'}
+    $passed=$draft -ceq 'ABC' -and @($edits|Where-Object { -not $_.Passed }).Count -eq 0 -and $empty.Down -eq 0 -and $empty.Up -eq 0 -and -not $commit
+    Record ('Caps Lock Backspace in '+$mode) $passed ([pscustomobject]@{Initial=$draft;Edits=$edits;Empty=$empty;Commit=$commit})
+  }
   [RimeProbe]::RimeSetOption($session,'research_english',1)
   [RimeProbe]::RimeSetOption($session,'ascii_mode',1)
   [void](Press 0xffe1);[void](Press 0xffe2)
   Record 'red A ignores both Shift taps and remembers En' ([RimeProbe]::RimeGetOption($session,'ascii_mode') -eq 1 -and [RimeProbe]::RimeGetOption($session,'research_english') -eq 1) @([RimeProbe]::RimeGetOption($session,'ascii_mode'),[RimeProbe]::RimeGetOption($session,'research_english'))
   [RimeProbe]::RimeSetOption($session,'ascii_mode',0)
+  foreach($mode in 'Chinese','En'){
+    [RimeProbe]::RimeSetOption($session,'research_english',[int]($mode -eq 'En'))
+    Test-CapsDraft $mode 'ABC'
+  }
   [RimeProbe]::RimeSetOption($session,'research_english',0)
   foreach($route in @(@('cn_stellae',0x65,'jp_stellae'),@('jp_stellae',0x65,'cn_stellae'),@('jp_stellae',0x72,'cn_stellae'))){
-    [void][RimeProbe]::RimeSelectSchema($session,$route[0]);[RimeProbe]::RimeSetOption($session,'ascii_mode',0)
-    [void](Press $route[1] 4)
-    $actual=Current-Schema
-    Record ('hotkey '+$route[0]+' Ctrl+'+[char]$route[1]) ($actual -ceq $route[2]) $actual
+    $schemas=@(foreach($lock in 0,2){
+      [void][RimeProbe]::RimeSelectSchema($session,$route[0]);[RimeProbe]::RimeSetOption($session,'ascii_mode',0)
+      $letter=if($lock){[int][char]::ToUpperInvariant([char]$route[1])}else{$route[1]}
+      [void](Press $letter (4 -bor $lock))
+      Current-Schema
+    })
+    Record ('hotkey '+$route[0]+' Ctrl+'+[char]$route[1]) ($schemas[0] -ceq $route[2] -and $schemas[1] -ceq $route[2]) $schemas
   }
+  [RimeProbe]::RimeSetOption($session,'simplification',0)
+  $punctBefore=[RimeProbe]::RimeGetOption($session,'ascii_punct')
+  $punctErrors=@(foreach($mask in 4,6){
+    $key=Press 0x2e $mask
+    if($key.Down -or $key.Up -or [RimeProbe]::RimeGetOption($session,'ascii_punct') -ne $punctBefore -or [RimeProbe]::ReadCommit($session)){$mask}
+  })
+  $form=Press 0x66 7
+  $scOn=[RimeProbe]::RimeGetOption($session,'simplification')
+  $menu=Press 0x60 6
+  $menuSchema=Current-Schema
+  $firstItem=[RimeProbe]::Snapshot($session,1).HighlightedIndex
+  $move=Press 0xff54 2
+  $nextItem=[RimeProbe]::Snapshot($session,1).HighlightedIndex
+  $cancel=Press 0xff1b 2
+  $afterCancel=Current-Schema
+  $menuPassed=$menu.Down -and $menuSchema -ceq '.default' -and $move.Down -and $nextItem -eq ($firstItem+1) -and $cancel.Down -and $afterCancel -ceq 'cn_stellae'
+  Record 'Ctrl+period passes through, Caps Lock TC/SC and menu shortcuts work' (-not $punctErrors.Count -and $form.Down -and $scOn -and $menuPassed) @($punctErrors,$scOn,$menuSchema,$firstItem,$nextItem,$afterCancel)
+  [void][RimeProbe]::RimeSelectSchema($session,'cn_stellae')
+  [RimeProbe]::RimeSetOption($session,'ascii_punct',0)
   [RimeProbe]::RimeSetOption($session,'probe_options_ready',1)
   [RimeProbe]::RimeSetOption($session,'ascii_mode',0);[RimeProbe]::RimeSetOption($session,'research_english',0);[RimeProbe]::RimeSetOption($session,'simplification',1)
   Compose 'hao';$coldHao=Snapshot
@@ -257,7 +394,19 @@ try{
   Compose 'haodeba';Select-Text '好的';[void](Press 0xff09)
   $state=Snapshot
   Record 'selected prefix Tab boundary' ($state.Caret -eq 5 -and $state.Preedit -ceq '好的ba' -and -not $state.EarlyCommit) $state
+  Compose 'haodeba';[RimeProbe]::SetCaret($session,0)
+  $tab=Press 0xff09 2
+  $state=Snapshot
+  Record 'Caps Lock Tab moves to the next syllable' ($tab.Down -and -not $tab.Up -and $state.Raw -ceq 'haodeba' -and $state.Caret -eq 3) $state.Caret
   [void][RimeProbe]::RimeSelectSchema($session,'jp_stellae');[RimeProbe]::RimeSetOption($session,'ascii_mode',0)
+  Test-CapsDraft 'Japanese' 'KA'
+  Compose 'vwo'
+  $pageSize=[RebuildProbe]::PageSize($session)
+  $down=Press 0xff56 2
+  $next=[RimeProbe]::Snapshot($session,1).HighlightedIndex
+  $up=Press 0xff55 2
+  $back=[RimeProbe]::Snapshot($session,1).HighlightedIndex
+  Record 'Caps Lock pages Japanese candidates in both directions' ($pageSize -gt 0 -and $down.Down -and $up.Down -and $next -eq $pageSize -and $back -eq 0) @($next,$back)
   foreach($case in @(@('kana',@('かな')),@('KANA',@('カナ')),@('qnihon',@('日本')),@('vwo',@('我')),@('vwoni',@('我に')))){
     Candidate-Case $case[0] $case[1]
   }

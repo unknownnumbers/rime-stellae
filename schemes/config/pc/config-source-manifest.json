@@ -1,6 +1,6 @@
 {
   "format": "rymcp-public-config-v2",
-  "scheme_version": "2026.11.26.1",
+  "scheme_version": "2026.11.27.1",
   "allowlisted_source_files": 196,
   "source_files": [
     {
@@ -710,8 +710,8 @@
     },
     {
       "path": "stellae/defaults.yaml",
-      "bytes": 1385,
-      "sha256": "e0ea2ce3a10a045a9124923575f6703be8911efbc0842af8f7cbb9a5aa4dfd4c"
+      "bytes": 3909,
+      "sha256": "157cf177b076c346ef743496379ed623c9a2abd7ce0b409c84a5d57a2c5b5f12"
     },
     {
       "path": "stellae/english.yaml",
@@ -720,8 +720,8 @@
     },
     {
       "path": "stellae/japanese.yaml",
-      "bytes": 3725,
-      "sha256": "abdf9d354f774819ee069dff88e2e8a787000c427775e7296c7d8f7d4d0d1df4"
+      "bytes": 3905,
+      "sha256": "2d5c8207e909b30bc20894a3d0c6cae81ed64e51b81c2cde523982bf186c6f35"
     },
     {
       "path": "stellae/spelling.yaml",

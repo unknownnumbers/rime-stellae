@@ -1,7 +1,7 @@
 {
   "format": "rymcp-official-profile-v2",
-  "version": "2026.11.26.1",
-  "maintenance_source_manifest_sha256": "78cc3e9d6debc0a58eab0104ee8ba10a731dcfb0cfa5754fef34f622cbf67cfc",
+  "version": "2026.11.27.1",
+  "maintenance_source_manifest_sha256": "5f4c5784be60fd4f1a7b6fe6bb6d9bc7a1a001f3447b0a95ded300f37e03f35c",
   "files": [
     {
       "path": "JAPANESE.md",
@@ -730,8 +730,8 @@
     },
     {
       "path": "stellae/defaults.yaml",
-      "bytes": 1321,
-      "sha256": "d71b4725c3298dd5aa66e57560deb18d4304051e3df80f172b2a6348e0dfd3b4"
+      "bytes": 3845,
+      "sha256": "16005cf6a62cb517350251cb72b9d7d178d03821ff41f736d886b32beda5af0c"
     },
     {
       "path": "stellae/english.yaml",
@@ -740,8 +740,8 @@
     },
     {
       "path": "stellae/japanese.yaml",
-      "bytes": 3725,
-      "sha256": "abdf9d354f774819ee069dff88e2e8a787000c427775e7296c7d8f7d4d0d1df4"
+      "bytes": 3905,
+      "sha256": "2d5c8207e909b30bc20894a3d0c6cae81ed64e51b81c2cde523982bf186c6f35"
     },
     {
       "path": "stellae/spelling.yaml",
