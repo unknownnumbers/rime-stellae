@@ -137,8 +137,8 @@
     },
     {
       "path": "installer/InstallProfilePolicy.ps1",
-      "bytes": 7836,
-      "sha256": "ab027fe39adc978f0d16b118bbd547f8655d7b76793c98aed9b7585690151082"
+      "bytes": 8475,
+      "sha256": "f9e9b13ade81e1c59a8a9230dddc5629359575d70204c517feb3d05b9ea51e55"
     },
     {
       "path": "installer/NativeProfileSnapshot.ps1",
@@ -523,7 +523,7 @@
     {
       "path": "native/source-manifest.json",
       "bytes": 14730,
-      "sha256": "3fcaaf101b062eeacd0d8ef18ec4aa2f180f66fa28f90bb14b4c1ac804b9b31b"
+      "sha256": "39c2a9952053cd21f0c8c3fde6467976b329980c4dc473ebf76c4f0af5628a47"
     },
     {
       "path": "native/tests/appearance/Add-PaintTrace.ps1",
@@ -657,8 +657,8 @@
     },
     {
       "path": "native/tests/installer/Test-Win11EquivalentPolicy.ps1",
-      "bytes": 7729,
-      "sha256": "c745cd9f4d59cee809573d9c3eb1243b804649a984ef64fff102c90eb4ee0962"
+      "bytes": 8099,
+      "sha256": "b2ff90a9ad0e72f09599ceaa44cbc9cb0b96ce65cdaf1e8cd885a08e6bd44bd6"
     },
     {
       "path": "native/tests/jp-comment/Run-SchemaAliasTests.ps1",

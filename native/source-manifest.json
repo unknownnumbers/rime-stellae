@@ -252,7 +252,7 @@
     },
     {
       "path": "native/tests/installer/Test-Win11EquivalentPolicy.ps1",
-      "sha256": "c745cd9f4d59cee809573d9c3eb1243b804649a984ef64fff102c90eb4ee0962",
+      "sha256": "b2ff90a9ad0e72f09599ceaa44cbc9cb0b96ce65cdaf1e8cd885a08e6bd44bd6",
       "scope": "Fixed synthetic native and installer regression fixture"
     },
     {

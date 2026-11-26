@@ -128,6 +128,11 @@ try {
     $missingPairs=@(ForeignPairs $before | Where-Object {$_ -notin $foreignAfter})
     Check "$name original other-language groups retained" ($missingPairs.Count -eq 0) $missingPairs
     Check "$name selected HK group repaired" (@($after.Languages | Where-Object {$_.LanguageTag -in @('zh-Hant-HK','zh-HK') -and $selected -in $_.Tips}).Count -gt 0)
+    if($name -eq 'preexisting-HK-US-preserved'){
+      $hkBefore=$before.Languages | Where-Object {$_.LanguageTag -in @('zh-Hant-HK','zh-HK')}
+      $hkAfter=$after.Languages | Where-Object {$_.LanguageTag -in @('zh-Hant-HK','zh-HK')}
+      Check "$name original order within the selected group retained" (($hkBefore.Tips -join ';') -eq ($hkAfter.Tips -join ';'))
+    }
     $report.Cases+=@([ordered]@{Name=$name;WrongGroupRequired=$requireWrongGroup;WrongGroupObserved=$wrongGroupReached;Before=$before;Emulated=$wrong;After=$after;Passed=$true})
   }
   $report.Passed=$true

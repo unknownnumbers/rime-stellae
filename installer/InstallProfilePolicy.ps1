@@ -13,7 +13,7 @@ trap {
     $null=New-Item -ItemType Directory -Path $folder -Force
     [ordered]@{Action=$Action;Error=$_.Exception.Message;Position=$_.InvocationInfo.PositionMessage;ExceptionType=$_.Exception.GetType().FullName}|ConvertTo-Json|Set-Content -LiteralPath (Join-Path $folder ($Action+'-error.json')) -Encoding UTF8
   }
-  throw
+  break
 }
 . (Join-Path $PSScriptRoot 'NativeProfileSnapshot.ps1') -LibraryOnly
 $ownClass='{0230F8DE-23D2-4E61-B45B-B6DB84E71145}'
@@ -24,11 +24,24 @@ function Read-KeyboardValues([string]$Subkey) {
   if($key){try{$rows=@(foreach($name in $key.GetValueNames()){[ordered]@{Name=$name;Value=[string]$key.GetValue($name) }})}finally{$key.Dispose()}}
   return $rows
 }
-if($Action -eq 'Capture') {
+function Get-DefaultTip {
   $override=Get-WinDefaultInputMethodOverride
-  $defaultTip=if($override){[string]$override.InputMethodTip}else{''}
+  if($override){return [string]$override.InputMethodTip}
+  return ''
+}
+function Test-SameLanguageList($Wanted,$Actual) {
+  if($Wanted.Count -ne $Actual.Count){return $false}
+  for($index=0;$index -lt $Wanted.Count;$index++){
+    $entry=$Wanted[$index];$other=$Actual[$index]
+    if($entry.LanguageTag -ne $other.LanguageTag -or
+       ($entry.InputMethodTips -join ';') -ne ($other.InputMethodTips -join ';') -or
+       $entry.Spellchecking -ne $other.Spellchecking -or $entry.Handwriting -ne $other.Handwriting){return $false}
+  }
+  return $true
+}
+if($Action -eq 'Capture') {
   [ordered]@{
-    SchemaVersion=1;Before=(Get-StellaeNativeProfileSnapshot);DefaultTip=$defaultTip
+    SchemaVersion=1;Before=(Get-StellaeNativeProfileSnapshot);DefaultTip=(Get-DefaultTip)
     Preload=@(Read-KeyboardValues 'Preload');Substitutes=@(Read-KeyboardValues 'Substitutes')
   }|ConvertTo-Json -Depth 12|Set-Content -LiteralPath $StateFile -Encoding UTF8
   exit 0
@@ -48,18 +61,20 @@ $desired=New-WinUserLanguageList 'en-US'
 $desired.Clear()
 $target=$null
 foreach($row in @($before.Languages)) {
-  $foreign=@($row.Tips|Where-Object {$_ -notmatch [regex]::Escape($ownClass)})
-  $hadOwn=@($row.Tips|Where-Object {$_ -match [regex]::Escape($ownClass)}).Count -gt 0
-  # Only drop a former group made empty by moving this product's own TIP.
-  if($foreign.Count -eq 0 -and $hadOwn -and $row.LanguageTag -notin $aliases){continue}
   $entryList=New-WinUserLanguageList $row.LanguageTag
   $entry=$entryList[0]
   $entry.InputMethodTips.Clear()
-  foreach($tip in $foreign){$entry.InputMethodTips.Add([string]$tip)}
+  $targetGroup=$entry.LanguageTag -in $aliases -and $null -eq $target
+  if($targetGroup){$target=$entry}
+  foreach($tip in $row.Tips){
+    if($tip -notmatch [regex]::Escape($ownClass)){$entry.InputMethodTips.Add([string]$tip)}
+    elseif($targetGroup -and $selected -notin $entry.InputMethodTips){$entry.InputMethodTips.Add($selected)}
+  }
+  # Drop only a former group made empty by moving this product's own TIP.
+  if($row.Tips.Count -gt 0 -and $entry.InputMethodTips.Count -eq 0){continue}
   $entry.Spellchecking=[bool]$row.Spellchecking
   $entry.Handwriting=[bool]$row.Handwriting
   $desired.Add($entry)
-  if($entry.LanguageTag -in $aliases){$target=$entry}
 }
 if(-not $target){
   $entryList=New-WinUserLanguageList $tag
@@ -67,13 +82,14 @@ if(-not $target){
   $target.InputMethodTips.Clear()
   $desired.Add($target)
 }
-$target.InputMethodTips.Add($selected)
-Set-WinUserLanguageList -LanguageList $desired -Force
-if($state.DefaultTip){
-  $defaultTip=if($state.DefaultTip -match [regex]::Escape($ownClass)){$selected}else{[string]$state.DefaultTip}
-  Set-WinDefaultInputMethodOverride -InputTip $defaultTip
-}else{
-  Set-WinDefaultInputMethodOverride
+if($selected -notin $target.InputMethodTips){$target.InputMethodTips.Add($selected)}
+if(-not (Test-SameLanguageList $desired (Get-WinUserLanguageList))){
+  Set-WinUserLanguageList -LanguageList $desired -Force
+}
+$defaultTip=if($state.DefaultTip -match [regex]::Escape($ownClass)){$selected}else{[string]$state.DefaultTip}
+if($defaultTip -ne (Get-DefaultTip)){
+  if($defaultTip){Set-WinDefaultInputMethodOverride -InputTip $defaultTip}
+  else{Set-WinDefaultInputMethodOverride}
 }
 if(-not ('StellaeInstallerPolicy.Native' -as [type])) {
   Add-Type -TypeDefinition @'
@@ -102,6 +118,10 @@ $current=Get-StellaeNativeProfileSnapshot
 $disabled=@()
 foreach($row in @($current.Enabled|Where-Object {$_.Id -notin $expected})) {
   $rowLanguage=[string]$row.Language
+  if($row.Type -eq 1 -and $rowLanguage -in @('0404','0804','0C04') -and $row.Id -eq ($rowLanguage+':'+$ownClass+$ownProfile)){
+    if(-not [StellaeInstallerPolicy.Native]::InstallLayoutOrTip($row.Id,1)){throw "Could not remove the previous Stellae input profile: $($row.Id)"}
+    continue
+  }
   $match=[regex]::Match($row.Id,('^'+$rowLanguage+':(0000[0-9A-Fa-f]{4})$'),[Text.RegularExpressions.RegexOptions]::IgnoreCase)
   if($row.Type -ne 2 -or $rowLanguage -notin $affectedLanguages -or -not $match.Success){continue}
   $klid=$match.Groups[1].Value
@@ -129,13 +149,8 @@ foreach($row in @($current.Enabled|Where-Object {$_.Id -notin $expected})) {
 }
 $after=Get-StellaeNativeProfileSnapshot
 $actual=@($after.Enabled.Id)
-if(@(Compare-Object ($expected|Sort-Object -Unique) ($actual|Sort-Object -Unique)).Count){throw 'Input profiles differ from the captured settings plus selected Stellae'}
-$actualList=Get-WinUserLanguageList
-if($actualList.Count -ne $desired.Count){throw 'Windows language groups differ from the requested profile placement'}
-for($index=0;$index -lt $desired.Count;$index++){
-  $wanted=$desired[$index];$got=$actualList[$index]
-  if($wanted.LanguageTag -ne $got.LanguageTag -or
-     [string]::Join(';',$wanted.InputMethodTips) -cne [string]::Join(';',$got.InputMethodTips) -or
-     $wanted.Spellchecking -ne $got.Spellchecking -or $wanted.Handwriting -ne $got.Handwriting){throw 'Windows language options or input group placement were not retained'}
-}
+$missing=@($expected|Where-Object {$_ -notin $actual})
+$extra=@($actual|Where-Object {$_ -notin $expected})
+if($missing.Count -or $extra.Count){throw "Input profiles differ. Missing=[$($missing -join ', ')] Extra=[$($extra -join ', ')]"}
+if(-not (Test-SameLanguageList $desired (Get-WinUserLanguageList))){throw 'Windows language options or input group placement were not retained'}
 [ordered]@{Passed=$true;SelectedTip=$selected;DisabledNewLayouts=$disabled;After=$after}|ConvertTo-Json -Depth 12|Set-Content -LiteralPath ($StateFile+'.result.json') -Encoding UTF8
