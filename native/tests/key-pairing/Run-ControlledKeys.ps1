@@ -118,6 +118,18 @@ try{
   Run-Probe 'truthful-key-repeat-space' 'V19' 34
   Run-Probe 'r2-caps-marker' 'R2' 35
   Run-Probe 'idle-modifiers' 'IDLE-MODIFIERS' 19
+  Run-Probe 'mode-sync-local' 'MODE-SYNC-LOCAL' 10
+  $server.Kill();$server.WaitForExit();$server=$null
+  $appearance=Join-Path $user 'stellae.yaml'
+  [IO.File]::AppendAllText($appearance,"`nglobal_ascii: true`n",$utf8)
+  $compiled=Join-Path $user 'build/stellae.yaml'
+  Remove-Item -LiteralPath $compiled
+  Deploy $user
+  if(-not (Select-String -LiteralPath $compiled -Pattern '^global_ascii: true\s*$' -Quiet)){throw 'Global fixture was not deployed.'}
+  $server=Start-Process -FilePath (Join-Path $serverDirectory 'StellaeServer.exe') -WorkingDirectory $serverDirectory -WindowStyle Hidden -PassThru
+  Start-Sleep -Seconds 2
+  if($server.HasExited){throw 'Global-mode synthetic service exited.'}
+  Run-Probe 'mode-sync-global' 'MODE-SYNC-GLOBAL' 10
 }catch{$report.Errors+=$_.Exception.Message}
 finally{
   foreach($process in @($child,$server)){try{if($process -and -not $process.HasExited){$process.Kill();$process.WaitForExit()}}catch{$report.RestoreErrors+=$_.Exception.Message}}
@@ -127,7 +139,7 @@ finally{
   foreach($path in $productFiles.Keys){try{if($null -ne $productFiles[$path]){[IO.File]::WriteAllBytes($path,$productFiles[$path])}elseif(Test-Path -LiteralPath $path){Remove-Item -LiteralPath $path}}catch{$report.RestoreErrors+=$_.Exception.Message}}
   $report.ProductOutputRestored=$report.RestoreErrors.Count -eq 0
   try{if($oldUser){Set-ItemProperty -LiteralPath $registry -Name RimeUserDir -Value $oldUser.RimeUserDir}else{Remove-ItemProperty -LiteralPath $registry -Name RimeUserDir -ErrorAction SilentlyContinue}}catch{$report.RestoreErrors+=$_.Exception.Message}
-  $report.Passed=$report.Errors.Count -eq 0 -and $report.RestoreErrors.Count -eq 0 -and $report.Probes.Count -eq 6 -and @($report.Probes|Where-Object {-not $_.Passed}).Count -eq 0
+  $report.Passed=$report.Errors.Count -eq 0 -and $report.RestoreErrors.Count -eq 0 -and $report.Probes.Count -eq 8 -and @($report.Probes|Where-Object {-not $_.Passed}).Count -eq 0
   $report|ConvertTo-Json -Depth 8|Set-Content -LiteralPath $reportPath -Encoding utf8
   Pop-Location
 }

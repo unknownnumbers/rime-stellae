@@ -53,7 +53,7 @@
     {
       "id": "stellae61052",
       "path": "native/weasel/stellae-61052.patch",
-      "sha256": "512741694b68bf31fd48199bc710c2245ca777bb9c2589ece62dd77aafd9a450",
+      "sha256": "864b6661d87e2a09a8da257f3956d2418516d08d4f50e71d913e3230b4c950a7",
       "source": "weasel"
     },
     {
@@ -212,12 +212,12 @@
   "tests": [
     {
       "path": "native/tests/input-position/InputPositionTests.cpp",
-      "sha256": "2a55a98630e919a449457e1d8fa9a678331f055ed9c0fb056156fa2de5e979f5",
+      "sha256": "109b4d083d6bcd948f8fd13054500f929b1d474af715d365314a2b87458a8275",
       "scope": "Fixed synthetic native and installer regression fixture"
     },
     {
       "path": "native/tests/input-position/Run-InputPositionTests.py",
-      "sha256": "a98dff0a8f7996366dc906f73575a98d664727c14c61b430835674a38deca779",
+      "sha256": "e257a7876b861b95cfef788e2e9bbffd9148d78ec79af428a2995b063b8f0754",
       "scope": "Fixed synthetic native and installer regression fixture"
     },
     {
@@ -277,7 +277,7 @@
     },
     {
       "path": "native/tests/key-pairing/Invoke-KeyPairingTests.ps1",
-      "sha256": "8c0b2e33a00c98a2796ee988d7ef34f185bd9203b4158378d517f6e709bb6a52",
+      "sha256": "232574279565fc5686ab024abd3765bb2eee398bcc3b4a47ce45621d277c028a",
       "scope": "Fixed synthetic native and installer regression fixture"
     },
     {
@@ -287,12 +287,12 @@
     },
     {
       "path": "native/tests/key-pairing/ResponseOwnerProductTests.cpp",
-      "sha256": "c3e1207d1f65692907d855637170fa35f8899153c2e5a4444535a8e6ec49ac9b",
+      "sha256": "01c573d719bb6f31370ebda19e36287333e1f806583bcaab51b6a505cac06136",
       "scope": "Fixed synthetic native and installer regression fixture"
     },
     {
       "path": "native/tests/key-pairing/Run-ControlledKeys.ps1",
-      "sha256": "a14fb4c893c3e7a6a8eae0af3cc4bb81d9d10b7380a39890a43fd793f13306b0",
+      "sha256": "a7766fdd139af67a91a913775e88543f61a61f5e76be8ed04a6ce7ecbb64d165",
       "scope": "Fixed synthetic native and installer regression fixture"
     },
     {

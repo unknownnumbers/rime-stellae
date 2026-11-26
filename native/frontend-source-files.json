@@ -1,12 +1,12 @@
 {
   "schema": "stellae-frontend-source-files/1",
   "upstreamCommit": "9cc96e20dc71b80876b12f689bb5863c76c2a7ed",
-  "patchSha256": "512741694b68bf31fd48199bc710c2245ca777bb9c2589ece62dd77aafd9a450",
+  "patchSha256": "864b6661d87e2a09a8da257f3956d2418516d08d4f50e71d913e3230b4c950a7",
   "files": [
     {
       "path": "RimeWithWeasel/RimeWithWeasel.cpp",
-      "sha256": "482886f80090bae4182cb02afd0dcb469803794bdcf2193ee60123e7adfeb6a7",
-      "bytes": 72355,
+      "sha256": "8cd751bc86abafde22d8865f0e4f58a26e1349727e32cb85151011c9f2b055d5",
+      "bytes": 72433,
       "replayMatchesFrozen": true
     },
     {
@@ -161,14 +161,14 @@
     },
     {
       "path": "WeaselIPC/WeaselClientImpl.cpp",
-      "sha256": "6ef3343230ff13a4e85d4d279983c5a821e0fd9d9bc8dd4921f6233322e33429",
-      "bytes": 11400,
+      "sha256": "317a9cc412ca677b21afce0ef716fc1584534839d467095c8f4a543e32bb9144",
+      "bytes": 11589,
       "replayMatchesFrozen": true
     },
     {
       "path": "WeaselIPC/WeaselClientImpl.h",
-      "sha256": "98f58ae91196afad96935c79545217a67192541df509901f243fb88d214b0b4c",
-      "bytes": 1576,
+      "sha256": "ac84ccc996a17aac98180d12bdc71e3be16e935f7a5b8d7d43afa35011d8eabf",
+      "bytes": 1594,
       "replayMatchesFrozen": true
     },
     {
@@ -299,8 +299,8 @@
     },
     {
       "path": "WeaselTSF/Composition.cpp",
-      "sha256": "57369f3bf7cf1894b11e8cc490562ae7cbb36dfc76bb0dc90a1b5aacf2ebbbc1",
-      "bytes": 47443,
+      "sha256": "bcaac3113edf27776d18c96d65b31dd2cd601214ec47871ae86a467688af668a",
+      "bytes": 47447,
       "replayMatchesFrozen": true
     },
     {
@@ -587,8 +587,8 @@
     },
     {
       "path": "include/WeaselIPC.h",
-      "sha256": "9aaa4c190ce587abe1543fec278b8ecb3e54bcf7c6e993bf7aea5f2ecb4238f0",
-      "bytes": 6700,
+      "sha256": "dc36aa75f73b5dddc6769ad3c1b8f3082df4f9aedbeeb36a08ce49ce86856d5e",
+      "bytes": 6749,
       "replayMatchesFrozen": true
     },
     {

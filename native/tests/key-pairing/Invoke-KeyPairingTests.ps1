@@ -1,6 +1,6 @@
 param([Parameter(Mandatory=$true)][string]$DllPath,
       [Parameter(Mandatory=$true)][string]$EvidencePath,
-      [ValidateSet('truthful-key-pairing','truthful-key-nested','truthful-key-repeat-space','r2-caps-marker','no-schemas','idle-modifiers')][string]$Probe)
+      [ValidateSet('truthful-key-pairing','truthful-key-nested','truthful-key-repeat-space','r2-caps-marker','no-schemas','idle-modifiers','mode-sync-local','mode-sync-global')][string]$Probe)
 $ErrorActionPreference = 'Stop'
 if ($env:GITHUB_ACTIONS -ne 'true') { throw 'Run only on an ephemeral hosted CI runner.' }
 if ($Probe) { $env:RIME_CUSTOM_DELTA_PROBE = $Probe }

@@ -1,6 +1,6 @@
 {
   "format": "stellae-bundle-inputs-v2",
-  "bundleVersion": "2026.11.26.3",
+  "bundleVersion": "2026.11.26.4",
   "frontendVersion": "0.17.4.61052",
   "frontendInstaller": {
     "url": "https://github.com/unknownnumbers/rime-stellae/releases/download/v0.17.4.61052/stellae-0.17.4.61052-installer.exe",
@@ -35,7 +35,7 @@
       "x86"
     ],
     "sourceFiles": {
-      "RimeWithWeasel/RimeWithWeasel.cpp": "482886f80090bae4182cb02afd0dcb469803794bdcf2193ee60123e7adfeb6a7",
+      "RimeWithWeasel/RimeWithWeasel.cpp": "8cd751bc86abafde22d8865f0e4f58a26e1349727e32cb85151011c9f2b055d5",
       "WeaselDeployer/Configurator.cpp": "8e3f505bc3262fb3daf41dadfc4444edb806d0916f3a94d33f189f42636a8a7e",
       "WeaselDeployer/Configurator.h": "9ba9f1fb5e2b9adb3aa32ab6f347c3bb4f30c2a34e01abf11aaacbdf2d290d5b",
       "WeaselDeployer/DictManagementDialog.cpp": "d0617730eca11bc891a52aa02d2e98dd35b9faf3145a341782044c20fd5e1227",
@@ -47,15 +47,15 @@
       "WeaselDeployer/WeaselDeployer.cpp": "09bcffb1d43e0798e69dd991c00a9b9e81b31cd3380761656c25bb00c73368f3",
       "WeaselDeployer/WeaselDeployer.rc": "72af0a9b9a5794a7b1e7e871e3571081680e5b20c8d2c26138af066d676ffd7b",
       "WeaselDeployer/resource.h": "241cba0e41755a1be3912b6d01ad28f2541d108ef161aec3b1d6051d4d77f868",
-      "WeaselIPC/WeaselClientImpl.cpp": "6ef3343230ff13a4e85d4d279983c5a821e0fd9d9bc8dd4921f6233322e33429",
-      "WeaselIPC/WeaselClientImpl.h": "98f58ae91196afad96935c79545217a67192541df509901f243fb88d214b0b4c",
+      "WeaselIPC/WeaselClientImpl.cpp": "317a9cc412ca677b21afce0ef716fc1584534839d467095c8f4a543e32bb9144",
+      "WeaselIPC/WeaselClientImpl.h": "ac84ccc996a17aac98180d12bdc71e3be16e935f7a5b8d7d43afa35011d8eabf",
       "WeaselIPCServer/WeaselServerImpl.cpp": "61eb27b0e53d18aa64abc289215222e2e6b9e937c65e215118c69f7d59dab17f",
       "WeaselIPCServer/WeaselServerImpl.h": "2408c58ff15acf4c1f8231fb9c870c7b950524f5b13f7e295334a5dff2e11da8",
       "WeaselServer/WeaselServerApp.cpp": "a70384ef442cee1db4ed30a1d7bba6ea9c6292f5a308e4eaba4824ad5583a509",
       "WeaselServer/WeaselTrayIcon.cpp": "e0affb183665473ede76a2ea073d0871648ab5063c2b35d9dcf311e762f455f4",
       "WeaselServer/WeaselTrayIcon.h": "47f8e592001130744c08c6d02dbc5d1b25d792ba6bd9258cbb67a091cb8bbd71",
       "WeaselTSF/Compartment.cpp": "b26ac7542825d0c0981500f1db32f5e9901baa20b59fb0bda66aca53ea300492",
-      "WeaselTSF/Composition.cpp": "57369f3bf7cf1894b11e8cc490562ae7cbb36dfc76bb0dc90a1b5aacf2ebbbc1",
+      "WeaselTSF/Composition.cpp": "bcaac3113edf27776d18c96d65b31dd2cd601214ec47871ae86a467688af668a",
       "WeaselTSF/EditSession.cpp": "df5ba9dc26ae2229cc6082ff17e055f4df955bd50f7814495a906fa4ffa51cd3",
       "WeaselTSF/KeyEventSink.cpp": "76c6b1e62a3d274b2cc66bec36501ea2aacb6580b132cad8a5e357e43143ebed",
       "WeaselTSF/LanguageBar.cpp": "d1562a7f47461deccdccd5c2d2f9b765b4dd2b58737b89480f2342879b346eab",
@@ -72,7 +72,7 @@
       "include/RimeWithWeasel.h": "0eaa787719f51ec64f98a0de6d85d148cf229e247b30458080be87834d356158",
       "include/ShiftKeySnapshotWin.h": "827ba6411731876d4d6f28a6724aae55243ed989ef93dce9a000a76d09369a9e",
       "include/StellaeIdentity.h": "665df00b74dfa51219d3d9b53b8fc749e6377ef6185bd27a750fb81aa841a2ab",
-      "include/WeaselIPC.h": "9aaa4c190ce587abe1543fec278b8ecb3e54bcf7c6e993bf7aea5f2ecb4238f0",
+      "include/WeaselIPC.h": "dc36aa75f73b5dddc6769ad3c1b8f3082df4f9aedbeeb36a08ce49ce86856d5e",
       "include/WeaselUI.h": "13662010d99f7204e5d484882fc5ecaa81624b01359512a5c5fcdaa219d8a7d7"
     }
   },

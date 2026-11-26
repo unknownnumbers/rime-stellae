@@ -20,10 +20,14 @@ if __name__ == "__main__":
     work = args.output.resolve()
     work.mkdir(parents=True, exist_ok=True)
     client = (args.source_root / "WeaselIPC/WeaselClientImpl.cpp").read_text("utf-8-sig")
+    composition = (args.source_root / "WeaselTSF/Composition.cpp").read_text("utf-8-sig")
     server = (args.source_root / "WeaselIPCServer/WeaselServerImpl.cpp").read_text("utf-8-sig")
     channel = (args.source_root / "include/PipeChannel.h").read_text("utf-8-sig")
     (work / "position.inc").write_text(
         method(client, "void ClientImpl::UpdateInputPosition(")
+        + method(client, "void Client::UpdateInputPosition(")
+        + method(client, "void Client::UpdateModeInputPosition(")
+        + method(composition, "void WeaselTSF::_PublishModePosition(")
         + method(server, "DWORD ServerImpl::OnUpdateInputPosition(")
         + method(server, "const char* PipeServer::_ReceiveRequest("), encoding="utf-8")
     (work / "transaction.inc").write_text(

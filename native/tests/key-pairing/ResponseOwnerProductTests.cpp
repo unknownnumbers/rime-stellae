@@ -1,6 +1,7 @@
 // Instrumented candidate only. The host primitives control TSF grants; all
 // production/capture/cancel/delivery state below belongs to the real product.
 #include "ProductHostFixture.h"
+#include <resource.h>
 #include <utility>
 #include <cstdlib>
 #include <cstring>
@@ -1948,7 +1949,62 @@ void SameOwnerFailedRequestProbe() {
           b_->store->imeWrites == 0 && a_->pending.empty());
     }
   }
+  void CheckAsciiModeClients(bool global, bool forwarded) {
+    auto& a = service_->m_client;
+    weasel::Client b, c;
+    auto open = [](weasel::Client& client) {
+      if (!client.Connect() || !client.StartSession())
+        throw std::runtime_error("cannot open mode-sync IPC session");
+    };
+    auto ascii = [](weasel::Client& client) -> bool {
+      weasel::SessionMetadata response;
+      if (!client.QueryMetadata(response))
+        throw std::runtime_error("cannot query mode-sync session");
+      return response.status.ascii_mode;
+    };
+    const weasel::KeyEvent toggle(ibus::space, ibus::CONTROL_MASK);
+    a.TrayCommand(ID_WEASELTRAY_DISABLE_ASCII);
+    open(b);
+    Check(forwarded ? "forwarded-two-clients-start-in-native-mode"
+                    : "system-two-clients-start-in-native-mode", !ascii(a) && !ascii(b));
+    if (forwarded) {
+      if (!b.ProcessKeyEvent(toggle))
+        throw std::runtime_error("B did not accept forwarded Ctrl+Space");
+    } else {
+      b.TrayCommand(ID_WEASELTRAY_ENABLE_ASCII);
+    }
+    Check(forwarded ? "forwarded-B-enters-and-A-follows-config"
+                    : "system-B-enters-and-A-follows-config", ascii(a) == global && ascii(b));
+    open(c);
+    Check(forwarded ? "forwarded-new-C-inherits-current-mode"
+                    : "system-new-C-inherits-current-mode", ascii(c) == global);
+    if (forwarded) {
+      if (!a.ProcessKeyEvent(toggle))
+        throw std::runtime_error("A did not accept forwarded Ctrl+Space");
+    } else {
+      service_->_ToggleAsciiMode(service_->_activation);
+    }
+    Check(forwarded ? "forwarded-A-toggle-reaches-established-and-new-client"
+                    : "system-A-toggle-reaches-established-and-new-client",
+          ascii(a) == !global && ascii(b) == !global && !ascii(c));
+    if (!global) {
+      a.TrayCommand(ID_WEASELTRAY_DISABLE_ASCII);
+      b.TrayCommand(ID_WEASELTRAY_DISABLE_ASCII);
+    }
+    Check(forwarded ? "forwarded-three-clients-return-to-native-mode"
+                    : "system-three-clients-return-to-native-mode",
+          !ascii(a) && !ascii(b) && !ascii(c));
+  }
   void RunProbe(const char* probe) {
+    if (std::strcmp(probe, "mode-sync-local") == 0 ||
+        std::strcmp(probe, "mode-sync-global") == 0) {
+      const bool global = std::strcmp(probe, "mode-sync-global") == 0;
+      Group(global ? "MODE-SYNC-GLOBAL" : "MODE-SYNC-LOCAL", [&] {
+        CheckAsciiModeClients(global, true);
+        CheckAsciiModeClients(global, false);
+      });
+      return;
+    }
     if (std::strcmp(probe, "idle-modifiers") == 0) {
       Group("IDLE-MODIFIERS", [&] {
         a_->selectionProbeRead = true;

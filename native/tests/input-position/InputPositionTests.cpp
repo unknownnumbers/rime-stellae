@@ -66,7 +66,24 @@ struct ClientImpl {
     Message header{command, packed, id};
     Check(channel.TransactOutcome(header, body).error == 0, "position transaction");
   }
+  void UpdateInputPosition(const RECT&, bool);
+};
+struct Client {
+  ClientImpl* m_pImpl;
   void UpdateInputPosition(const RECT&);
+  void UpdateModeInputPosition(const RECT&);
+};
+struct WeaselTSF {
+  struct ModeCaretRequest {
+    RECT rect{};
+    bool positioned = true, published = false, invalidate = false;
+  };
+  Client& m_client;
+  bool _producerResponse = false;
+  bool _IsCurrentModeCaret(const std::shared_ptr<ModeCaretRequest>& request) const {
+    return request != nullptr;
+  }
+  void _PublishModePosition(const std::shared_ptr<ModeCaretRequest>&);
 };
 struct PipeServer {
   using Res = Message;
@@ -98,6 +115,8 @@ auto GetProcAddress(void*, const char*) { return &ConvertPoint; }
 
 int main() {
   ClientImpl client;
+  Client api{&client};
+  WeaselTSF tsf{api};
   Handler handler;
   ServerImpl server{&handler};
   PipeServer pipe;
@@ -111,11 +130,18 @@ int main() {
     server.OnUpdateInputPosition(header.wParam, header.lParam, body);
     Check(handler.session == client.session_id, "delivered session");
   };
-  auto checkPosition = [&](RECT input, RECT expected, bool extended) {
+  auto checkPosition = [&](RECT input, RECT expected, bool extended, bool modeHint = false) {
     const bool empty = Same(input, RECT{});
     const auto previous = client.channel.writes;
     dpiCalls = 0;
-    client.UpdateInputPosition(input);
+    if (modeHint) {
+      auto request = std::make_shared<WeaselTSF::ModeCaretRequest>();
+      request->rect = input;
+      tsf._PublishModePosition(request);
+      tsf._PublishModePosition(request);
+    } else {
+      api.UpdateInputPosition(input);
+    }
     Check(client.channel.writes == previous + 1, "one position write");
     Check(client.channel.wire.size() == sizeof(header) + (extended ? sizeof(RECT) : 0), "position frame size");
     receive();
@@ -126,6 +152,19 @@ int main() {
   checkPosition({4094, 350, 4095, 372}, {4094, 350, 4100, 372}, false);
   checkPosition({0, 0, 1, 0}, {0, 0, 6, 0}, false);
   checkPosition({}, {}, false);
+  for (LONG x : {2558, 2559, 2560}) {
+    for (LONG width : {0, 1}) {
+      const RECT caret{x, 350, x + width, 372};
+      const LONG compactX = (x >> 1) << 1;
+      checkPosition(caret, {compactX, 350, compactX + 6, 372}, false);
+      checkPosition(caret, caret, true, true);
+    }
+  }
+  checkPosition({}, {}, false, true);
+  api.UpdateModeInputPosition({2559, 350, 2560, 372});
+  client.channel.wire.resize(sizeof(Message));
+  receive();
+  Check(Same(handler.rect, RECT{2558, 350, 2564, 372}), "mode hint retains legacy header");
   const RECT extended[] = {
       {4095, 350, 4096, 372}, {5000, 350, 5001, 372}, {5119, -493, 5120, -470},
       {-5300, -6100, -5291, -6000}, {107, 6099, 107, 6508}, {107, 350, 109, 605},
@@ -133,13 +172,13 @@ int main() {
   for (auto rect : extended) checkPosition(rect, rect, true);
 
   // A .2 server ignores the body. A .2 client sends this header alone.
-  client.UpdateInputPosition({5000, 351, 5001, 374});
+  api.UpdateInputPosition({5000, 351, 5001, 374});
   receive();
   Check(header.wParam == 0x8b0af7ffu, "legacy header from current client");
   client.channel.wire.resize(sizeof(Message));
   receive();
   Check(Same(handler.rect, RECT{4094, 350, 4100, 372}), "legacy header after full rectangle");
-  client.UpdateInputPosition({-5300, -6000, -5290, -5990});
+  api.UpdateInputPosition({-5300, -6000, -5290, -5990});
   client.channel.wire.resize(sizeof(Message));
   receive();
   Check(Same(handler.rect, RECT{-4096, -4096, -4090, -4086}), "signed legacy header");

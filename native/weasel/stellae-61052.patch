@@ -1,5 +1,5 @@
 diff --git a/RimeWithWeasel/RimeWithWeasel.cpp b/RimeWithWeasel/RimeWithWeasel.cpp
-index 3f4e59d9f410c79ad605460c5492314d71bdfb65..f071caf5c0537333461edf6567dec228f01d0ca4 100644
+index 3f4e59d9f410c79ad605460c5492314d71bdfb65..01a6dfe15aa5ddaddc07a0c1a7236555e8149f8e 100644
 --- a/RimeWithWeasel/RimeWithWeasel.cpp
 +++ b/RimeWithWeasel/RimeWithWeasel.cpp
 @@ -1,4 +1,4 @@
@@ -832,7 +832,7 @@ index 3f4e59d9f410c79ad605460c5492314d71bdfb65..f071caf5c0537333461edf6567dec228
    std::set<std::string> actions;
    std::list<std::string> messages;
  
-@@ -803,17 +1081,7 @@ bool RimeWithWeaselHandler::_Respond(WeaselSessionId ipc_id, EatLine eat) {
+@@ -803,23 +1081,15 @@ bool RimeWithWeaselHandler::_Respond(WeaselSessionId ipc_id, EatLine eat) {
    RIME_STRUCT(RimeStatus, status);
    if (rime_api->get_status(session_id, &status)) {
      is_composing = !!status.is_composing;
@@ -851,7 +851,17 @@ index 3f4e59d9f410c79ad605460c5492314d71bdfb65..f071caf5c0537333461edf6567dec228
      if (m_global_ascii_mode &&
          (session_status.status.is_ascii_mode != status.is_ascii_mode)) {
        for (auto& pair : m_session_status_map) {
-@@ -830,6 +1098,8 @@ bool RimeWithWeaselHandler::_Respond(WeaselSessionId ipc_id, EatLine eat) {
+-        if (pair.first != ipc_id)
+-          rime_api->set_option(to_session_id(pair.first), "ascii_mode",
++        if (pair.first != ipc_id) {
++          rime_api->set_option(pair.second.session_id, "ascii_mode",
+                                !!status.is_ascii_mode);
++          pair.second.status.is_ascii_mode = status.is_ascii_mode;
++        }
+       }
+     }
+     session_status.status = status;
+@@ -830,6 +1100,8 @@ bool RimeWithWeaselHandler::_Respond(WeaselSessionId ipc_id, EatLine eat) {
    if (rime_api->get_context(session_id, &ctx)) {
      if (is_composing) {
        actions.insert("ctx");
@@ -860,7 +870,7 @@ index 3f4e59d9f410c79ad605460c5492314d71bdfb65..f071caf5c0537333461edf6567dec228
        switch (session_status.style.preedit_type) {
          case UIStyle::PREVIEW:
            if (ctx.commit_text_preview != NULL) {
-@@ -919,40 +1189,10 @@ bool RimeWithWeaselHandler::_Respond(WeaselSessionId ipc_id, EatLine eat) {
+@@ -919,40 +1191,10 @@ bool RimeWithWeaselHandler::_Respond(WeaselSessionId ipc_id, EatLine eat) {
      rime_api->free_context(&ctx);
    }
  
@@ -905,7 +915,7 @@ index 3f4e59d9f410c79ad605460c5492314d71bdfb65..f071caf5c0537333461edf6567dec228
  }
  
  static inline COLORREF blend_colors(COLORREF fcolor, COLORREF bcolor) {
-@@ -1427,9 +1667,10 @@ void RimeWithWeaselHandler::_GetStatus(Status& stat,
+@@ -1427,9 +1669,10 @@ void RimeWithWeaselHandler::_GetStatus(Status& stat,
      stat.composing = !!status.is_composing;
      stat.disabled = !!status.is_disabled;
      stat.full_shape = !!status.is_full_shape;
@@ -918,7 +928,7 @@ index 3f4e59d9f410c79ad605460c5492314d71bdfb65..f071caf5c0537333461edf6567dec228
        if (schema_id != ".default") {  // don't load for schema select menu
          bool inline_preedit = session_status.style.inline_preedit;
          _LoadSchemaSpecificSettings(ipc_id, schema_id);
-@@ -1437,15 +1678,10 @@ void RimeWithWeaselHandler::_GetStatus(Status& stat,
+@@ -1437,15 +1680,10 @@ void RimeWithWeaselHandler::_GetStatus(Status& stat,
          if (session_status.style.inline_preedit != inline_preedit)
            // in case of inline_preedit set in schema
            _UpdateInlinePreeditStatus(ipc_id);
@@ -938,7 +948,7 @@ index 3f4e59d9f410c79ad605460c5492314d71bdfb65..f071caf5c0537333461edf6567dec228
        }
      }
      rime_api->free_status(&status);
-@@ -1454,10 +1690,12 @@ void RimeWithWeaselHandler::_GetStatus(Status& stat,
+@@ -1454,10 +1692,12 @@ void RimeWithWeaselHandler::_GetStatus(Status& stat,
  
  void RimeWithWeaselHandler::_GetContext(Context& weasel_context,
                                          RimeSessionId session_id) {
@@ -4070,7 +4080,7 @@ index 1bba123..35aacd8 100644
 +  return Deserializer::Ptr(new Styler(pTarget));
 +}
 diff --git a/WeaselIPC/WeaselClientImpl.cpp b/WeaselIPC/WeaselClientImpl.cpp
-index 26122ad50a1550c4e4b8daccc5de5625141d33ee..afbde833ebd6dbc2d589d5ac13627872f951b01c 100644
+index 26122ad50a1550c4e4b8daccc5de5625141d33ee..c5f6d96a090dacf305ed15dddf34eaba1df936ba 100644
 --- a/WeaselIPC/WeaselClientImpl.cpp
 +++ b/WeaselIPC/WeaselClientImpl.cpp
 @@ -1,5 +1,6 @@
@@ -4149,7 +4159,16 @@ index 26122ad50a1550c4e4b8daccc5de5625141d33ee..afbde833ebd6dbc2d589d5ac13627872
  }
  
  bool ClientImpl::CommitComposition() {
-@@ -118,15 +146,26 @@ void ClientImpl::UpdateInputPosition(RECT const& rc) {
+@@ -103,7 +131,7 @@ bool ClientImpl::ChangePage(bool backward) {
+   return ret != 0;
+ }
+ 
+-void ClientImpl::UpdateInputPosition(RECT const& rc) {
++void ClientImpl::UpdateInputPosition(RECT const& rc, bool mode_hint) {
+   if (!_Active())
+     return;
+   /*
+@@ -118,15 +146,27 @@ void ClientImpl::UpdateInputPosition(RECT const& rc) {
    top:-4096~4094 = 12bit（有符号，舍弃低1位）
    left:-4096~4094 = 12bit（有符号，舍弃低1位）
    */
@@ -4169,17 +4188,18 @@ index 26122ad50a1550c4e4b8daccc5de5625141d33ee..afbde833ebd6dbc2d589d5ac13627872
 +  // to zero, the high-resolution bit alone decodes to the same point.
 +  if (compressed_rect == 0 && (rc.left || rc.top || rc.right || rc.bottom))
 +    compressed_rect = 0x80000000u;
-+  // Keep normal updates header-only. Supply the full rect in the same
-+  // message when the legacy header clamps the caret to its limits.
++  // A mode hint needs the caret's actual width for monitor selection at a
++  // display edge. Ordinary updates only need the body beyond the header range.
 +  std::string_view body;
-+  if (rc.left < -4096 || rc.left > 4094 || rc.top < -4096 || rc.top > 4094 ||
++  if ((mode_hint && compressed_rect != 0) ||
++      rc.left < -4096 || rc.left > 4094 || rc.top < -4096 || rc.top > 4094 ||
 +      full_height > 254)
 +    body = {reinterpret_cast<const char*>(&rc), sizeof(rc)};
 +  _SendMessageOutcome(WEASEL_IPC_UPDATE_INPUT_POS, compressed_rect, session_id, body);
  }
  
  void ClientImpl::FocusIn() {
-@@ -142,13 +181,14 @@ void ClientImpl::TrayCommand(UINT menuId) {
+@@ -142,13 +182,14 @@ void ClientImpl::TrayCommand(UINT menuId) {
    _SendMessage(WEASEL_IPC_TRAY_COMMAND, menuId, session_id);
  }
  
@@ -4196,7 +4216,7 @@ index 26122ad50a1550c4e4b8daccc5de5625141d33ee..afbde833ebd6dbc2d589d5ac13627872
  }
  
  void ClientImpl::EndSession() {
-@@ -166,12 +206,45 @@ void ClientImpl::EndMaintenance() {
+@@ -166,12 +207,45 @@ void ClientImpl::EndMaintenance() {
    session_id = 0;
  }
  
@@ -4244,7 +4264,7 @@ index 26122ad50a1550c4e4b8daccc5de5625141d33ee..afbde833ebd6dbc2d589d5ac13627872
  }
  
  bool ClientImpl::GetResponseData(ResponseHandler const& handler) {
-@@ -182,6 +255,10 @@ bool ClientImpl::GetResponseData(ResponseHandler const& handler) {
+@@ -182,6 +256,10 @@ bool ClientImpl::GetResponseData(ResponseHandler const& handler) {
    return channel.HandleResponseData(handler);
  }
  
@@ -4255,7 +4275,7 @@ index 26122ad50a1550c4e4b8daccc5de5625141d33ee..afbde833ebd6dbc2d589d5ac13627872
  bool ClientImpl::_WriteClientInfo() {
    channel << L"action=session\n";
    channel << L"session.client_app=" << app_name.c_str() << L"\n";
-@@ -193,11 +270,27 @@ bool ClientImpl::_WriteClientInfo() {
+@@ -193,11 +271,27 @@ bool ClientImpl::_WriteClientInfo() {
  LRESULT ClientImpl::_SendMessage(WEASEL_IPC_COMMAND Msg,
                                   DWORD wParam,
                                   DWORD lParam) {
@@ -4287,7 +4307,7 @@ index 26122ad50a1550c4e4b8daccc5de5625141d33ee..afbde833ebd6dbc2d589d5ac13627872
    }
  }
  
-@@ -224,6 +317,10 @@ bool Client::ProcessKeyEvent(KeyEvent const& keyEvent) {
+@@ -224,6 +318,10 @@ bool Client::ProcessKeyEvent(KeyEvent const& keyEvent) {
    return m_pImpl->ProcessKeyEvent(keyEvent);
  }
  
@@ -4298,7 +4318,20 @@ index 26122ad50a1550c4e4b8daccc5de5625141d33ee..afbde833ebd6dbc2d589d5ac13627872
  bool Client::CommitComposition() {
    return m_pImpl->CommitComposition();
  }
-@@ -256,8 +353,8 @@ void Client::FocusOut() {
+@@ -245,7 +343,11 @@ bool Client::ChangePage(bool backward) {
+ }
+ 
+ void Client::UpdateInputPosition(RECT const& rc) {
+-  m_pImpl->UpdateInputPosition(rc);
++  m_pImpl->UpdateInputPosition(rc, false);
++}
++
++void Client::UpdateModeInputPosition(RECT const& rc) {
++  m_pImpl->UpdateInputPosition(rc, true);
+ }
+ 
+ void Client::FocusIn() {
+@@ -256,8 +358,8 @@ void Client::FocusOut() {
    m_pImpl->FocusOut();
  }
  
@@ -4309,7 +4342,7 @@ index 26122ad50a1550c4e4b8daccc5de5625141d33ee..afbde833ebd6dbc2d589d5ac13627872
  }
  
  void Client::EndSession() {
-@@ -272,6 +369,10 @@ void Client::EndMaintenance() {
+@@ -272,6 +374,10 @@ void Client::EndMaintenance() {
    m_pImpl->EndMaintenance();
  }
  
@@ -4320,7 +4353,7 @@ index 26122ad50a1550c4e4b8daccc5de5625141d33ee..afbde833ebd6dbc2d589d5ac13627872
  void Client::TrayCommand(UINT menuId) {
    m_pImpl->TrayCommand(menuId);
  }
-@@ -280,6 +381,14 @@ bool Client::Echo() {
+@@ -280,6 +386,14 @@ bool Client::Echo() {
    return m_pImpl->Echo();
  }
  
@@ -4336,10 +4369,10 @@ index 26122ad50a1550c4e4b8daccc5de5625141d33ee..afbde833ebd6dbc2d589d5ac13627872
 +  return m_pImpl->ResponseGeneration();
 +}
 diff --git a/WeaselIPC/WeaselClientImpl.h b/WeaselIPC/WeaselClientImpl.h
-index 7602792869408ccf24b4e82ada2b8be8ec0f56ed..09ef9ea3ad38c6068e5ab077087082ce55a2557b 100644
+index 7602792869408ccf24b4e82ada2b8be8ec0f56ed..0f2c092d5144dcab8e396c0ec446740be3b2c95e 100644
 --- a/WeaselIPC/WeaselClientImpl.h
 +++ b/WeaselIPC/WeaselClientImpl.h
-@@ -12,12 +12,15 @@ class ClientImpl {
+@@ -12,28 +12,34 @@ class ClientImpl {
    bool Connect(ServerLauncher const& launcher);
    void Disconnect();
    void ShutdownServer();
@@ -4356,7 +4389,11 @@ index 7602792869408ccf24b4e82ada2b8be8ec0f56ed..09ef9ea3ad38c6068e5ab077087082ce
    bool CommitComposition();
    bool ClearComposition();
    bool SelectCandidateOnCurrentPage(size_t index);
-@@ -28,12 +31,15 @@ class ClientImpl {
+   bool HighlightCandidateOnCurrentPage(size_t index);
+   bool ChangePage(bool backward);
+-  void UpdateInputPosition(RECT const& rc);
++  void UpdateInputPosition(RECT const& rc, bool mode_hint);
+   void FocusIn();
    void FocusOut();
    void TrayCommand(UINT menuId);
    bool GetResponseData(ResponseHandler const& handler);
@@ -4372,6 +4409,13 @@ index 7602792869408ccf24b4e82ada2b8be8ec0f56ed..09ef9ea3ad38c6068e5ab077087082ce
  
    bool _Connected() const { return channel.Connected(); }
    bool _Active() const { return channel.Connected() && session_id != 0; }
+@@ -46,4 +52,4 @@ class ClientImpl {
+   PipeChannel<PipeMessage> channel;
+ };
+ 
+-}  // namespace weasel
+\ No newline at end of file
++}  // namespace weasel
 diff --git a/WeaselIPCServer/WeaselServerImpl.cpp b/WeaselIPCServer/WeaselServerImpl.cpp
 index 11225c445de8cb3c8f10810cc988cbf33bfe7462..087829713646dc26779d9958409decb94e4456d2 100644
 --- a/WeaselIPCServer/WeaselServerImpl.cpp
@@ -9445,7 +9489,7 @@ index d030666..886e872 100644
 +  LONG _refCount;
 +};
 diff --git a/WeaselTSF/Composition.cpp b/WeaselTSF/Composition.cpp
-index e94cea0..862dfd7 100644
+index e94cea0a57575bf0f9fbe9742a7eaaf6d7b6fd3b..e4e06367d1f844367988f4935a2c3eabb2a25020 100644
 --- a/WeaselTSF/Composition.cpp
 +++ b/WeaselTSF/Composition.cpp
 @@ -1,421 +1,990 @@
@@ -10166,7 +10210,7 @@ index e94cea0..862dfd7 100644
 +  }
 +  if (!request->positioned || request->published) return;
 +  request->published = true;
-+  m_client.UpdateInputPosition(request->rect);
++  m_client.UpdateModeInputPosition(request->rect);
 +}
 +
 +void WeaselTSF::_RefreshIdleModePosition(ITfContext* owner, bool invalidateServer) {
@@ -21149,7 +21193,7 @@ index 09625e4..961f373 100644
  #define STRINGIZE(x) #x
  #define VERSION_STR(x) STRINGIZE(x)
 diff --git a/include/WeaselIPC.h b/include/WeaselIPC.h
-index 3065cb57d49095eefbc04eddbe5ec2801216f8b4..6dd9be5966ca3214a58e405c00ce1e07a5ae445b 100644
+index 3065cb57d49095eefbc04eddbe5ec2801216f8b4..d7d56e3dea09dec22c70963cc9b5a20cb4f3923e 100644
 --- a/include/WeaselIPC.h
 +++ b/include/WeaselIPC.h
 @@ -1,13 +1,14 @@
@@ -21246,7 +21290,15 @@ index 3065cb57d49095eefbc04eddbe5ec2801216f8b4..6dd9be5966ca3214a58e405c00ce1e07
    // 上屏正在編輯的文字
    bool CommitComposition();
    // 清除正在編輯的文字
-@@ -142,6 +175,8 @@ class Client {
+@@ -134,6 +167,7 @@ class Client {
+   bool ChangePage(bool backward);
+   // 更新输入位置
+   void UpdateInputPosition(RECT const& rc);
++  void UpdateModeInputPosition(RECT const& rc);
+   // 输入窗口获得焦点
+   void FocusIn();
+   // 输入窗口失去焦点
+@@ -142,6 +176,8 @@ class Client {
    void TrayCommand(UINT menuId);
    // 读取server返回的数据
    bool GetResponseData(ResponseHandler handler);
@@ -21255,7 +21307,7 @@ index 3065cb57d49095eefbc04eddbe5ec2801216f8b4..6dd9be5966ca3214a58e405c00ce1e07
  
   private:
    ClientImpl* m_pImpl;
-@@ -163,6 +198,10 @@ class Server {
+@@ -163,6 +199,10 @@ class Server {
    void AddMenuHandler(UINT uID, CommandHandler handler);
    HWND GetHWnd();
  
