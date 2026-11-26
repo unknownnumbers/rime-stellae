@@ -3647,8 +3647,8 @@
     },
     {
       "path": "schemes/release-manifest.json",
-      "bytes": 110746,
-      "sha256": "d9275782e690301ba1876bb2682817c9db8c54bed2bdad4d423430744205c01f"
+      "bytes": 110745,
+      "sha256": "e22fd50008b802ff45ea706540d250f33f544d475c6cb56329e02e6308d748c5"
     },
     {
       "path": "schemes/scripts/build_dlc.py",
@@ -3762,8 +3762,8 @@
     },
     {
       "path": "schemes/scripts/schemes/Test-OfficialProfile.ps1",
-      "bytes": 6137,
-      "sha256": "0902a45cc5068f8ebc9ab4c2cd794bbd6e9910050d0ceb2f86ba6b840ce74e3e"
+      "bytes": 6123,
+      "sha256": "3c7e4ffb665df2038808574cb44b0a707ac1e21df761923b575759b9e68a94c0"
     },
     {
       "path": "schemes/scripts/schemes/Test-SharedProfile.ps1",
@@ -3912,13 +3912,13 @@
     },
     {
       "path": "schemes/tests/schemes/Test-OfficialChinese.ps1",
-      "bytes": 10042,
-      "sha256": "2b0b9b7b0271ec90eed53fc31ed46620943d70313358ce9d6b699e87c7f08342"
+      "bytes": 9578,
+      "sha256": "492fc38dec8b6a4b252a51325b39ecfd923bacc565fb4c876356bbfcd25881b5"
     },
     {
       "path": "schemes/tests/schemes/Test-OfficialEnglish.ps1",
-      "bytes": 8319,
-      "sha256": "e1c526102ebf372a5544f1394187ec888bc407361fd91589517932eacba48705"
+      "bytes": 8621,
+      "sha256": "8d695e79ab318bb286cfbb3dab175cb27671d30293eab09ff7fb355e56356737"
     },
     {
       "path": "schemes/tests/schemes/Test-OfficialPersistence.ps1",

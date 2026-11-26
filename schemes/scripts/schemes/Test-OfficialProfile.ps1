@@ -57,7 +57,7 @@ foreach ($scenario in @('English','Bracket')) {
         if (-not $en.Completed -or $en.Failed -ne 0) { throw 'Official English validation is incomplete.' }
         $results += [pscustomobject]@{Scenario='English';Checks=[int]$en.Passed;Passed=$true}
     } else {
-        & $hostExe -NoProfile -ExecutionPolicy Bypass -File (Join-Path $repo 'tests/schemes/Test-BracketLearning.ps1') -EngineDll $engine -SharedData $SharedDir -UserData $testUser -OutputDirectory $out -SkipJapanese
+        & $hostExe -NoProfile -ExecutionPolicy Bypass -File (Join-Path $repo 'tests/schemes/Test-BracketLearning.ps1') -EngineDll $engine -SharedData $SharedDir -UserData $testUser -OutputDirectory $out
         if ($LASTEXITCODE -ne 0) { throw 'Official bracket learning checks failed.' }
         $rows = Get-Content -LiteralPath (Join-Path $out 'results.json') -Raw -Encoding UTF8 | ConvertFrom-Json
         if (-not $rows.Count -or @($rows | Where-Object { -not $_.Passed }).Count) { throw 'Missing or failed official bracket assertions.' }

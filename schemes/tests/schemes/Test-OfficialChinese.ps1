@@ -56,18 +56,7 @@ try {
     [RimeProbe]::RimeInitialize([ref]$traits)
     [RimeProbe]::RimeDeployerInitialize([ref]$traits)
     $watch = [Diagnostics.Stopwatch]::StartNew()
-    $schemas = @(
-        (Join-Path $shared 'stroke.schema.yaml')
-        (Join-Path $user 'project_radical.schema.yaml')
-        (Join-Path $user 'project_radical_parts.schema.yaml')
-        (Join-Path $user 'english_full.schema.yaml')
-        (Join-Path $user 'cn_stellae.schema.yaml')
-    )
-    foreach ($schema in $schemas) {
-        if (-not [RimeProbe]::RimeDeploySchema($schema)) {
-            throw "Schema deployment failed for $([IO.Path]::GetFileName($schema))."
-        }
-    }
+    if (-not [RimeProbe]::RimeDeployWorkspace()) { throw 'Official scheme deployment failed.' }
     $result.DeployMilliseconds = $watch.ElapsedMilliseconds
     $session = [RimeProbe]::RimeCreateSession()
     if (-not [RimeProbe]::RimeSelectSchema($session,'cn_stellae')) { throw 'Schema selection failed' }
@@ -100,10 +89,10 @@ try {
             Check ('partial-tail-'+$raw) ((Pos $state $word) -ge 0) ([string[]]$state.Context.Candidates | Select-Object -First 12)
         }
     }
-    foreach ($raw in @('pi','alpha','juhao','partial')) {
+    foreach ($case in @(@('pi','π'), @('alpha','α'), @('juhao','。'), @('partial','∂'))) {
+        $raw,$symbol = $case
         $state = Query $raw 1000
-        $forbidden = @($state.Context.Candidates | Where-Object { $_ -cmatch '^[\u0370-\u03ff\u2000-\u2bff\u3000-\u303f]+$' -or $_ -ceq '。' -or $_ -ceq '3.141592653589793' })
-        Check ('removed-named-features-'+$raw) ($forbidden.Count -eq 0) $forbidden.Count
+        Check ('named-symbol-'+$raw) ((Pos $state $symbol) -ge 0) ([string[]]$state.Context.Candidates | Select-Object -First 12)
     }
     $state = Query 'uUmumuU'
     $index = Pos $state '林'
