@@ -1,5 +1,5 @@
 diff --git a/RimeWithWeasel/RimeWithWeasel.cpp b/RimeWithWeasel/RimeWithWeasel.cpp
-index 3f4e59d9f410c79ad605460c5492314d71bdfb65..2c2ea99af5e8e4c56a9138278c82ed653b3a0ec3 100644
+index 3f4e59d9f410c79ad605460c5492314d71bdfb65..a85e2dfe415d5941e8fa495d266ad3c8b56c01d6 100644
 --- a/RimeWithWeasel/RimeWithWeasel.cpp
 +++ b/RimeWithWeasel/RimeWithWeasel.cpp
 @@ -1,4 +1,4 @@
@@ -283,7 +283,7 @@ index 3f4e59d9f410c79ad605460c5492314d71bdfb65..2c2ea99af5e8e4c56a9138278c82ed65
  }
  
  BOOL RimeWithWeaselHandler::ProcessKeyEvent(KeyEvent keyEvent,
-@@ -310,11 +404,47 @@ BOOL RimeWithWeaselHandler::ProcessKeyEvent(KeyEvent keyEvent,
+@@ -310,11 +404,50 @@ BOOL RimeWithWeaselHandler::ProcessKeyEvent(KeyEvent keyEvent,
               << ", mask = " << keyEvent.mask << ", ipc_id = " << ipc_id;
    if (m_disabled)
      return FALSE;
@@ -295,6 +295,11 @@ index 3f4e59d9f410c79ad605460c5492314d71bdfb65..2c2ea99af5e8e4c56a9138278c82ed65
    RimeSessionId session_id = to_session_id(ipc_id);
 -  Bool handled = rime_api->process_key(session_id, keyEvent.keycode,
 -                                       expand_ibus_modifier(keyEvent.mask));
++  const bool shift = keyEvent.keycode == ibus::Shift_L ||
++                     keyEvent.keycode == ibus::Shift_R;
++  const bool release = (keyEvent.mask & ibus::RELEASE_MASK) != 0;
++  if (!release && !shift)
++    _EndModeCaretWait(ipc_id, keyEvent.keycode == ibus::Escape);
 +  // Caps Lock is a toggle state, separate from the Ctrl+Space binding.
 +  const bool ascii_toggle = keyEvent.keycode == ibus::space &&
 +                            (keyEvent.mask & ~ibus::LOCK_MASK) == ibus::CONTROL_MASK;
@@ -312,8 +317,6 @@ index 3f4e59d9f410c79ad605460c5492314d71bdfb65..2c2ea99af5e8e4c56a9138278c82ed65
 +        if (shift) rime_api->set_property(session, "weasel_shift_snapshot", "");
 +      }
 +    };
-+    const bool shift = keyEvent.keycode == ibus::Shift_L ||
-+                       keyEvent.keycode == ibus::Shift_R;
 +    ClearShiftSnapshot clear_snapshot{session_id, shift};
 +    if (shift) {
 +      const std::string value = keyEvent.shift_snapshot.PropertyValue();
@@ -334,31 +337,70 @@ index 3f4e59d9f410c79ad605460c5492314d71bdfb65..2c2ea99af5e8e4c56a9138278c82ed65
      bool isVimBackInCommandMode =
          (keyEvent.keycode == ibus::Keycode::Escape) ||
          ((keyEvent.mask & (1 << 2)) &&
-@@ -329,7 +459,6 @@ BOOL RimeWithWeaselHandler::ProcessKeyEvent(KeyEvent keyEvent,
+@@ -328,8 +461,17 @@ BOOL RimeWithWeaselHandler::ProcessKeyEvent(KeyEvent keyEvent,
+     }
    }
    _Respond(ipc_id, eat);
++  if (shift && release && handled) {
++    const SessionStatus& session = get_session_status(ipc_id);
++    if (!session.status.is_composing && !session.input_position_valid &&
++        _IsSessionTSF(session_id)) {
++      std::lock_guard<std::mutex> lock(m_notification_mutex);
++      if (m_notification.owner == session_id && m_notification.type == "option" &&
++          m_notification.option == session.mode_option)
++        m_notification.awaiting_mode_caret = true;
++    }
++  }
    _UpdateUI(ipc_id);
 -  m_active_session = ipc_id;
    return (BOOL)handled;
  }
  
-@@ -339,7 +468,6 @@ void RimeWithWeaselHandler::CommitComposition(WeaselSessionId ipc_id) {
+@@ -337,18 +479,18 @@ void RimeWithWeaselHandler::CommitComposition(WeaselSessionId ipc_id) {
+   DLOG(INFO) << "Commit composition: ipc_id = " << ipc_id;
+   if (m_disabled)
      return;
++  _EndModeCaretWait(ipc_id);
    rime_api->commit_composition(to_session_id(ipc_id));
    _UpdateUI(ipc_id);
 -  m_active_session = ipc_id;
  }
  
  void RimeWithWeaselHandler::ClearComposition(WeaselSessionId ipc_id) {
-@@ -348,7 +476,6 @@ void RimeWithWeaselHandler::ClearComposition(WeaselSessionId ipc_id) {
+   DLOG(INFO) << "Clear composition: ipc_id = " << ipc_id;
+   if (m_disabled)
      return;
++  _EndModeCaretWait(ipc_id);
    rime_api->clear_composition(to_session_id(ipc_id));
    _UpdateUI(ipc_id);
 -  m_active_session = ipc_id;
  }
  
  void RimeWithWeaselHandler::SelectCandidateOnCurrentPage(
-@@ -385,17 +512,60 @@ bool RimeWithWeaselHandler::ChangePage(bool backward,
+@@ -358,6 +500,7 @@ void RimeWithWeaselHandler::SelectCandidateOnCurrentPage(
+              << ", index = " << index;
+   if (m_disabled)
+     return;
++  _EndModeCaretWait(ipc_id);
+   rime_api->select_candidate_on_current_page(to_session_id(ipc_id), index);
+ }
+ 
+@@ -367,6 +510,7 @@ bool RimeWithWeaselHandler::HighlightCandidateOnCurrentPage(
+     EatLine eat) {
+   DLOG(INFO) << "highlight candidate on current page, ipc_id = " << ipc_id
+              << ", index = " << index;
++  _EndModeCaretWait(ipc_id);
+   bool res = rime_api->highlight_candidate_on_current_page(
+       to_session_id(ipc_id), index);
+   _Respond(ipc_id, eat);
+@@ -379,23 +523,67 @@ bool RimeWithWeaselHandler::ChangePage(bool backward,
+                                        EatLine eat) {
+   DLOG(INFO) << "change page, ipc_id = " << ipc_id
+              << (backward ? "backward" : "foreward");
++  _EndModeCaretWait(ipc_id);
+   bool res = rime_api->change_page(to_session_id(ipc_id), backward);
+   _Respond(ipc_id, eat);
+   _UpdateUI(ipc_id);
    return res;
  }
  
@@ -421,7 +463,7 @@ index 3f4e59d9f410c79ad605460c5492314d71bdfb65..2c2ea99af5e8e4c56a9138278c82ed65
    if (m_ui)
      m_ui->Hide();
    m_active_session = 0;
-@@ -406,20 +576,50 @@ void RimeWithWeaselHandler::UpdateInputPosition(RECT const& rc,
+@@ -406,20 +594,61 @@ void RimeWithWeaselHandler::UpdateInputPosition(RECT const& rc,
    DLOG(INFO) << "Update input position: (" << rc.left << ", " << rc.top
               << "), ipc_id = " << ipc_id
               << ", m_active_session = " << m_active_session;
@@ -455,14 +497,25 @@ index 3f4e59d9f410c79ad605460c5492314d71bdfb65..2c2ea99af5e8e4c56a9138278c82ed65
 +  m_notification = PendingNotification();
 +}
 +
++void RimeWithWeaselHandler::_EndModeCaretWait(WeaselSessionId ipc_id, bool dismiss) {
++  if (ipc_id != m_active_session) return;
++  std::lock_guard<std::mutex> lock(m_notification_mutex);
++  if (!m_notification.awaiting_mode_caret) return;
++  if (dismiss)
++    m_notification = PendingNotification();
++  else
++    m_notification.awaiting_mode_caret = false;  // A fresh candidate position can still show it.
++}
++
 +RimeWithWeaselHandler::PendingNotification
 +RimeWithWeaselHandler::_PeekNotification(RimeSessionId owner) {
 +  std::lock_guard<std::mutex> lock(m_notification_mutex);
 +  if (m_notification.owner && m_notification.owner != owner)
 +    return PendingNotification();
 +  if (m_notification.type != "deploy" &&
-+      (!m_show_notifications_time || GetTickCount64() - m_notification.created >
-+          static_cast<ULONGLONG>(m_show_notifications_time))) {
++      (!m_show_notifications_time ||
++       (!m_notification.awaiting_mode_caret && GetTickCount64() - m_notification.created >
++            static_cast<ULONGLONG>(m_show_notifications_time)))) {
 +    m_notification = PendingNotification();
    }
 +  return m_notification;
@@ -480,7 +533,7 @@ index 3f4e59d9f410c79ad605460c5492314d71bdfb65..2c2ea99af5e8e4c56a9138278c82ed65
  
  void RimeWithWeaselHandler::OnNotify(void* context_object,
                                       uintptr_t session_id,
-@@ -430,19 +630,35 @@ void RimeWithWeaselHandler::OnNotify(void* context_object,
+@@ -430,19 +659,35 @@ void RimeWithWeaselHandler::OnNotify(void* context_object,
        reinterpret_cast<RimeWithWeaselHandler*>(context_object);
    if (!self || !message_type || !message_value)
      return;
@@ -520,7 +573,7 @@ index 3f4e59d9f410c79ad605460c5492314d71bdfb65..2c2ea99af5e8e4c56a9138278c82ed65
  }
  
  void RimeWithWeaselHandler::_ReadClientInfo(WeaselSessionId ipc_id,
-@@ -537,16 +753,16 @@ void RimeWithWeaselHandler::EndMaintenance() {
+@@ -537,16 +782,16 @@ void RimeWithWeaselHandler::EndMaintenance() {
  void RimeWithWeaselHandler::SetOption(WeaselSessionId ipc_id,
                                        const std::string& opt,
                                        bool val) {
@@ -545,7 +598,7 @@ index 3f4e59d9f410c79ad605460c5492314d71bdfb65..2c2ea99af5e8e4c56a9138278c82ed65
    }
  }
  
-@@ -555,7 +771,7 @@ void RimeWithWeaselHandler::OnUpdateUI(std::function<void()> const& cb) {
+@@ -555,7 +800,7 @@ void RimeWithWeaselHandler::OnUpdateUI(std::function<void()> const& cb) {
  }
  
  bool RimeWithWeaselHandler::_IsDeployerRunning() {
@@ -554,7 +607,7 @@ index 3f4e59d9f410c79ad605460c5492314d71bdfb65..2c2ea99af5e8e4c56a9138278c82ed65
    bool deployer_detected = hMutex && GetLastError() == ERROR_ALREADY_EXISTS;
    if (hMutex) {
      CloseHandle(hMutex);
-@@ -563,14 +779,30 @@ bool RimeWithWeaselHandler::_IsDeployerRunning() {
+@@ -563,14 +808,30 @@ bool RimeWithWeaselHandler::_IsDeployerRunning() {
    return deployer_detected;
  }
  
@@ -588,7 +641,7 @@ index 3f4e59d9f410c79ad605460c5492314d71bdfb65..2c2ea99af5e8e4c56a9138278c82ed65
    RimeSessionId session_id = to_session_id(ipc_id);
    bool is_tsf = _IsSessionTSF(session_id);
  
-@@ -578,12 +810,16 @@ void RimeWithWeaselHandler::_UpdateUI(WeaselSessionId ipc_id) {
+@@ -578,12 +839,16 @@ void RimeWithWeaselHandler::_UpdateUI(WeaselSessionId ipc_id) {
      weasel_status.disabled = m_disabled;
  
    _GetStatus(weasel_status, ipc_id, weasel_context);
@@ -605,7 +658,7 @@ index 3f4e59d9f410c79ad605460c5492314d71bdfb65..2c2ea99af5e8e4c56a9138278c82ed65
    if (rime_api->get_option(session_id, "inline_preedit"))
      session_status.style.client_caps |= INLINE_PREEDIT_CAPABLE;
    else
-@@ -592,17 +828,23 @@ void RimeWithWeaselHandler::_UpdateUI(WeaselSessionId ipc_id) {
+@@ -592,17 +857,23 @@ void RimeWithWeaselHandler::_UpdateUI(WeaselSessionId ipc_id) {
    if (weasel_status.composing && !is_tsf) {
      m_ui->Update(weasel_context, weasel_status);
      m_ui->Show();
@@ -635,7 +688,7 @@ index 3f4e59d9f410c79ad605460c5492314d71bdfb65..2c2ea99af5e8e4c56a9138278c82ed65
  }
  
  void RimeWithWeaselHandler::_LoadSchemaSpecificSettings(
-@@ -613,11 +855,16 @@ void RimeWithWeaselHandler::_LoadSchemaSpecificSettings(
+@@ -613,11 +884,16 @@ void RimeWithWeaselHandler::_LoadSchemaSpecificSettings(
    RimeConfig config;
    if (!rime_api->schema_open(schema_id.c_str(), &config))
      return;
@@ -656,7 +709,7 @@ index 3f4e59d9f410c79ad605460c5492314d71bdfb65..2c2ea99af5e8e4c56a9138278c82ed65
    UIStyle& style = session_status.style;
    // load schema color style config
    const int BUF_SIZE = 255;
-@@ -631,7 +878,7 @@ void RimeWithWeaselHandler::_LoadSchemaSpecificSettings(
+@@ -631,7 +907,7 @@ void RimeWithWeaselHandler::_LoadSchemaSpecificSettings(
        rime_api->config_end(&preset);
      } else {
        RimeConfig weaselconfig;
@@ -665,7 +718,7 @@ index 3f4e59d9f410c79ad605460c5492314d71bdfb65..2c2ea99af5e8e4c56a9138278c82ed65
          _UpdateUIStyleColor(&weaselconfig, style, color_name);
          rime_api->config_close(&weaselconfig);
        }
-@@ -643,31 +890,79 @@ void RimeWithWeaselHandler::_LoadSchemaSpecificSettings(
+@@ -643,31 +919,79 @@ void RimeWithWeaselHandler::_LoadSchemaSpecificSettings(
      update_color_scheme();
    // load schema icon start
    {
@@ -766,7 +819,7 @@ index 3f4e59d9f410c79ad605460c5492314d71bdfb65..2c2ea99af5e8e4c56a9138278c82ed65
  }
  
  void RimeWithWeaselHandler::_LoadAppInlinePreeditSet(WeaselSessionId ipc_id,
-@@ -678,9 +973,9 @@ void RimeWithWeaselHandler::_LoadAppInlinePreeditSet(WeaselSessionId ipc_id,
+@@ -678,9 +1002,9 @@ void RimeWithWeaselHandler::_LoadAppInlinePreeditSet(WeaselSessionId ipc_id,
    rime_api->get_property(session_id, "client_app", _app_name,
                           sizeof(_app_name) - 1);
    std::string app_name(_app_name);
@@ -778,7 +831,7 @@ index 3f4e59d9f410c79ad605460c5492314d71bdfb65..2c2ea99af5e8e4c56a9138278c82ed65
    bool inline_preedit = session_status.style.inline_preedit;
    bool found = false;
    if (!app_name.empty()) {
-@@ -720,54 +1015,55 @@ void RimeWithWeaselHandler::_LoadAppInlinePreeditSet(WeaselSessionId ipc_id,
+@@ -720,54 +1044,55 @@ void RimeWithWeaselHandler::_LoadAppInlinePreeditSet(WeaselSessionId ipc_id,
      _UpdateInlinePreeditStatus(ipc_id);
  }
  
@@ -850,7 +903,7 @@ index 3f4e59d9f410c79ad605460c5492314d71bdfb65..2c2ea99af5e8e4c56a9138278c82ed65
      m_ui->Update(ctx, status);
      if (m_show_notifications_time)
        m_ui->ShowWithTimeout(m_show_notifications_time);
-@@ -785,6 +1081,7 @@ inline std::string _GetLabelText(const std::vector<Text>& labels,
+@@ -785,6 +1110,7 @@ inline std::string _GetLabelText(const std::vector<Text>& labels,
  }
  
  bool RimeWithWeaselHandler::_Respond(WeaselSessionId ipc_id, EatLine eat) {
@@ -858,7 +911,7 @@ index 3f4e59d9f410c79ad605460c5492314d71bdfb65..2c2ea99af5e8e4c56a9138278c82ed65
    std::set<std::string> actions;
    std::list<std::string> messages;
  
-@@ -803,23 +1100,14 @@ bool RimeWithWeaselHandler::_Respond(WeaselSessionId ipc_id, EatLine eat) {
+@@ -803,23 +1129,14 @@ bool RimeWithWeaselHandler::_Respond(WeaselSessionId ipc_id, EatLine eat) {
    RIME_STRUCT(RimeStatus, status);
    if (rime_api->get_status(session_id, &status)) {
      is_composing = !!status.is_composing;
@@ -887,7 +940,7 @@ index 3f4e59d9f410c79ad605460c5492314d71bdfb65..2c2ea99af5e8e4c56a9138278c82ed65
        }
      }
      session_status.status = status;
-@@ -830,6 +1118,8 @@ bool RimeWithWeaselHandler::_Respond(WeaselSessionId ipc_id, EatLine eat) {
+@@ -830,6 +1147,8 @@ bool RimeWithWeaselHandler::_Respond(WeaselSessionId ipc_id, EatLine eat) {
    if (rime_api->get_context(session_id, &ctx)) {
      if (is_composing) {
        actions.insert("ctx");
@@ -896,7 +949,7 @@ index 3f4e59d9f410c79ad605460c5492314d71bdfb65..2c2ea99af5e8e4c56a9138278c82ed65
        switch (session_status.style.preedit_type) {
          case UIStyle::PREVIEW:
            if (ctx.commit_text_preview != NULL) {
-@@ -919,40 +1209,10 @@ bool RimeWithWeaselHandler::_Respond(WeaselSessionId ipc_id, EatLine eat) {
+@@ -919,40 +1238,10 @@ bool RimeWithWeaselHandler::_Respond(WeaselSessionId ipc_id, EatLine eat) {
      rime_api->free_context(&ctx);
    }
  
@@ -941,7 +994,7 @@ index 3f4e59d9f410c79ad605460c5492314d71bdfb65..2c2ea99af5e8e4c56a9138278c82ed65
  }
  
  static inline COLORREF blend_colors(COLORREF fcolor, COLORREF bcolor) {
-@@ -1427,9 +1687,10 @@ void RimeWithWeaselHandler::_GetStatus(Status& stat,
+@@ -1427,9 +1716,10 @@ void RimeWithWeaselHandler::_GetStatus(Status& stat,
      stat.composing = !!status.is_composing;
      stat.disabled = !!status.is_disabled;
      stat.full_shape = !!status.is_full_shape;
@@ -954,7 +1007,7 @@ index 3f4e59d9f410c79ad605460c5492314d71bdfb65..2c2ea99af5e8e4c56a9138278c82ed65
        if (schema_id != ".default") {  // don't load for schema select menu
          bool inline_preedit = session_status.style.inline_preedit;
          _LoadSchemaSpecificSettings(ipc_id, schema_id);
-@@ -1437,15 +1698,10 @@ void RimeWithWeaselHandler::_GetStatus(Status& stat,
+@@ -1437,15 +1727,10 @@ void RimeWithWeaselHandler::_GetStatus(Status& stat,
          if (session_status.style.inline_preedit != inline_preedit)
            // in case of inline_preedit set in schema
            _UpdateInlinePreeditStatus(ipc_id);
@@ -974,7 +1027,7 @@ index 3f4e59d9f410c79ad605460c5492314d71bdfb65..2c2ea99af5e8e4c56a9138278c82ed65
        }
      }
      rime_api->free_status(&status);
-@@ -1454,10 +1710,12 @@ void RimeWithWeaselHandler::_GetStatus(Status& stat,
+@@ -1454,10 +1739,12 @@ void RimeWithWeaselHandler::_GetStatus(Status& stat,
  
  void RimeWithWeaselHandler::_GetContext(Context& weasel_context,
                                          RimeSessionId session_id) {
@@ -9515,10 +9568,10 @@ index d030666..886e872 100644
 +  LONG _refCount;
 +};
 diff --git a/WeaselTSF/Composition.cpp b/WeaselTSF/Composition.cpp
-index e94cea0a57575bf0f9fbe9742a7eaaf6d7b6fd3b..e4e06367d1f844367988f4935a2c3eabb2a25020 100644
+index e94cea0a57575bf0f9fbe9742a7eaaf6d7b6fd3b..40f5badc97e3be70684fa2e723898c0cfe6098d3 100644
 --- a/WeaselTSF/Composition.cpp
 +++ b/WeaselTSF/Composition.cpp
-@@ -1,421 +1,990 @@
+@@ -1,421 +1,1001 @@
 -#include "stdafx.h"
 -#include "WeaselTSF.h"
 -#include "EditSession.h"
@@ -10129,6 +10182,7 @@ index e94cea0a57575bf0f9fbe9742a7eaaf6d7b6fd3b..e4e06367d1f844367988f4935a2c3eab
 +  STDMETHODIMP DoEditSession(TfEditCookie ec) override;
 + private:
 +  bool Current() const { return _pTextService->_IsCurrentModeCaret(request_); }
++  HRESULT ReadCaret(TfEditCookie ec);
 +  HRESULT OwnedScreenBounds(ITfContextView* view, RECT& bounds);
 +  std::shared_ptr<WeaselTSF::ModeCaretRequest> request_;
 +};
@@ -10149,6 +10203,12 @@ index e94cea0a57575bf0f9fbe9742a7eaaf6d7b6fd3b..e4e06367d1f844367988f4935a2c3eab
 +}
 +
 +STDAPI CIdleCaretEditSession::DoEditSession(TfEditCookie ec) {
++  const HRESULT result = ReadCaret(ec);
++  if (result != S_OK && Current()) _pTextService->_InvalidateModePosition(false);
++  return result;
++}
++
++HRESULT CIdleCaretEditSession::ReadCaret(TfEditCookie ec) {
 +  if (!Current()) return S_FALSE;
 +  com_ptr<ITfContextView> view;
 +  HRESULT result = _pContext->GetActiveView(&view);
@@ -10267,8 +10327,12 @@ index e94cea0a57575bf0f9fbe9742a7eaaf6d7b6fd3b..e4e06367d1f844367988f4935a2c3eab
 +  if (!_IsCurrentModeCaret(request)) return;
 +  HRESULT granted = E_FAIL;
 +  // A mode hint must not wait for the host to calculate the caret inline.
-+  binding->context->RequestEditSession(activation->client, session,
++  const HRESULT result = binding->context->RequestEditSession(activation->client, session,
 +      TF_ES_ASYNC | TF_ES_READ, &granted);
++  if ((FAILED(result) || FAILED(granted)) && _IsCurrentModeCaret(request)) {
++    _InvalidateModePosition(false);
++    return;
++  }
 +  _PublishModePosition(request);
 +}
 +// END idle-mode-caret.
@@ -11326,10 +11390,10 @@ index a18bdb4..2eb40b8 100644
 +  return SetAttributeInfo(_pDisplayAttribute);
 +}
 diff --git a/WeaselTSF/EditSession.cpp b/WeaselTSF/EditSession.cpp
-index 8f4d503676f507f4728ac31c64a7bda4b6046136..9932bc8ec0bfdd2e6a464a660952fb8f5f7e6945 100644
+index 8f4d503676f507f4728ac31c64a7bda4b6046136..badd23b1c33ae70170b92df67c354c7683603888 100644
 --- a/WeaselTSF/EditSession.cpp
 +++ b/WeaselTSF/EditSession.cpp
-@@ -1,47 +1,915 @@
+@@ -1,47 +1,916 @@
 -#include "stdafx.h"
 -#include "WeaselTSF.h"
 -#include "CandidateList.h"
@@ -12226,9 +12290,9 @@ index 8f4d503676f507f4728ac31c64a7bda4b6046136..9932bc8ec0bfdd2e6a464a660952fb8f
 +  // without a host READ in this key's pre-engine path. System shortcuts only
 +  // retire our local geometry; they do not own an in-IME mode popup.
 +  const auto pendingCaret = _modeCaretRequest;
-+  // A trailing release can arrive before the prior mode key's READ is granted.
-+  // Keep that read only for the same live context; clear the wire position as usual.
-+  const bool keepPendingCaret = !systemShortcut && (key.mask & ibus::RELEASE_MASK) &&
++  // Another Shift tap can arrive while this field is still waiting for its caret.
++  const bool plainShift = shiftKey && !(key.mask & ibus::CONTROL_MASK);
++  const bool keepPendingCaret = !systemShortcut && (plainShift || (key.mask & ibus::RELEASE_MASK)) &&
 +      _IsCurrentModeCaret(pendingCaret) && !pendingCaret->published &&
 +      pendingCaret->binding->context.p == owner;
 +  if (keepPendingCaret) {
@@ -12278,16 +12342,17 @@ index 8f4d503676f507f4728ac31c64a7bda4b6046136..9932bc8ec0bfdd2e6a464a660952fb8f
 +        previousStatus.type != response.status.type ||
 +        previousZhungIcon != response.style.current_zhung_icon ||
 +        previousAsciiIcon != response.style.current_ascii_icon;
++    const bool needsPosition = modeChanged || (outcome.Handled() && !shiftKey);
 +    if (_status.composing) {
 +      _InvalidateModePosition(false);
-+    } else if (!systemShortcut && (modeChanged || (outcome.Handled() && !shiftKey))) {
-+      // The body is already copied. Only a changed mode or a handled ordinary
-+      // key may request fresh owned geometry. A chord's trailing Shift release
-+      // with unchanged mode does not trigger another auxiliary host READ.
-+      _RefreshIdleModePosition(owner, false);
-+    } else if (keepPendingCaret) {
-+      // A host may have granted the saved READ while this response was unread.
++    } else if (keepPendingCaret && response.commit.empty() &&
++               (plainShift || !needsPosition) && _IsCurrentModeCaret(pendingCaret)) {
++      // The position belongs to the field. The service supplies its latest mode.
 +      _PublishModePosition(pendingCaret);
++    } else if (!systemShortcut && needsPosition) {
++      _RefreshIdleModePosition(owner, false);
++    } else if (keepPendingCaret && !response.commit.empty() && _IsCurrentModeCaret(pendingCaret)) {
++      _InvalidateModePosition(false);
 +    }
 +  }
 +  return consume;
@@ -20952,7 +21017,7 @@ index bebc73a087ac2bf917b20751ed8a48a1e2fa6c45..dac6062e968309c6ff7cad4cbcec27ba
 +};
 +};  // namespace weasel
 diff --git a/include/RimeWithWeasel.h b/include/RimeWithWeasel.h
-index 6fb0a4c..facae05 100644
+index 6fb0a4cab82cba3943a0c2ea6c2bc54caa1938a9..7c2da8dcfb86ecab99f41f2af845fa0cab8ba3c2 100644
 --- a/include/RimeWithWeasel.h
 +++ b/include/RimeWithWeasel.h
 @@ -3,6 +3,9 @@
@@ -20992,7 +21057,7 @@ index 6fb0a4c..facae05 100644
    virtual void FocusIn(DWORD param, WeaselSessionId ipc_id);
    virtual void FocusOut(DWORD param, WeaselSessionId ipc_id);
    virtual void UpdateInputPosition(RECT const& rc, WeaselSessionId ipc_id);
-@@ -61,18 +75,30 @@ class RimeWithWeaselHandler : public weasel::RequestHandler {
+@@ -61,18 +75,32 @@ class RimeWithWeaselHandler : public weasel::RequestHandler {
                           const std::string& opt,
                           bool val);
    virtual void UpdateColorTheme(BOOL darkMode);
@@ -21016,16 +21081,18 @@ index 6fb0a4c..facae05 100644
 +    std::string type, value, label, option;
 +    ULONGLONG created = 0;
 +    std::uint64_t serial = 0;
++    bool awaiting_mode_caret = false;
 +  };
 +  bool _ShowMessage(weasel::Context& ctx, weasel::Status& status,
 +                    const PendingNotification& message);
 +  void _ClearNotification();
++  void _EndModeCaretWait(WeaselSessionId ipc_id, bool dismiss = true);
 +  PendingNotification _PeekNotification(RimeSessionId owner);
 +  void _ConsumeNotification(std::uint64_t serial);
    bool _Respond(WeaselSessionId ipc_id, EatLine eat);
    void _ReadClientInfo(WeaselSessionId ipc_id, LPWSTR buffer);
    void _GetCandidateInfo(weasel::CandidateInfo& cinfo, RimeContext& ctx);
-@@ -110,10 +136,10 @@ class RimeWithWeaselHandler : public weasel::RequestHandler {
+@@ -110,10 +138,10 @@ class RimeWithWeaselHandler : public weasel::RequestHandler {
                         uintptr_t session_id,
                         const char* message_type,
                         const char* message_value);

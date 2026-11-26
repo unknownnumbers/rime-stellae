@@ -1,6 +1,6 @@
 {
   "format": "stellae-bundle-inputs-v2",
-  "bundleVersion": "2026.11.27.1",
+  "bundleVersion": "2026.11.27.2",
   "frontendVersion": "0.17.4.61052",
   "frontendInstaller": {
     "url": "https://github.com/unknownnumbers/rime-stellae/releases/download/v0.17.4.61052/stellae-0.17.4.61052-installer.exe",
@@ -35,7 +35,7 @@
       "x86"
     ],
     "sourceFiles": {
-      "RimeWithWeasel/RimeWithWeasel.cpp": "5733ee14ef35d732e7deaa012bc8282b6b09a6fe26f80634e5eac7301bec4db2",
+      "RimeWithWeasel/RimeWithWeasel.cpp": "f29d67b8ebc66b7305ea997f02dd79c069807eebcbdac2cc4ab22a2a41f4fe54",
       "WeaselDeployer/Configurator.cpp": "8e3f505bc3262fb3daf41dadfc4444edb806d0916f3a94d33f189f42636a8a7e",
       "WeaselDeployer/Configurator.h": "9ba9f1fb5e2b9adb3aa32ab6f347c3bb4f30c2a34e01abf11aaacbdf2d290d5b",
       "WeaselDeployer/DictManagementDialog.cpp": "d0617730eca11bc891a52aa02d2e98dd35b9faf3145a341782044c20fd5e1227",
@@ -55,8 +55,8 @@
       "WeaselServer/WeaselTrayIcon.cpp": "e0affb183665473ede76a2ea073d0871648ab5063c2b35d9dcf311e762f455f4",
       "WeaselServer/WeaselTrayIcon.h": "47f8e592001130744c08c6d02dbc5d1b25d792ba6bd9258cbb67a091cb8bbd71",
       "WeaselTSF/Compartment.cpp": "b26ac7542825d0c0981500f1db32f5e9901baa20b59fb0bda66aca53ea300492",
-      "WeaselTSF/Composition.cpp": "bcaac3113edf27776d18c96d65b31dd2cd601214ec47871ae86a467688af668a",
-      "WeaselTSF/EditSession.cpp": "df5ba9dc26ae2229cc6082ff17e055f4df955bd50f7814495a906fa4ffa51cd3",
+      "WeaselTSF/Composition.cpp": "14ae152635bd03494b3a6730dae1ec9500920aa62585a00194c29683b30233c1",
+      "WeaselTSF/EditSession.cpp": "ea6ed02711bd25b406caa3f9c3f50441300caf7d0961f67f7e41238f65f99e24",
       "WeaselTSF/KeyEventSink.cpp": "76c6b1e62a3d274b2cc66bec36501ea2aacb6580b132cad8a5e357e43143ebed",
       "WeaselTSF/LanguageBar.cpp": "d1562a7f47461deccdccd5c2d2f9b765b4dd2b58737b89480f2342879b346eab",
       "WeaselTSF/PromptTrace.h": "d4f38820f921b37b5e7d2b72b6ff39bcf76ad99ae7a2df9e595dd0292fc16c2e",
@@ -69,7 +69,7 @@
       "WeaselUI/WeaselPanel.h": "4c6dbb6d60da072ca680277c28d5af258a12dceec23a607b969d3c27f196bc49",
       "WeaselUI/WeaselUI.cpp": "0147debd7bbf4b2a5fa8bf623063cedb7700c4b4887fe9aedb1f86fbfbbc0c80",
       "include/PipeChannel.h": "ac7b53f292d9e9f6b080d375ad25912b4c48a36686f93c734917154111851db3",
-      "include/RimeWithWeasel.h": "0eaa787719f51ec64f98a0de6d85d148cf229e247b30458080be87834d356158",
+      "include/RimeWithWeasel.h": "7517d12090777013d9c18760c4a4f643093df866d961ab5f289b1dddca0d437a",
       "include/ShiftKeySnapshotWin.h": "827ba6411731876d4d6f28a6724aae55243ed989ef93dce9a000a76d09369a9e",
       "include/StellaeIdentity.h": "665df00b74dfa51219d3d9b53b8fc749e6377ef6185bd27a750fb81aa841a2ab",
       "include/WeaselIPC.h": "dc36aa75f73b5dddc6769ad3c1b8f3082df4f9aedbeeb36a08ce49ce86856d5e",
