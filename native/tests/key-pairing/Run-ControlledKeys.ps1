@@ -117,6 +117,7 @@ try{
   Run-Probe 'truthful-key-nested' 'V18' 16
   Run-Probe 'truthful-key-repeat-space' 'V19' 34
   Run-Probe 'r2-caps-marker' 'R2' 35
+  Run-Probe 'idle-modifiers' 'IDLE-MODIFIERS' 13
 }catch{$report.Errors+=$_.Exception.Message}
 finally{
   foreach($process in @($child,$server)){try{if($process -and -not $process.HasExited){$process.Kill();$process.WaitForExit()}}catch{$report.RestoreErrors+=$_.Exception.Message}}
@@ -126,7 +127,7 @@ finally{
   foreach($path in $productFiles.Keys){try{if($null -ne $productFiles[$path]){[IO.File]::WriteAllBytes($path,$productFiles[$path])}elseif(Test-Path -LiteralPath $path){Remove-Item -LiteralPath $path}}catch{$report.RestoreErrors+=$_.Exception.Message}}
   $report.ProductOutputRestored=$report.RestoreErrors.Count -eq 0
   try{if($oldUser){Set-ItemProperty -LiteralPath $registry -Name RimeUserDir -Value $oldUser.RimeUserDir}else{Remove-ItemProperty -LiteralPath $registry -Name RimeUserDir -ErrorAction SilentlyContinue}}catch{$report.RestoreErrors+=$_.Exception.Message}
-  $report.Passed=$report.Errors.Count -eq 0 -and $report.RestoreErrors.Count -eq 0 -and $report.Probes.Count -eq 5 -and @($report.Probes|Where-Object {-not $_.Passed}).Count -eq 0
+  $report.Passed=$report.Errors.Count -eq 0 -and $report.RestoreErrors.Count -eq 0 -and $report.Probes.Count -eq 6 -and @($report.Probes|Where-Object {-not $_.Passed}).Count -eq 0
   $report|ConvertTo-Json -Depth 8|Set-Content -LiteralPath $reportPath -Encoding utf8
   Pop-Location
 }

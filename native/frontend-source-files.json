@@ -1,12 +1,12 @@
 {
   "schema": "stellae-frontend-source-files/1",
   "upstreamCommit": "9cc96e20dc71b80876b12f689bb5863c76c2a7ed",
-  "patchSha256": "1a3be906efc5800c154743f2868f17d61f3c552ecc9fb737f014cd9d9213f3bd",
+  "patchSha256": "46c84930fb998947c77cc0446d4f2af8df4e0d69b4f1a2e9e279ab0bc3494b23",
   "files": [
     {
       "path": "RimeWithWeasel/RimeWithWeasel.cpp",
-      "sha256": "67add0fcb9a5e618a5fc7c1add5013e0f0d6d043d5f312f72e364c46892b43da",
-      "bytes": 72810,
+      "sha256": "cc947d95d8b0e478f9018238411e89cb32459db98b6120f4094c290eb81b1a0b",
+      "bytes": 72330,
       "replayMatchesFrozen": true
     },
     {
@@ -17,8 +17,8 @@
     },
     {
       "path": "WeaselDeployer/Configurator.cpp",
-      "sha256": "097adc45d1289093585fe31c9d0c392279389407d02411732fc53328b5d64585",
-      "bytes": 8626,
+      "sha256": "8e3f505bc3262fb3daf41dadfc4444edb806d0916f3a94d33f189f42636a8a7e",
+      "bytes": 8570,
       "replayMatchesFrozen": true
     },
     {
@@ -173,14 +173,14 @@
     },
     {
       "path": "WeaselIPCServer/WeaselServerImpl.cpp",
-      "sha256": "517ffa04a508673c76ba57d13321d1f2e363365b1f02b43b318fb2283fd2806d",
-      "bytes": 26043,
+      "sha256": "96dd3be134ec211554374d8295cbf45904fccfe7c219bca978c7aabdb01e7dd2",
+      "bytes": 26697,
       "replayMatchesFrozen": true
     },
     {
       "path": "WeaselIPCServer/WeaselServerImpl.h",
-      "sha256": "1c6a3f395ceb9a379ff5fdd89886422da39fca39975b58e49468fc984a096196",
-      "bytes": 4413,
+      "sha256": "1a4d05d581e570b76ce1d144ef82a50e6b490afce084c7f468fbf2b49bed5d3d",
+      "bytes": 4833,
       "replayMatchesFrozen": true
     },
     {
@@ -203,8 +203,8 @@
     },
     {
       "path": "WeaselServer/WeaselServerApp.cpp",
-      "sha256": "038ec5ee93d0a9cf8deffa405e69fee4a6d84f18e06ba2b029d2b767f0af6e62",
-      "bytes": 2400,
+      "sha256": "a70384ef442cee1db4ed30a1d7bba6ea9c6292f5a308e4eaba4824ad5583a509",
+      "bytes": 2521,
       "replayMatchesFrozen": true
     },
     {
@@ -217,6 +217,18 @@
       "path": "WeaselServer/WeaselService.h",
       "sha256": "02648500700843c103cb76c666abe202921f52576f85b9098b57549d6ba2d68b",
       "bytes": 1234,
+      "replayMatchesFrozen": true
+    },
+    {
+      "path": "WeaselServer/WeaselTrayIcon.cpp",
+      "sha256": "e0affb183665473ede76a2ea073d0871648ab5063c2b35d9dcf311e762f455f4",
+      "bytes": 3849,
+      "replayMatchesFrozen": true
+    },
+    {
+      "path": "WeaselServer/WeaselTrayIcon.h",
+      "sha256": "47f8e592001130744c08c6d02dbc5d1b25d792ba6bd9258cbb67a091cb8bbd71",
+      "bytes": 2153,
       "replayMatchesFrozen": true
     },
     {
@@ -305,8 +317,8 @@
     },
     {
       "path": "WeaselTSF/EditSession.cpp",
-      "sha256": "91655df1522781c824d02cf3a1b2561f0c5dd74f033af495e77eeac59b0844d2",
-      "bytes": 41814,
+      "sha256": "df5ba9dc26ae2229cc6082ff17e055f4df955bd50f7814495a906fa4ffa51cd3",
+      "bytes": 42790,
       "replayMatchesFrozen": true
     },
     {
@@ -377,8 +389,8 @@
     },
     {
       "path": "WeaselTSF/WeaselTSF.h",
-      "sha256": "7cbeb75e98662b60d500ef64477999170f6c3102a6e3a5fc55fd43554c6ea3fb",
-      "bytes": 19332,
+      "sha256": "ceff32ae4abe1a209caa37550c0f274458182e4e6a5e065b44c61d1622470ebc",
+      "bytes": 19400,
       "replayMatchesFrozen": true
     },
     {
@@ -575,8 +587,8 @@
     },
     {
       "path": "include/WeaselIPC.h",
-      "sha256": "ff81fbbcc0a8c52e6ad0df99a8a9e39b92d88a7760dd5cdf8beaa36bb0278e16",
-      "bytes": 6297,
+      "sha256": "9aaa4c190ce587abe1543fec278b8ecb3e54bcf7c6e993bf7aea5f2ecb4238f0",
+      "bytes": 6700,
       "replayMatchesFrozen": true
     },
     {

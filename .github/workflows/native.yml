@@ -133,7 +133,9 @@ jobs:
           $release=Join-Path $env:RUNNER_TEMP 'package/release'
           $reports=@((Join-Path $env:RUNNER_TEMP 'installer-evidence/installer-result.json'),(Join-Path $env:RUNNER_TEMP 'profile-policy-evidence/win11-equivalent-policy-result.json'),(Join-Path $env:RUNNER_TEMP 'stellae/ci-logs/controlled-keys-x64.json'),(Join-Path $env:RUNNER_TEMP 'stellae/ci-logs/controlled-keys-win32.json'))
           foreach($path in $reports){$report=Get-Content -LiteralPath $path -Raw|ConvertFrom-Json;if(-not $report.Passed){throw "A required validation report failed: $path"}}
-          [ordered]@{version='0.17.4.61052';commit=$env:GITHUB_SHA;run=$env:GITHUB_RUN_ID;passed=$true;emptySchemeCallbacksPerArchitecture=36;keyRegressionsPerArchitecture=130;physicalKeyboardTested=$false;actualWindows11Tested=$false;installerAndUpgradeTested=$true}|ConvertTo-Json|Set-Content (Join-Path $release 'validation.json') -Encoding utf8
+          $emptyChecks = ($report.Probes | Where-Object Group -eq 'EMPTY').ExpectedChecks
+          $keyChecks = ($report.Probes | Where-Object Group -ne 'EMPTY' | Measure-Object ExpectedChecks -Sum).Sum
+          [ordered]@{version='0.17.4.61052';commit=$env:GITHUB_SHA;run=$env:GITHUB_RUN_ID;passed=$true;emptySchemeCallbacksPerArchitecture=$emptyChecks;keyRegressionsPerArchitecture=$keyChecks;physicalKeyboardTested=$false;actualWindows11Tested=$false;installerAndUpgradeTested=$true}|ConvertTo-Json|Set-Content (Join-Path $release 'validation.json') -Encoding utf8
           Get-ChildItem -LiteralPath $release -File|Where-Object {$_.Name -ne 'SHA256SUMS.txt'}|Sort-Object Name|ForEach-Object{(Get-FileHash -LiteralPath $_.FullName -Algorithm SHA256).Hash.ToLowerInvariant()+'  '+$_.Name}|Set-Content (Join-Path $release 'SHA256SUMS.txt') -Encoding ascii
       - name: Preserve successful release candidate
         uses: actions/upload-artifact@v4

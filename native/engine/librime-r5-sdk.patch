@@ -18,6 +18,67 @@ index ac057e8..248cb4e 100644
          end = cand->end();
          auto caret_placeholder = cand->preedit().find('\t');
          if (caret_placeholder != string::npos) {
+diff --git a/src/rime/config/build_info_plugin.cc b/src/rime/config/build_info_plugin.cc
+index ead851cd85c0a385a2fc842b212ae5c8f3fa8a44..53d765711a3b22c08c3411c624f6d77ef32ff771 100644
+--- a/src/rime/config/build_info_plugin.cc
++++ b/src/rime/config/build_info_plugin.cc
+@@ -22,13 +22,18 @@ bool BuildInfoPlugin::ReviewLinkOutput(ConfigCompiler* compiler,
+   build_info["rime_version"] = RIME_VERSION;
+ #ifndef RIME_NO_TIMESTAMP
+   auto timestamps = build_info["timestamps"];
++#endif
++  bool sources_valid = true;
+   compiler->EnumerateResources([&](an<ConfigResource> resource) {
++    const auto& file_path = resource->data->file_path();
++    if (!resource->loaded && std::filesystem::exists(file_path))
++      sources_valid = false;
++#ifndef RIME_NO_TIMESTAMP
+     if (!resource->loaded) {
+       LOG(INFO) << "resource '" << resource->resource_id << "' not loaded.";
+       timestamps[resource->resource_id] = 0;
+       return;
+     }
+-    const auto& file_path = resource->data->file_path();
+     if (file_path.empty()) {
+       LOG(WARNING) << "resource '" << resource->resource_id
+                    << "' is not persisted.";
+@@ -38,9 +43,9 @@ bool BuildInfoPlugin::ReviewLinkOutput(ConfigCompiler* compiler,
+     // TODO: store as 64-bit number to avoid the year 2038 problem
+     timestamps[resource->resource_id] =
+         (int)filesystem::to_time_t(std::filesystem::last_write_time(file_path));
+-  });
+ #endif
+-  return true;
++  });
++  return sources_valid;
+ }
+ 
+ }  // namespace rime
+diff --git a/src/rime/config/config_component.cc b/src/rime/config/config_component.cc
+index 60c1107844b8487dd3261b059e50d6dea906e281..96de20e4b090236bb3ae8d8e05f69f134c72a1e0 100644
+--- a/src/rime/config/config_component.cc
++++ b/src/rime/config/config_component.cc
+@@ -176,7 +176,8 @@ ConfigComponentBase::ConfigComponentBase(ResourceResolver* resource_resolver)
+ ConfigComponentBase::~ConfigComponentBase() {}
+ 
+ Config* ConfigComponentBase::Create(const string& file_name) {
+-  return new Config(GetConfigData(file_name));
++  auto data = GetConfigData(file_name);
++  return data ? new Config(data) : nullptr;
+ }
+ 
+ an<ConfigData> ConfigComponentBase::GetConfigData(const string& file_name) {
+@@ -246,8 +247,9 @@ an<ConfigData> ConfigBuilder::LoadConfig(ResourceResolver* resource_resolver,
+   MultiplePlugins<decltype(plugins_)> multiple_plugins(plugins_);
+   ConfigCompiler compiler(resource_resolver, &multiple_plugins);
+   auto resource = compiler.Compile(config_id);
+-  if (resource->loaded && !compiler.Link(resource)) {
++  if (!resource->loaded || !compiler.Link(resource)) {
+     LOG(ERROR) << "error building config: " << config_id;
++    return nullptr;
+   }
+   return resource->data;
+ }
 diff --git a/src/rime/context.cc b/src/rime/context.cc
 index 43f0b41..acc074d 100644
 --- a/src/rime/context.cc
@@ -52,6 +113,28 @@ index 43f0b41..acc074d 100644
  }
  
  bool Context::IsComposing() const {
+diff --git a/src/rime/lever/deployment_tasks.cc b/src/rime/lever/deployment_tasks.cc
+index 5dbb0dcab662bba3ae4c4b584f2517e744e30d9f..1d55e32653cadc3bbcd88109c289895e7e8718f2 100644
+--- a/src/rime/lever/deployment_tasks.cc
++++ b/src/rime/lever/deployment_tasks.cc
+@@ -164,7 +164,8 @@ bool WorkspaceUpdate::Run(Deployer* deployer) {
+   {
+     the<DeploymentTask> t;
+     t.reset(new ConfigFileUpdate("default.yaml", "config_version"));
+-    t->Run(deployer);
++    if (!t->Run(deployer))
++      return false;
+     // Deprecated: symbols.yaml is only used as source file
+     // t.reset(new ConfigFileUpdate("symbols.yaml", "config_version"));
+     // t->Run(deployer);
+@@ -443,6 +444,7 @@ bool ConfigFileUpdate::Run(Deployer* deployer) {
+       return false;
+     }
+     config.reset(Config::Require("config_builder")->Create(file_name_));
++    return config != nullptr;
+   }
+   return true;
+ }
 diff --git a/src/rime/preedit_spacing.h b/src/rime/preedit_spacing.h
 new file mode 100644
 index 0000000..c3fbbe9

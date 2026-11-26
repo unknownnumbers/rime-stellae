@@ -42,6 +42,8 @@ jobs:
         run: ./scripts/native/Prepare-Sources.ps1 -Variant '${{ matrix.variant }}' -Destination (Join-Path $env:RUNNER_TEMP 'runtime-source')
       - name: Compile and test the runtime engine
         run: ./scripts/native/Build-Engine.ps1 -Variant '${{ matrix.variant }}' -Architecture '${{ matrix.architecture }}' -SourcePath (Join-Path $env:RUNNER_TEMP 'runtime-source') -CacheDirectory (Join-Path $env:RUNNER_TEMP 'runtime-cache') -OutputDirectory (Join-Path $env:RUNNER_TEMP 'runtime-output')
+      - name: Test configuration deployment and recovery
+        run: ./native/tests/installer/Test-ConfigDeployment.ps1 -Engine "$env:RUNNER_TEMP/runtime-output/dist/lib/rime.dll" -OutputDirectory "$env:RUNNER_TEMP/config-deployment-test"
       - uses: actions/upload-artifact@v4
         with:
           name: bundle-runtime-${{ matrix.architecture }}
@@ -70,6 +72,9 @@ jobs:
           arch: ${{ matrix.architecture }}
       - name: Assemble pinned frontend source
         run: ./scripts/native/Prepare-Sources.ps1 -Variant stellae-61052 -Destination "$env:RUNNER_TEMP/frontend-source"
+      - name: Test tray refresh while the shell is busy
+        if: matrix.architecture == 'x64'
+        run: python native/tests/tray/Run-TrayRefreshTests.py --source-root "$env:RUNNER_TEMP/frontend-source" --output "$env:RUNNER_TEMP/tray-test"
       - name: Compile the x64 backend or x86 compatibility clients
         env:
           APPEARANCE_ARCHITECTURE: ${{ matrix.architecture }}

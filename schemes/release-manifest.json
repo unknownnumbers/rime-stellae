@@ -2824,8 +2824,8 @@
     },
     {
       "path": "scripts/build_scheme_packages.py",
-      "bytes": 14314,
-      "sha256": "2d31e5f9a5aa9bc75d50bf666a1a152cb4a1b981ddc2cd65b260682cc6891a9e"
+      "bytes": 14721,
+      "sha256": "1d0391aeafdcd065315aee11619d90b91f5ec4641924b2ab2b7b12a9393b870c"
     },
     {
       "path": "scripts/data/build_dlc_english_index.py",

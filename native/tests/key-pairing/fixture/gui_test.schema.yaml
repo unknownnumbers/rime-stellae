@@ -20,6 +20,9 @@ key_binder:
   bindings:
     - {when: always, accept: 'Release+F13', toggle: fixture_release_probe_a}
     - {when: always, accept: 'Release+F14', toggle: fixture_release_probe_b}
+    - {when: always, accept: 'Alt+Shift_R', send_sequence: 'abc{space}'}
+    - {when: always, accept: 'Alt+x', send: x}
+    - {when: always, accept: 'Control+space', toggle: ascii_mode}
 menu:
   page_size: 5
 style:

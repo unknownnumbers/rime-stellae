@@ -53,31 +53,31 @@
     {
       "id": "stellae61052",
       "path": "native/weasel/stellae-61052.patch",
-      "sha256": "1a3be906efc5800c154743f2868f17d61f3c552ecc9fb737f014cd9d9213f3bd",
+      "sha256": "46c84930fb998947c77cc0446d4f2af8df4e0d69b4f1a2e9e279ab0bc3494b23",
       "source": "weasel"
     },
     {
       "id": "coreN01",
       "path": "native/engine/librime-n01.patch",
-      "sha256": "3eaf5dcd371c497cfac298d11acf29a5e1327792057bca5aa4ffb53894f714b1",
+      "sha256": "ce08e8e9f45f94b5d0e92c82263717eacba539343f13919672031ed68ca4b7dd",
       "source": "librime"
     },
     {
       "id": "luaN01",
       "path": "native/engine/librime-lua-n01.patch",
-      "sha256": "a1a39f91974554168e4c13ebd2e8122fe62c0243c119589d7d6379504a00812a",
+      "sha256": "8dcb36d39ae34f8c68656ddd23b0cc2afc613d9020dbee281464728357605ba8",
       "source": "librimeLua"
     },
     {
       "id": "coreR5",
       "path": "native/engine/librime-r5-sdk.patch",
-      "sha256": "86656d2577009b0cef9e7d3335cd1e8ca8655821f97bcf060a56411c1b2eb293",
+      "sha256": "e6d48014da29c092e1b387ac75d66a495c61268117c4492ce76c1e137e38177d",
       "source": "librime"
     },
     {
       "id": "luaR5",
       "path": "native/engine/librime-lua-r5-sdk.patch",
-      "sha256": "2199fe11317660f41bf77d416d97b79a3127fdf683788316f96e022fe9610a15",
+      "sha256": "6d9268b79c3f5c67ef93bb09c65a9cf8f072eb49d396231c7ac649d813a1458d",
       "source": "librimeLua"
     }
   ],
@@ -257,7 +257,7 @@
     },
     {
       "path": "native/tests/key-pairing/ControlledReadGrant.inc",
-      "sha256": "0d95e50844a8f251677349dee7e70f97d5e043b49e8c16f532cd595e0789ff6c",
+      "sha256": "2bd32dd8ea657d83beafc3d226300bffffe6f9b1e29342fc0451c278a0288881",
       "scope": "Fixed synthetic native and installer regression fixture"
     },
     {
@@ -267,22 +267,22 @@
     },
     {
       "path": "native/tests/key-pairing/Invoke-KeyPairingTests.ps1",
-      "sha256": "b3ecfed7e168b254c195bf0d01aed2a718b4c5489e77ae80aaf00f9c28bce8ed",
+      "sha256": "8c0b2e33a00c98a2796ee988d7ef34f185bd9203b4158378d517f6e709bb6a52",
       "scope": "Fixed synthetic native and installer regression fixture"
     },
     {
       "path": "native/tests/key-pairing/ProductHostFixture.h",
-      "sha256": "b44f001a7c1442e429003434b839200e3bf7dd6a4695f22be6ca6f6527c0a284",
+      "sha256": "8802a3f36edf8c03d0a653fe3db77af00bd676a42c69dc02dccbefa077952188",
       "scope": "Fixed synthetic native and installer regression fixture"
     },
     {
       "path": "native/tests/key-pairing/ResponseOwnerProductTests.cpp",
-      "sha256": "2430fa691f94333879cc791cd9ceb57f73c2911c9befb498b2ecc68c02267b61",
+      "sha256": "09943de64cb6d0a65bba266db485f9d4af2ce260acaaf8a5d7c0c244bd0ecb99",
       "scope": "Fixed synthetic native and installer regression fixture"
     },
     {
       "path": "native/tests/key-pairing/Run-ControlledKeys.ps1",
-      "sha256": "1c066fbc8490ebba4e72e9f742670a0e0c0b435d6901bc2057aa315bb168ff2d",
+      "sha256": "dc8e5bbf0029c07a7362a7145fd40088568903eee652d0368be45eee335df5e7",
       "scope": "Fixed synthetic native and installer regression fixture"
     },
     {
@@ -302,7 +302,7 @@
     },
     {
       "path": "native/tests/key-pairing/fixture/gui_test.schema.yaml",
-      "sha256": "fa0ca63077994110547b422967b7ae50906c93632db494ae02e97acf6e16cfe4",
+      "sha256": "2df5df6dd83ee6411b351de9bc6404005a89b11604919c621577b22f2066dcfa",
       "scope": "Fixed synthetic native and installer regression fixture"
     },
     {

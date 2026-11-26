@@ -1632,6 +1632,15 @@
       ]
     },
     {
+      "path": "native/tests/installer/Test-ConfigDeployment.ps1",
+      "source_ids": [
+        "project-code"
+      ],
+      "references": [
+        "LICENSE"
+      ]
+    },
+    {
       "path": "native/tests/installer/Test-DlcNamespace.ps1",
       "source_ids": [
         "project-code"
@@ -1975,6 +1984,24 @@
     },
     {
       "path": "native/tests/shift/ShiftKeySnapshotTests.cpp",
+      "source_ids": [
+        "project-code"
+      ],
+      "references": [
+        "LICENSE"
+      ]
+    },
+    {
+      "path": "native/tests/tray/Run-TrayRefreshTests.py",
+      "source_ids": [
+        "project-code"
+      ],
+      "references": [
+        "LICENSE"
+      ]
+    },
+    {
+      "path": "native/tests/tray/TrayRefreshTests.cpp",
       "source_ids": [
         "project-code"
       ],

@@ -521,6 +521,7 @@ class Context : public ITfContext, public ITfInsertAtSelection, public ITfContex
     failNextRequest = failNextSession = S_OK;
   }
   bool selectionProbeRead = false;
+  unsigned synchronousReads = 0;
   bool synchronous = true;
   bool viewAvailable = true;
   HRESULT failNextRequest = S_OK, failNextSession = S_OK;

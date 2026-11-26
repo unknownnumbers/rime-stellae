@@ -1,5 +1,5 @@
 diff --git a/RimeWithWeasel/RimeWithWeasel.cpp b/RimeWithWeasel/RimeWithWeasel.cpp
-index 3f4e59d9f410c79ad605460c5492314d71bdfb65..5ffdbfa2283dbedf3b1ab71931336f54f25db91f 100644
+index 3f4e59d9f410c79ad605460c5492314d71bdfb65..3d66f4e4c580de43e4b7214c503881975ab9c7a5 100644
 --- a/RimeWithWeasel/RimeWithWeasel.cpp
 +++ b/RimeWithWeasel/RimeWithWeasel.cpp
 @@ -1,4 +1,4 @@
@@ -107,7 +107,30 @@ index 3f4e59d9f410c79ad605460c5492314d71bdfb65..5ffdbfa2283dbedf3b1ab71931336f54
    std::string dir = WeaselLogPath().string();
    if (!fs::exists(fs::path(dir)))
      return;
-@@ -137,7 +220,7 @@ void RimeWithWeaselHandler::_Setup() {
+@@ -110,22 +193,6 @@ bool _UpdateUIStyleColor(RimeConfig* config,
+                          std::string color = "");
+ void _LoadAppOptions(RimeConfig* config, AppOptionsByAppName& app_options);
+ 
+-void _RefreshTrayIcon(const RimeSessionId session_id,
+-                      const std::function<void()> _UpdateUICallback) {
+-  // Dangerous, don't touch
+-  static char app_name[256] = {0};
+-  auto ret = rime_api->get_property(session_id, "client_app", app_name,
+-                                    sizeof(app_name) - 1);
+-  if (!ret || u8tow(app_name) == std::wstring(L"explorer.exe"))
+-    boost::thread th([=]() {
+-      ::Sleep(100);
+-      if (_UpdateUICallback)
+-        _UpdateUICallback();
+-    });
+-  else if (_UpdateUICallback)
+-    _UpdateUICallback();
+-}
+-
+ void RimeWithWeaselHandler::_Setup() {
+   RIME_STRUCT(RimeTraits, weasel_traits);
+   std::string shared_dir = wtou8(WeaselSharedDataPath().wstring());
+@@ -137,7 +204,7 @@ void RimeWithWeaselHandler::_Setup() {
    weasel_traits.distribution_name = distribution_name.c_str();
    weasel_traits.distribution_code_name = WEASEL_CODE_NAME;
    weasel_traits.distribution_version = WEASEL_VERSION;
@@ -116,7 +139,7 @@ index 3f4e59d9f410c79ad605460c5492314d71bdfb65..5ffdbfa2283dbedf3b1ab71931336f54
    std::string log_dir = WeaselLogPath().u8string();
    weasel_traits.log_dir = log_dir.c_str();
    rime_api->setup(&weasel_traits);
-@@ -160,7 +243,7 @@ void RimeWithWeaselHandler::Initialize() {
+@@ -160,7 +227,7 @@ void RimeWithWeaselHandler::Initialize() {
    CleanOldLogs();
  
    RimeConfig config = {NULL};
@@ -125,7 +148,7 @@ index 3f4e59d9f410c79ad605460c5492314d71bdfb65..5ffdbfa2283dbedf3b1ab71931336f54
      if (m_ui) {
        _UpdateUIStyle(&config, m_ui, true);
        _UpdateShowNotifications(&config, true);
-@@ -189,6 +272,8 @@ void RimeWithWeaselHandler::Initialize() {
+@@ -189,6 +256,8 @@ void RimeWithWeaselHandler::Initialize() {
  }
  
  void RimeWithWeaselHandler::Finalize() {
@@ -134,7 +157,7 @@ index 3f4e59d9f410c79ad605460c5492314d71bdfb65..5ffdbfa2283dbedf3b1ab71931336f54
    m_active_session = 0;
    m_disabled = true;
    m_session_status_map.clear();
-@@ -235,59 +320,62 @@ DWORD RimeWithWeaselHandler::AddSession(LPWSTR buffer, EatLine eat) {
+@@ -235,59 +304,62 @@ DWORD RimeWithWeaselHandler::AddSession(LPWSTR buffer, EatLine eat) {
    RIME_STRUCT(RimeStatus, status);
    if (rime_api->get_status(session_id, &status)) {
      std::string schema_id = status.schema_id;
@@ -222,7 +245,7 @@ index 3f4e59d9f410c79ad605460c5492314d71bdfb65..5ffdbfa2283dbedf3b1ab71931336f54
  
    for (auto& pair : m_session_status_map) {
      RIME_STRUCT(RimeStatus, status);
-@@ -300,7 +388,12 @@ void RimeWithWeaselHandler::UpdateColorTheme(BOOL darkMode) {
+@@ -300,7 +372,12 @@ void RimeWithWeaselHandler::UpdateColorTheme(BOOL darkMode) {
        rime_api->free_status(&status);
      }
    }
@@ -236,7 +259,7 @@ index 3f4e59d9f410c79ad605460c5492314d71bdfb65..5ffdbfa2283dbedf3b1ab71931336f54
  }
  
  BOOL RimeWithWeaselHandler::ProcessKeyEvent(KeyEvent keyEvent,
-@@ -310,11 +403,45 @@ BOOL RimeWithWeaselHandler::ProcessKeyEvent(KeyEvent keyEvent,
+@@ -310,11 +387,45 @@ BOOL RimeWithWeaselHandler::ProcessKeyEvent(KeyEvent keyEvent,
               << ", mask = " << keyEvent.mask << ", ipc_id = " << ipc_id;
    if (m_disabled)
      return FALSE;
@@ -285,7 +308,7 @@ index 3f4e59d9f410c79ad605460c5492314d71bdfb65..5ffdbfa2283dbedf3b1ab71931336f54
      bool isVimBackInCommandMode =
          (keyEvent.keycode == ibus::Keycode::Escape) ||
          ((keyEvent.mask & (1 << 2)) &&
-@@ -329,7 +456,6 @@ BOOL RimeWithWeaselHandler::ProcessKeyEvent(KeyEvent keyEvent,
+@@ -329,7 +440,6 @@ BOOL RimeWithWeaselHandler::ProcessKeyEvent(KeyEvent keyEvent,
    }
    _Respond(ipc_id, eat);
    _UpdateUI(ipc_id);
@@ -293,7 +316,7 @@ index 3f4e59d9f410c79ad605460c5492314d71bdfb65..5ffdbfa2283dbedf3b1ab71931336f54
    return (BOOL)handled;
  }
  
-@@ -339,7 +465,6 @@ void RimeWithWeaselHandler::CommitComposition(WeaselSessionId ipc_id) {
+@@ -339,7 +449,6 @@ void RimeWithWeaselHandler::CommitComposition(WeaselSessionId ipc_id) {
      return;
    rime_api->commit_composition(to_session_id(ipc_id));
    _UpdateUI(ipc_id);
@@ -301,7 +324,7 @@ index 3f4e59d9f410c79ad605460c5492314d71bdfb65..5ffdbfa2283dbedf3b1ab71931336f54
  }
  
  void RimeWithWeaselHandler::ClearComposition(WeaselSessionId ipc_id) {
-@@ -348,7 +473,6 @@ void RimeWithWeaselHandler::ClearComposition(WeaselSessionId ipc_id) {
+@@ -348,7 +457,6 @@ void RimeWithWeaselHandler::ClearComposition(WeaselSessionId ipc_id) {
      return;
    rime_api->clear_composition(to_session_id(ipc_id));
    _UpdateUI(ipc_id);
@@ -309,7 +332,7 @@ index 3f4e59d9f410c79ad605460c5492314d71bdfb65..5ffdbfa2283dbedf3b1ab71931336f54
  }
  
  void RimeWithWeaselHandler::SelectCandidateOnCurrentPage(
-@@ -385,17 +509,60 @@ bool RimeWithWeaselHandler::ChangePage(bool backward,
+@@ -385,17 +493,60 @@ bool RimeWithWeaselHandler::ChangePage(bool backward,
    return res;
  }
  
@@ -372,7 +395,7 @@ index 3f4e59d9f410c79ad605460c5492314d71bdfb65..5ffdbfa2283dbedf3b1ab71931336f54
    if (m_ui)
      m_ui->Hide();
    m_active_session = 0;
-@@ -406,20 +573,50 @@ void RimeWithWeaselHandler::UpdateInputPosition(RECT const& rc,
+@@ -406,20 +557,50 @@ void RimeWithWeaselHandler::UpdateInputPosition(RECT const& rc,
    DLOG(INFO) << "Update input position: (" << rc.left << ", " << rc.top
               << "), ipc_id = " << ipc_id
               << ", m_active_session = " << m_active_session;
@@ -431,7 +454,7 @@ index 3f4e59d9f410c79ad605460c5492314d71bdfb65..5ffdbfa2283dbedf3b1ab71931336f54
  
  void RimeWithWeaselHandler::OnNotify(void* context_object,
                                       uintptr_t session_id,
-@@ -430,19 +627,35 @@ void RimeWithWeaselHandler::OnNotify(void* context_object,
+@@ -430,19 +611,35 @@ void RimeWithWeaselHandler::OnNotify(void* context_object,
        reinterpret_cast<RimeWithWeaselHandler*>(context_object);
    if (!self || !message_type || !message_value)
      return;
@@ -471,7 +494,7 @@ index 3f4e59d9f410c79ad605460c5492314d71bdfb65..5ffdbfa2283dbedf3b1ab71931336f54
  }
  
  void RimeWithWeaselHandler::_ReadClientInfo(WeaselSessionId ipc_id,
-@@ -537,17 +750,14 @@ void RimeWithWeaselHandler::EndMaintenance() {
+@@ -537,16 +734,16 @@ void RimeWithWeaselHandler::EndMaintenance() {
  void RimeWithWeaselHandler::SetOption(WeaselSessionId ipc_id,
                                        const std::string& opt,
                                        bool val) {
@@ -487,15 +510,16 @@ index 3f4e59d9f410c79ad605460c5492314d71bdfb65..5ffdbfa2283dbedf3b1ab71931336f54
 +      rime_api->set_option(pair.second.session_id, "ascii_mode", val);
 +      pair.second.status.is_ascii_mode = val;
      }
--  } else {
++    _UpdateUI(m_active_session);
+   } else {
 -    rime_api->set_option(to_session_id(ipc_id), opt.c_str(), val);
-+    return;
++    const auto target = ipc_id ? ipc_id : m_active_session;
++    rime_api->set_option(to_session_id(target), opt.c_str(), val);
++    _UpdateUI(target);
    }
-+  rime_api->set_option(to_session_id(ipc_id ? ipc_id : m_active_session), opt.c_str(), val);
  }
  
- void RimeWithWeaselHandler::OnUpdateUI(std::function<void()> const& cb) {
-@@ -555,7 +765,7 @@ void RimeWithWeaselHandler::OnUpdateUI(std::function<void()> const& cb) {
+@@ -555,7 +752,7 @@ void RimeWithWeaselHandler::OnUpdateUI(std::function<void()> const& cb) {
  }
  
  bool RimeWithWeaselHandler::_IsDeployerRunning() {
@@ -504,7 +528,7 @@ index 3f4e59d9f410c79ad605460c5492314d71bdfb65..5ffdbfa2283dbedf3b1ab71931336f54
    bool deployer_detected = hMutex && GetLastError() == ERROR_ALREADY_EXISTS;
    if (hMutex) {
      CloseHandle(hMutex);
-@@ -563,14 +773,30 @@ bool RimeWithWeaselHandler::_IsDeployerRunning() {
+@@ -563,14 +760,30 @@ bool RimeWithWeaselHandler::_IsDeployerRunning() {
    return deployer_detected;
  }
  
@@ -538,7 +562,7 @@ index 3f4e59d9f410c79ad605460c5492314d71bdfb65..5ffdbfa2283dbedf3b1ab71931336f54
    RimeSessionId session_id = to_session_id(ipc_id);
    bool is_tsf = _IsSessionTSF(session_id);
  
-@@ -578,12 +804,16 @@ void RimeWithWeaselHandler::_UpdateUI(WeaselSessionId ipc_id) {
+@@ -578,12 +791,16 @@ void RimeWithWeaselHandler::_UpdateUI(WeaselSessionId ipc_id) {
      weasel_status.disabled = m_disabled;
  
    _GetStatus(weasel_status, ipc_id, weasel_context);
@@ -555,7 +579,7 @@ index 3f4e59d9f410c79ad605460c5492314d71bdfb65..5ffdbfa2283dbedf3b1ab71931336f54
    if (rime_api->get_option(session_id, "inline_preedit"))
      session_status.style.client_caps |= INLINE_PREEDIT_CAPABLE;
    else
-@@ -592,17 +822,22 @@ void RimeWithWeaselHandler::_UpdateUI(WeaselSessionId ipc_id) {
+@@ -592,17 +809,23 @@ void RimeWithWeaselHandler::_UpdateUI(WeaselSessionId ipc_id) {
    if (weasel_status.composing && !is_tsf) {
      m_ui->Update(weasel_context, weasel_status);
      m_ui->Show();
@@ -569,10 +593,12 @@ index 3f4e59d9f410c79ad605460c5492314d71bdfb65..5ffdbfa2283dbedf3b1ab71931336f54
 +    m_ui->Hide();
    }
  
+-  _RefreshTrayIcon(session_id, _UpdateUICallback);
 +  // Silent focus refreshes and deferred tips still publish the actual mode
 +  // to the tray callback. This does not show or restart the floating window.
 +  m_ui->status() = weasel_status;
-   _RefreshTrayIcon(session_id, _UpdateUICallback);
++  if (_UpdateUICallback)
++    _UpdateUICallback();
  
 -  m_message_type.clear();
 -  m_message_value.clear();
@@ -583,7 +609,7 @@ index 3f4e59d9f410c79ad605460c5492314d71bdfb65..5ffdbfa2283dbedf3b1ab71931336f54
  }
  
  void RimeWithWeaselHandler::_LoadSchemaSpecificSettings(
-@@ -613,11 +848,16 @@ void RimeWithWeaselHandler::_LoadSchemaSpecificSettings(
+@@ -613,11 +836,16 @@ void RimeWithWeaselHandler::_LoadSchemaSpecificSettings(
    RimeConfig config;
    if (!rime_api->schema_open(schema_id.c_str(), &config))
      return;
@@ -604,7 +630,7 @@ index 3f4e59d9f410c79ad605460c5492314d71bdfb65..5ffdbfa2283dbedf3b1ab71931336f54
    UIStyle& style = session_status.style;
    // load schema color style config
    const int BUF_SIZE = 255;
-@@ -631,7 +871,7 @@ void RimeWithWeaselHandler::_LoadSchemaSpecificSettings(
+@@ -631,7 +859,7 @@ void RimeWithWeaselHandler::_LoadSchemaSpecificSettings(
        rime_api->config_end(&preset);
      } else {
        RimeConfig weaselconfig;
@@ -613,7 +639,7 @@ index 3f4e59d9f410c79ad605460c5492314d71bdfb65..5ffdbfa2283dbedf3b1ab71931336f54
          _UpdateUIStyleColor(&weaselconfig, style, color_name);
          rime_api->config_close(&weaselconfig);
        }
-@@ -643,31 +883,79 @@ void RimeWithWeaselHandler::_LoadSchemaSpecificSettings(
+@@ -643,31 +871,79 @@ void RimeWithWeaselHandler::_LoadSchemaSpecificSettings(
      update_color_scheme();
    // load schema icon start
    {
@@ -714,7 +740,7 @@ index 3f4e59d9f410c79ad605460c5492314d71bdfb65..5ffdbfa2283dbedf3b1ab71931336f54
  }
  
  void RimeWithWeaselHandler::_LoadAppInlinePreeditSet(WeaselSessionId ipc_id,
-@@ -678,9 +966,9 @@ void RimeWithWeaselHandler::_LoadAppInlinePreeditSet(WeaselSessionId ipc_id,
+@@ -678,9 +954,9 @@ void RimeWithWeaselHandler::_LoadAppInlinePreeditSet(WeaselSessionId ipc_id,
    rime_api->get_property(session_id, "client_app", _app_name,
                           sizeof(_app_name) - 1);
    std::string app_name(_app_name);
@@ -726,7 +752,7 @@ index 3f4e59d9f410c79ad605460c5492314d71bdfb65..5ffdbfa2283dbedf3b1ab71931336f54
    bool inline_preedit = session_status.style.inline_preedit;
    bool found = false;
    if (!app_name.empty()) {
-@@ -720,54 +1008,55 @@ void RimeWithWeaselHandler::_LoadAppInlinePreeditSet(WeaselSessionId ipc_id,
+@@ -720,54 +996,55 @@ void RimeWithWeaselHandler::_LoadAppInlinePreeditSet(WeaselSessionId ipc_id,
      _UpdateInlinePreeditStatus(ipc_id);
  }
  
@@ -798,7 +824,7 @@ index 3f4e59d9f410c79ad605460c5492314d71bdfb65..5ffdbfa2283dbedf3b1ab71931336f54
      m_ui->Update(ctx, status);
      if (m_show_notifications_time)
        m_ui->ShowWithTimeout(m_show_notifications_time);
-@@ -785,6 +1074,7 @@ inline std::string _GetLabelText(const std::vector<Text>& labels,
+@@ -785,6 +1062,7 @@ inline std::string _GetLabelText(const std::vector<Text>& labels,
  }
  
  bool RimeWithWeaselHandler::_Respond(WeaselSessionId ipc_id, EatLine eat) {
@@ -806,7 +832,7 @@ index 3f4e59d9f410c79ad605460c5492314d71bdfb65..5ffdbfa2283dbedf3b1ab71931336f54
    std::set<std::string> actions;
    std::list<std::string> messages;
  
-@@ -803,17 +1093,7 @@ bool RimeWithWeaselHandler::_Respond(WeaselSessionId ipc_id, EatLine eat) {
+@@ -803,17 +1081,7 @@ bool RimeWithWeaselHandler::_Respond(WeaselSessionId ipc_id, EatLine eat) {
    RIME_STRUCT(RimeStatus, status);
    if (rime_api->get_status(session_id, &status)) {
      is_composing = !!status.is_composing;
@@ -825,7 +851,7 @@ index 3f4e59d9f410c79ad605460c5492314d71bdfb65..5ffdbfa2283dbedf3b1ab71931336f54
      if (m_global_ascii_mode &&
          (session_status.status.is_ascii_mode != status.is_ascii_mode)) {
        for (auto& pair : m_session_status_map) {
-@@ -830,6 +1110,8 @@ bool RimeWithWeaselHandler::_Respond(WeaselSessionId ipc_id, EatLine eat) {
+@@ -830,6 +1098,8 @@ bool RimeWithWeaselHandler::_Respond(WeaselSessionId ipc_id, EatLine eat) {
    if (rime_api->get_context(session_id, &ctx)) {
      if (is_composing) {
        actions.insert("ctx");
@@ -834,7 +860,7 @@ index 3f4e59d9f410c79ad605460c5492314d71bdfb65..5ffdbfa2283dbedf3b1ab71931336f54
        switch (session_status.style.preedit_type) {
          case UIStyle::PREVIEW:
            if (ctx.commit_text_preview != NULL) {
-@@ -919,40 +1201,10 @@ bool RimeWithWeaselHandler::_Respond(WeaselSessionId ipc_id, EatLine eat) {
+@@ -919,40 +1189,10 @@ bool RimeWithWeaselHandler::_Respond(WeaselSessionId ipc_id, EatLine eat) {
      rime_api->free_context(&ctx);
    }
  
@@ -879,7 +905,7 @@ index 3f4e59d9f410c79ad605460c5492314d71bdfb65..5ffdbfa2283dbedf3b1ab71931336f54
  }
  
  static inline COLORREF blend_colors(COLORREF fcolor, COLORREF bcolor) {
-@@ -1427,9 +1679,10 @@ void RimeWithWeaselHandler::_GetStatus(Status& stat,
+@@ -1427,9 +1667,10 @@ void RimeWithWeaselHandler::_GetStatus(Status& stat,
      stat.composing = !!status.is_composing;
      stat.disabled = !!status.is_disabled;
      stat.full_shape = !!status.is_full_shape;
@@ -892,7 +918,7 @@ index 3f4e59d9f410c79ad605460c5492314d71bdfb65..5ffdbfa2283dbedf3b1ab71931336f54
        if (schema_id != ".default") {  // don't load for schema select menu
          bool inline_preedit = session_status.style.inline_preedit;
          _LoadSchemaSpecificSettings(ipc_id, schema_id);
-@@ -1437,15 +1690,10 @@ void RimeWithWeaselHandler::_GetStatus(Status& stat,
+@@ -1437,15 +1678,10 @@ void RimeWithWeaselHandler::_GetStatus(Status& stat,
          if (session_status.style.inline_preedit != inline_preedit)
            // in case of inline_preedit set in schema
            _UpdateInlinePreeditStatus(ipc_id);
@@ -912,7 +938,7 @@ index 3f4e59d9f410c79ad605460c5492314d71bdfb65..5ffdbfa2283dbedf3b1ab71931336f54
        }
      }
      rime_api->free_status(&status);
-@@ -1454,10 +1702,12 @@ void RimeWithWeaselHandler::_GetStatus(Status& stat,
+@@ -1454,10 +1690,12 @@ void RimeWithWeaselHandler::_GetStatus(Status& stat,
  
  void RimeWithWeaselHandler::_GetContext(Context& weasel_context,
                                          RimeSessionId session_id) {
@@ -948,7 +974,7 @@ index 9a07343..76c3f16 100644
  }
  
 diff --git a/WeaselDeployer/Configurator.cpp b/WeaselDeployer/Configurator.cpp
-index 15023226746b715a55935d8d043762348b3acc42..11cda807776c3c71b4891e729c0d31b99b5deabe 100644
+index 15023226746b715a55935d8d043762348b3acc42..55308d7b93a724fe0c44205ff6b9d5836a794c58 100644
 --- a/WeaselDeployer/Configurator.cpp
 +++ b/WeaselDeployer/Configurator.cpp
 @@ -1,4 +1,5 @@
@@ -1028,7 +1054,7 @@ index 15023226746b715a55935d8d043762348b3acc42..11cda807776c3c71b4891e729c0d31b9
      return 1;
    }
    if (GetLastError() == ERROR_ALREADY_EXISTS) {
-@@ -134,7 +146,7 @@ int Configurator::UpdateWorkspace(bool report_errors) {
+@@ -134,17 +146,13 @@ int Configurator::UpdateWorkspace(bool report_errors) {
  
    weasel::Client client;
    if (client.Connect()) {
@@ -1037,19 +1063,27 @@ index 15023226746b715a55935d8d043762348b3acc42..11cda807776c3c71b4891e729c0d31b9
      client.StartMaintenance();
    }
  
-@@ -143,7 +155,7 @@ int Configurator::UpdateWorkspace(bool report_errors) {
-     // initialize default config, preset schemas
-     rime->deploy();
-     // initialize weasel config
+-  {
+-    RimeApi* rime = rime_get_api();
+-    // initialize default config, preset schemas
+-    rime->deploy();
+-    // initialize weasel config
 -    rime->deploy_config_file("weasel.yaml", "config_version");
-+    rime->deploy_config_file("stellae.yaml", "config_version");
-   }
+-  }
++  RimeApi* rime = rime_get_api();
++  const bool deployed =
++      rime->deploy() && rime->deploy_config_file("stellae.yaml", "config_version");
  
    CloseHandle(hMutex);  // should be closed before resuming service.
-@@ -155,10 +167,30 @@ int Configurator::UpdateWorkspace(bool report_errors) {
-   return 0;
- }
  
+@@ -152,13 +160,33 @@ int Configurator::UpdateWorkspace(bool report_errors) {
+     LOG(INFO) << "Resuming service.";
+     client.EndMaintenance();
+   }
+-  return 0;
++  return deployed ? 0 : 1;
++}
++
 +int Configurator::UpdateAppearance() {
 +  HANDLE mutex = CreateMutex(NULL, TRUE, STELLAE_DEPLOYER_MUTEX);
 +  if (!mutex)
@@ -1068,8 +1102,8 @@ index 15023226746b715a55935d8d043762348b3acc42..11cda807776c3c71b4891e729c0d31b9
 +  if (!client.Connect())
 +    return FindWindow(WEASEL_IPC_WINDOW, WEASEL_IPC_WINDOW) ? 2 : 0;
 +  return client.ReloadAppearance() ? 0 : 2;
-+}
-+
+ }
+ 
  int Configurator::DictManagement() {
 -  HANDLE hMutex = CreateMutex(NULL, TRUE, L"WeaselDeployerMutex");
 +  HANDLE hMutex = CreateMutex(NULL, TRUE, STELLAE_DEPLOYER_MUTEX);
@@ -1079,7 +1113,7 @@ index 15023226746b715a55935d8d043762348b3acc42..11cda807776c3c71b4891e729c0d31b9
      return 1;
    }
    if (GetLastError() == ERROR_ALREADY_EXISTS) {
-@@ -173,7 +205,7 @@ int Configurator::DictManagement() {
+@@ -173,7 +201,7 @@ int Configurator::DictManagement() {
  
    weasel::Client client;
    if (client.Connect()) {
@@ -1088,7 +1122,7 @@ index 15023226746b715a55935d8d043762348b3acc42..11cda807776c3c71b4891e729c0d31b9
      client.StartMaintenance();
    }
  
-@@ -196,9 +228,9 @@ int Configurator::DictManagement() {
+@@ -196,9 +224,9 @@ int Configurator::DictManagement() {
  }
  
  int Configurator::SyncUserData() {
@@ -1100,7 +1134,7 @@ index 15023226746b715a55935d8d043762348b3acc42..11cda807776c3c71b4891e729c0d31b9
      return 1;
    }
    if (GetLastError() == ERROR_ALREADY_EXISTS) {
-@@ -213,7 +245,7 @@ int Configurator::SyncUserData() {
+@@ -213,7 +241,7 @@ int Configurator::SyncUserData() {
  
    weasel::Client client;
    if (client.Connect()) {
@@ -4320,7 +4354,7 @@ index 7602792..c0091c6 100644
    bool _Connected() const { return channel.Connected(); }
    bool _Active() const { return channel.Connected() && session_id != 0; }
 diff --git a/WeaselIPCServer/WeaselServerImpl.cpp b/WeaselIPCServer/WeaselServerImpl.cpp
-index 11225c4..e6b36df 100644
+index 11225c445de8cb3c8f10810cc988cbf33bfe7462..f59634e93249a4d7cea7cf02d5b8ecb0ce7d6b93 100644
 --- a/WeaselIPCServer/WeaselServerImpl.cpp
 +++ b/WeaselIPCServer/WeaselServerImpl.cpp
 @@ -1,26 +1,67 @@
@@ -4477,7 +4511,27 @@ index 11225c4..e6b36df 100644
    UINT uID = LOWORD(wParam);
    switch (uID) {
      case ID_WEASELTRAY_ENABLE_ASCII:
-@@ -140,7 +204,7 @@ DWORD ServerImpl::OnCommand(WEASEL_IPC_COMMAND uMsg,
+@@ -131,6 +195,19 @@ LRESULT ServerImpl::OnCommand(UINT uMsg,
+   return 0;
+ }
+ 
++LRESULT ServerImpl::OnServiceNotifyMessage(UINT uMsg,
++                                           WPARAM wParam,
++                                           LPARAM lParam,
++                                           BOOL& bHandled) {
++  // Runs on the server message thread, NOT on a pipe worker thread and
++  // without holding g_api_mutex, so that Shell_NotifyIcon inside the tray
++  // update can never deadlock against the taskbar UI thread.
++  if (m_trayRefreshCallback) {
++    m_trayRefreshCallback();
++  }
++  return 0;
++}
++
+ DWORD ServerImpl::OnCommand(WEASEL_IPC_COMMAND uMsg,
+                             DWORD wParam,
+                             DWORD lParam) {
+@@ -140,7 +217,7 @@ DWORD ServerImpl::OnCommand(WEASEL_IPC_COMMAND uMsg,
  }
  
  int ServerImpl::Start() {
@@ -4486,7 +4540,7 @@ index 11225c4..e6b36df 100644
    instanceName += getUsername();
    HANDLE hMutexOneInstance = ::CreateMutex(NULL, FALSE, instanceName.c_str());
    bool areYouOK = (::GetLastError() == ERROR_ALREADY_EXISTS ||
-@@ -171,17 +235,30 @@ int ServerImpl::Run() {
+@@ -171,17 +248,30 @@ int ServerImpl::Run() {
    // auto handler = boost::bind(&ServerImpl::HandlePipeMessage, this);
    // auto listener = boost::bind(&PipeServer::Listen, channel.get(), handler);
    //
@@ -4521,7 +4575,7 @@ index 11225c4..e6b36df 100644
    return nRet;
  }
  
-@@ -191,6 +268,16 @@ DWORD ServerImpl::OnEcho(WEASEL_IPC_COMMAND uMsg, DWORD wParam, DWORD lParam) {
+@@ -191,6 +281,16 @@ DWORD ServerImpl::OnEcho(WEASEL_IPC_COMMAND uMsg, DWORD wParam, DWORD lParam) {
    return m_pRequestHandler->FindSession(lParam);
  }
  
@@ -4538,7 +4592,7 @@ index 11225c4..e6b36df 100644
  DWORD ServerImpl::OnStartSession(WEASEL_IPC_COMMAND uMsg,
                                   DWORD wParam,
                                   DWORD lParam) {
-@@ -214,7 +301,8 @@ DWORD ServerImpl::OnEndSession(WEASEL_IPC_COMMAND uMsg,
+@@ -214,7 +314,8 @@ DWORD ServerImpl::OnEndSession(WEASEL_IPC_COMMAND uMsg,
  
  DWORD ServerImpl::OnKeyEvent(WEASEL_IPC_COMMAND uMsg,
                               DWORD wParam,
@@ -4548,7 +4602,7 @@ index 11225c4..e6b36df 100644
    if (!m_pRequestHandler /* || !m_pSharedMemory*/)
      return 0;
  
-@@ -222,7 +310,11 @@ DWORD ServerImpl::OnKeyEvent(WEASEL_IPC_COMMAND uMsg,
+@@ -222,7 +323,11 @@ DWORD ServerImpl::OnKeyEvent(WEASEL_IPC_COMMAND uMsg,
      *channel << msg;
      return true;
    };
@@ -4561,7 +4615,7 @@ index 11225c4..e6b36df 100644
  }
  
  DWORD ServerImpl::OnShutdownServer(WEASEL_IPC_COMMAND uMsg,
-@@ -237,8 +329,9 @@ DWORD ServerImpl::OnFocusIn(WEASEL_IPC_COMMAND uMsg,
+@@ -237,8 +342,9 @@ DWORD ServerImpl::OnFocusIn(WEASEL_IPC_COMMAND uMsg,
                              DWORD lParam) {
    if (!m_pRequestHandler)
      return 0;
@@ -4573,7 +4627,7 @@ index 11225c4..e6b36df 100644
  }
  
  DWORD ServerImpl::OnFocusOut(WEASEL_IPC_COMMAND uMsg,
-@@ -255,6 +348,11 @@ DWORD ServerImpl::OnUpdateInputPosition(WEASEL_IPC_COMMAND uMsg,
+@@ -255,6 +361,11 @@ DWORD ServerImpl::OnUpdateInputPosition(WEASEL_IPC_COMMAND uMsg,
                                          DWORD lParam) {
    if (!m_pRequestHandler)
      return 0;
@@ -4585,7 +4639,7 @@ index 11225c4..e6b36df 100644
    /*
     * 移位标志 = 1bit == 0
     * height: 0~127 = 7bit
-@@ -308,6 +406,10 @@ DWORD ServerImpl::OnEndMaintenance(WEASEL_IPC_COMMAND uMsg,
+@@ -308,6 +419,10 @@ DWORD ServerImpl::OnEndMaintenance(WEASEL_IPC_COMMAND uMsg,
    return 0;
  }
  
@@ -4596,7 +4650,7 @@ index 11225c4..e6b36df 100644
  DWORD ServerImpl::OnCommitComposition(WEASEL_IPC_COMMAND uMsg,
                                        DWORD wParam,
                                        DWORD lParam) {
-@@ -375,20 +477,28 @@ DWORD ServerImpl::OnChangePage(WEASEL_IPC_COMMAND uMsg,
+@@ -375,20 +490,28 @@ DWORD ServerImpl::OnChangePage(WEASEL_IPC_COMMAND uMsg,
    }
  
  template <typename _Resp>
@@ -4627,7 +4681,7 @@ index 11225c4..e6b36df 100644
    PIPE_MSG_HANDLE(WEASEL_IPC_COMMIT_COMPOSITION, OnCommitComposition)
    PIPE_MSG_HANDLE(WEASEL_IPC_CLEAR_COMPOSITION, OnClearComposition);
    PIPE_MSG_HANDLE(WEASEL_IPC_SELECT_CANDIDATE_ON_CURRENT_PAGE,
-@@ -403,38 +513,228 @@ void ServerImpl::HandlePipeMessage(PipeMessage pipe_msg, _Resp resp) {
+@@ -403,38 +526,228 @@ void ServerImpl::HandlePipeMessage(PipeMessage pipe_msg, _Resp resp) {
  }
  
  PipeServer::PipeServer(std::wstring&& pn_cmd, SECURITY_ATTRIBUTES* s)
@@ -4660,7 +4714,12 @@ index 11225c4..e6b36df 100644
 +                                "CreateNamedPipe");
 +    }
 +    DWORD error;
-+    try {
+     try {
+-      boost::this_thread::interruption_point();
+-      pipe = _ConnectServerPipe(pname);
+-      boost::thread th(
+-          [&handler, pipe, this] { _ProcessPipeThread(pipe, handler); });
+-    } catch (DWORD ex) {
 +      if (!::ResetEvent(accept_event.handle))
 +        throw ::GetLastError();
 +      OVERLAPPED operation{};
@@ -4680,7 +4739,7 @@ index 11225c4..e6b36df 100644
 +    }
 +    std::lock_guard guard(state_mutex);
 +    if (stopping) {
-+      _FinalizePipe(pipe);
+       _FinalizePipe(pipe);
 +      return;
 +    }
 +    if (error != ERROR_SUCCESS && error != ERROR_PIPE_CONNECTED) {
@@ -4691,12 +4750,7 @@ index 11225c4..e6b36df 100644
 +        continue;
 +      throw std::system_error(error, std::system_category(), "ConnectNamedPipe");
 +    }
-     try {
--      boost::this_thread::interruption_point();
--      pipe = _ConnectServerPipe(pname);
--      boost::thread th(
--          [&handler, pipe, this] { _ProcessPipeThread(pipe, handler); });
--    } catch (DWORD ex) {
++    try {
 +      workers.push_back(std::make_unique<Worker>(pipe, buff_size));
 +      auto* record = workers.back().get();
 +      try {
@@ -4707,7 +4761,7 @@ index 11225c4..e6b36df 100644
 +        throw;
 +      }
 +    } catch (...) {
-       _FinalizePipe(pipe);
++      _FinalizePipe(pipe);
 +      throw;
      }
 -    boost::this_thread::interruption_point();
@@ -4872,8 +4926,19 @@ index 11225c4..e6b36df 100644
  }
  
  // weasel::Server
+@@ -466,6 +779,10 @@ void Server::AddMenuHandler(UINT uID, CommandHandler handler) {
+   m_pImpl->AddMenuHandler(uID, handler);
+ }
+ 
++void Server::SetTrayRefreshCallback(std::function<void()> callback) {
++  m_pImpl->SetTrayRefreshCallback(callback);
++}
++
+ HWND Server::GetHWnd() {
+   return m_pImpl->m_hWnd;
+ }
 diff --git a/WeaselIPCServer/WeaselServerImpl.h b/WeaselIPCServer/WeaselServerImpl.h
-index a4d123d..5f88b30 100644
+index a4d123ddb5a91fe663c94e164304dc67837cdf27..824adff3fb209e0f273ba05504977f631f3417a7 100644
 --- a/WeaselIPCServer/WeaselServerImpl.h
 +++ b/WeaselIPCServer/WeaselServerImpl.h
 @@ -5,6 +5,7 @@
@@ -4884,8 +4949,22 @@ index a4d123d..5f88b30 100644
  
  #include "SecurityAttribute.h"
  
-@@ -48,9 +49,11 @@ class ServerImpl : public CWindowImpl<ServerImpl, CWindow, ServerWinTraits>
+@@ -28,6 +29,7 @@ class ServerImpl : public CWindowImpl<ServerImpl, CWindow, ServerWinTraits>
+   MESSAGE_HANDLER(WM_DWMCOLORIZATIONCOLORCHANGED, OnColorChange)
+   MESSAGE_HANDLER(WM_SETTINGCHANGE, OnColorChange)
+   MESSAGE_HANDLER(WM_COMMAND, OnCommand)
++  MESSAGE_HANDLER(WM_WEASEL_SERVICE_NOTIFY, OnServiceNotifyMessage)
+   END_MSG_MAP()
+ 
+   LRESULT OnColorChange(UINT uMsg,
+@@ -46,11 +48,17 @@ class ServerImpl : public CWindowImpl<ServerImpl, CWindow, ServerWinTraits>
+                              LPARAM lParam,
+                              BOOL& bHandled);
    LRESULT OnCommand(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
++  LRESULT OnServiceNotifyMessage(UINT uMsg,
++                                 WPARAM wParam,
++                                 LPARAM lParam,
++                                 BOOL& bHandled);
    DWORD OnCommand(WEASEL_IPC_COMMAND uMsg, DWORD wParam, DWORD lParam);
    DWORD OnEcho(WEASEL_IPC_COMMAND uMsg, DWORD wParam, DWORD lParam);
 +  DWORD OnQueryMetadata(WEASEL_IPC_COMMAND uMsg, DWORD wParam, DWORD lParam);
@@ -4897,7 +4976,7 @@ index a4d123d..5f88b30 100644
    DWORD OnShutdownServer(WEASEL_IPC_COMMAND uMsg, DWORD wParam, DWORD lParam);
    DWORD OnFocusIn(WEASEL_IPC_COMMAND uMsg, DWORD wParam, DWORD lParam);
    DWORD OnFocusOut(WEASEL_IPC_COMMAND uMsg, DWORD wParam, DWORD lParam);
-@@ -59,6 +62,7 @@ class ServerImpl : public CWindowImpl<ServerImpl, CWindow, ServerWinTraits>
+@@ -59,6 +67,7 @@ class ServerImpl : public CWindowImpl<ServerImpl, CWindow, ServerWinTraits>
                                DWORD lParam);
    DWORD OnStartMaintenance(WEASEL_IPC_COMMAND uMsg, DWORD wParam, DWORD lParam);
    DWORD OnEndMaintenance(WEASEL_IPC_COMMAND uMsg, DWORD wParam, DWORD lParam);
@@ -4905,7 +4984,14 @@ index a4d123d..5f88b30 100644
    DWORD OnCommitComposition(WEASEL_IPC_COMMAND uMsg,
                              DWORD wParam,
                              DWORD lParam);
-@@ -89,10 +93,12 @@ class ServerImpl : public CWindowImpl<ServerImpl, CWindow, ServerWinTraits>
+@@ -85,16 +94,22 @@ class ServerImpl : public CWindowImpl<ServerImpl, CWindow, ServerWinTraits>
+   void AddMenuHandler(UINT uID, CommandHandler& handler) {
+     m_MenuHandlers[uID] = handler;
+   }
++  void SetTrayRefreshCallback(std::function<void()> callback) {
++    m_trayRefreshCallback = callback;
++  }
+ 
   private:
    void _Finailize();
    template <typename _Resp>
@@ -4918,7 +5004,10 @@ index a4d123d..5f88b30 100644
 +  std::exception_ptr listener_error;
    RequestHandler* m_pRequestHandler;  // reference
    std::map<UINT, CommandHandler> m_MenuHandlers;
++  std::function<void()> m_trayRefreshCallback;
    HMODULE m_hUser32Module;
+   SecurityAttribute sa;
+   BOOL m_darkMode;
 diff --git a/WeaselServer/WeaselServer.cpp b/WeaselServer/WeaselServer.cpp
 index b4cf8b2..966ce4e 100644
 --- a/WeaselServer/WeaselServer.cpp
@@ -5038,10 +5127,10 @@ index 8e3cc1f..24b699d 100644
        <GenerateDebugInformation>false</GenerateDebugInformation>
        <SubSystem>Windows</SubSystem>
 diff --git a/WeaselServer/WeaselServerApp.cpp b/WeaselServer/WeaselServerApp.cpp
-index e09c4c5..391e3c0 100644
+index e09c4c5ed2a5f716a4d8b4b112eb49e441be3633..27f999298b16838bf3bc37ec3670c226db08f14a 100644
 --- a/WeaselServer/WeaselServerApp.cpp
 +++ b/WeaselServer/WeaselServerApp.cpp
-@@ -1,76 +1,65 @@
+@@ -1,76 +1,67 @@
 -#include "stdafx.h"
 -#include "WeaselServerApp.h"
 -#include <filesystem>
@@ -5140,13 +5229,15 @@ index e09c4c5..391e3c0 100644
 +  m_ui.Create(m_server.GetHWnd());
 +
 +  m_handler->Initialize();
-+  m_handler->OnUpdateUI([this]() { tray_icon.Refresh(); });
++  m_handler->OnUpdateUI([this]() { tray_icon.RequestRefresh(); });
 +
 +  tray_icon.Create(m_server.GetHWnd());
-+  tray_icon.Refresh();
++  m_server.SetTrayRefreshCallback([this]() { tray_icon.ApplyRefresh(); });
++  tray_icon.RequestRefresh();
 +
 +  int ret = m_server.Run();
 +
++  tray_icon.DisableRefresh();
 +  m_handler->Finalize();
 +  m_ui.Destroy();
 +  tray_icon.RemoveIcon();
@@ -5427,6 +5518,174 @@ index 28927fb..ce78d3e 100644
 +
 +  WeaselServerApp app;
 +};
+diff --git a/WeaselServer/WeaselTrayIcon.cpp b/WeaselServer/WeaselTrayIcon.cpp
+index 119111affdd3e9ac2bb6e8a5728245497fbdbbd6..3eaff9b30ae8349c9563cd7c351906f8df2e5837 100644
+--- a/WeaselServer/WeaselTrayIcon.cpp
++++ b/WeaselServer/WeaselTrayIcon.cpp
+@@ -37,9 +37,50 @@ BOOL WeaselTrayIcon::Create(HWND hTargetWnd) {
+   return bRet;
+ }
+ 
+-void WeaselTrayIcon::Refresh() {
+-  if (!m_style.display_tray_icon &&
+-      !m_status.disabled)  // display notification when deploying
++void WeaselTrayIcon::RequestRefresh() {
++  std::lock_guard<std::mutex> lock(m_state_mutex);
++  if (!m_refresh_enabled) {
++    return;
++  }
++  m_pending_state = WeaselTrayIconState::From(m_style, m_status);
++  if (m_refresh_pending) {
++    return;
++  }
++  m_refresh_pending = true;
++  if (!::PostMessage(GetTargetWnd(), WM_WEASEL_SERVICE_NOTIFY, 0, 0)) {
++    m_refresh_pending = false;
++  }
++}
++
++void WeaselTrayIcon::ApplyRefresh() {
++  WeaselTrayIconState state;
++  {
++    std::lock_guard<std::mutex> lock(m_state_mutex);
++    if (!m_refresh_pending || !m_refresh_enabled) {
++      return;
++    }
++    state = m_pending_state;
++    m_refresh_pending = false;
++    m_refresh_in_progress = true;
++  }
++  Refresh(state);
++  {
++    std::lock_guard<std::mutex> lock(m_state_mutex);
++    m_refresh_in_progress = false;
++  }
++  m_state_cv.notify_all();
++}
++
++void WeaselTrayIcon::DisableRefresh() {
++  std::unique_lock<std::mutex> lock(m_state_mutex);
++  m_refresh_enabled = false;
++  m_refresh_pending = false;
++  m_state_cv.wait(lock, [this] { return !m_refresh_in_progress; });
++}
++
++void WeaselTrayIcon::Refresh(const WeaselTrayIconState& state) {
++  if (!state.display_tray_icon &&
++      !state.disabled)  // display notification when deploying
+   {
+     if (m_mode != INITIAL) {
+       RemoveIcon();
+@@ -48,24 +89,24 @@ void WeaselTrayIcon::Refresh() {
+     m_disabled = false;
+     return;
+   }
+-  WeaselTrayMode mode = m_status.disabled     ? DISABLED
+-                        : m_status.ascii_mode ? ASCII
+-                                              : ZHUNG;
++  WeaselTrayMode mode = state.disabled     ? DISABLED
++                        : state.ascii_mode ? ASCII
++                                           : ZHUNG;
+   /* change icon, when
+           1,mode changed
+           2,icon changed
+-          3,both m_schema_zhung_icon and m_style.current_zhung_icon empty(for
+-     initialize) 4,both m_schema_ascii_icon and m_style.current_ascii_icon
++          3,both m_schema_zhung_icon and state.current_zhung_icon empty(for
++     initialize) 4,both m_schema_ascii_icon and state.current_ascii_icon
+      empty(for initialize)
+   */
+-  if (mode != m_mode || m_schema_zhung_icon != m_style.current_zhung_icon ||
+-      (m_schema_zhung_icon.empty() && m_style.current_zhung_icon.empty()) ||
+-      m_schema_ascii_icon != m_style.current_ascii_icon ||
+-      (m_schema_ascii_icon.empty() && m_style.current_ascii_icon.empty())) {
++  if (mode != m_mode || m_schema_zhung_icon != state.current_zhung_icon ||
++      (m_schema_zhung_icon.empty() && state.current_zhung_icon.empty()) ||
++      m_schema_ascii_icon != state.current_ascii_icon ||
++      (m_schema_ascii_icon.empty() && state.current_ascii_icon.empty())) {
+     ShowIcon();
+     m_mode = mode;
+-    m_schema_zhung_icon = m_style.current_zhung_icon;
+-    m_schema_ascii_icon = m_style.current_ascii_icon;
++    m_schema_zhung_icon = state.current_zhung_icon;
++    m_schema_ascii_icon = state.current_ascii_icon;
+     if (mode == ASCII) {
+       if (m_schema_ascii_icon.empty())
+         SetIcon(mode_icon[mode]);
+diff --git a/WeaselServer/WeaselTrayIcon.h b/WeaselServer/WeaselTrayIcon.h
+index 42d407aaa52ce6e50bf115a864f886e532c3a624..01815d373ba7b80ad6fddac6e072b568391b123a 100644
+--- a/WeaselServer/WeaselTrayIcon.h
++++ b/WeaselServer/WeaselTrayIcon.h
+@@ -3,8 +3,35 @@
+ #include <WeaselIPC.h>
+ #include "SystemTraySDK.h"
+ 
++#include <condition_variable>
++#include <mutex>
++
+ #define WM_WEASEL_TRAY_NOTIFY (WEASEL_IPC_LAST_COMMAND + 100)
+ 
++// Snapshot of the tray-relevant UI state, computed on the pipe worker thread
++// and applied on the server message thread. Keeps Shell_NotifyIcon off the
++// pipe worker threads (and away from g_api_mutex), avoiding the deadlock loop
++// where the taskbar UI thread waits on the pipe while the server waits for the
++// taskbar UI thread inside Shell_NotifyIcon.
++struct WeaselTrayIconState {
++  static WeaselTrayIconState From(const weasel::UIStyle& style,
++                                  const weasel::Status& status) {
++    WeaselTrayIconState state;
++    state.display_tray_icon = style.display_tray_icon;
++    state.disabled = status.disabled;
++    state.ascii_mode = status.ascii_mode;
++    state.current_zhung_icon = style.current_zhung_icon;
++    state.current_ascii_icon = style.current_ascii_icon;
++    return state;
++  }
++
++  bool display_tray_icon;
++  bool disabled;
++  bool ascii_mode;
++  std::wstring current_zhung_icon;
++  std::wstring current_ascii_icon;
++};
++
+ class WeaselTrayIcon : public CSystemTray {
+  public:
+   enum WeaselTrayMode {
+@@ -17,15 +44,32 @@ class WeaselTrayIcon : public CSystemTray {
+   WeaselTrayIcon(weasel::UI& ui);
+ 
+   BOOL Create(HWND hTargetWnd);
+-  void Refresh();
++
++  // Captures the tray-relevant state and posts a refresh request to the server
++  // message thread. Never calls Shell_NotifyIcon itself.
++  void RequestRefresh();
++  void DisableRefresh();
++
++  // Runs on the server message thread (no g_api_mutex held).
++  void ApplyRefresh();
+ 
+  protected:
+   virtual void CustomizeMenu(HMENU hMenu);
+ 
++  void Refresh(const WeaselTrayIconState& state);
++
+   weasel::UIStyle& m_style;
+   weasel::Status& m_status;
+   WeaselTrayMode m_mode;
+   std::wstring m_schema_zhung_icon;
+   std::wstring m_schema_ascii_icon;
+   bool m_disabled;
++
++  // Guarded by m_state_mutex.
++  bool m_refresh_enabled = true;
++  bool m_refresh_pending = false;
++  bool m_refresh_in_progress = false;
++  WeaselTrayIconState m_pending_state;
++  std::mutex m_state_mutex;
++  std::condition_variable m_state_cv;
+ };
 diff --git a/WeaselServer/xmake.lua b/WeaselServer/xmake.lua
 index 78b99b0..9d99e05 100644
 --- a/WeaselServer/xmake.lua
@@ -10931,10 +11190,10 @@ index a18bdb4..2eb40b8 100644
 +  return SetAttributeInfo(_pDisplayAttribute);
 +}
 diff --git a/WeaselTSF/EditSession.cpp b/WeaselTSF/EditSession.cpp
-index 8f4d503..199990e 100644
+index 8f4d503676f507f4728ac31c64a7bda4b6046136..9932bc8ec0bfdd2e6a464a660952fb8f5f7e6945 100644
 --- a/WeaselTSF/EditSession.cpp
 +++ b/WeaselTSF/EditSession.cpp
-@@ -1,47 +1,899 @@
+@@ -1,47 +1,915 @@
 -#include "stdafx.h"
 -#include "WeaselTSF.h"
 -#include "CandidateList.h"
@@ -11099,9 +11358,8 @@ index 8f4d503..199990e 100644
 +  return bridge;
 +}
 +
-+// Read any initial empty point before IPC. After IPC there is no host callback
-+// between the immutable value copy and native queue submission.
-+std::shared_ptr<response_owner::Packet> WeaselTSF::_PrepareResponse(ITfContext* owner) {
++std::shared_ptr<response_owner::Packet> WeaselTSF::_PrepareResponse(
++    ITfContext* owner, bool captureInitialPoint) {
 +  using namespace response_owner;
 +  auto packet = std::make_shared<Packet>();
 +  // Establish this request before retiring anything that can Release COM.
@@ -11222,12 +11480,16 @@ index 8f4d503..199990e 100644
 +    }
 +    packet->source = source;
 +    const auto dependency = NativeDependency(source->predecessor);
-+    if (dependency && dependency->kind == WorkKind::EndDraft && !dependency->scheduled) {
++    if (dependency && !dependency->scheduled) {
 +      com_ptr<ITfComposition> retiredMirror;
-+      if (_IsCurrentComposition(dependency->endComposition))
-+        retiredMirror.Attach(_pComposition.Detach());
-+      // The new action publishes its endpoint owner before the only new close
-+      // request. A refusal is terminal for this action, never a queue loop.
++      if (dependency->kind == WorkKind::EndDraft) {
++        if (_IsCurrentComposition(dependency->endComposition))
++          retiredMirror.Attach(_pComposition.Detach());
++      } else {
++        // A nested key arrived during its predecessor's bookmark READ.
++        // Schedule that commit first, after the current read grant returns.
++        dependency->deferNative = true;
++      }
 +      _QueueResponse(dependency);
 +      if (_lastResponse != packet || _responseIntent != source ||
 +          !source->valid || source->cancelled) {
@@ -11236,7 +11498,7 @@ index 8f4d503..199990e 100644
 +        return packet;
 +      }
 +    }
-+    _CaptureInitialPoint(packet);
++    if (captureInitialPoint || source->predecessor) _CaptureInitialPoint(packet);
 +  }
 +  if (packet->source && (_lastResponse != packet || _responseIntent != packet->source ||
 +      !packet->source->valid || packet->source->cancelled)) {
@@ -11332,11 +11594,17 @@ index 8f4d503..199990e 100644
 +  if (source->range || source->composition || source->initialPoint ||
 +      source->followsCommit || !source->initialSelection ||
 +      source->initialPointResult != E_PENDING) return;
-+  const auto current = [this, packet, source]() {
-+    return _lastResponse == packet && _responseIntent == source &&
-+        source->valid && !source->cancelled && !source->range &&
++  const auto revision = source->selection->revision;
++  const auto current = [this, packet, source, revision]() {
++    // A commit already belongs to its source. A nested key can become latest
++    // while this READ is granted without changing that source's selection.
++    const bool capturedCommit = packet->response && !packet->response->commit.empty() &&
++        source->selection->revision == revision;
++    return (capturedCommit || (_lastResponse == packet && _responseIntent == source)) &&
++        source->initialSelection && source->valid && !source->cancelled && !source->range &&
 +        !source->composition && !source->followsCommit;
 +  };
++  if (!current()) return;
 +  com_ptr<CInitialPointEditSession> point;
 +  point.Attach(new CInitialPointEditSession(this, source->owner, current));
 +  HRESULT granted = E_FAIL;
@@ -11391,7 +11659,7 @@ index 8f4d503..199990e 100644
 +
 +
 +void WeaselTSF::_CaptureResponse(const std::shared_ptr<response_owner::Packet>& packet,
-+    const weasel::KeyEventOutcome* keyOutcome) {
++    const weasel::KeyEventOutcome* keyOutcome, bool bookmarkText) {
 +  using namespace response_owner;
 +  const com_ptr<CCandidateList> candidate = _cand;
 +  auto response = std::make_shared<Response>();
@@ -11500,7 +11768,10 @@ index 8f4d503..199990e 100644
 +      _responseIntents.emplace_back(next);
 +    }
 +  }
-+  // A response is already immutable before RequestEditSession can reenter.
++  // A user can bind a modifier to text. Save its insertion point only once
++  // its real output is known, before the host receives the write request.
++  if (bookmarkText && packet->kind == WorkKind::Content)
++    _CaptureInitialPoint(packet);
 +  _QueueResponse(packet);
 +  if (!response->status.composing && _lastResponse == packet &&
 +      candidate && _cand == candidate) {
@@ -11796,7 +12067,11 @@ index 8f4d503..199990e 100644
 +      key.keycode == ibus::Hyper_L || key.keycode == ibus::Hyper_R ||
 +      key.keycode == ibus::Menu;
 +  const bool shiftKey = key.keycode == ibus::Shift_L || key.keycode == ibus::Shift_R;
-+  auto packet = _PrepareResponse(owner);
++  // Idle shortcuts and ASCII pass-through usually carry only status. A custom
++  // binding that actually emits text still captures its insertion point.
++  const bool bookmarkOnOutput = (systemShortcut || shiftKey || _status.ascii_mode) &&
++      !_responseIntent && !_status.composing && !_pComposition;
++  auto packet = _PrepareResponse(owner, !bookmarkOnOutput);
 +  if (packet->stage == response_owner::Stage::UnsupportedEndpoint) {
 +    _PromptTrace(prompt_trace::KeyBypass, owner,
 +        packet->source ? packet->source->composition.p : nullptr,
@@ -11847,7 +12122,7 @@ index 8f4d503..199990e 100644
 +  // Publish the consumed Test before capture can reenter host or UI callbacks.
 +  // Unknown owns a possible engine effect too; its Actual must not resend it.
 +  if (consume && publication) publication->Publish();
-+  _CaptureResponse(packet, &outcome);
++  _CaptureResponse(packet, &outcome, bookmarkOnOutput);
 +#if STELLAE_SHIFT_CALLBACK_TRACE && STELLAE_ENABLE_PROMPT_TRACE
 +  if (shiftKey && packet->response) {
 +    const auto& response = *packet->response;
@@ -16071,7 +16346,7 @@ index 590d3b8..8c283ca 100644
 +  return false;
 +}
 diff --git a/WeaselTSF/WeaselTSF.h b/WeaselTSF/WeaselTSF.h
-index 696d3cc..fa8998e 100644
+index 696d3cce4b9c394d2420ff1cae7cbbdbcb527a49..b49b1a675db74eabdfa32dc3947cd3ec0493dd1d 100644
 --- a/WeaselTSF/WeaselTSF.h
 +++ b/WeaselTSF/WeaselTSF.h
 @@ -3,10 +3,18 @@
@@ -16130,7 +16405,7 @@ index 696d3cc..fa8998e 100644
    ~WeaselTSF();
  
    /* IUnknown */
-@@ -103,25 +139,57 @@ class WeaselTSF : public ITfTextInputProcessorEx,
+@@ -103,25 +139,58 @@ class WeaselTSF : public ITfTextInputProcessorEx,
    // STDMETHODIMP OnChange(_In_ REFGUID guid);
  
    /* Compartments */
@@ -16177,11 +16452,12 @@ index 696d3cc..fa8998e 100644
    void _AbortComposition(bool clear = true);
 +  void _AbortComposition(bool clear,
 +      const std::shared_ptr<response_owner::Intent>& target);
-+  std::shared_ptr<response_owner::Packet> _PrepareResponse(ITfContext* owner);
++  std::shared_ptr<response_owner::Packet> _PrepareResponse(
++      ITfContext* owner, bool captureInitialPoint = true);
 +  bool _ProduceKeyResponse(ITfContext* owner, const weasel::KeyEvent& key,
 +      TestedKeyPublication* publication = nullptr);
 +  void _CaptureResponse(const std::shared_ptr<response_owner::Packet>& packet,
-+      const weasel::KeyEventOutcome* keyOutcome = nullptr);
++      const weasel::KeyEventOutcome* keyOutcome = nullptr, bool bookmarkText = false);
 +  void _QueueResponse(const std::shared_ptr<response_owner::Packet>& packet);
 +  HRESULT _DeliverResponse(const std::shared_ptr<response_owner::Packet>& packet, TfEditCookie ec);
 +  bool _IsLatestResponse(const std::shared_ptr<response_owner::Packet>& packet);
@@ -16197,7 +16473,7 @@ index 696d3cc..fa8998e 100644
  
    /* Language bar */
    HWND _GetFocusedContextWindow();
-@@ -131,22 +199,18 @@ class WeaselTSF : public ITfTextInputProcessorEx,
+@@ -131,22 +200,18 @@ class WeaselTSF : public ITfTextInputProcessorEx,
    bool _EnsureServerConnected();
  
    /* UI */
@@ -16224,7 +16500,7 @@ index 696d3cc..fa8998e 100644
    void HandleUICallback(size_t* const sel,
                          size_t* const hov,
                          bool* const next,
-@@ -154,66 +218,221 @@ class WeaselTSF : public ITfTextInputProcessorEx,
+@@ -154,66 +219,221 @@ class WeaselTSF : public ITfTextInputProcessorEx,
  
   private:
    /* ui callback functions private */
@@ -16489,7 +16765,7 @@ index 696d3cc..fa8998e 100644
    com_ptr<CCandidateList> _cand;
  
    LONG _cRef;  // COM ref count
-@@ -223,14 +442,20 @@ class WeaselTSF : public ITfTextInputProcessorEx,
+@@ -223,14 +443,20 @@ class WeaselTSF : public ITfTextInputProcessorEx,
  
    /* Weasel Related */
    weasel::Client m_client;
@@ -20801,7 +21077,7 @@ index 09625e4..961f373 100644
  #define STRINGIZE(x) #x
  #define VERSION_STR(x) STRINGIZE(x)
 diff --git a/include/WeaselIPC.h b/include/WeaselIPC.h
-index 3065cb5..1a17446 100644
+index 3065cb57d49095eefbc04eddbe5ec2801216f8b4..6dd9be5966ca3214a58e405c00ce1e07a5ae445b 100644
 --- a/include/WeaselIPC.h
 +++ b/include/WeaselIPC.h
 @@ -1,13 +1,14 @@
@@ -20822,7 +21098,7 @@ index 3065cb5..1a17446 100644
  
  #define WEASEL_IPC_METADATA_SIZE 1024
  #define WEASEL_IPC_BUFFER_SIZE (4 * 1024)
-@@ -32,10 +33,33 @@ enum WEASEL_IPC_COMMAND {
+@@ -32,10 +33,37 @@ enum WEASEL_IPC_COMMAND {
    WEASEL_IPC_SELECT_CANDIDATE_ON_CURRENT_PAGE,
    WEASEL_IPC_HIGHLIGHT_CANDIDATE_ON_CURRENT_PAGE,
    WEASEL_IPC_CHANGE_PAGE,
@@ -20831,6 +21107,10 @@ index 3065cb5..1a17446 100644
    WEASEL_IPC_LAST_COMMAND
  };
  
++// Posted by WeaselTrayIcon to the server window so that Shell_NotifyIcon runs
++// on the server message thread instead of a pipe worker thread.
++#define WM_WEASEL_SERVICE_NOTIFY (WEASEL_IPC_LAST_COMMAND + 200)
++
  namespace weasel {
 +// Requests metadata after ordinary FocusIn on the same pipe transaction.
 +constexpr DWORD kFocusInWithMetadata = 0x80000000;
@@ -20856,7 +21136,7 @@ index 3065cb5..1a17446 100644
  struct PipeMessage {
    WEASEL_IPC_COMMAND Msg;
    DWORD wParam;
-@@ -74,6 +98,7 @@ struct RequestHandler {
+@@ -74,6 +102,7 @@ struct RequestHandler {
    virtual bool ChangePage(bool backward, DWORD session_id, EatLine eat) {
      return false;
    }
@@ -20864,7 +21144,7 @@ index 3065cb5..1a17446 100644
    virtual void FocusIn(DWORD param, DWORD session_id) {}
    virtual void FocusOut(DWORD param, DWORD session_id) {}
    virtual void UpdateInputPosition(RECT const& rc, DWORD session_id) {}
-@@ -81,6 +106,7 @@ struct RequestHandler {
+@@ -81,6 +110,7 @@ struct RequestHandler {
    virtual void EndMaintenance() {}
    virtual void SetOption(DWORD session_id, const std::string& opt, bool val) {}
    virtual void UpdateColorTheme(BOOL darkMode) {}
@@ -20872,7 +21152,7 @@ index 3065cb5..1a17446 100644
  };
  
  // 處理server端回應之物件
-@@ -111,17 +137,20 @@ class Client {
+@@ -111,17 +141,20 @@ class Client {
    // 终止服务
    void ShutdownServer();
    // 發起會話
@@ -20894,7 +21174,7 @@ index 3065cb5..1a17446 100644
    // 上屏正在編輯的文字
    bool CommitComposition();
    // 清除正在編輯的文字
-@@ -142,6 +171,8 @@ class Client {
+@@ -142,6 +175,8 @@ class Client {
    void TrayCommand(UINT menuId);
    // 读取server返回的数据
    bool GetResponseData(ResponseHandler handler);
@@ -20903,6 +21183,17 @@ index 3065cb5..1a17446 100644
  
   private:
    ClientImpl* m_pImpl;
+@@ -163,6 +198,10 @@ class Server {
+   void AddMenuHandler(UINT uID, CommandHandler handler);
+   HWND GetHWnd();
+ 
++  // Callback invoked on the server message thread when a tray icon refresh is
++  // requested from a pipe worker thread.
++  void SetTrayRefreshCallback(std::function<void()> callback);
++
+  private:
+   ServerImpl* m_pImpl;
+ };
 diff --git a/include/WeaselUI.h b/include/WeaselUI.h
 index da17956..652bdf1 100644
 --- a/include/WeaselUI.h

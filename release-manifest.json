@@ -3,7 +3,7 @@
   "date": "2026-11-26",
   "kind": "frontend-and-input-scheme-source",
   "frontendVersion": "0.17.4.61052",
-  "bundleVersion": "2026.11.26.1",
+  "bundleVersion": "2026.11.26.2",
   "nativeBinariesIncluded": false,
   "personalLearningIncluded": false,
   "productionInputSchemesIncluded": true,
@@ -17,13 +17,13 @@
     },
     {
       "path": ".github/workflows/bundle.yml",
-      "bytes": 33739,
-      "sha256": "c57246dbd2cb32aee66b501a014cf793c6fc788905dab2b8cd084440bca2814f"
+      "bytes": 34225,
+      "sha256": "85a401ffc07658a77cc29ab8ec769b2b01e499d69c9ed0c7ad033ea213e44ed9"
     },
     {
       "path": ".github/workflows/native.yml",
-      "bytes": 7996,
-      "sha256": "13db33f2488eac687f661a8c21f6b43b7f340d44993979f8f28a2d17c5653b38"
+      "bytes": 8217,
+      "sha256": "73b971ecf693f8640d0bd78541164a53e38e29146a00d12b4c45e078dedf29e9"
     },
     {
       "path": ".github/workflows/schemes.yml",
@@ -147,8 +147,8 @@
     },
     {
       "path": "installer/bundle-inputs.json",
-      "bytes": 5521,
-      "sha256": "4473496208888dd9561a104a94a3fe2f7b9a28581a233caa7b11694610f28c26"
+      "bytes": 5847,
+      "sha256": "ce7b6072117120bd33f05c1d86970774136e30871ac0481a0171f16fddf6d52a"
     },
     {
       "path": "installer/bundle.nsi",
@@ -222,8 +222,8 @@
     },
     {
       "path": "licenses/file-licenses.json",
-      "bytes": 329499,
-      "sha256": "50762b054f27594a030155ced8e7f747bf3c28fc15792c8324dd7c53323b42b8"
+      "bytes": 330025,
+      "sha256": "633bd52b39e744ea95c24bce214ff11e9415f3f24a200e970cb212aa90579434"
     },
     {
       "path": "licenses/native-dependencies/boost/LICENSE_1_0.txt",
@@ -492,28 +492,28 @@
     },
     {
       "path": "native/engine/librime-lua-n01.patch",
-      "bytes": 3348,
-      "sha256": "a1a39f91974554168e4c13ebd2e8122fe62c0243c119589d7d6379504a00812a"
+      "bytes": 3630,
+      "sha256": "8dcb36d39ae34f8c68656ddd23b0cc2afc613d9020dbee281464728357605ba8"
     },
     {
       "path": "native/engine/librime-lua-r5-sdk.patch",
-      "bytes": 3021,
-      "sha256": "2199fe11317660f41bf77d416d97b79a3127fdf683788316f96e022fe9610a15"
+      "bytes": 3303,
+      "sha256": "6d9268b79c3f5c67ef93bb09c65a9cf8f072eb49d396231c7ac649d813a1458d"
     },
     {
       "path": "native/engine/librime-n01.patch",
-      "bytes": 14063,
-      "sha256": "3eaf5dcd371c497cfac298d11acf29a5e1327792057bca5aa4ffb53894f714b1"
+      "bytes": 17652,
+      "sha256": "ce08e8e9f45f94b5d0e92c82263717eacba539343f13919672031ed68ca4b7dd"
     },
     {
       "path": "native/engine/librime-r5-sdk.patch",
-      "bytes": 13357,
-      "sha256": "86656d2577009b0cef9e7d3335cd1e8ca8655821f97bcf060a56411c1b2eb293"
+      "bytes": 16946,
+      "sha256": "e6d48014da29c092e1b387ac75d66a495c61268117c4492ce76c1e137e38177d"
     },
     {
       "path": "native/frontend-source-files.json",
-      "bytes": 22632,
-      "sha256": "96ef105fe66f553185ebe89e2757c607f3200b11ed6bb32eb3f5282f6689eb86"
+      "bytes": 23032,
+      "sha256": "9f36c78ba25745ba6ffc000394179203679925fd0f60a0322da399d075c45d84"
     },
     {
       "path": "native/notification-inputs.json",
@@ -523,7 +523,7 @@
     {
       "path": "native/source-manifest.json",
       "bytes": 14251,
-      "sha256": "355e3a6f844e1f6be31d7927a049d08b01a1bcdcfb1101a2e4f2e30628860e52"
+      "sha256": "a404661f7944c690ac82c2114b7bd1b3254cec4b8d823a8145183a476713705b"
     },
     {
       "path": "native/tests/appearance/Add-PaintTrace.ps1",
@@ -601,6 +601,11 @@
       "sha256": "5d4534c09f613b37f71ab20b1691bd45980dc7df2810cc4e81707240c06aaaa5"
     },
     {
+      "path": "native/tests/installer/Test-ConfigDeployment.ps1",
+      "bytes": 4521,
+      "sha256": "5be726642a6caceba9cb68ec37ff4e3703ea77548cd3a6f525762487c15e9ff1"
+    },
+    {
       "path": "native/tests/installer/Test-DlcNamespace.ps1",
       "bytes": 16134,
       "sha256": "156499551a093853310839aecff721bf2dc4f6809fe2cc7be233852d5f79511b"
@@ -657,8 +662,8 @@
     },
     {
       "path": "native/tests/key-pairing/ControlledReadGrant.inc",
-      "bytes": 795,
-      "sha256": "0d95e50844a8f251677349dee7e70f97d5e043b49e8c16f532cd595e0789ff6c"
+      "bytes": 818,
+      "sha256": "2bd32dd8ea657d83beafc3d226300bffffe6f9b1e29342fc0451c278a0288881"
     },
     {
       "path": "native/tests/key-pairing/Deploy-PublicFixture.py",
@@ -667,23 +672,23 @@
     },
     {
       "path": "native/tests/key-pairing/Invoke-KeyPairingTests.ps1",
-      "bytes": 955,
-      "sha256": "b3ecfed7e168b254c195bf0d01aed2a718b4c5489e77ae80aaf00f9c28bce8ed"
+      "bytes": 972,
+      "sha256": "8c0b2e33a00c98a2796ee988d7ef34f185bd9203b4158378d517f6e709bb6a52"
     },
     {
       "path": "native/tests/key-pairing/ProductHostFixture.h",
-      "bytes": 27957,
-      "sha256": "b44f001a7c1442e429003434b839200e3bf7dd6a4695f22be6ca6f6527c0a284"
+      "bytes": 27991,
+      "sha256": "8802a3f36edf8c03d0a653fe3db77af00bd676a42c69dc02dccbefa077952188"
     },
     {
       "path": "native/tests/key-pairing/ResponseOwnerProductTests.cpp",
-      "bytes": 136257,
-      "sha256": "2430fa691f94333879cc791cd9ceb57f73c2911c9befb498b2ecc68c02267b61"
+      "bytes": 140890,
+      "sha256": "09943de64cb6d0a65bba266db485f9d4af2ce260acaaf8a5d7c0c244bd0ecb99"
     },
     {
       "path": "native/tests/key-pairing/Run-ControlledKeys.ps1",
-      "bytes": 9867,
-      "sha256": "1c066fbc8490ebba4e72e9f742670a0e0c0b435d6901bc2057aa315bb168ff2d"
+      "bytes": 9916,
+      "sha256": "dc8e5bbf0029c07a7362a7145fd40088568903eee652d0368be45eee335df5e7"
     },
     {
       "path": "native/tests/key-pairing/SelectionControlledModes.inc",
@@ -702,8 +707,8 @@
     },
     {
       "path": "native/tests/key-pairing/fixture/gui_test.schema.yaml",
-      "bytes": 731,
-      "sha256": "fa0ca63077994110547b422967b7ae50906c93632db494ae02e97acf6e16cfe4"
+      "bytes": 920,
+      "sha256": "2df5df6dd83ee6411b351de9bc6404005a89b11604919c621577b22f2066dcfa"
     },
     {
       "path": "native/tests/key-pairing/fixture/stellae.yaml",
@@ -796,6 +801,16 @@
       "sha256": "bedb6d25c5e7fd054e3730f42e13e7902d414fd3bc96aee220b974ea9d4eef41"
     },
     {
+      "path": "native/tests/tray/Run-TrayRefreshTests.py",
+      "bytes": 2177,
+      "sha256": "93d44910eabbc2abaa8ad5612c52a810d57622a6ee9235a081eadc3c42cb9eed"
+    },
+    {
+      "path": "native/tests/tray/TrayRefreshTests.cpp",
+      "bytes": 6428,
+      "sha256": "8f00bd49f900a4fdd7b87af64f77712a2c299306250df6bc34e429bfff92d19e"
+    },
+    {
       "path": "native/weasel/mode-status-icon.patch",
       "bytes": 4584,
       "sha256": "adc9fd98501ca42b60a514a5c6510009c4e891c878660bc769ceb82305fee1bc"
@@ -807,8 +822,8 @@
     },
     {
       "path": "native/weasel/stellae-61052.patch",
-      "bytes": 977862,
-      "sha256": "1a3be906efc5800c154743f2868f17d61f3c552ecc9fb737f014cd9d9213f3bd"
+      "bytes": 989289,
+      "sha256": "46c84930fb998947c77cc0446d4f2af8df4e0d69b4f1a2e9e279ab0bc3494b23"
     },
     {
       "path": "schemes/.gitattributes",
@@ -3623,7 +3638,7 @@
     {
       "path": "schemes/release-manifest.json",
       "bytes": 110746,
-      "sha256": "ccaadd1c053d4f958d12245a9eb45673d92d61d96fb506add5d8afcf12155373"
+      "sha256": "9806f47e0ff4c4fa6b53a769fc13063b0c00fc215d6ec0ccca7255a137d433ce"
     },
     {
       "path": "schemes/scripts/build_dlc.py",
@@ -3632,8 +3647,8 @@
     },
     {
       "path": "schemes/scripts/build_scheme_packages.py",
-      "bytes": 14314,
-      "sha256": "2d31e5f9a5aa9bc75d50bf666a1a152cb4a1b981ddc2cd65b260682cc6891a9e"
+      "bytes": 14721,
+      "sha256": "1d0391aeafdcd065315aee11619d90b91f5ec4641924b2ab2b7b12a9393b870c"
     },
     {
       "path": "schemes/scripts/data/build_dlc_english_index.py",

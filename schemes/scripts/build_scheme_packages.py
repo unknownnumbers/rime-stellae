@@ -146,16 +146,17 @@ def package(profile, output_dir, version, source_ref):
     for destination, source in sorted(mappings):
         if destination in payload:
             raise ValueError(f'Duplicate archive path: {destination}')
-        data = source_file(source).read_bytes()
+        original = source_file(source).read_bytes()
         if source not in license_records:
             raise ValueError(f'File has no source license record: {source}')
         transformed = source.endswith('.md') and license_records[source]['kind'] == 'project-explanatory-document'
-        if transformed:
-            data = rendered_markdown(data, source, source_ref)
+        data = rendered_markdown(original, source, source_ref) if transformed else original
+        source_hash = digest(original)
+        archive_hash = digest(data) if data != original else source_hash
         payload[destination] = data
         records.append({'path': destination, 'source_path': source,
-                        'bytes': len(data), 'sha256': digest(data),
-                        'source_sha256': digest(source_file(source).read_bytes()),
+                        'bytes': len(data), 'sha256': archive_hash,
+                        'source_sha256': source_hash,
                         'transformation': 'relative Markdown links resolved to pinned source'
                                           if transformed else 'byte-exact copy',
                         'license_index': 'package-license-index.json'})
@@ -165,39 +166,47 @@ def package(profile, output_dir, version, source_ref):
             if key in license_record:
                 license_record[key] = [license_reference(path) for path in license_record[key]]
         licensed.append({'path': destination, 'source_path': source,
-                         'bytes': len(data), 'sha256': digest(data),
+                         'bytes': len(data), 'sha256': archive_hash,
                          'license': license_record})
+    manifest_name = 'UserProfile/config-source-manifest.json' if profile == 'stellae' else 'profile-manifest.json'
+    original_manifest = payload[manifest_name]
+    distributed_manifest = json.loads(original_manifest)
     if profile == 'stellae':
-        manifest_name = 'UserProfile/config-source-manifest.json'
-        original_manifest = payload[manifest_name]
-        distributed_manifest = json.loads(original_manifest)
-        changed = []
-        for record in distributed_manifest['source_files'] + distributed_manifest['generated_files']:
-            name = 'UserProfile/' + record['path']
-            data = payload[name]
-            if digest(data) != record['sha256'] or len(data) != record['bytes']:
-                source_record = next(item for item in records if item['path'] == name)
-                if source_record['transformation'] != 'relative Markdown links resolved to pinned source':
-                    raise ValueError(f'Unexpected profile transformation: {name}')
-                record['repository_sha256'] = record['sha256']
-                record['sha256'], record['bytes'] = digest(data), len(data)
-                record['archive_transformation'] = source_record['transformation']
-                changed.append(record['path'])
-        distributed_manifest['archive_provenance'] = {
-            'source_repository': SOURCE_REPOSITORY, 'source_prefix': SOURCE_PREFIX,
-            'source_ref': source_ref, 'original_manifest': 'source-config-manifest.json',
-            'original_manifest_sha256': digest(original_manifest),
-            'rendered_documentation': changed,
-            'scope': 'Hashes describe distributed UserProfile files; code, data and retained notices are byte-exact source copies.'}
-        data = (json.dumps(distributed_manifest, ensure_ascii=False, indent=2) + '\n').encode('utf-8')
-        payload[manifest_name] = data
-        for record in records:
-            if record['path'] == manifest_name:
-                record['bytes'], record['sha256'] = len(data), digest(data)
-                record['transformation'] = 'distributed documentation hashes and pinned source provenance'
-        for record in licensed:
-            if record['path'] == manifest_name:
-                record['bytes'], record['sha256'] = len(data), digest(data)
+        inventory = distributed_manifest['source_files'] + distributed_manifest['generated_files']
+        source_dir = 'config/pc/'
+        original_location = 'source-config-manifest.json'
+        scope = 'UserProfile/'
+    else:
+        inventory = distributed_manifest['files']
+        source_dir = 'config/official-weasel/'
+        original_location = f'{SOURCE_REPOSITORY}/blob/{source_ref}/{SOURCE_PREFIX}/{source_dir}profile-manifest.json'
+        scope = 'payload/ and samples/ (also assembled under FreshUserProfile/)'
+    archived_by_source = {record['source_path']: record for record in records}
+    changed = []
+    for record in inventory:
+        archived = archived_by_source[source_dir + record['path']]
+        if archived['sha256'] != record['sha256']:
+            if archived['transformation'] != 'relative Markdown links resolved to pinned source':
+                raise ValueError(f"Unexpected profile transformation: {archived['path']}")
+            record['repository_sha256'] = record['sha256']
+            record.update(sha256=archived['sha256'], bytes=archived['bytes'],
+                          archive_transformation=archived['transformation'])
+            changed.append(record['path'])
+    distributed_manifest['archive_provenance'] = {
+        'source_repository': SOURCE_REPOSITORY, 'source_prefix': SOURCE_PREFIX,
+        'source_ref': source_ref, 'original_manifest': original_location,
+        'original_manifest_sha256': digest(original_manifest), 'rendered_documentation': changed,
+        'scope': f'File sizes and hashes describe {scope} in this archive.'}
+    data = (json.dumps(distributed_manifest, ensure_ascii=False, indent=2) + '\n').encode('utf-8')
+    payload[manifest_name] = data
+    manifest_hash = digest(data)
+    for record in records:
+        if record['path'] == manifest_name:
+            record.update(bytes=len(data), sha256=manifest_hash,
+                          transformation='distributed documentation hashes and pinned source provenance')
+    for record in licensed:
+        if record['path'] == manifest_name:
+            record.update(bytes=len(data), sha256=manifest_hash)
     for name in ('package-manifest.json', 'package-license-index.json'):
         licensed.append({'path': name, 'source_path': 'scripts/build_scheme_packages.py',
                          'license': {'path': name, 'kind': 'generated-package-metadata',

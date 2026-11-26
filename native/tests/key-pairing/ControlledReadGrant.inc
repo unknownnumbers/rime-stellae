@@ -4,6 +4,7 @@
 // This is not a range-gravity model and must not run the original 259 suite
 // with the option enabled. No product state is installed by this host branch.
 if ((flags & TF_ES_SYNC) && (flags & TF_ES_READWRITE) == TF_ES_READ) {
+  ++synchronousReads;
   if (!selectionProbeRead || grantingStore) {
     *result = TF_E_SYNCHRONOUS;
     return S_OK;

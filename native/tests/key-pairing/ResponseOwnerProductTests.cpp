@@ -1949,6 +1949,86 @@ void SameOwnerFailedRequestProbe() {
     }
   }
   void RunProbe(const char* probe) {
+    if (std::strcmp(probe, "idle-modifiers") == 0) {
+      Group("IDLE-MODIFIERS", [&] {
+        a_->selectionProbeRead = true;
+        const unsigned before = a_->synchronousReads;
+        for (const auto& key : {weasel::KeyEvent(ibus::Alt_L, 0),
+                                weasel::KeyEvent(ibus::Shift_L, ibus::ALT_MASK),
+                                weasel::KeyEvent(ibus::Shift_L, ibus::ALT_MASK | ibus::RELEASE_MASK),
+                                weasel::KeyEvent(ibus::Alt_L, ibus::RELEASE_MASK),
+                                weasel::KeyEvent('y', ibus::ALT_MASK)}) {
+          const bool handled = service_->_ProduceKeyResponse(a_, key);
+          const auto reply = Record(service_->_lastResponse);
+          Check("idle-modifier-reaches-engine-and-passes-through", !handled &&
+              EmptyEngineResponse(reply) && a_->synchronousReads == before);
+        }
+        a_->synchronous = false;
+        a_->store->beforeRequest = [&] {
+          a_->store->selectionStart = a_->store->selectionEnd = 0;
+        };
+        const bool handled = service_->_ProduceKeyResponse(
+            a_, weasel::KeyEvent(ibus::Shift_R, ibus::ALT_MASK));
+        const auto commit = Record(service_->_lastResponse);
+        Check("bound-modifier-keeps-delayed-commit-point", handled && commit && commit->source &&
+            commit->response->commit == L"cn01" && commit->source->initialPoint &&
+            a_->synchronousReads == before + 1 && !a_->pending.empty());
+        a_->Drain();
+        Check("bound-modifier-writes-once-at-original-point", commit && commit->textWritten &&
+            commit->writeAttempts == 1 && a_->store->text == L"prefix|cn01");
+        Fresh();
+        a_->selectionProbeRead = true;
+        a_->synchronous = false;
+        std::shared_ptr<Packet> outer;
+        a_->store->afterSelectionQuery = [&] {
+          outer = Record(service_->_lastResponse);
+          service_->_ProduceKeyResponse(a_, weasel::KeyEvent('x', 0));
+        };
+        service_->_ProduceKeyResponse(a_, weasel::KeyEvent(ibus::Shift_R, ibus::ALT_MASK));
+        const auto nested = Record(service_->_lastResponse);
+        a_->store->selectionStart = a_->store->selectionEnd = 0;
+        a_->Drain();
+        Check("nested-key-keeps-original-modifier-commit-and-following-draft", outer && nested &&
+            outer != nested && outer->textWritten && outer->writeAttempts == 1 &&
+            a_->store->text == L"prefix|cn01" && HasPreedit(nested, L"x") &&
+            service_->_IsComposing() && nested->source && nested->source->composition);
+        Fresh();
+        a_->selectionProbeRead = true;
+        a_->synchronous = false;
+        std::shared_ptr<Packet> blurred;
+        a_->store->afterSelectionQuery = [&] {
+          blurred = Record(service_->_lastResponse);
+          Require(service_->OnKillThreadFocus(), "blur during modifier bookmark read");
+        };
+        service_->_ProduceKeyResponse(a_, weasel::KeyEvent(ibus::Shift_R, ibus::ALT_MASK));
+        a_->Drain();
+        Check("blur-revokes-pending-modifier-bookmark-and-write", blurred && blurred->source &&
+            !blurred->source->initialSelection && !blurred->source->initialPoint &&
+            blurred->stage == Stage::UnsupportedEndpoint && blurred->writeAttempts == 0 &&
+            a_->store->text == L"prefix|" && a_->store->imeWrites == 0);
+        Fresh();
+        a_->selectionProbeRead = true;
+        const unsigned beforeChord = a_->synchronousReads;
+        const bool boundChord = service_->_ProduceKeyResponse(
+            a_, weasel::KeyEvent('x', ibus::ALT_MASK));
+        const auto draft = Record(service_->_lastResponse);
+        Check("alt-letter-binding-preserves-draft-and-initial-read", boundChord &&
+            HasPreedit(draft, L"x") && a_->synchronousReads == beforeChord + 1);
+        Fresh();
+        a_->selectionProbeRead = true;
+        const weasel::KeyEvent toggle(ibus::space, ibus::CONTROL_MASK);
+        const bool entered = service_->_ProduceKeyResponse(a_, toggle);
+        Check("control-space-enters-ASCII", entered && service_->_status.ascii_mode);
+        const unsigned beforeAscii = a_->synchronousReads;
+        const bool asciiLetter = service_->_ProduceKeyResponse(a_, weasel::KeyEvent('x', 0));
+        Check("ASCII-app-key-passes-through-without-initial-read", !asciiLetter &&
+            EmptyEngineResponse(Record(service_->_lastResponse)) &&
+            a_->synchronousReads == beforeAscii);
+        const bool left = service_->_ProduceKeyResponse(a_, toggle);
+        Check("control-space-leaves-ASCII", left && !service_->_status.ascii_mode);
+      });
+      return;
+    }
     if (std::strcmp(probe, "no-schemas") == 0) {
       Group("EMPTY", [&] { NoSchemaPassThrough(); });
       return;
